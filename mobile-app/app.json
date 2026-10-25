@@ -20,7 +20,10 @@
       },
       "predictiveBackGestureEnabled": false,
       "package": "uz.ilbi.mobile",
-      "versionCode": 1
+      "versionCode": 1,
+      "blockedPermissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -30,7 +33,16 @@
       "expo-sharing",
       "expo-router",
       "expo-sqlite",
-      "expo-asset"
+      "expo-asset",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "ILBI tovar shtrix-kodini skanerlash uchun kameradan foydalanadi.",
+          "microphonePermission": false,
+          "recordAudioAndroid": false,
+          "barcodeScannerEnabled": true
+        }
+      ]
     ],
     "scheme": "ilbi"
   }

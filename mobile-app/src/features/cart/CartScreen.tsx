@@ -155,8 +155,8 @@ export const CartScreen: React.FC = () => {
           style={[styles.searchAddInput, { color: colors.text }]}
           onFocus={() => navigation.navigate('Tovar')}
         />
-        <TouchableOpacity accessibilityRole="button" accessibilityLabel="Shtrix-kod qidirish"
-          onPress={() => navigation.navigate('Tovar')}
+        <TouchableOpacity accessibilityRole="button" accessibilityLabel="Shtrix-kod skanerlash"
+          onPress={() => navigation.navigate('Tovar', { scan: '1' })}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           style={styles.scanIconBtn}
         >
@@ -189,8 +189,8 @@ export const CartScreen: React.FC = () => {
             variant="secondary"
             icon={<Scan size={18} color={colors.text} />}
             fullWidth
-            accessibilityLabel="Tovar qo‘shish"
-            onPress={() => navigation.navigate('Tovar')}
+            accessibilityLabel="Shtrix-kod skanerlash"
+            onPress={() => navigation.navigate('Tovar', { scan: '1' })}
             style={styles.emptyScanBtn}
           />
 

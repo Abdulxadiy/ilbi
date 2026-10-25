@@ -64,6 +64,15 @@ try {
   const shot = await browser.call('Page.captureScreenshot', { format: 'png' });
   await writeFile(new URL('web-phone-preview.png', evidence), Buffer.from(shot.data, 'base64'));
   await click('Tovar', 'tab');
+  await click('Kameradan skanerlash');
+  await waitFor(`${doc}.body.innerText.includes('Kodni qo‘lda kiritish')`, 'scanner exposes manual fallback');
+  await click('Kodni qo‘lda kiritish');
+  await waitFor(`!${doc}.body.innerText.includes('Kodni qo‘lda kiritish')`, 'scanner closes');
+  await click('Aniq shtrix-kod bo‘yicha');
+  await fill('Tovar qidirish', '0000000000000');
+  await waitFor(`${doc}.body.innerText.includes('Bu shtrix-kod bo‘yicha tovar topilmadi.')`, 'unknown complete barcode');
+  await fill('Tovar qidirish', '');
+  await click('Aniq shtrix-kod: yoqilgan');
   await click('Kategoriyalar');
   await waitFor(`${doc}.body.innerText.includes('Oziq-ovqat')`, 'category roots');
   await click('Yangi kategoriya');
@@ -209,7 +218,7 @@ try {
   const receiptShot = await browser.call('Page.captureScreenshot', { format: 'png' });
   await writeFile(new URL('web-demo-receipt.png', evidence), Buffer.from(receiptShot.data, 'base64'));
   assert.deepEqual(browser.errors, []);
-  console.log('PASS: Docker phone preview, parent/child category CRUD, product/variant creation, archive/restore/delete, persistent catalog prices isolated from negotiated cart price, Router filter, price negotiation, sidebar, persistent tabs across five secondary modules, dark theme, 320px viewport, live source refresh, demo checkout/change and saved receipt. Native Android/iOS are separate checks.');
+  console.log('PASS: Interactive phone preview (' + (process.env.MOBILE_PREVIEW_TEST_RUNTIME || 'Docker') + '), camera manual fallback/unknown exact code, parent/child category CRUD, product/variant creation, archive/restore/delete, persistent catalog prices isolated from negotiated cart price, Router filter, price negotiation, sidebar, persistent tabs across five secondary modules, dark theme, 320px viewport, live source refresh, demo checkout/change and saved receipt. Native Android/iOS are separate checks.');
 } finally {
   if (changed) {
     const current = await readFile(sourcePath, 'utf8');

@@ -28,7 +28,7 @@ Status: **COMPLETE — source comparison and available checks; native/real-backe
 | [DMP-015](#dmp-015) | OPEN | Pending |
 | [DMP-016](#dmp-016) | TESTED_CODE | Integer per-line VAT inclusive/exclusive totals, current tenant receipt settings and expected_tax_settings POST guard implemented. Fractional backend contract and VAT/checkout tests pass; backend receipt-tax suite passes. |
 | [DMP-017](#dmp-017) | TESTED_CODE | Live expired_batches render their actual batch/date/quantity and require an explicit acknowledgement keyed to those warnings. Integration test blocks POST before consent and allows it afterward. |
-| [DMP-018](#dmp-018) | OPEN | Pending |
+| [DMP-018](#dmp-018) | TESTED_CODE | 199 mobile tests pass (7 camera boundary checks), strict lint/tsc and actual SDK58 permission introspection pass. Interactive host phone regression verifies scanner manual fallback and unknown exact code. |
 | [DMP-019](#dmp-019) | TESTED_CODE | Paged catalog and exact barcode mode implemented; pagination/real-shape screen tests pass, including complete barcode query; full Jest suite, tsc and lint pass. |
 | [DMP-020](#dmp-020) | TESTED_CODE | 14 targeted mobile checks and 36 isolated PostgreSQL catalog/category API/service checks passed; Chrome created USD parent/child, followed category filter and deleted both with persistent tabs. tsc/strict lint passed. |
 | [DMP-021](#dmp-021) | TESTED_CODE | 192 mobile tests, 37 real PostgreSQL catalog API/service tests and interactive Chrome product/variant create/edit flow passed. Actual receipt snapshots retain old names/prices after catalog edits. tsc/strict lint passed. |

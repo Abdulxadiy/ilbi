@@ -1,0 +1,7 @@
+2026-10-25 — actual Expo SDK 58 config introspection
+PASS: generated iOS camera usage text explains barcode scanning.
+PASS: iOS microphone usage description absent.
+PASS: Android CAMERA permission present.
+PASS: Android RECORD_AUDIO explicitly removed through tools:node="remove".
+PASS: mobile version 1.0.0, Android versionCode 1 and iOS buildNumber 1 unchanged.
+This verifies generated configuration, not an iOS build or physical camera decode.

@@ -1,3 +1,4 @@
+import { BarcodeScanner } from '../scanner/BarcodeScanner';
 import { useLocalSearchParams, router } from 'expo-router';
 import { useFeedback } from '../../hooks/useFeedback';
 import { useDebounced, usePagedResource } from '../../hooks/usePagedResource';
@@ -27,8 +28,10 @@ export const CatalogScreen: React.FC = () => {
 
   const [search, setSearch] = useState('');
   const { message: toastMessage, type: toastType, show: setToastMessage } = useFeedback();
-  const params = useLocalSearchParams<{ categoryId?: string; categoryName?: string }>();
+  const params = useLocalSearchParams<{ categoryId?: string; categoryName?: string; scan?: string }>();
   const categoryId = /^\d+$/.test(params.categoryId || '') ? params.categoryId : '';
+  const [scanning, setScanning] = useState(false);
+  const closeScanner = () => { setScanning(false); router.setParams({ scan: '' }); };
   const [archived, setArchived] = useState(false);
   const [exactBarcode, setExactBarcode] = useState(false);
   const query = useDebounced(search.trim());
@@ -85,6 +88,8 @@ export const CatalogScreen: React.FC = () => {
         {can('catalog.add_product') ? <Button title="Yangi mahsulot" onPress={() => navigation.navigate('NewProduct')} /> : null}
         {can('catalog.archive_product') ? <Button title={archived ? 'Faol tovarlarni ko‘rish' : 'Arxivlangan tovarlar'} variant="ghost" onPress={() => setArchived(value => !value)} /> : null}
       </View>
+      <View style={{ paddingHorizontal: spacing.lg }}><Button title="Kameradan skanerlash" variant="secondary" onPress={() => setScanning(true)} /></View>
+      {(scanning || params.scan === '1') ? <BarcodeScanner onClose={closeScanner} onCode={code => { setSearch(code); setExactBarcode(true); setArchived(false); router.setParams({ categoryId: '', categoryName: '' }); }} /> : null}
       {/* Products List */}
       <FlatList
         data={catalog.rows}
@@ -93,7 +98,7 @@ export const CatalogScreen: React.FC = () => {
         refreshControl={<RefreshControl refreshing={catalog.loading} onRefresh={catalog.reload} />}
         onEndReached={() => { void catalog.loadMore(); }}
         onEndReachedThreshold={0.3}
-        ListEmptyComponent={<ListState loading={catalog.loading} error={catalog.error} empty onRetry={catalog.retry} />}
+        ListEmptyComponent={<ListState loading={catalog.loading} error={catalog.error} empty emptyLabel={exactBarcode && query ? 'Bu shtrix-kod bo‘yicha tovar topilmadi. Kodni tekshiring yoki nomidan qidiring.' : 'Tovar topilmadi'} onRetry={catalog.retry} />}
         ListFooterComponent={catalog.rows.length ? <><ListState loading={catalog.loadingMore} error={catalog.error} onRetry={catalog.retry} />{catalog.hasMore && !catalog.error && <Button title="Yana yuklash" variant="secondary" onPress={() => { void catalog.loadMore(); }} />}</> : undefined}
         renderItem={({ item }) => (
           <View

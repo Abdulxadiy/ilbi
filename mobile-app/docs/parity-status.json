@@ -123,9 +123,11 @@
     },
     "DMP-018": {
       "title": "Real camera barcode scanning",
-      "status": "OPEN",
-      "evidence": [],
-      "notes": ""
+      "status": "TESTED_CODE",
+      "evidence": [
+        "199 mobile tests pass (7 camera boundary checks), strict lint/tsc and actual SDK58 permission introspection pass. Interactive host phone regression verifies scanner manual fallback and unknown exact code."
+      ],
+      "notes": "Physical Android/iOS permission/decoding acceptance remains open. Camera event mocks and web preview do not prove native decoding; actual Android runtime validation tracked separately."
     },
     "DMP-019": {
       "title": "Server pagination and exact barcode lookup",
