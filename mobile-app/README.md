@@ -2,6 +2,8 @@
 
 # ILBI mobile development
 
+Another AI building the APK should start with [AI_BUILD_START_HERE.md](AI_BUILD_START_HERE.md): exact checks, source/signature verification, key continuity and the current Android-only scope.
+
 React Native + TypeScript, Expo SDK 58, Expo Router. Android and iOS share the feature code in `src/features/`. The app is a working UI prototype with partial API integration; it is **not ready for production acceptance**. Read [the review](docs/MOBILE_REVIEW.md) and [current progress](docs/MOBILE_PROGRESS.md) before continuing implementation.
 
 Support opens from **Menyu → Qo‘llab-quvvatlash**, with the bottom navigation preserved. Guests can open it from login. Text conversations, consent, retry, history and close/reopen use the existing support API. See [support verification and remaining media/profile work](docs/SUPPORT_MOBILE_VALIDATION.md).

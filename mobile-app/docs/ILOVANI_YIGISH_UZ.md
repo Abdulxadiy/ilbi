@@ -88,6 +88,15 @@ npm run build:apk:local -- --architectures arm64-v8a
 
 Birinchi build Gradle/SDK komponentlarini yuklashi mumkin. Faqat debug APK yaratib, uni yakuniy o‘rnatuvchi deb tarqatmang: u Metro’ga bog‘liq bo‘lishi yoki boshqa imzolash kalitidan foydalanishi mumkin. Tayyor skript bu holatni tekshiradi.
 
+Yig‘ish sharoiti va mavjud APK’ni alohida tekshirishingiz mumkin:
+
+```bash
+npm run build:apk:check
+npm run verify:apk:local
+```
+
+Birinchisi build boshlamasdan SDK/JDK va doimiy imzolash kalitini tekshiradi. Ikkinchisi APK imzosi, SHA-256, native versiya/build, JavaScript, protsessor kutubxonalari va joriy ilova kodiga mosligini tekshiradi. O‘zgargan yoki yangi runtime fayllari bo‘lsa, eski APK’ni joriy deb tasdiqlamaydi. Boshqa AI ishni [AI_BUILD_START_HERE.md](../AI_BUILD_START_HERE.md) dan boshlasin.
+
 ## 3. Imzolash kaliti — keyingi yangilanishlar uchun
 
 Siz Android ilovasini hali tarqatmaganingizni tasdiqladingiz. Shu sabab birinchi doimiy kalit yaratildi. Ushbu kompyuterda:
@@ -167,3 +176,5 @@ npm test -- --silent
 ```
 
 APK’ni o‘zingiz o‘rnating va kirish, savat, klaviatura, hujjat/chek, sidebar, yordam va yangilanish oynalarini tekshiring. APK yig‘ilganining o‘zi barcha biznes modullari tugaganini bildirmaydi. Joriy ilova sinov bosqichida; bajarilgan tekshiruvlar va qolgan ishlar [parity audit](DESKTOP_MOBILE_PARITY_AUDIT.md), [Android tekshiruvi](ANDROID_NATIVE_VALIDATION.md) va [yordam tekshiruvi](SUPPORT_MOBILE_VALIDATION.md) ichida yozilgan.
+
+Butun ILBI bo‘yicha telefon bildirishnomalari rejasi [muhokama hujjatida](PUSH_NOTIFICATIONS_DISCUSSION.md): qarz/to‘lov, ombor va yaroqlilik muddati, savdo/kassa/hisobot, B2B/transfer, chat, vazifa/hujjat, xodim/xavfsizlik va tizim holatlari. Z-hisobot va B2B faqat misollar edi. Hujjatda mavjud hodisalar bilan hali yaratilishi kerak bo‘lganlari ajratilgan. Bu taklif hali implementatsiya boshlanganini anglatmaydi.
