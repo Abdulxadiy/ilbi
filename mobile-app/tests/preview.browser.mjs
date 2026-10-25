@@ -63,6 +63,33 @@ try {
   await mkdir(evidence, { recursive: true });
   const shot = await browser.call('Page.captureScreenshot', { format: 'png' });
   await writeFile(new URL('web-phone-preview.png', evidence), Buffer.from(shot.data, 'base64'));
+  await click('Tovar', 'tab');
+  await click('Kategoriyalar');
+  await waitFor(`${doc}.body.innerText.includes('Oziq-ovqat')`, 'category roots');
+  await click('Yangi kategoriya');
+  await fill('Kategoriya nomi', 'QA category');
+  await click('Valyuta: USD', 'radio');
+  await click('Kategoriyani saqlash');
+  await waitFor(`!${doc}.querySelector('input[aria-label="Kategoriya nomi"]')`, 'parent saved');
+  await click('QA category: ichki kategoriyalar');
+  await click('Yangi kategoriya');
+  await fill('Kategoriya nomi', 'QA child');
+  await click('Kategoriyani saqlash');
+  await waitFor(`!${doc}.querySelector('input[aria-label="Kategoriya nomi"]')`, 'child saved');
+  await click('QA child: tovarlarni ko‘rish');
+  await waitFor(`${doc}.body.innerText.includes('QA child: filtrni tozalash')`, 'category filter forwarded through Router');
+  await click('QA child: filtrni tozalash');
+  await click('Kategoriyalar');
+  await click('QA child: tahrirlash');
+  await click('Kategoriyani o‘chirish');
+  await click('O‘chirishni tasdiqlash');
+  await waitFor(`!${doc}.querySelector('input[aria-label="Kategoriya nomi"]')`, 'child deleted');
+  await click('← Bosh kategoriyalar / QA category');
+  await click('QA category: tahrirlash');
+  await click('Kategoriyani o‘chirish');
+  await click('O‘chirishni tasdiqlash');
+  await waitFor(`!${doc}.querySelector('input[aria-label="Kategoriya nomi"]')`, 'parent deleted');
+  assert.equal(await browser.evaluate(`${doc}.querySelectorAll('[role=tab]').length`), 5);
   await click('Savdo', 'tab');
   await waitFor(`${doc}.body.innerText.includes('Dona narxi')`, 'interactive cart');
   assert.ok(await browser.evaluate(`${doc}.querySelector('[aria-label="Sut 1 L: sotuv narxi"]').getBoundingClientRect().height >= 44`), 'Price edit target must be at least 44px high');
@@ -122,7 +149,7 @@ try {
   const receiptShot = await browser.call('Page.captureScreenshot', { format: 'png' });
   await writeFile(new URL('web-demo-receipt.png', evidence), Buffer.from(receiptShot.data, 'base64'));
   assert.deepEqual(browser.errors, []);
-  console.log('PASS: Docker phone preview, price negotiation, sidebar, persistent tabs across five secondary modules, dark theme, 320px viewport, live source refresh, demo checkout/change and saved receipt. Native Android/iOS are separate checks.');
+  console.log('PASS: Docker phone preview, parent/child category CRUD and Router filter, price negotiation, sidebar, persistent tabs across five secondary modules, dark theme, 320px viewport, live source refresh, demo checkout/change and saved receipt. Native Android/iOS are separate checks.');
 } finally {
   if (changed) {
     const current = await readFile(sourcePath, 'utf8');

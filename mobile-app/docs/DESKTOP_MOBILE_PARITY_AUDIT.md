@@ -30,7 +30,7 @@ Status: **COMPLETE — source comparison and available checks; native/real-backe
 | [DMP-017](#dmp-017) | TESTED_CODE | Live expired_batches render their actual batch/date/quantity and require an explicit acknowledgement keyed to those warnings. Integration test blocks POST before consent and allows it afterward. |
 | [DMP-018](#dmp-018) | OPEN | Pending |
 | [DMP-019](#dmp-019) | TESTED_CODE | Paged catalog and exact barcode mode implemented; pagination/real-shape screen tests pass, including complete barcode query; full Jest suite, tsc and lint pass. |
-| [DMP-020](#dmp-020) | OPEN | Pending |
+| [DMP-020](#dmp-020) | TESTED_CODE | 14 targeted mobile checks and 36 isolated PostgreSQL catalog/category API/service checks passed; Chrome created USD parent/child, followed category filter and deleted both with persistent tabs. tsc/strict lint passed. |
 | [DMP-021](#dmp-021) | OPEN | Pending |
 | [DMP-022](#dmp-022) | OPEN | Pending |
 | [DMP-023](#dmp-023) | OPEN | Pending |

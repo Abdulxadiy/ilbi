@@ -22,6 +22,7 @@ export function BottomTabNavigator() {
     <Tabs.Protected guard={canOpen('Inventory')}><Tabs.Screen name="inventory" options={{ tabBarButton: () => null, tabBarItemStyle: { display: 'none' } }} /></Tabs.Protected>
     <Tabs.Protected guard={canOpen('Customers')}><Tabs.Screen name="customers" options={{ tabBarButton: () => null, tabBarItemStyle: { display: 'none' } }} /></Tabs.Protected>
     <Tabs.Protected guard={canOpen('Reports')}><Tabs.Screen name="reports" options={{ tabBarButton: () => null, tabBarItemStyle: { display: 'none' } }} /></Tabs.Protected>
+    <Tabs.Protected guard={canOpen('Categories')}><Tabs.Screen name="categories" options={{ tabBarButton: () => null, tabBarItemStyle: { display: 'none' } }} /></Tabs.Protected>
     <Tabs.Screen name="sync" options={{ tabBarButton: () => null, tabBarItemStyle: { display: 'none' } }} />
     <Tabs.Screen name="settings" options={{ tabBarButton: () => null, tabBarItemStyle: { display: 'none' } }} />
   </Tabs>;

@@ -6,13 +6,15 @@ export const previewUser = {
   phone_number: '', role: 'owner' as const, terms_accepted: true,
   tenants: [{ id: 900001, name: 'Demo do‘kon', is_owner: true, permissions: ['*'] }],
 };
+let nextCategoryId = 10;
+const categories = [{ id: 1, name: 'Oziq-ovqat', kod: '01', parent: null as number | null, currency: 'UZS', is_active: true }];
 const products = [
   ['Sut 1 L', 12000, 2], ['Non', 4000, 3], ['Suv 1.5 L', 5000, 2],
   ['Shakar 1 kg', 16000, 1], ['Choy 100 g', 18000, 1], ["Yog' 1 L", 22000, 1],
   ['Guruch 1 kg', 15000, 2], ['Tuxum (10 dona)', 18000, 1], ['Tuz 1 kg', 3000, 1],
   ['Makaron 500 g', 8000, 1],
 ].map(([name, price, quantity], index) => ({
-  id: index + 1, product: index + 1, product_name: String(name), name: 'Standart',
+  id: index + 1, product: index + 1, category_id: 1, category_name: 'Oziq-ovqat', product_name: String(name), name: 'Standart',
   unit: 'dona', price_recommended: Number(price), price_min: 0, price_partner: Number(price), currency: 'UZS', image: null,
   barcode: '47800000000' + String(index + 1).padStart(2, '0'), stock_quantity: 50,
   quantity: Number(quantity),
@@ -43,11 +45,32 @@ export async function previewRequest(endpoint: string, options: { method?: strin
     if (path === '/auth/me/') return previewUser;
     if (path === '/tenants/my/') return previewUser.tenants;
     if (path === '/analytics/dashboard/') return { today_sales_sum: 2450000, sales_count: 24, debt_sum: 860000 };
-    if (path === '/catalog/variants/') return { results: products.filter(p => p.product_name.toLowerCase().includes((url.searchParams.get('search') || '').toLowerCase())) };
+    if (path === '/catalog/categories/') return { results: categories.filter(c => c.is_active && c.name.toLowerCase().includes((url.searchParams.get('search') || '').toLowerCase()) && (!url.searchParams.has('parent') || (url.searchParams.get('parent') === 'null' ? c.parent === null : c.parent === Number(url.searchParams.get('parent'))))) };
+    const category = path.match(/^\/catalog\/categories\/(\d+)\/$/);
+    if (category) { const found = categories.find(c => c.id === Number(category[1])); if (!found) throw Error('Kategoriya topilmadi.'); return { ...found }; }
+    if (path === '/catalog/variants/') return { results: products.filter(p => (!url.searchParams.has('category') || p.category_id === Number(url.searchParams.get('category'))) && (!url.searchParams.has('barcode') || p.barcode === url.searchParams.get('barcode')) && p.product_name.toLowerCase().includes((url.searchParams.get('search') || '').toLowerCase())) };
     if (path === '/sales/counterparties/') return { results: customers };
     if (path === '/sales/') return { results: [...sales.values()] };
     const match = path.match(/^\/sales\/(\d+)\/$/);
     if (match && sales.has(Number(match[1]))) return sales.get(Number(match[1]));
+  }
+  const categoryMatch = path.match(/^\/catalog\/categories\/(\d+)\/$/);
+  if ((method === 'POST' && path === '/catalog/categories/') || (method === 'PATCH' && categoryMatch)) {
+    const existing = categoryMatch ? categories.find(c => c.id === Number(categoryMatch[1])) : null;
+    if (categoryMatch && !existing) throw Error('Kategoriya topilmadi.');
+    const parent = body.parent_id ? categories.find(c => c.id === body.parent_id && c.is_active) : null;
+    if (body.parent_id && (!parent || parent.parent || parent.id === existing?.id || (existing && categories.some(c => c.parent === existing.id)))) throw Error('Kategoriya tuzilishi noto‘g‘ri.');
+    if (!body.name?.trim()) throw Error('Kategoriya nomi kerak.');
+    const saved = { id: existing?.id || nextCategoryId++, name: body.name.trim(), kod: body.kod || existing?.kod || String(nextCategoryId), parent: parent?.id || null, currency: parent?.currency || body.currency || 'UZS', is_active: true };
+    if (categories.some(c => c.id !== saved.id && c.kod === saved.kod)) throw Error('Kategoriya kodi band.');
+    if (existing) Object.assign(existing, saved); else categories.push(saved);
+    return { ...saved };
+  }
+  if (method === 'DELETE' && categoryMatch) {
+    const index = categories.findIndex(c => c.id === Number(categoryMatch[1]));
+    if (index < 0) throw Error('Kategoriya topilmadi.');
+    if (categories.some(c => c.parent === categories[index].id && c.is_active) || products.some(p => p.category_id === categories[index].id)) throw Error('Kategoriyada faol mahsulot yoki ichki kategoriya mavjud.');
+    categories.splice(index, 1); return null;
   }
   if (method === 'POST' && path === '/sales/') {
     if (!body.items?.length) throw Error('Savat bo‘sh');

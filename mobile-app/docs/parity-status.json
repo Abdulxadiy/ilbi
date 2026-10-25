@@ -137,9 +137,11 @@
     },
     "DMP-020": {
       "title": "Category tree and category administration",
-      "status": "OPEN",
-      "evidence": [],
-      "notes": ""
+      "status": "TESTED_CODE",
+      "evidence": [
+        "14 targeted mobile checks and 36 isolated PostgreSQL catalog/category API/service checks passed; Chrome created USD parent/child, followed category filter and deleted both with persistent tabs. tsc/strict lint passed."
+      ],
+      "notes": "Native keyboard and screen reader acceptance remains separate."
     },
     "DMP-021": {
       "title": "Product and variant creation/editing",

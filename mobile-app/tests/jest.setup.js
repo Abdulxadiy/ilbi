@@ -10,3 +10,9 @@ jest.mock('../src/navigation/useAppNavigation', () => ({
 jest.mock('expo-crypto', () => ({ randomUUID: () => require('node:crypto').randomUUID() }));
 
 jest.mock('react-native-safe-area-context', () => require('react-native-safe-area-context/jest/mock').default);
+
+// Feature component tests isolate Router; actual route guards and URL transitions run in Chrome.
+jest.mock('expo-router', () => ({
+  useLocalSearchParams: () => ({}),
+  router: { setParams: jest.fn(), navigate: jest.fn(), push: jest.fn(), replace: jest.fn(), back: jest.fn(), canGoBack: () => true },
+}));

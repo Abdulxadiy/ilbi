@@ -9,7 +9,7 @@ export function hasPermission(user: UserProfile | null, tenant: UserTenant | nul
   return !ownerOnly.has(permission) && member.permissions.includes(permission);
 }
 export const modulePermissions: Record<string, string | string[]> = {
-  Tovar: 'catalog.view_product', Savdo: 'sales.add_sale', Checkout: 'sales.add_sale',
+  Categories: 'catalog.view_category', Tovar: 'catalog.view_product', Savdo: 'sales.add_sale', Checkout: 'sales.add_sale',
   Qarz: ['sales.manage_counterparty', 'sales.record_debt_payment'], Customers: ['sales.manage_counterparty', 'sales.record_debt_payment'],
   Documents: 'sales.view_sale', ReceiptView: 'sales.view_sale', ShareSheet: 'sales.view_sale', PdfExport: 'sales.view_sale',
   Inventory: 'inventory.view_stock', Reports: 'analytics.view_dashboard',

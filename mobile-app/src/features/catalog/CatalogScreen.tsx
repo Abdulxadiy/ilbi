@@ -1,3 +1,4 @@
+import { useLocalSearchParams, router } from 'expo-router';
 import { useFeedback } from '../../hooks/useFeedback';
 import { useDebounced, usePagedResource } from '../../hooks/usePagedResource';
 import { ListState } from '../../components/ui/ListState';
@@ -26,9 +27,11 @@ export const CatalogScreen: React.FC = () => {
 
   const [search, setSearch] = useState('');
   const { message: toastMessage, type: toastType, show: setToastMessage } = useFeedback();
+  const params = useLocalSearchParams<{ categoryId?: string; categoryName?: string }>();
+  const categoryId = /^\d+$/.test(params.categoryId || '') ? params.categoryId : '';
   const [exactBarcode, setExactBarcode] = useState(false);
   const query = useDebounced(search.trim());
-  const catalog = usePagedResource<CatalogVariant>('/catalog/variants/?' + (exactBarcode ? 'barcode=' : 'search=') + encodeURIComponent(query), parseVariant);
+  const catalog = usePagedResource<CatalogVariant>('/catalog/variants/?' + (exactBarcode ? 'barcode=' : 'search=') + encodeURIComponent(query) + (categoryId ? '&category=' + categoryId : ''), parseVariant);
 
   const handleAddToCart = (product: CatalogVariant) => {
     if (!can('sales.add_sale')) { setToastMessage('Savdo uchun vakolat berilmagan.'); return; }
@@ -72,6 +75,10 @@ export const CatalogScreen: React.FC = () => {
         <Button title={exactBarcode ? "Aniq shtrix-kod: yoqilgan" : "Aniq shtrix-kod bo‘yicha"} variant="ghost" onPress={() => setExactBarcode(value => !value)} />
       </View>
 
+      <View style={{ paddingHorizontal: spacing.lg, gap: 8 }}>
+        {can('catalog.view_category') ? <Button title="Kategoriyalar" variant="secondary" onPress={() => navigation.navigate('Categories')} /> : null}
+        {categoryId ? <Button title={(params.categoryName || 'Kategoriya') + ': filtrni tozalash'} variant="ghost" onPress={() => router.setParams({ categoryId: '', categoryName: '' })} /> : null}
+      </View>
       {/* Products List */}
       <FlatList
         data={catalog.rows}
