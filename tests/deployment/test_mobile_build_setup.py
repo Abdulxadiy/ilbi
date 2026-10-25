@@ -58,6 +58,23 @@ class MobileBuildSetupTests(unittest.TestCase):
         for name in ['credentials.json', '.env', 'android']:
             self.assertFalse((target / name).exists())
 
+    def test_signer_pin_rejects_accidental_replacement_before_build(self):
+        public = {'schema': 1, 'applicationId': 'uz.ilbi.mobile', 'signerSha256': 'a' * 64}
+        build_apk.validate_signer('a' * 64, public)
+        with self.assertRaisesRegex(ValueError, 'Restore the existing key'):
+            build_apk.validate_signer('b' * 64, public)
+
+    def test_complete_stable_build_tools_are_selected_over_partial_downloads(self):
+        sdk = self.folder / 'sdk'
+        for version, names in [('37.0.0', ['aapt2', 'apksigner', 'zipalign']), ('38.0.0', ['aapt2']), ('39.0.0-rc1', ['aapt2', 'apksigner', 'zipalign'])]:
+            folder = sdk / 'build-tools' / version
+            folder.mkdir(parents=True)
+            for name in names:
+                (folder / name).write_text('fixture')
+        self.assertEqual(build_apk.select_build_tools(sdk).name, '37.0.0')
+        with self.assertRaisesRegex(ValueError, 'Complete Android build-tools'):
+            build_apk.select_build_tools(self.folder / 'missing-sdk')
+
 
 if __name__ == '__main__':
     unittest.main()

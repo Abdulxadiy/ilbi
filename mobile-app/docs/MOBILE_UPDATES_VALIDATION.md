@@ -41,3 +41,11 @@ The exact APK installed on a new, separate `ILBI_RELEASE_API_36` emulator. With 
 The genuine signed APK also passed the real exporter and activation in isolated local staging, retaining existing desktop metadata. Nothing was uploaded or activated on the public server. The 73 MB binary is generated/ignored, not committed. Evidence and public metadata are in `evidence/android-release/`. Physical ARM64, iOS, actual older-to-newer production migration, live operator delivery, fiscal readiness and remaining audit items are still separate gates.
 
 After the successful build, the helper was tightened to capture Git provenance before source copying and retain the correctly named optional v4 signature sidecar. Eight Python setup/publisher checks and Python compilation passed after that small tooling correction; application JavaScript did not change. The first artifact's source remains the exact commit above.
+
+## Build handoff and existing-artifact verification
+
+The builder now checks the established public signing-certificate pin before starting an expensive native build and selects a complete stable Android build-tools installation. `npm run build:apk:check` passed against the actual local SDK/JDK and persistent key without starting a build or printing signing secrets.
+
+`npm run verify:apk:local` passed against the genuine APK above: the actual certificate, application/version/build, SHA-256, byte size, alignment, embedded JavaScript and ARM64/x86_64 libraries matched. Its original runtime commit is still `6ac80b1b5b955587837ec5f58cd4ab690a90cca2`; the current application runtime matches that commit. The verifier rejects changed dependencies, runtime configuration/files and new untracked routes, while allowing documented host check scripts and documentation changes. A newer documentation/tooling commit is not evidence of a newly compiled binary.
+
+All 14 Python mobile setup, publisher and source-verification checks passed. TypeScript, strict ESLint, Python compilation and `git diff --check` also passed. Public output is recorded in `evidence/android-release/handoff-verification.txt`. No application runtime or dependencies changed in this slice, so the APK was **verified, not rebuilt**. No new emulator/physical-device acceptance, IPA, phone push configuration or server publication is claimed. Versions remain unchanged.

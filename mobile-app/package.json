@@ -55,7 +55,9 @@
     "dev:docker": "node scripts/dev-server.mjs",
     "test:preview": "node tests/preview.browser.mjs",
     "prepare:signing": "python3 scripts/prepare_signing.py",
-    "build:apk:local": "python3 scripts/build_apk.py"
+    "build:apk:local": "python3 scripts/build_apk.py",
+    "build:apk:check": "python3 scripts/build_apk.py --check",
+    "verify:apk:local": "python3 scripts/verify_apk.py"
   },
   "jest": {
     "preset": "jest-expo",

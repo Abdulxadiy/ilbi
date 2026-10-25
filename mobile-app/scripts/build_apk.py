@@ -15,6 +15,20 @@ from prepare_signing import APP, DEFAULT_RECORD
 TOOLS = Path('/mnt/storage/.cache/ilbi-native-tools')
 
 
+def select_build_tools(sdk):
+    folder = Path(sdk) / 'build-tools'
+    candidates = [p for p in folder.iterdir() if p.is_dir() and all(part.isdigit() for part in p.name.split('.'))
+                  and all((p / tool).is_file() for tool in ['aapt2', 'apksigner', 'zipalign'])] if folder.is_dir() else []
+    if not candidates:
+        raise ValueError('Complete Android build-tools are missing: aapt2, apksigner and zipalign are required')
+    return max(candidates, key=lambda p: tuple(map(int, p.name.split('.'))))
+
+
+def validate_signer(signer, public_record):
+    if public_record.get('schema') != 1 or public_record.get('applicationId') != 'uz.ilbi.mobile' or public_record.get('signerSha256') != signer:
+        raise ValueError('Signing key differs from the established ILBI identity. Restore the existing key; do not generate a replacement.')
+
+
 def copy_project(source, destination):
     source, destination = Path(source), Path(destination)
     destination.mkdir(parents=True)
@@ -34,8 +48,7 @@ def build(args):
         raise ValueError('Run npm ci inside mobile-app first')
     if not (jdk / 'bin/java').is_file() or not (sdk / 'platform-tools/adb').is_file():
         raise ValueError('Java 17 and an Android SDK are required; pass --jdk and --android-sdk')
-    versions = [p for p in (sdk / 'build-tools').iterdir() if p.is_dir() and all(part.isdigit() for part in p.name.split('.'))]
-    tools = max(versions, key=lambda p: tuple(map(int, p.name.split('.'))))
+    tools = select_build_tools(sdk)
     config = json.loads((APP / 'app.json').read_text())
     if config['expo']['version'] != json.loads((APP / 'package.json').read_text())['version']:
         raise ValueError('Mobile app/config versions disagree')
@@ -45,6 +58,13 @@ def build(args):
         raise ValueError('The established signing key is missing; restore it rather than replacing it')
     environment = {**os.environ, 'JAVA_HOME': str(jdk), 'ANDROID_HOME': str(sdk), 'ANDROID_SDK_ROOT': str(sdk), 'CI': '1', 'EXPO_NO_TELEMETRY': '1', 'EXPO_PUBLIC_DESIGN_PREVIEW': '0', 'EXPO_PUBLIC_UPDATE_PREVIEW': '0'}
     environment['PATH'] = str(jdk / 'bin') + os.pathsep + environment.get('PATH', '')
+    signing = {**environment, 'ILBI_ANDROID_STORE_PASSWORD': record['storePassword']}
+    certificate = subprocess.run([str(jdk / 'bin/keytool'), '-exportcert', '-keystore', str(key), '-alias', record['alias'], '-storepass:env', 'ILBI_ANDROID_STORE_PASSWORD'], env=signing, check=True, capture_output=True).stdout
+    signer = hashlib.sha256(certificate).hexdigest()
+    validate_signer(signer, json.loads((APP / 'android-signing-public.json').read_text()))
+    if args.check:
+        print('PASS: installed dependencies, SDK/build-tools, Java, mobile versions and established signing identity. No build, upload, version change or secret output.')
+        return
     if (TOOLS / 'gradle').is_dir() and 'GRADLE_USER_HOME' not in environment:
         environment['GRADLE_USER_HOME'] = str(TOOLS / 'gradle')
     cache = Path(args.build_cache).expanduser()
@@ -63,9 +83,6 @@ def build(args):
     apk = project / 'android/app/build/outputs/apk/release/app-release.apk'
     if not apk.is_file():
         raise ValueError('Gradle did not produce the expected standalone APK')
-    signing = {**environment, 'ILBI_ANDROID_STORE_PASSWORD': record['storePassword']}
-    certificate = subprocess.run([str(jdk / 'bin/keytool'), '-exportcert', '-keystore', str(key), '-alias', record['alias'], '-storepass:env', 'ILBI_ANDROID_STORE_PASSWORD'], env=signing, check=True, capture_output=True).stdout
-    signer = hashlib.sha256(certificate).hexdigest()
     output = Path(args.output).expanduser().resolve()
     output.mkdir(parents=True, exist_ok=True)
     name = f"ILBI-{config['expo']['version']}-android-{config['expo']['android']['versionCode']}.apk"
@@ -88,10 +105,11 @@ def build(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--android-sdk', default=os.environ.get('ANDROID_HOME', str(TOOLS / 'sdk')))
+    parser.add_argument('--android-sdk', default=os.environ.get('ANDROID_HOME') or os.environ.get('ANDROID_SDK_ROOT') or str(TOOLS / 'sdk'))
     parser.add_argument('--jdk', default=os.environ.get('JAVA_HOME', str(TOOLS / 'jdk/jdk-17.0.21+9')))
     parser.add_argument('--signing-record', type=Path, default=DEFAULT_RECORD)
     parser.add_argument('--build-cache', type=Path, default=TOOLS / 'build' if TOOLS.is_dir() else Path.home() / '.cache/ilbi/android-builds')
     parser.add_argument('--output', type=Path, default=APP / 'dist/android')
     parser.add_argument('--architectures', choices=['arm64-v8a', 'x86_64', 'arm64-v8a,x86_64'], default='arm64-v8a,x86_64')
+    parser.add_argument('--check', action='store_true', help='Check prerequisites and pinned signing identity without starting a build')
     build(parser.parse_args())
