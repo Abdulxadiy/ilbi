@@ -51,6 +51,8 @@ def build(args):
     cache.mkdir(parents=True, exist_ok=True)
     work = Path(tempfile.mkdtemp(prefix='standalone-', dir=cache))
     project = work / 'mobile-app'
+    commit = subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=APP, capture_output=True, text=True, check=False).stdout.strip() or None
+    modified = subprocess.run(['git', 'status', '--porcelain', '--untracked-files=normal', '--', '.'], cwd=APP, capture_output=True, text=True, check=False).stdout.strip()
     copy_project(APP, project)
     if not any((project / name).exists() for name in ['metro.config.js', 'metro.config.cjs']):
         (project / 'metro.config.cjs').write_text("const { getDefaultConfig } = require('expo/metro-config');\nconst config = getDefaultConfig(__dirname);\nconfig.maxWorkers = 2;\nmodule.exports = config;\n")
@@ -73,10 +75,12 @@ def build(args):
     subprocess.run([str(tools / 'zipalign'), '-c', '4', str(temporary)], env=environment, check=True, capture_output=True)
     final = output / name
     temporary.replace(final)
+    incremental = Path(str(temporary) + '.idsig')
+    if incremental.exists():
+        incremental.replace(Path(str(final) + '.idsig'))
     with final.open('rb') as source:
         digest = hashlib.file_digest(source, 'sha256').hexdigest()
-    commit = subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=APP, capture_output=True, text=True, check=False).stdout.strip() or None
-    manifest = {**inspection, 'artifact': name, 'sha256': digest, 'bytes': final.stat().st_size, 'sourceCommit': commit, 'architectures': args.architectures.split(','), 'standalone': True, 'designPreview': False, 'builtAt': datetime.now(timezone.utc).isoformat()}
+    manifest = {**inspection, 'artifact': name, 'sha256': digest, 'bytes': final.stat().st_size, 'sourceCommit': commit, 'sourceModified': bool(modified), 'architectures': args.architectures.split(','), 'standalone': True, 'designPreview': False, 'builtAt': datetime.now(timezone.utc).isoformat()}
     (output / 'android-build-manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
     print('Standalone owner-signed APK:', final, flush=True)
     print('Mobile version/build unchanged:', inspection['version'], inspection['buildNumber'], flush=True)

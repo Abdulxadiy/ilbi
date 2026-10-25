@@ -24,8 +24,20 @@ The first native driver attempt assumed the app was still foregrounded; it encou
 
 ## Packaging and remaining gates
 
-The owner confirmed Android has never been distributed. A persistent owner-only signing identity was created outside Git; subsequent user builds must retain it. `eas.json`, protected local credential preparation and the isolated local APK builder are documented in [ILOVANI_YIGISH_UZ.md](ILOVANI_YIGISH_UZ.md). The builder forces real backend mode, embeds JavaScript and checks the final signature/native metadata. Actual standalone release assembly/installation is recorded separately when executed; debug acceptance above is not that check. EAS/Apple login, cloud builds and iOS native acceptance have not been performed.
+The owner confirmed Android has never been distributed. A persistent owner-only signing identity was created outside Git; subsequent user builds must retain it. `eas.json`, protected local credential preparation and the isolated local APK builder are documented in [ILOVANI_YIGISH_UZ.md](ILOVANI_YIGISH_UZ.md). The builder forces real backend mode, embeds JavaScript and checks the final signature/native metadata. The completed standalone release assembly/installation is recorded below; debug acceptance alone did not establish it. EAS/Apple login, cloud builds and iOS native acceptance have not been performed.
 
 `scripts/export_downloads.py` inspects a genuine non-debug APK and pinned release certificate, then stages an immutable `/downloads/mobile/<commit>/...apk` artifact. `ops/activate_mobile_downloads.py` verifies the transferred artifact and atomically merges its metadata into the existing feed. Android's legacy alias remains for older pages. Desktop retention does not remove the separate mobile directory. No release is activated remotely by these tests.
 
 Phone push notifications are still DMP-060 work. The in-app update strip does not establish FCM/APNs delivery. Existing fiscal, financial, production, physical-device, iOS and broader migration gates remain in the audit. Platform `1.4.0`, mobile `1.0.0`, Android code `1` and iOS build `1` remain unchanged; the simulated build-2 offer was never published.
+
+## Actual signed standalone APK — completed
+
+`npm run build:apk:local` completed a genuine CNG release build in 10m 17s from application source `6ac80b1b5b955587837ec5f58cd4ab690a90cca2`. The APK was re-signed using the owner's persistent PKCS12 identity and passed native version/application ID, non-debuggability, certificate, size/hash and alignment checks. It contains embedded Hermes JavaScript and both ARM64/x86_64 native libraries.
+
+Artifact: `mobile-app/dist/android/ILBI-1.0.0-android-1.apk` (75,719,733 bytes). SHA-256: `772d4de6795c6abbf5e758eae4d6a5e06e0a4e7f88c2e8143c7af8137f110ee0`. Public signing-certificate SHA-256: `09fc04394dfd3d8e63abe97a0b71f066ced06a90cd7e94773705f1efae2cd756`. Signing secrets remain outside Git and are not contained in evidence.
+
+The exact APK installed on a new, separate `ILBI_RELEASE_API_36` emulator. With Metro stopped and no reverse connection configured, real-mode login and public downloads opened, and the app read installed version 1.0.0/build 1. No design-data banner or demo-login action appeared. Package flags confirmed a non-debug release; native/JavaScript crash checks passed. No account login, support send or financial mutation was submitted. Both native emulators were stopped afterwards and the normal synthetic host preview was restored with the fake-update fixture disabled.
+
+The genuine signed APK also passed the real exporter and activation in isolated local staging, retaining existing desktop metadata. Nothing was uploaded or activated on the public server. The 73 MB binary is generated/ignored, not committed. Evidence and public metadata are in `evidence/android-release/`. Physical ARM64, iOS, actual older-to-newer production migration, live operator delivery, fiscal readiness and remaining audit items are still separate gates.
+
+After the successful build, the helper was tightened to capture Git provenance before source copying and retain the correctly named optional v4 signature sidecar. Eight Python setup/publisher checks and Python compilation passed after that small tooling correction; application JavaScript did not change. The first artifact's source remains the exact commit above.

@@ -1,0 +1,1 @@
+PASS: owner-signed APK SHA-256 and size match manifest; actual APK has arm64-v8a/x86_64 native libraries and assets/index.android.bundle. Actual signed package inspected/exported, then activated in isolated local staging while preserving desktop metadata. No remote publication.

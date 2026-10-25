@@ -93,7 +93,7 @@ Status: **COMPLETE — source comparison and available checks; native/real-backe
 | [DMP-080](#dmp-080) | OPEN | Pending |
 | [DMP-081](#dmp-081) | OPEN | Pending |
 | [DMP-082](#dmp-082) | OPEN | Pending |
-| [DMP-083](#dmp-083) | IN_PROGRESS | 236 mobile tests, lint/tsc, web phone/download Chrome checks and installed API 36 actual version/build + daily reminder persistence passed; native SDK 58 APK with expo-application built. See MOBILE_UPDATES_VALIDATION.md and ILOVANI_YIGISH_UZ.md. |
+| [DMP-083](#dmp-083) | IN_PROGRESS | Genuine owner-signed standalone 1.0.0/build 1 APK built and installed on fresh API 36 Android; login/downloads/native version work with Metro stopped. Real APK export/local staging activation passed, preserving desktop metadata. See MOBILE_UPDATES_VALIDATION.md. |
 | [DMP-084](#dmp-084) | TESTED_CODE | tests/auth.test.tsx + login.test.tsx: unlinked bot gate, real bot link, polling confirmation and one automatic OTP; 17 auth/profile/gate/UI tests pass; tsc/lint pass. |
 | [DMP-085](#dmp-085) | TESTED_CODE | Linked-account initial OTP and concurrent bot confirmation tests pass; OTP UI appears only after otp_sent acknowledgment. |
 | [DMP-086](#dmp-086) | TESTED_CODE | Tests reject incomplete codes, prevent cooldown resend, and reset expired login tickets; UI countdown and back action tested. |

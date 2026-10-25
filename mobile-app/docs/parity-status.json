@@ -537,9 +537,10 @@
       "title": "Installed mobile package, updates and data migration",
       "status": "IN_PROGRESS",
       "evidence": [
-        "236 mobile tests, lint/tsc, web phone/download Chrome checks and installed API 36 actual version/build + daily reminder persistence passed; native SDK 58 APK with expo-application built. See MOBILE_UPDATES_VALIDATION.md and ILOVANI_YIGISH_UZ.md."
+        "236 mobile tests, lint/tsc, web phone/download Chrome checks and installed API 36 actual version/build + daily reminder persistence passed; native SDK 58 APK with expo-application built. See MOBILE_UPDATES_VALIDATION.md and ILOVANI_YIGISH_UZ.md.",
+        "Genuine owner-signed standalone 1.0.0/build 1 APK built and installed on fresh API 36 Android; login/downloads/native version work with Metro stopped. Real APK export/local staging activation passed, preserving desktop metadata. See MOBILE_UPDATES_VALIDATION.md."
       ],
-      "notes": "Sidebar/login downloads, platform-specific official links, native version/build policy, next-day reminder tests, EAS profiles, persistent owner signing and isolated local APK builder implemented. Standalone release runtime, actual version migration/upgrade and iOS acceptance remain explicit; platform/mobile versions unchanged."
+      "notes": "APK includes ARM64/x86_64; actual x86_64 emulator acceptance only. iOS/EAS account linkage, physical ARM64, actual production version migration and public-server activation remain. Platform 1.4.0/mobile 1.0.0/native build 1 unchanged."
     },
     "DMP-084": {
       "title": "Telegram bot connection onboarding is missing",

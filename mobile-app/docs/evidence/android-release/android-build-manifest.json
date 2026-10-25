@@ -1,0 +1,17 @@
+{
+  "applicationId": "uz.ilbi.mobile",
+  "version": "1.0.0",
+  "buildNumber": "1",
+  "signerSha256": "09fc04394dfd3d8e63abe97a0b71f066ced06a90cd7e94773705f1efae2cd756",
+  "artifact": "ILBI-1.0.0-android-1.apk",
+  "sha256": "772d4de6795c6abbf5e758eae4d6a5e06e0a4e7f88c2e8143c7af8137f110ee0",
+  "bytes": 75719733,
+  "sourceCommit": "6ac80b1b5b955587837ec5f58cd4ab690a90cca2",
+  "architectures": [
+    "arm64-v8a",
+    "x86_64"
+  ],
+  "standalone": true,
+  "designPreview": false,
+  "builtAt": "2026-10-25T09:46:45.137321+00:00"
+}

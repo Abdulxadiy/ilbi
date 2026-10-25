@@ -70,6 +70,8 @@ dist/android/ILBI-1.0.0-android-1.apk
 dist/android/android-build-manifest.json
 ```
 
+Bu buyruq amalda bajarilib tekshirildi: `1.0.0`/build `1` imzolangan APK chiqdi va alohida Android emulatorida Metro o‘chiq holda ochildi. Tayyor namuna yuqoridagi `dist/android/` papkasida turibdi. Fizik ARM64 telefon va iPhone sinovlari hali bajarilmagan. Batafsil dalillar [MOBILE_UPDATES_VALIDATION.md](MOBILE_UPDATES_VALIDATION.md) ichida.
+
 Asosiy repozitoriydagi `android/` yoki `ios/` fayllarini qo‘lda yozish/o‘zgartirish talab qilinmaydi. Skript mavjud savat, hisob yoki telefon ma’lumotlarini o‘chirmaydi. U qurilmaga avtomatik o‘rnatmaydi va serverga paket jo‘natmaydi.
 
 Boshqa kompyuterda SDK/JDK joylashuvi boshqacha bo‘lsa:
@@ -99,9 +101,11 @@ Bu papka faqat egasiga ochiq; kalit va parol fayli Git’dan tashqarida. Parolla
 
 **Ikkala faylni xavfsiz joyga zaxiralang.** Boshqa kompyuterda ham yangi kalit yaratish o‘rniga shu kalitni tiklang. APK tarqatilgandan keyin keyingi paketlar aynan shu imzolash identity’si bilan chiqishi kerak. `credentials.json`, `.p12` va parol faylini commit/push qilmang.
 
+Keyinchalik Google Play’dan ham shu APK ustiga yangilashni xohlasangiz, Play App Signing’da ham o‘sha **app signing key** ishlatilishi kerak. Play’dagi **upload key** boshqa vazifa bajarishi mumkin. Birinchi Play sozlashida bu farqni hisobga oling. [Android imzolash va yangilash hujjati](https://developer.android.com/studio/publish/app-signing).
+
 ## 4. iPhone uchun yig‘ish
 
-iPhone APK o‘rnatmaydi; unga Apple tomonidan imzolangan iOS paketi kerak. iOS build’ni EAS bulutda bajarishi mumkin, shuning uchun bu usulda o‘z kompyuteringiz Mac bo‘lishi shart emas. Haqiqiy iPhone uchun distributsiya sertifikati/provisioning va Apple Developer akkaunti talab qilinadi. [Expo iOS build hujjati](https://docs.expo.dev/build/setup/).
+iPhone APK o‘rnatmaydi; unga Apple tomonidan imzolangan iOS paketi kerak. iOS build’ni EAS bulutda bajarishi mumkin, shuning uchun bu usulda o‘z kompyuteringiz Mac bo‘lishi shart emas. Haqiqiy iPhone uchun distributsiya sertifikati/provisioning va pullik Apple Developer Program a’zoligi talab qilinadi. [Expo iOS build hujjati](https://docs.expo.dev/build/setup/).
 
 ### O‘z iPhone’ingizda sinash
 
