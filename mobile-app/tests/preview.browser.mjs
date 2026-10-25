@@ -18,7 +18,7 @@ let changed = false;
 const doc = "document.querySelector('#app').contentDocument";
 const waitFor = async (expression, label) => {
   for (let i = 0; i < 140; i++) {
-    if (await browser.evaluate(expression)) return;
+    if (await browser.evaluate('Boolean(' + expression + ')')) return;
     await pause(150);
   }
   const failure = await browser.call('Page.captureScreenshot', { format: 'png' });
@@ -90,6 +90,50 @@ try {
   await click('O‘chirishni tasdiqlash');
   await waitFor(`!${doc}.querySelector('input[aria-label="Kategoriya nomi"]')`, 'parent deleted');
   assert.equal(await browser.evaluate(`${doc}.querySelectorAll('[role=tab]').length`), 5);
+  await click('Tovar', 'tab');
+  await click('Yangi mahsulot');
+  await fill('Mahsulot nomi', 'QA product');
+  await click('Mahsulot kategoriyasi: Tanlang');
+  await click('Oziq-ovqat');
+  await fill('Variant nomi', 'Small');
+  await fill('Tavsiya sotuv narxi', '11,50');
+  await fill('Ulgurji sotuv narxi', '9,75');
+  await fill('Minimal narx (tavsiya)', '10');
+  await fill('MXIK (ixtiyoriy)', '00000000000000001');
+  await click('Mahsulotni saqlash');
+  await waitFor(`document.querySelector('#app').contentWindow.location.pathname.endsWith('/products')`, 'product created');
+  await fill('Tovar qidirish', 'QA product');
+  await waitFor(`${doc}.querySelector('[aria-label="QA product: batafsil"]')`, 'new product appears after server acknowledgement');
+  await click('QA product: batafsil');
+  await click('Yangi variant');
+  await fill('Variant nomi', 'Large');
+  await click('O‘lchov birligi: Kg', 'radio');
+  await fill('Tavsiya sotuv narxi', '22,50');
+  await fill('Ulgurji sotuv narxi', '20');
+  await fill('Minimal narx (tavsiya)', '21');
+  await click('Variantni saqlash');
+  await waitFor(`!${doc}.querySelector('input[aria-label="Variant nomi"]')`, 'second variant saved');
+  await click('Large: arxivlash');
+  await click('Arxivlashni tasdiqlash');
+  await waitFor(`${doc}.body.innerText.includes('Large: tiklash')`, 'single variant archived');
+  await click('Large: tiklash');
+  await click('Tiklashni tasdiqlash');
+  await waitFor(`${doc}.body.innerText.includes('Large: arxivlash')`, 'single variant restored');
+  await click('Mahsulotni arxivlash');
+  await click('Arxivlashni tasdiqlash');
+  await waitFor(`${doc}.body.innerText.includes('Mahsulot arxivlangan.')`, 'product archived');
+  await click('Tovar', 'tab');
+  await click('Arxivlangan tovarlar');
+  await waitFor(`${doc}.querySelector('[aria-label="QA product: batafsil"]')`, 'archived product list');
+  await click('QA product: batafsil');
+  await click('Mahsulotni tiklash');
+  await click('Tiklashni tasdiqlash');
+  await waitFor(`${doc}.body.innerText.includes('Mahsulotni arxivlash')`, 'product restored');
+  await click('Mahsulotni o‘chirish');
+  await click('O‘chirishni tasdiqlash');
+  await waitFor(`document.querySelector('#app').contentWindow.location.pathname.endsWith('/products')`, 'unused product deleted');
+  await click('Faol tovarlarni ko‘rish');
+  await fill('Tovar qidirish', '');
   await click('Savdo', 'tab');
   await waitFor(`${doc}.body.innerText.includes('Dona narxi')`, 'interactive cart');
   assert.ok(await browser.evaluate(`${doc}.querySelector('[aria-label="Sut 1 L: sotuv narxi"]').getBoundingClientRect().height >= 44`), 'Price edit target must be at least 44px high');
@@ -99,6 +143,22 @@ try {
   await click("Qo'llash");
   await waitFor(`!${doc}.querySelector('input[aria-label="Yangi sotuv narxi"]')`, 'price sheet closes');
   await waitFor(`${doc}.querySelector('[aria-label="Sut 1 L: sotuv narxi"]').innerText.replace(/\\s/g, '').includes('11500')`, 'negotiated unit price applied');
+  // Editing persistent catalog defaults must preserve the negotiated price in the existing cart.
+  await click('Tovar', 'tab');
+  await click('Sut 1 L: batafsil');
+  await click('Standart: tahrirlash');
+  await fill('Tavsiya sotuv narxi', '13000');
+  await click('Variantni saqlash');
+  await waitFor(`!${doc}.querySelector('input[aria-label="Variant nomi"]')`, 'catalog default changed');
+  await click('Savdo', 'tab');
+  assert.ok(await browser.evaluate(`${doc}.querySelector('[aria-label="Sut 1 L: sotuv narxi"]').innerText.replace(/\\s/g, '').includes('11500')`), 'Existing negotiated cart price survives catalog changes');
+  await click('Tovar', 'tab');
+  await click('Sut 1 L: batafsil');
+  await click('Standart: tahrirlash');
+  await fill('Tavsiya sotuv narxi', '12000');
+  await click('Variantni saqlash');
+  await waitFor(`!${doc}.querySelector('input[aria-label="Variant nomi"]')`, 'catalog default restored');
+  await click('Savdo', 'tab');
   await click('Sut 1 L: miqdorni o‘zgartirish');
   await fill('Yangi miqdor', '0,125');
   await click('Miqdorni qo‘llash');
@@ -149,7 +209,7 @@ try {
   const receiptShot = await browser.call('Page.captureScreenshot', { format: 'png' });
   await writeFile(new URL('web-demo-receipt.png', evidence), Buffer.from(receiptShot.data, 'base64'));
   assert.deepEqual(browser.errors, []);
-  console.log('PASS: Docker phone preview, parent/child category CRUD and Router filter, price negotiation, sidebar, persistent tabs across five secondary modules, dark theme, 320px viewport, live source refresh, demo checkout/change and saved receipt. Native Android/iOS are separate checks.');
+  console.log('PASS: Docker phone preview, parent/child category CRUD, product/variant creation, archive/restore/delete, persistent catalog prices isolated from negotiated cart price, Router filter, price negotiation, sidebar, persistent tabs across five secondary modules, dark theme, 320px viewport, live source refresh, demo checkout/change and saved receipt. Native Android/iOS are separate checks.');
 } finally {
   if (changed) {
     const current = await readFile(sourcePath, 'utf8');

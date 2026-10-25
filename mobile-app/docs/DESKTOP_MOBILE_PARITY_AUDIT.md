@@ -31,9 +31,9 @@ Status: **COMPLETE — source comparison and available checks; native/real-backe
 | [DMP-018](#dmp-018) | OPEN | Pending |
 | [DMP-019](#dmp-019) | TESTED_CODE | Paged catalog and exact barcode mode implemented; pagination/real-shape screen tests pass, including complete barcode query; full Jest suite, tsc and lint pass. |
 | [DMP-020](#dmp-020) | TESTED_CODE | 14 targeted mobile checks and 36 isolated PostgreSQL catalog/category API/service checks passed; Chrome created USD parent/child, followed category filter and deleted both with persistent tabs. tsc/strict lint passed. |
-| [DMP-021](#dmp-021) | OPEN | Pending |
-| [DMP-022](#dmp-022) | OPEN | Pending |
-| [DMP-023](#dmp-023) | OPEN | Pending |
+| [DMP-021](#dmp-021) | TESTED_CODE | 192 mobile tests, 37 real PostgreSQL catalog API/service tests and interactive Chrome product/variant create/edit flow passed. Actual receipt snapshots retain old names/prices after catalog edits. tsc/strict lint passed. |
+| [DMP-022](#dmp-022) | TESTED_CODE | Actual backend accepts negotiated price below the advisory minimum and preserves old receipt prices; Chrome changed catalog default while existing cart kept its negotiated price. All 192 mobile tests passed. |
+| [DMP-023](#dmp-023) | TESTED_CODE | Actual PostgreSQL product/variant archive and restore, archived POS exclusion and preserved stock/history on DELETE tested; Chrome lifecycle flow passed; read-only UI and confirmed rejection tests pass. |
 | [DMP-024](#dmp-024) | OPEN | Pending |
 | [DMP-025](#dmp-025) | OPEN | Pending |
 | [DMP-026](#dmp-026) | OPEN | Pending |

@@ -15,3 +15,9 @@ describe('Real ProductVariantOutputSerializer contract', () => {
     expect(variantToCart({ ...serialized, currency: 'UZS', price_recommended: '0.00' }).defaultPrice).toBe(10);
   });
 });
+
+test('a partner-only price can be added in wholesale mode and remains rejected in retail mode', () => {
+  const value = { ...serialized, currency: 'UZS' as const, price_recommended: '0.00', price_min: '0.00', price_partner: '8.50' };
+  expect(variantToCart(value, true).partnerPrice).toBe(8.5);
+  expect(() => variantToCart(value)).toThrow();
+});

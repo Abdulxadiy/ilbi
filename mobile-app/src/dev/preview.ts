@@ -1,4 +1,5 @@
 /** Explicit, development-only design data. Never a fallback for a failed API call. */
+import { createPreviewCatalog, type PreviewVariant } from './previewCatalog';
 import { isDesignPreview } from '../api/environment';
 export { isDesignPreview } from '../api/environment';
 export const previewUser = {
@@ -8,17 +9,18 @@ export const previewUser = {
 };
 let nextCategoryId = 10;
 const categories = [{ id: 1, name: 'Oziq-ovqat', kod: '01', parent: null as number | null, currency: 'UZS', is_active: true }];
-const products = [
+const products: PreviewVariant[] = [
   ['Sut 1 L', 12000, 2], ['Non', 4000, 3], ['Suv 1.5 L', 5000, 2],
   ['Shakar 1 kg', 16000, 1], ['Choy 100 g', 18000, 1], ["Yog' 1 L", 22000, 1],
   ['Guruch 1 kg', 15000, 2], ['Tuxum (10 dona)', 18000, 1], ['Tuz 1 kg', 3000, 1],
   ['Makaron 500 g', 8000, 1],
 ].map(([name, price, quantity], index) => ({
-  id: index + 1, product: index + 1, category_id: 1, category_name: 'Oziq-ovqat', product_name: String(name), name: 'Standart',
+  is_active: true, sku: 'DEMO-' + (index + 1), id: index + 1, product: index + 1, category_id: 1, category_name: 'Oziq-ovqat', product_name: String(name), name: 'Standart',
   unit: 'dona', price_recommended: Number(price), price_min: 0, price_partner: Number(price), currency: 'UZS', image: null,
   barcode: '47800000000' + String(index + 1).padStart(2, '0'), stock_quantity: 50,
   quantity: Number(quantity),
 }));
+const catalogRequest = createPreviewCatalog(products, categories);
 const customers = [
   { id: 1, name: 'Ali Valiyev', phone_number: '', debt_amount: 230000, sales_count: 1 },
   { id: 2, name: 'Dilnoza Karimova', phone_number: '', debt_amount: 320000, sales_count: 1 },
@@ -40,6 +42,8 @@ export async function previewRequest(endpoint: string, options: { method?: strin
   const url = new URL(endpoint, 'http://design.invalid'), path = url.pathname;
   const method = (options.method || 'GET').toUpperCase();
   const body = typeof options.body === 'string' ? JSON.parse(options.body) : options.body || {};
+  const catalogResult = catalogRequest(url, method, body);
+  if (catalogResult.handled) return catalogResult.data;
   if (method === 'GET') {
     if (path === '/tenants/current/') return { id: previewUser.tenants[0].id, name: 'Demo do‘kon', usd_rate: '12000.00', receipt_settings: { is_vat_payer: false, vat_rate: '12.00', price_includes_vat: true } };
     if (path === '/auth/me/') return previewUser;
@@ -48,7 +52,6 @@ export async function previewRequest(endpoint: string, options: { method?: strin
     if (path === '/catalog/categories/') return { results: categories.filter(c => c.is_active && c.name.toLowerCase().includes((url.searchParams.get('search') || '').toLowerCase()) && (!url.searchParams.has('parent') || (url.searchParams.get('parent') === 'null' ? c.parent === null : c.parent === Number(url.searchParams.get('parent'))))) };
     const category = path.match(/^\/catalog\/categories\/(\d+)\/$/);
     if (category) { const found = categories.find(c => c.id === Number(category[1])); if (!found) throw Error('Kategoriya topilmadi.'); return { ...found }; }
-    if (path === '/catalog/variants/') return { results: products.filter(p => (!url.searchParams.has('category') || p.category_id === Number(url.searchParams.get('category'))) && (!url.searchParams.has('barcode') || p.barcode === url.searchParams.get('barcode')) && p.product_name.toLowerCase().includes((url.searchParams.get('search') || '').toLowerCase())) };
     if (path === '/sales/counterparties/') return { results: customers };
     if (path === '/sales/') return { results: [...sales.values()] };
     const match = path.match(/^\/sales\/(\d+)\/$/);

@@ -20,7 +20,7 @@ export function useApiResource<T>(endpoint: string | null, parse: (value: any) =
       if (latest.current !== key || current !== sequence.current || abort.signal.aborted) return null;
       setState({ key, data: value, loading: false, error: '' }); return value;
     } catch (error: any) {
-      if (latest.current === key && current === sequence.current && !abort.signal.aborted) setState(previous => ({ ...previous, key, loading: false, error: error.message || 'Ma’lumotlar yuklanmadi.' }));
+      if (latest.current === key && current === sequence.current && !abort.signal.aborted) setState(previous => ({ ...previous, data: error.status === 404 ? null : previous.data, key, loading: false, error: error.message || 'Ma’lumotlar yuklanmadi.' }));
       return null;
     }
   }, [endpoint, key, parse, cancel]);

@@ -1,0 +1,78 @@
+import React from 'react';
+import { fireEvent, render } from '@testing-library/react-native';
+import { ProductScreen } from '../src/features/catalog/ProductScreen';
+import { ThemeProvider } from '../src/theme/ThemeContext';
+import { request } from '../src/api/client';
+import wire from './contracts/backend.json';
+let mockCanWrite = true, mockTenant = 1;
+const mockBack = jest.fn();
+jest.mock('../src/api/client', () => ({ request: jest.fn(), captureAuthScope: () => ({}), assertAuthScope: jest.fn() }));
+jest.mock('../src/navigation/useAppNavigation', () => ({ useAppNavigation: () => ({ goBack: mockBack }) }));
+jest.mock('../src/features/auth/AuthContext', () => ({ useAuth: () => ({ user: { id: 1 }, activeTenant: { id: mockTenant } }) }));
+jest.mock('../src/features/auth/usePermissions', () => ({ usePermissions: () => ({ can: (p: string) => p.startsWith('catalog.view') || mockCanWrite, requirePermission: () => { if (!mockCanWrite) throw Error('Denied'); } }) }));
+const variant = wire.variants.results[0];
+const product = { id: variant.product, name: variant.product_name, category: variant.category_id, image: null, gallery_images: [], is_active: true, variants: [variant] };
+const show = (id?: number) => render(<ThemeProvider><ProductScreen id={id} /></ThemeProvider>);
+describe('Product and variant management', () => {
+  beforeEach(() => { jest.clearAllMocks(); mockCanWrite = true; mockTenant = 1; });
+  test('creates the mandatory first variant in the same request, preserving decimal prices and leading-zero fiscal codes', async () => {
+    jest.mocked(request).mockImplementation(async (_path, options) => options?.method === 'POST' ? product : { results: [{ id: 7, name: 'Food', currency: 'UZS' }] });
+    const screen = await show();
+    await fireEvent.changeText(screen.getByLabelText('Mahsulot nomi'), 'New rice');
+    await fireEvent.press(screen.getByText('Mahsulot kategoriyasi: Tanlang'));
+    await fireEvent.press(await screen.findByText('Food'));
+    for (const [label, value] of [['Tavsiya sotuv narxi', '11,50'], ['Ulgurji sotuv narxi', '9,75'], ['Minimal narx (tavsiya)', '10'], ['MXIK (ixtiyoriy)', '00000000000000001'], ['Qadoq kodi (ixtiyoriy)', '0000123']]) await fireEvent.changeText(screen.getByLabelText(label), value);
+    await fireEvent.press(screen.getByText('Mahsulotni saqlash'));
+    const [path, options] = jest.mocked(request).mock.calls.find(([, o]) => o?.method === 'POST')!;
+    expect(path).toBe('/catalog/products/');
+    expect(JSON.parse(options!.body as string)).toMatchObject({ name: 'New rice', category_id: 7, variant_name: 'Standart', unit: 'dona', price_recommended: '11.50', price_partner: '9.75', price_min: '10.00', mxik: '00000000000000001', package_code: '0000123' });
+    expect(mockBack).toHaveBeenCalledTimes(1);
+  });
+  test('rejects malformed prices before sending a product request', async () => {
+    jest.mocked(request).mockResolvedValue({ results: [{ id: 7, name: 'Food' }] });
+    const screen = await show();
+    await fireEvent.changeText(screen.getByLabelText('Mahsulot nomi'), 'Rice');
+    await fireEvent.press(screen.getByText('Mahsulot kategoriyasi: Tanlang'));
+    await fireEvent.press(await screen.findByText('Food'));
+    await fireEvent.changeText(screen.getByLabelText('Tavsiya sotuv narxi'), '-2');
+    await fireEvent.press(screen.getByText('Mahsulotni saqlash'));
+    expect(screen.getByText(/Summani to‘g‘ri kiriting/)).toBeTruthy();
+    expect(jest.mocked(request).mock.calls.some(([, o]) => o?.method === 'POST')).toBe(false);
+  });
+  test('edits a selected variant without changing product IDs or another variant', async () => {
+    jest.mocked(request).mockImplementation(async (_path, options) => options?.method === 'PATCH' ? variant : product);
+    const screen = await show(product.id);
+    await fireEvent.press(await screen.findByText(variant.name + ': tahrirlash'));
+    await fireEvent.changeText(screen.getByLabelText('Tavsiya sotuv narxi'), '12,25');
+    await fireEvent.press(screen.getByText('Variantni saqlash'));
+    const [path, options] = jest.mocked(request).mock.calls.find(([, o]) => o?.method === 'PATCH')!;
+    expect(path).toBe(`/catalog/variants/${variant.id}/`);
+    expect(JSON.parse(options!.body as string).price_recommended).toBe('12.25');
+    expect(screen.queryByLabelText('Tavsiya sotuv narxi')).toBeNull();
+  });
+  test('read-only users can inspect a real serializer shape but cannot modify prices or lifecycle', async () => {
+    mockCanWrite = false; jest.mocked(request).mockResolvedValue(product);
+    const screen = await show(product.id); await screen.findByText('Variantlar');
+    expect(screen.queryByText('Mahsulotni saqlash')).toBeNull();
+    expect(screen.queryByText('Yangi variant')).toBeNull();
+    expect(screen.queryByText('Mahsulotni arxivlash')).toBeNull();
+  });
+  test('a failed guarded deletion preserves the product and displays the server reason', async () => {
+    jest.mocked(request).mockImplementation(async (_path, options) => { if (options?.method === 'DELETE') throw Error('Harakat tarixi bor.'); return product; });
+    const screen = await show(product.id);
+    await fireEvent.press(await screen.findByText('Mahsulotni o‘chirish'));
+    expect(jest.mocked(request).mock.calls.some(([, o]) => o?.method === 'DELETE')).toBe(false);
+    await fireEvent.press(screen.getByText('O‘chirishni tasdiqlash'));
+    expect(await screen.findByText('Harakat tarixi bor.')).toBeTruthy();
+    expect(mockBack).not.toHaveBeenCalled();
+  });
+  test('changing stores discards old form values before the new store detail is shown', async () => {
+    jest.mocked(request).mockImplementation(async () => ({ ...product, name: mockTenant === 1 ? 'Store A name' : 'Store B name' }));
+    const screen = await show(product.id);
+    await screen.findByDisplayValue('Store A name');
+    await fireEvent.changeText(screen.getByLabelText('Mahsulot nomi'), 'Unsaved store A');
+    mockTenant = 2; await screen.rerender(<ThemeProvider><ProductScreen id={product.id} /></ThemeProvider>);
+    expect(await screen.findByDisplayValue('Store B name')).toBeTruthy();
+    expect(screen.queryByDisplayValue('Unsaved store A')).toBeNull();
+  });
+});

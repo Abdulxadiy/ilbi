@@ -8,7 +8,7 @@ import { usePermissions } from '../features/auth/usePermissions';
 export function BottomTabNavigator() {
   const { colors } = useTheme(), { totalQuantity } = useCart(), insets = useSafeAreaInsets();
   const navigation = useAppNavigation(), { canOpen } = usePermissions();
-  return <Tabs screenOptions={{ headerShown: false,
+  return <Tabs backBehavior="history" screenOptions={{ headerShown: false,
     tabBarStyle: { backgroundColor: colors.surface, borderTopColor: colors.borderSubtle, height: 56 + insets.bottom, paddingBottom: Math.max(6, insets.bottom) },
     tabBarActiveTintColor: colors.text, tabBarInactiveTintColor: colors.textTertiary,
     tabBarLabelStyle: { fontSize: 11, fontWeight: '600' },
@@ -23,6 +23,7 @@ export function BottomTabNavigator() {
     <Tabs.Protected guard={canOpen('Customers')}><Tabs.Screen name="customers" options={{ tabBarButton: () => null, tabBarItemStyle: { display: 'none' } }} /></Tabs.Protected>
     <Tabs.Protected guard={canOpen('Reports')}><Tabs.Screen name="reports" options={{ tabBarButton: () => null, tabBarItemStyle: { display: 'none' } }} /></Tabs.Protected>
     <Tabs.Protected guard={canOpen('Categories')}><Tabs.Screen name="categories" options={{ tabBarButton: () => null, tabBarItemStyle: { display: 'none' } }} /></Tabs.Protected>
+    <Tabs.Protected guard={canOpen('Product') || canOpen('NewProduct')}><Tabs.Screen name="product" options={{ tabBarButton: () => null, tabBarItemStyle: { display: 'none' } }} /></Tabs.Protected>
     <Tabs.Screen name="sync" options={{ tabBarButton: () => null, tabBarItemStyle: { display: 'none' } }} />
     <Tabs.Screen name="settings" options={{ tabBarButton: () => null, tabBarItemStyle: { display: 'none' } }} />
   </Tabs>;

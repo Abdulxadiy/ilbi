@@ -145,21 +145,27 @@
     },
     "DMP-021": {
       "title": "Product and variant creation/editing",
-      "status": "OPEN",
-      "evidence": [],
-      "notes": ""
+      "status": "TESTED_CODE",
+      "evidence": [
+        "192 mobile tests, 37 real PostgreSQL catalog API/service tests and interactive Chrome product/variant create/edit flow passed. Actual receipt snapshots retain old names/prices after catalog edits. tsc/strict lint passed."
+      ],
+      "notes": "Native keyboard/accessibility acceptance remains separate; image/import/labels tracked separately."
     },
     "DMP-022": {
       "title": "Persistent product prices and minimum-price policy",
-      "status": "OPEN",
-      "evidence": [],
-      "notes": ""
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Actual backend accepts negotiated price below the advisory minimum and preserves old receipt prices; Chrome changed catalog default while existing cart kept its negotiated price. All 192 mobile tests passed."
+      ],
+      "notes": "Minimum is advisory in this backend; never introduce a blocking price floor. Native acceptance remains separate."
     },
     "DMP-023": {
       "title": "Archive, restore and delete product lifecycle",
-      "status": "OPEN",
-      "evidence": [],
-      "notes": ""
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Actual PostgreSQL product/variant archive and restore, archived POS exclusion and preserved stock/history on DELETE tested; Chrome lifecycle flow passed; read-only UI and confirmed rejection tests pass."
+      ],
+      "notes": "Source correction: DELETE archives a product with history instead of rejecting it. No financial history is removed. Native runtime acceptance remains separate."
     },
     "DMP-024": {
       "title": "Product images, thumbnails and gallery management",

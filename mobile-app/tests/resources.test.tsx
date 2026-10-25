@@ -24,6 +24,13 @@ describe('Scoped resource and action infrastructure', () => {
     await act(async () => finish({ id: 1 }));
     expect(hook.result.current.data).toEqual({ id: 2 });
   });
+  test('a deleted detail is removed rather than kept as editable stale data', async () => {
+    jest.mocked(request).mockResolvedValueOnce({ id: 1, name: 'Before' }).mockRejectedValueOnce(Object.assign(Error('Deleted'), { status: 404 }));
+    const hook = await renderHook(() => useApiResource<{ id: number; name: string }>('/catalog/products/1/'));
+    expect(hook.result.current.data?.name).toBe('Before');
+    await act(async () => resourceChanged('/catalog/products/1/'));
+    expect(hook.result.current.data).toBeNull(); expect(hook.result.current.error).toBe('Deleted');
+  });
   test('missing action permission cannot invoke its mutation', async () => {
     mockAllowed = false; const action = jest.fn();
     const hook = await renderHook(() => useApiAction('catalog.add_product'));

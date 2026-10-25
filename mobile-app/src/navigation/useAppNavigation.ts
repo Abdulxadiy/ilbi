@@ -8,7 +8,7 @@ const paths: Record<string, string> = {
   Customers: '/(app)/(tabs)/customers', Reports: '/(app)/(tabs)/reports', Settings: '/(app)/(tabs)/settings',
   Checkout: '/checkout',
   Sync: '/(app)/(tabs)/sync', Categories: '/(app)/(tabs)/categories',
-  Stores: '/stores', Admin: '/(app)/admin',
+  Product: '/(app)/(tabs)/product', NewProduct: '/(app)/(tabs)/product', Stores: '/stores', Admin: '/(app)/admin',
 };
 let receiptSnapshot: any = null;
 let receiptScope = '';
@@ -41,7 +41,7 @@ export function useAppNavigation() {
       if (name === 'Menyu') { openDrawer(); return; }
       const path = paths[name];
       if (!path) throw Error('Unknown app route: ' + name);
-      router.navigate({ pathname: path, params: params || {} } as any);
+      router.navigate({ pathname: path, params: name === 'NewProduct' ? { id: 'new' } : params || {} } as any);
     },
   };
 }
