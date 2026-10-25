@@ -6,6 +6,8 @@ React Native + TypeScript, Expo SDK 58, Expo Router. Android and iOS share the f
 
 Support opens from **Menyu → Qo‘llab-quvvatlash**, with the bottom navigation preserved. Guests can open it from login. Text conversations, consent, retry, history and close/reopen use the existing support API. See [support verification and remaining media/profile work](docs/SUPPORT_MOBILE_VALIDATION.md).
 
+APK/iPhone builds: [O‘zbekcha batafsil yo‘riqnoma](docs/ILOVANI_YIGISH_UZ.md). EAS profiles are included, and `npm run build:apk:local` creates an isolated, owner-signed standalone Android APK. Native phone push notifications remain unimplemented; the guide distinguishes them from the existing in-app update reminder.
+
 ## Start the interactive phone preview in Docker
 
 From the **repository root** (`ilbi/`):

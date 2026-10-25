@@ -1,0 +1,2 @@
+PASS: actual installed APK identity v1.0.0/build 1; explicit synthetic build-2 reminder; preview cannot open/install a package; same-day dismissal survives force-stop/restart; download/update tabs preserve five business tabs; public downloads at login; sidebar support retained. No financial records deleted.
+Next-day policy is separately verified with controlled-clock component tests. No real package update, Apple runtime or public release is claimed.

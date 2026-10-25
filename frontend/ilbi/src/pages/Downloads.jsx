@@ -5,7 +5,6 @@ import {
   BookOpen,
   Download,
   ExternalLink,
-  Smartphone,
   RefreshCw,
   CheckCircle2,
   AlertCircle,
@@ -15,7 +14,7 @@ import IlbiLogo from '../components/common/IlbiLogo';
 import RecoveryNotice, { RetryButton } from '../components/common/RecoveryNotice';
 import { desktopRequest } from '../components/sync/desktopApi';
 import { useAuth } from '../hooks/useAuth';
-import { releaseSize, releaseURL } from '../utils/downloads';
+import { mobileReleaseURL, releaseSize, releaseURL } from '../utils/downloads';
 import { version } from '../../package.json';
 import './Downloads.css';
 
@@ -202,9 +201,12 @@ export default function Downloads() {
   const windows = state.manifest?.windows;
   const linux = state.manifest?.linux;
   const mobile = state.manifest?.mobile;
+  const android = mobile?.android || (mobile?.url ? mobile : null);
+  const ios = mobile?.ios;
   const windowsURL = releaseURL(windows?.url, state.origin);
   const linuxURL = releaseURL(linux?.url, state.origin);
-  const mobileURL = releaseURL(mobile?.url, state.origin);
+  const androidURL = state.origin ? mobileReleaseURL(android?.url, state.origin, 'android') : null;
+  const iosURL = state.origin ? mobileReleaseURL(ios?.url, state.origin, 'ios') : null;
 
   return <div className="downloads-page">
     <header className="downloads-header">
@@ -416,7 +418,7 @@ export default function Downloads() {
         <section id="panel-downloads" role="tabpanel" aria-labelledby="tab-downloads">
           <span className="downloads-eyebrow">ILBI sizning qurilmangizda</span>
           <h1>Yuklab olish</h1>
-          <p className="downloads-intro">Do‘koningiz bilan kompyuterda ishlang. Internet qaytganda offline ishlaringiz server bilan sinxronlanadi.</p>
+          <p className="downloads-intro">Qurilmangiz uchun rasmiy ILBI ilovasini tanlang. Kompyuter va mobil ilova versiyalari alohida yuritiladi.</p>
           {state.error && <RecoveryNotice className="downloads-notice" title="Yuklamalar ro‘yxati ochilmadi" actions={<>
             <RetryButton loading={state.loading} onClick={() => setAttempt(value => value + 1)}>Qayta tekshirish</RetryButton>
             {window.ilbiDesktop?.openDownloads && <button className="btn btn-secondary downloads-open-site" type="button" onClick={() => {
@@ -443,12 +445,21 @@ export default function Downloads() {
               {linuxURL && linux?.channel === 'preview' && <small>Sinov nusxasi. POS savdosiga mavjud fiskal integratsiya cheklovi amal qiladi.</small>}
               {linux?.sha256 && <details className="downloads-checksum"><summary>Faylning SHA-256 qiymati</summary><code>{linux.sha256}</code></details>}
             </article>
-            <article className="downloads-card"><div className="downloads-platform-icon"><Smartphone size={27} /></div>
-              <div className="downloads-card-heading"><h2>Mobil ilova</h2><span>{mobileURL ? `v${mobile.version}` : 'Hozircha mavjud emas'}</span></div>
-              <p>Mobil ilova chiqarilganda uning rasmiy yuklab olish havolasi ham shu sahifada bo‘ladi.</p>
-              <div className="downloads-details"><span>{mobile?.label || 'Telefon va planshet uchun'}</span></div>
-              {mobileURL ? <a className="btn btn-secondary downloads-button" href={mobileURL} target="_blank" rel="noopener noreferrer"><Download size={18} />Mobil ilovani yuklab olish</a>
-                : <button type="button" className="btn btn-secondary downloads-button" disabled>Mobil ilova hali joylanmagan</button>}
+            <article className="downloads-card" data-platform="android"><div className="downloads-platform-icon"><img src="/brand/ilbi-icon-512.png" width="52" height="52" alt="ILBI mobil ilovasi belgisi" /></div>
+              <div className="downloads-card-heading"><h2>Android uchun ILBI</h2><span>{androidURL ? `v${android.version}` : 'Hozircha mavjud emas'}</span></div>
+              <p>Telefon va planshetda savdo hamda do‘kon boshqaruvi. Mobil ilova platformadan alohida versiyalanadi.</p>
+              <div className="downloads-details"><span>Android</span>{android?.buildNumber && <span>Yig‘ilma {android.buildNumber}</span>}{releaseSize(android?.bytes) && <span>{releaseSize(android.bytes)}</span>}{androidURL && android?.channel === 'preview' && <span className="downloads-preview">Sinov nusxasi</span>}</div>
+              {androidURL ? <a className="btn btn-primary downloads-button" href={androidURL} target="_blank" rel="noopener noreferrer"><Download size={18} />Android uchun yuklab olish</a>
+                : <button type="button" className="btn btn-primary downloads-button" disabled>Android yuklamasi hali joylanmagan</button>}
+              {androidURL && <small>APK’ni yuklab, qurilmada oching yoki Google Play’dan yangilang. Mavjud ILBI’ni o‘chirish shart emas.</small>}
+              {android?.sha256 && <details className="downloads-checksum"><summary>Faylning SHA-256 qiymati</summary><code>{android.sha256}</code></details>}
+            </article>
+            <article className="downloads-card" data-platform="ios"><div className="downloads-platform-icon"><img src="/brand/ilbi-icon-512.png" width="52" height="52" alt="ILBI iPhone ilovasi belgisi" /></div>
+              <div className="downloads-card-heading"><h2>iPhone va iPad uchun ILBI</h2><span>{iosURL ? `v${ios.version}` : 'Hozircha mavjud emas'}</span></div>
+              <p>iPhone va iPad uchun rasmiy ilova. O‘rnatish va yangilash App Store yoki TestFlight orqali bajariladi.</p>
+              <div className="downloads-details"><span>iOS · iPadOS</span>{ios?.buildNumber && <span>Yig‘ilma {ios.buildNumber}</span>}{iosURL && ios?.channel === 'preview' && <span className="downloads-preview">Sinov nusxasi</span>}</div>
+              {iosURL ? <a className="btn btn-primary downloads-button" href={iosURL} target="_blank" rel="noopener noreferrer"><ExternalLink size={18} />Ilovalar do‘konida ochish</a>
+                : <button type="button" className="btn btn-primary downloads-button" disabled>iPhone ilovasi hali joylanmagan</button>}
             </article>
           </div>
           <section className="downloads-linux-install" id="linux-install" aria-labelledby="linux-install-heading"><h2 id="linux-install-heading">Linux’da o‘rnatish — 4 qadam</h2><ol>

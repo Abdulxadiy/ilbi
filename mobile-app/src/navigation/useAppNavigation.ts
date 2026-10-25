@@ -7,7 +7,7 @@ const paths: Record<string, string> = {
   Bosh: '/(app)/(tabs)', Tovar: '/(app)/(tabs)/products', Savdo: '/(app)/(tabs)/cart',
   Qarz: '/(app)/(tabs)/debts', Documents: '/(app)/(tabs)/documents', Inventory: '/(app)/(tabs)/inventory',
   Customers: '/(app)/(tabs)/customers', Reports: '/(app)/(tabs)/reports', Settings: '/(app)/(tabs)/settings',
-  Checkout: '/checkout', Support: '/support',
+  Checkout: '/checkout', Support: '/support', Downloads: '/downloads',
   Sync: '/(app)/(tabs)/sync', Categories: '/(app)/(tabs)/categories',
   Product: '/(app)/(tabs)/product', NewProduct: '/(app)/(tabs)/product', Stores: '/stores', Admin: '/(app)/admin',
 };
@@ -41,7 +41,8 @@ export function useAppNavigation() {
         return;
       }
       if (name === 'Menyu') { openDrawer(); return; }
-      const path = name === 'Support' && user?.role !== 'platform_admin' && user?.terms_accepted && activeTenant ? '/(app)/(tabs)/support' : paths[name];
+      const tabbedUtility = ['Support', 'Downloads'].includes(name) && user?.role !== 'platform_admin' && user?.terms_accepted && activeTenant;
+      const path = tabbedUtility ? '/(app)/(tabs)/' + name.toLowerCase() : paths[name];
       if (!path) throw Error('Unknown app route: ' + name);
       router.navigate({ pathname: path, params: name === 'NewProduct' ? { id: 'new' } : params || {} } as any);
     },

@@ -24,6 +24,7 @@ export function RootNavigator() {
     <Stack.Screen name="index" />
     <Stack.Screen name="legal" />
     <Stack.Screen name="support" />
+    <Stack.Screen name="downloads" />
     <Stack.Protected guard={!isAuthenticated}><Stack.Screen name="login" /></Stack.Protected>
     <Stack.Protected guard={isAuthenticated && !accepted}><Stack.Screen name="terms" /></Stack.Protected>
     <Stack.Protected guard={isAuthenticated && accepted}><Stack.Screen name="stores" /></Stack.Protected>

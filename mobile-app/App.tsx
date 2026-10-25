@@ -9,6 +9,8 @@ import { AuthProvider } from './src/features/auth/AuthContext';
 import { CartProvider, useCart } from './src/features/cart/CartContext';
 import { RootNavigator } from './src/navigation/RootNavigator';
 import { isDesignPreview } from './src/dev/preview';
+import { UpdatesProvider } from './src/features/updates/UpdatesProvider';
+import { UpdateNotice } from './src/features/updates/UpdateNotice';
 
 const ThemedApp: React.FC = () => {
   const { isDark, colors } = useTheme();
@@ -20,6 +22,7 @@ const ThemedApp: React.FC = () => {
       {isDesignPreview && <View style={{ backgroundColor: '#e9dfc2', padding: 5 }}><Text style={{ color: '#3b3018', fontSize: 10, textAlign: 'center' }}>DIZAYN PREVIEW · Sun’iy ma’lumotlar · Haqiqiy savdo emas</Text></View>}
       {persistenceError && <View accessibilityRole="alert" style={{ padding: 10, backgroundColor: colors.surface }}><Text style={{ color: colors.danger }}>{persistenceError}</Text><Text onPress={retryPersistence} accessibilityRole="button" style={{ paddingTop: 8, color: colors.text }}>Qayta urinish</Text></View>}
       {saving && <Text accessibilityLiveRegion="polite" style={{ color: colors.textSecondary, padding: 4, fontSize: 11 }}>Qoralama saqlanmoqda…</Text>}
+      <UpdateNotice />
       <RootNavigator />
     </SafeAreaView>
   );
@@ -32,7 +35,9 @@ export default function App() {
         <ThemeProvider>
           <AuthProvider>
             <CartProvider>
+              <UpdatesProvider>
               <ThemedApp />
+              </UpdatesProvider>
             </CartProvider>
           </AuthProvider>
         </ThemeProvider>

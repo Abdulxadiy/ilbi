@@ -395,7 +395,7 @@
       "title": "Real notification inbox, unread count and actions",
       "status": "OPEN",
       "evidence": [],
-      "notes": ""
+      "notes": "Native phone push/local notifications are not connected: no expo-notifications, device-token registry or FCM/APNs credentials. Home bell is disabled. Existing update strip is in-app; build/notification guide documents the distinction."
     },
     "DMP-061": {
       "title": "Global search, favorites and quick tools",
@@ -535,9 +535,11 @@
     },
     "DMP-083": {
       "title": "Installed mobile package, updates and data migration",
-      "status": "OPEN",
-      "evidence": [],
-      "notes": ""
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "236 mobile tests, lint/tsc, web phone/download Chrome checks and installed API 36 actual version/build + daily reminder persistence passed; native SDK 58 APK with expo-application built. See MOBILE_UPDATES_VALIDATION.md and ILOVANI_YIGISH_UZ.md."
+      ],
+      "notes": "Sidebar/login downloads, platform-specific official links, native version/build policy, next-day reminder tests, EAS profiles, persistent owner signing and isolated local APK builder implemented. Standalone release runtime, actual version migration/upgrade and iOS acceptance remain explicit; platform/mobile versions unchanged."
     },
     "DMP-084": {
       "title": "Telegram bot connection onboarding is missing",

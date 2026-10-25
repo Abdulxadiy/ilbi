@@ -1,5 +1,7 @@
 # Installed Android validation — 2026-10-25
 
+This is the historical first installed checkpoint. Current JavaScript adds `expo-application`; use the newer APK/build documented in [MOBILE_UPDATES_VALIDATION.md](MOBILE_UPDATES_VALIDATION.md), or build fresh with [ILOVANI_YIGISH_UZ.md](ILOVANI_YIGISH_UZ.md), when testing current source.
+
 This is an actual CNG-generated debug APK, installed on a dedicated API 36 x86_64 emulator with KVM. The APK was generated from `de09805`; the runtime JavaScript includes the keyboard correction `a9ae2ee`. Mobile version `1.0.0`, Android build number `1` and platform version `1.4.0` remain unchanged. It is not a signed store release, an ARM device check or an iOS build.
 
 APK SHA-256: `ed6d89d81a1089fd2aa3a72a826f1ddc8a69396bc469fad2379c2623c227de38`.

@@ -211,6 +211,7 @@ export const LoginScreen: React.FC = () => {
           ) : null}
         </View>}
         <Button title="Qo‘llab-quvvatlash" variant="ghost" onPress={() => router.push('/support')} />
+        <Button title="Yuklab olish" variant="ghost" onPress={() => router.push('/downloads')} />
       </ScrollView>
     </KeyboardRegion>
   );

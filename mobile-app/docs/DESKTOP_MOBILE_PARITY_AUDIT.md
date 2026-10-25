@@ -70,7 +70,7 @@ Status: **COMPLETE — source comparison and available checks; native/real-backe
 | [DMP-057](#dmp-057) | TESTED_CODE | 222 mobile tests, strict lint/tsc, 19 PostgreSQL support tests, full host/Chrome regression and actual installed API 36 Android owner/guest sidebar flow passed; see SUPPORT_MOBILE_VALIDATION.md and support-* evidence. |
 | [DMP-058](#dmp-058) | OPEN | Pending |
 | [DMP-059](#dmp-059) | IN_PROGRESS | Operator inbox/claim/close/reopen/read-through and assignment-gated replies implemented; component checks reject replying to another operator’s conversation, and actual PostgreSQL support tests cover assignment. |
-| [DMP-060](#dmp-060) | OPEN | Pending |
+| [DMP-060](#dmp-060) | OPEN | Native phone push/local notifications are not connected: no expo-notifications, device-token registry or FCM/APNs credentials. Home bell is disabled. Existing update strip is in-app; build/notification guide documents the distinction. |
 | [DMP-061](#dmp-061) | OPEN | Pending |
 | [DMP-062](#dmp-062) | OPEN | Pending |
 | [DMP-063](#dmp-063) | OPEN | Pending |
@@ -93,7 +93,7 @@ Status: **COMPLETE — source comparison and available checks; native/real-backe
 | [DMP-080](#dmp-080) | OPEN | Pending |
 | [DMP-081](#dmp-081) | OPEN | Pending |
 | [DMP-082](#dmp-082) | OPEN | Pending |
-| [DMP-083](#dmp-083) | OPEN | Pending |
+| [DMP-083](#dmp-083) | IN_PROGRESS | 236 mobile tests, lint/tsc, web phone/download Chrome checks and installed API 36 actual version/build + daily reminder persistence passed; native SDK 58 APK with expo-application built. See MOBILE_UPDATES_VALIDATION.md and ILOVANI_YIGISH_UZ.md. |
 | [DMP-084](#dmp-084) | TESTED_CODE | tests/auth.test.tsx + login.test.tsx: unlinked bot gate, real bot link, polling confirmation and one automatic OTP; 17 auth/profile/gate/UI tests pass; tsc/lint pass. |
 | [DMP-085](#dmp-085) | TESTED_CODE | Linked-account initial OTP and concurrent bot confirmation tests pass; OTP UI appears only after otp_sent acknowledgment. |
 | [DMP-086](#dmp-086) | TESTED_CODE | Tests reject incomplete codes, prevent cooldown resend, and reset expired login tickets; UI countdown and back action tested. |

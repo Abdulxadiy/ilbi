@@ -14,4 +14,10 @@ Verified: all 70 frontend unit tests; all 8 desktop updater tests; the actual Ch
 
 ## Mobile and public download integration
 
-This is the next implementation slice. It will use the installed native binary's version/build, the same official public release feed and platform-specific download actions. No unsigned/debug APK or nonexistent App Store URL is to be advertised as a published release. Package signing/publication and available download artifacts must remain explicit.
+The mobile implementation reads the installed binary with Expo Application, uses the official public release feed and persists daily claims per account/native build. Sidebar/login download pages preserve the business tabs and distinguish Android/iOS/Windows/Linux releases. The public web page has separate Android/iOS cards; a missing release remains unavailable.
+
+All 236 mobile tests, strict lint/TypeScript, host/Chrome phone regression and actual installed API 36 native version/dismissal/restart/download checks passed. All 71 web tests, the download browser harness/build and eight isolated signing/publisher checks passed. Native acceptance used a clearly labeled synthetic build-2 offer; it did not install or publish that fake release. See [mobile validation](../mobile-app/docs/MOBILE_UPDATES_VALIDATION.md).
+
+The owner confirmed Android has never been distributed. Its persistent signing identity is outside Git under `~/.local/share/ilbi-signing/mobile/`; the protected credential mapper and isolated APK builder reuse it. The build and EAS/iPhone procedures are in [the Uzbek guide](../mobile-app/docs/ILOVANI_YIGISH_UZ.md). EAS/Apple login and iOS native builds have not been performed. No unsigned/debug APK or nonexistent App Store URL is advertised as published.
+
+Mobile staging and server activation preserve desktop and iOS metadata and keep immutable Android files under `/downloads/mobile/<commit>/`. These scripts do not upload automatically or bump platform versions. A later actual standalone build/installation is recorded separately. Native phone notifications remain DMP-060 work; this feature is an in-app update reminder.

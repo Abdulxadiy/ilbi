@@ -16,7 +16,7 @@ export const modulePermissions: Record<string, string | string[]> = {
 };
 export function canOpenModule(user: UserProfile | null, tenant: UserTenant | null, module: string) {
   if (module === 'Admin') return user?.role === 'platform_admin';
-  if (user?.role === 'platform_admin') return ['Settings', 'Stores', 'Support'].includes(module);
+  if (user?.role === 'platform_admin') return ['Settings', 'Stores', 'Support', 'Downloads'].includes(module);
   const required = modulePermissions[module];
   return !required || (Array.isArray(required) ? required.some(value => hasPermission(user, tenant, value)) : hasPermission(user, tenant, required));
 }
