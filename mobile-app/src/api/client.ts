@@ -1,3 +1,4 @@
+import { resourceChanged } from './invalidation';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { secureStorage } from './storage';
 import { isDesignPreview, previewRequest } from '../dev/preview';
@@ -135,7 +136,7 @@ export async function refreshAccessToken(): Promise<string> {
 }
 export async function request<T = any>(endpoint: string, options: RequestOptions = {}): Promise<T> {
   if (!endpoint.startsWith('/') || endpoint.startsWith('//')) throw new ApiError('API yo‘li noto‘g‘ri.');
-  if (isDesignPreview) return previewRequest(endpoint, options) as Promise<T>;
+  if (isDesignPreview) { const result = await previewRequest(endpoint, options); if (!['GET', 'HEAD', 'OPTIONS'].includes((options.method || 'GET').toUpperCase())) resourceChanged(endpoint); return result as T; }
   const generation = authGeneration;
   const assertCurrent = () => { if (generation !== authGeneration) throw new ApiError('Sessiya o‘zgargan. Amalni qayta boshlang.', 0, null, 0, 'SESSION_CHANGED'); };
   const { body: inputBody, skipTenant, responseType, timeoutMs = 20000, _retry, ...init } = options;
@@ -153,12 +154,13 @@ export async function request<T = any>(endpoint: string, options: RequestOptions
     response = await transport(url, { ...init, headers, body }, timeoutMs); assertCurrent();
     if (response.status === 401) await clearTokens();
   }
-  if (response.status === 204) return null as T;
+  if (response.status === 204) { if (!['GET', 'HEAD', 'OPTIONS'].includes((options.method || 'GET').toUpperCase())) resourceChanged(endpoint); return null as T; }
   if (response.ok && responseType === 'blob') { const value = await response.blob(); assertCurrent(); return value as T; }
   if (response.ok && responseType === 'text') { const value = await response.text(); assertCurrent(); return value as T; }
   const json = (response.headers.get('content-type') || '').includes('json');
   const data = json ? await response.json() : await response.text();
   if (response.status !== 401) assertCurrent();
   if (!response.ok) throw new ApiError(errorMessage(data), response.status, data, Number(response.headers.get('Retry-After') || data?.retry_after_seconds || 0) * 1000);
+  if (!['GET', 'HEAD', 'OPTIONS'].includes((options.method || 'GET').toUpperCase())) resourceChanged(endpoint);
   return data as T;
 }

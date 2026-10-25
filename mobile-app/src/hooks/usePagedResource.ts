@@ -1,3 +1,4 @@
+import { observeResource } from '../api/invalidation';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { request } from '../api/client';
 import { getServerScope } from '../api/environment';
@@ -42,6 +43,7 @@ export function usePagedResource<T extends { id: number }>(endpoint: string | nu
     void Promise.resolve().then(() => { if (active && endpoint) return load(1, true); });
     return () => { active = false; cancel(); };
   }, [endpoint, load, cancel]);
+  useEffect(() => observeResource(endpoint, () => { void load(1, true); }), [endpoint, load]);
   const visible = state.key === key ? state : { key, rows: [], count: 0, page: 0, hasMore: false, summary: null, loading: Boolean(endpoint), loadingMore: false, error: null, failedPage: 1 };
   return { ...visible, reload: () => load(1, true), retry: () => load(visible.failedPage, visible.failedPage === 1),
     loadMore: () => visible.hasMore && !visible.loading && !visible.loadingMore ? load(visible.page + 1) : Promise.resolve(),

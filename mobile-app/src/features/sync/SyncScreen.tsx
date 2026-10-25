@@ -63,7 +63,7 @@ function SyncBody() {
     finally { processing.current = false; setBusy(null); }
   };
   const current = state.scope === scope ? state : null;
-  return <Page title="Amallar va sinxronlash" onBack={() => navigation.goBack()}>
+  return <Page insetBottom={false} title="Amallar va sinxronlash" onBack={() => navigation.goBack()}>
     <Notice>Natijasi noma’lum amal yangi kalit bilan yaratilmaydi. Tekshirish asl kalit va asl ma’lumot bilan serverga qayta so‘rov yuboradi.</Notice>
     <Button title="Jurnalni yangilash" variant="secondary" onPress={() => refresh(value => value + 1)} disabled={Boolean(busy)} />
     {message ? <Notice>{message}</Notice> : null}

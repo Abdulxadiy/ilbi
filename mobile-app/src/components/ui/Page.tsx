@@ -4,9 +4,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScreenHeader } from './ScreenHeader';
 import { useTheme } from '../../theme/ThemeContext';
 import { Button } from './Button';
-export function Page({ title, children, onBack, onMenu, scroll = true, actions }: { title: string; children: React.ReactNode; onBack?: () => void; onMenu?: () => void; scroll?: boolean; actions?: React.ReactNode }) {
+export function Page({ title, children, onBack, onMenu, scroll = true, actions, insetBottom = true }: { title: string; children: React.ReactNode; onBack?: () => void; onMenu?: () => void; scroll?: boolean; actions?: React.ReactNode; insetBottom?: boolean }) {
   const { colors } = useTheme();
-  return <SafeAreaView edges={['bottom']} style={{ flex: 1, backgroundColor: colors.background }}>
+  return <SafeAreaView edges={insetBottom ? ['bottom'] : []} style={{ flex: 1, backgroundColor: colors.background }}>
     <ScreenHeader title={title} onGoBack={onBack} onOpenDrawer={onMenu} />
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
       {scroll ? <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ padding: 16, gap: 14, flexGrow: 1 }}>{children}</ScrollView> : children}
