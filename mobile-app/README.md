@@ -103,3 +103,5 @@ The browser test uses the repository's existing Chrome driver, opens the actual 
 | `../branding/mobile-concepts/README.md` | Design handoff entry point and v1–v4 reference map |
 
 Financial offline replay is deliberately disabled until account/store isolation and reconciliation are implemented and verified. Legacy queue records are retained. Pending retry identities and cart drafts are not disposable cache. Do not clear them to work around an uncertain transaction result.
+
+The native regression at `tests/android.native.py` drives an installed debug APK on a dedicated Android emulator using ADB. It requires an explicit design-preview Metro server (`EXPO_PUBLIC_DESIGN_PREVIEW=1`), `ANDROID_HOME`, an installed `uz.ilbi.mobile` APK and `ILBI_ANDROID_TEST_SERIAL` (default `emulator-5556`). It refuses physical-device serials and checks the synthetic-data banner before editing or checkout. Run it with `python tests/android.native.py`; optional `ILBI_NATIVE_EVIDENCE_DIR` controls screenshots/XML output. APKs, SDKs, AVDs and generated native projects stay outside Git. Build generation must use Expo CNG, never handwritten `android/` or `ios/` directories.

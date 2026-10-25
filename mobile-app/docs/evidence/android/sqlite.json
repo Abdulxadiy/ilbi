@@ -1,0 +1,8 @@
+{
+  "native_adapter": "expo-sqlite on installed Android app, API 36 emulator",
+  "journal_mode": "wal",
+  "confirmed_intents": 1,
+  "sale_lock_remaining": false,
+  "synthetic_result": true,
+  "server_total": 160000
+}
