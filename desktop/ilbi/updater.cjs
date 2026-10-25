@@ -45,7 +45,7 @@ class DesktopUpdater extends EventEmitter {
     try {
       const { release } = await publicReleases(this.fetcher);
       this.release = candidate(release, this.current, this.platform);
-      this.set(this.release ? { phase: 'available', version: this.release.version, bytes: this.release.bytes, message: 'ILBI uchun yangi yangilanish bor.' }
+      this.set(this.release ? { phase: 'available', version: this.release.version, availableBuild: this.release.sourceCommit, bytes: this.release.bytes, message: this.current.version === this.release.version ? `ILBI v${this.current.version} uchun yangi tuzatishlar chiqdi. Sizdagi nusxani yangilang.` : `Sizda ILBI v${this.current.version}. Yangi v${this.release.version} versiyasi chiqdi.` }
         : { phase: 'current', message: 'ILBI yangilangan.', progress: null });
       if (this.release && this.release.sourceCommit !== previous?.sourceCommit) this.emit('available', this.status());
     } catch (error) {
