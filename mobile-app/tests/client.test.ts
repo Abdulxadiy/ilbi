@@ -13,6 +13,19 @@ describe('Session refresh and stale responses', () => {
     expect(new Headers(fetchSpy.mock.calls[1][1]?.headers).get('X-Support-Token')).toBe('a'.repeat(64));
     expect(getAccessToken()).toBe('existing-private-access');
   });
+  test('a private support header bound to the old server is rejected before any new-origin request', async () => {
+    const original = getApiBaseUrl(), fetchSpy = jest.spyOn(globalThis, 'fetch');
+    await setApiBaseUrl('https://support-other.invalid/api/v1');
+    await expect(request('/support/guest/', { skipTenant: true, expectedServerScope: original, headers: { 'X-Support-Token': 'a'.repeat(64) } })).rejects.toMatchObject({ code: 'SESSION_CHANGED' });
+    expect(fetchSpy).not.toHaveBeenCalled();
+    await setApiBaseUrl(original);
+  });
+  test('guest support rejection does not refresh or clear a separate signed-in session', async () => {
+    await setTokens('account-access', refresh);
+    const fetchSpy = jest.spyOn(globalThis, 'fetch').mockResolvedValue(reply({ detail: 'Guest key rejected' }, 401));
+    await expect(request('/support/guest/', { skipTenant: true, headers: { 'X-Support-Token': 'a'.repeat(64) } })).rejects.toMatchObject({ status: 401 });
+    expect(fetchSpy).toHaveBeenCalledTimes(1); expect(getAccessToken()).toBe('account-access');
+  });
   test('refresh can retry its own request without invalidating the session', async () => {
     await setTokens('expired-access', refresh);
     const generation = getAuthGeneration();

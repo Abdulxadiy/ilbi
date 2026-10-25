@@ -96,6 +96,7 @@ export const isTokenExpired = (token: string | null) => !parseJwt(token)?.exp ||
 export interface RequestOptions extends Omit<RequestInit, 'body'> {
   body?: any;
   skipTenant?: boolean;
+  expectedServerScope?: string;
   responseType?: 'json' | 'blob' | 'text';
   timeoutMs?: number;
   _retry?: boolean;
@@ -135,11 +136,13 @@ export async function refreshAccessToken(): Promise<string> {
   refreshOperation = operation; return operation.promise;
 }
 export async function request<T = any>(endpoint: string, options: RequestOptions = {}): Promise<T> {
+  const { expectedServerScope, ...scopedOptions } = options;
+  if (expectedServerScope && expectedServerScope !== getServerScope()) throw new ApiError('Server o‘zgargan. Yordam seansini qayta oching.', 0, null, 0, 'SESSION_CHANGED');
   if (!endpoint.startsWith('/') || endpoint.startsWith('//')) throw new ApiError('API yo‘li noto‘g‘ri.');
-  if (isDesignPreview) { const result = await previewRequest(endpoint, options); if (!['GET', 'HEAD', 'OPTIONS'].includes((options.method || 'GET').toUpperCase())) resourceChanged(endpoint); return result as T; }
+  if (isDesignPreview) { const result = await previewRequest(endpoint, scopedOptions); if (!['GET', 'HEAD', 'OPTIONS'].includes((options.method || 'GET').toUpperCase())) resourceChanged(endpoint); return result as T; }
   const generation = authGeneration;
   const assertCurrent = () => { if (generation !== authGeneration) throw new ApiError('Sessiya o‘zgargan. Amalni qayta boshlang.', 0, null, 0, 'SESSION_CHANGED'); };
-  const { body: inputBody, skipTenant, responseType, timeoutMs = 20000, _retry, ...init } = options;
+  const { body: inputBody, skipTenant, responseType, timeoutMs = 20000, _retry, ...init } = scopedOptions;
   const form = typeof FormData !== 'undefined' && inputBody instanceof FormData;
   const headers = new Headers(init.headers);
   if (!form && !headers.has('Content-Type')) headers.set('Content-Type', 'application/json');

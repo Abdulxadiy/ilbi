@@ -12,7 +12,9 @@ export function normalizeApiBaseUrl(value: string): string {
 let apiBaseUrl = normalizeApiBaseUrl(process.env.EXPO_PUBLIC_API_URL || (Platform.OS === 'web' ? '/api/v1' : 'https://ilbi.uz/api/v1'));
 export const getApiBaseUrl = () => apiBaseUrl;
 /** Only the session client may commit a validated origin after credential removal. */
-export function commitApiBaseUrl(value: string) { apiBaseUrl = normalizeApiBaseUrl(value); }
+const serverListeners = new Set<() => void>();
+export function subscribeServerScope(listener: () => void) { serverListeners.add(listener); return () => { serverListeners.delete(listener); }; }
+export function commitApiBaseUrl(value: string) { apiBaseUrl = normalizeApiBaseUrl(value); for (const listener of serverListeners) listener(); }
 export const getServerScope = () => isDesignPreview ? 'design-preview-v2' : apiBaseUrl;
 export const scopedKey = (kind: string, userId?: number, tenantId?: number) => {
   if (!userId || !tenantId) throw Error('Foydalanuvchi va do‘kon tanlanishi kerak.');

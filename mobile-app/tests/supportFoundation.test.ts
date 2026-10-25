@@ -1,9 +1,10 @@
+import { getServerScope } from '../src/api/environment';
 import { secureStorage } from '../src/api/storage';
 import { loadGuestIdentity, createSupportSession } from '../src/features/support/session';
 import { request, assertAuthScope } from '../src/api/client';
 import { startSupportPolling } from '../src/features/support/polling';
 jest.mock('../src/api/storage', () => ({ secureStorage: { getItem: jest.fn(), setItem: jest.fn() } }));
-jest.mock('../src/api/client', () => ({ request: jest.fn(), assertAuthScope: jest.fn(), captureAuthScope: () => ({}) }));
+jest.mock('../src/api/client', () => ({ ApiError: jest.requireActual('../src/api/errors').ApiError, request: jest.fn(), assertAuthScope: jest.fn(), captureAuthScope: () => ({}) }));
 describe('Private support identity and serial polling', () => {
   beforeEach(() => jest.clearAllMocks());
   test('concurrent guest starts share one protected, origin-scoped identity', async () => {
@@ -22,18 +23,21 @@ describe('Private support identity and serial polling', () => {
   });
   test('authenticated support never reuses the guest header and lists across account stores without a stale tenant', async () => {
     jest.mocked(request).mockResolvedValue({ results: [] });
-    const session = createSupportSession({ userId: 8, tenantId: 2, guest: { id: '00000000-0000-4000-8000-000000000001', token: 'a'.repeat(64) } });
+    const session = createSupportSession({ userId: 8, tenantId: 2, guest: { origin: getServerScope(), id: '00000000-0000-4000-8000-000000000001', token: 'a'.repeat(64) } });
     await session.call();
     const [path, options] = jest.mocked(request).mock.calls[0];
     expect(path).toBe('/support/conversations/'); expect(options?.skipTenant).toBe(true);
     expect(new Headers(options?.headers).get('X-Support-Token')).toBeNull(); expect(assertAuthScope).toHaveBeenCalled();
   });
   test('guest credentials stay in headers and never enter a route or visible scope key', async () => {
-    const token = 'b'.repeat(64), session = createSupportSession({ userId: null, guest: { id: '00000000-0000-4000-8000-000000000002', token } });
+    const token = 'b'.repeat(64), session = createSupportSession({ userId: null, guest: { origin: getServerScope(), id: '00000000-0000-4000-8000-000000000002', token } });
     await session.call('?page=1');
     const [path, options] = jest.mocked(request).mock.calls[0];
     expect(path).toBe('/support/guest/?page=1'); expect(path).not.toContain(token); expect(session.key).not.toContain(token);
     expect(new Headers(options?.headers).get('X-Support-Token')).toBe(token);
+  });
+  test('a guest credential cannot be attached to a different server session', () => {
+    expect(() => createSupportSession({ userId: null, guest: { origin: 'https://foreign.invalid/api/v1', id: '00000000-0000-4000-8000-000000000009', token: 'c'.repeat(64) } })).toThrow('boshqa serverga');
   });
   test('slow reads do not overlap and stop prevents later polling', async () => {
     jest.useFakeTimers(); let finish!: () => void;

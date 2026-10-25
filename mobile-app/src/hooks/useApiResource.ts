@@ -4,7 +4,7 @@ import { observeResource } from '../api/invalidation';
 import { getServerScope } from '../api/environment';
 import { useAuth } from '../features/auth/AuthContext';
 const identity = <T,>(value: any): T => value;
-export function useApiResource<T>(endpoint: string | null, parse: (value: any) => T = identity, options?: { skipTenant?: boolean; headers?: Record<string, string> }) {
+export function useApiResource<T>(endpoint: string | null, parse: (value: any) => T = identity, options?: { skipTenant?: boolean; expectedServerScope?: string; headers?: Record<string, string> }) {
   const { user, activeTenant } = useAuth();
   const key = [getServerScope(), user?.id, activeTenant?.id, endpoint].join('|');
   const [state, setState] = useState<{ key: string; data: T | null; loading: boolean; error: string }>({ key: '', data: null, loading: false, error: '' });

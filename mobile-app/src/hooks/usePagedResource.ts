@@ -8,7 +8,7 @@ const identity = <T,>(value: any): T => value;
 type State<T> = { key: string; rows: T[]; count: number; page: number; hasMore: boolean; loading: boolean; loadingMore: boolean; error: any; failedPage: number; summary: any };
 export const pageUrl = (path: string, page: number, size = 50) => path + (path.includes('?') ? '&' : '?') + `page=${page}&page_size=${size}`;
 /** Own pagination URLs prevent a server-provided next link from redirecting credentials. */
-export function usePagedResource<T extends { id: number | string }>(endpoint: string | null, parseRow: (value: any) => T = identity, options?: { skipTenant?: boolean; headers?: Record<string, string> }) {
+export function usePagedResource<T extends { id: number | string }>(endpoint: string | null, parseRow: (value: any) => T = identity, options?: { skipTenant?: boolean; expectedServerScope?: string; headers?: Record<string, string> }) {
   const { user, activeTenant } = useAuth();
   const key = [getServerScope(), user?.id, activeTenant?.id, endpoint].join('|');
   const [state, setState] = useState<State<T>>({ key: '', rows: [], count: 0, page: 0, hasMore: false, loading: false, loadingMore: false, error: null, failedPage: 1, summary: null });
