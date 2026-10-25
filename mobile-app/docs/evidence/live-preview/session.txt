@@ -1,0 +1,9 @@
+2026-10-25 — computer live-preview session
+PASS: host preview health ready, explicit synthetic mode, fake update fixture disabled.
+PASS: visible API 36 x86_64 Android debug app; native Home → Sales → Home input.
+PASS: browser phone frame, five business tabs and sidebar support via actual mouse input.
+PASS: temporarily edited Home source rendered through Fast Refresh in browser AND Android.
+PASS: original source restored and rendered on both surfaces; no permanent app-code edit.
+PASS: current Android process ReactNativeJS/AndroidRuntime error log and browser errors empty.
+Screenshots: restored normal Home in browser.png and android.png.
+No app-data reset, new APK build, production login or financial/support submission.

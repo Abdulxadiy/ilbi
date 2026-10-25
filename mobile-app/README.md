@@ -10,6 +10,21 @@ Support opens from **Menyu → Qo‘llab-quvvatlash**, with the bottom navigatio
 
 APK/iPhone builds: [O‘zbekcha batafsil yo‘riqnoma](docs/ILOVANI_YIGISH_UZ.md). EAS profiles are included, and `npm run build:apk:local` creates an isolated, owner-signed standalone Android APK. Native phone push notifications remain unimplemented; the guide distinguishes them from the existing in-app update reminder.
 
+## Live preview directly on this computer
+
+In VS Code/Cursor, open **Tasks: Run Task → ILBI mobile: live preview (computer)**, then open **[http://localhost:8082/preview](http://localhost:8082/preview)**. This runs the existing preview server directly on the host, without Docker. Stop it with **Tasks: Terminate Task**. Run either the host task or the Docker mobile service, since both use ports 8081/8082.
+
+The equivalent terminal command is:
+
+```bash
+cd /mnt/storage/Codes/Projects/Backend/ilbi/mobile-app
+EXPO_PUBLIC_DESIGN_PREVIEW=1 EXPO_PUBLIC_UPDATE_PREVIEW=0 npm run dev:docker
+```
+
+Despite the historical `dev:docker` script name, this command also works directly on the computer. Dependencies must already be installed (`npm ci` if needed). The explicit preview flag uses synthetic data and the update fixture is disabled. Keep the terminal running. Save edits in `src/` to see Fast Refresh; ordinary screen/style edits do not require rebuilding an APK. Native dependency/configuration changes require a new native build.
+
+For the actual Android application in a visible emulator, use the existing installed **debug** app and launch instructions in [ANDROID_NATIVE_VALIDATION.md](docs/ANDROID_NATIVE_VALIDATION.md). Keep this Metro server running and its port reversed to the dedicated emulator. The standalone release APK embeds its JavaScript and does not receive development Fast Refresh. Browser and Android checks have different scopes; use the Android window for keyboard, gestures and native rendering. See [the live-session verification](docs/LIVE_PREVIEW_VALIDATION.md).
+
 ## Start the interactive phone preview in Docker
 
 From the **repository root** (`ilbi/`):
