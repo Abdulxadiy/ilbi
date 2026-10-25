@@ -40,3 +40,14 @@ describe('Paged resources and stale requests', () => {
     expect(hook.result.current.rows).toHaveLength(2);
   });
 });
+
+test('support UUID pages preserve private headers while rejecting arbitrary string identifiers', async () => {
+  const options = { skipTenant: true, headers: { 'X-Support-Token': 'synthetic-private-key' } };
+  jest.mocked(request).mockResolvedValueOnce({ results: [{ id: '00000000-0000-4000-8000-000000000001' }], next: null });
+  const hook = await renderHook(() => usePagedResource('/support/guest/', undefined, options));
+  expect(hook.result.current.rows).toHaveLength(1);
+  expect(jest.mocked(request).mock.calls.at(-1)?.[1]).toMatchObject(options);
+  jest.mocked(request).mockResolvedValueOnce({ results: [{ id: '../other-account' }], next: null });
+  await act(async () => { await hook.result.current.reload(); });
+  expect(hook.result.current.error.message).toContain('identifikatori');
+});

@@ -1,9 +1,18 @@
-import { clearTokens, getAccessToken, getAuthGeneration, request, setTokens, setApiBaseUrl, getApiBaseUrl, onSessionCleared, refreshAccessToken } from '../src/api/client';
+import { clearTokens, getAccessToken, getAuthGeneration, request, setTokens, setApiBaseUrl, getApiBaseUrl, onSessionCleared, setActiveTenantId, refreshAccessToken } from '../src/api/client';
 jest.mock('../src/api/storage', () => ({ secureStorage: { setItem: jest.fn(async () => {}), removeItem: jest.fn(async () => {}), getItem: jest.fn(async () => null) } }));
 const reply = (data: unknown, status = 200) => ({ status, ok: status < 400, headers: { get: () => 'application/json' }, json: async () => data }) as unknown as Response;
 const refresh = 'header.' + btoa(JSON.stringify({ exp: 9999999999 })) + '.signature';
 describe('Session refresh and stale responses', () => {
   afterEach(async () => { jest.restoreAllMocks(); await clearTokens(); });
+  test('public support metadata and guest requests exclude an existing account and tenant', async () => {
+    await setTokens('existing-private-access', refresh); await setActiveTenantId('7');
+    const fetchSpy = jest.spyOn(globalThis, 'fetch').mockResolvedValue(reply({ results: [] }));
+    await request('/support/metadata/', { skipTenant: true });
+    await request('/support/guest/', { skipTenant: true, headers: { 'X-Support-Token': 'a'.repeat(64) } });
+    for (const [, options] of fetchSpy.mock.calls) { expect(new Headers(options?.headers).get('Authorization')).toBeNull(); expect(new Headers(options?.headers).get('X-Tenant-ID')).toBeNull(); }
+    expect(new Headers(fetchSpy.mock.calls[1][1]?.headers).get('X-Support-Token')).toBe('a'.repeat(64));
+    expect(getAccessToken()).toBe('existing-private-access');
+  });
   test('refresh can retry its own request without invalidating the session', async () => {
     await setTokens('expired-access', refresh);
     const generation = getAuthGeneration();

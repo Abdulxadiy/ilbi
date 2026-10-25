@@ -7,7 +7,7 @@ jest.mock('../src/navigation/useAppNavigation', () => ({
   getReceiptSnapshot: () => null,
 }));
 
-jest.mock('expo-crypto', () => ({ randomUUID: () => require('node:crypto').randomUUID() }));
+jest.mock('expo-crypto', () => ({ randomUUID: () => require('node:crypto').randomUUID(), getRandomBytesAsync: async count => require('node:crypto').randomBytes(count) }));
 
 jest.mock('react-native-safe-area-context', () => require('react-native-safe-area-context/jest/mock').default);
 

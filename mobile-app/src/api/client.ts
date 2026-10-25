@@ -144,7 +144,7 @@ export async function request<T = any>(endpoint: string, options: RequestOptions
   const headers = new Headers(init.headers);
   if (!form && !headers.has('Content-Type')) headers.set('Content-Type', 'application/json');
   if (activeTenantId && !skipTenant && !endpoint.startsWith('/auth/') && !endpoint.startsWith('/tenants/my/') && !endpoint.startsWith('/platform/')) headers.set('X-Tenant-ID', activeTenantId);
-  const publicAuth = /^\/(auth\/(admin-login|token|password-reset)|sales\/public\/|support\/guest\/)/.test(endpoint);
+  const publicAuth = /^\/(auth\/(admin-login|token|password-reset)|sales\/public\/|support\/(guest|metadata)\/)/.test(endpoint);
   if (accessToken && !publicAuth && !headers.has('Authorization')) headers.set('Authorization', 'Bearer ' + accessToken);
   const body = inputBody && !form && typeof inputBody === 'object' ? JSON.stringify(inputBody) : inputBody;
   const url = getApiBaseUrl() + endpoint;

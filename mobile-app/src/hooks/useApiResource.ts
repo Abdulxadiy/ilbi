@@ -4,7 +4,7 @@ import { observeResource } from '../api/invalidation';
 import { getServerScope } from '../api/environment';
 import { useAuth } from '../features/auth/AuthContext';
 const identity = <T,>(value: any): T => value;
-export function useApiResource<T>(endpoint: string | null, parse: (value: any) => T = identity) {
+export function useApiResource<T>(endpoint: string | null, parse: (value: any) => T = identity, options?: { skipTenant?: boolean; headers?: Record<string, string> }) {
   const { user, activeTenant } = useAuth();
   const key = [getServerScope(), user?.id, activeTenant?.id, endpoint].join('|');
   const [state, setState] = useState<{ key: string; data: T | null; loading: boolean; error: string }>({ key: '', data: null, loading: false, error: '' });
@@ -16,14 +16,14 @@ export function useApiResource<T>(endpoint: string | null, parse: (value: any) =
     cancel(); const current = sequence.current, abort = new AbortController(); controller.current = abort;
     setState(previous => ({ key, data: previous.key === key ? previous.data : null, loading: true, error: '' }));
     try {
-      const value = parse(await request(endpoint, { signal: abort.signal }));
+      const value = parse(await request(endpoint, { ...options, signal: abort.signal }));
       if (latest.current !== key || current !== sequence.current || abort.signal.aborted) return null;
       setState({ key, data: value, loading: false, error: '' }); return value;
     } catch (error: any) {
       if (latest.current === key && current === sequence.current && !abort.signal.aborted) setState(previous => ({ ...previous, data: error.status === 404 ? null : previous.data, key, loading: false, error: error.message || 'Ma’lumotlar yuklanmadi.' }));
       return null;
     }
-  }, [endpoint, key, parse, cancel]);
+  }, [endpoint, key, parse, cancel, options]);
   useEffect(() => {
     let active = true;
     void Promise.resolve().then(() => { if (active) return reload(); });

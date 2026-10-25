@@ -370,9 +370,11 @@
     },
     "DMP-057": {
       "title": "Authenticated and guest help conversations",
-      "status": "OPEN",
-      "evidence": [],
-      "notes": ""
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "28 targeted mobile infrastructure/real-DTO checks and 19 actual PostgreSQL support tests pass, including guest/account isolation, idempotency and cursor history; strict lint/tsc pass."
+      ],
+      "notes": "Latest owner request: dedicated sidebar support screen, no floating corner launcher. Chat UI and native interaction are the next slice."
     },
     "DMP-058": {
       "title": "Attachments, voice, stickers and multilingual support UI",

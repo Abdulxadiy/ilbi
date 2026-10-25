@@ -67,7 +67,7 @@ Status: **COMPLETE — source comparison and available checks; native/real-backe
 | [DMP-054](#dmp-054) | OPEN | Pending |
 | [DMP-055](#dmp-055) | OPEN | Pending |
 | [DMP-056](#dmp-056) | OPEN | Pending |
-| [DMP-057](#dmp-057) | OPEN | Pending |
+| [DMP-057](#dmp-057) | IN_PROGRESS | 28 targeted mobile infrastructure/real-DTO checks and 19 actual PostgreSQL support tests pass, including guest/account isolation, idempotency and cursor history; strict lint/tsc pass. |
 | [DMP-058](#dmp-058) | OPEN | Pending |
 | [DMP-059](#dmp-059) | OPEN | Pending |
 | [DMP-060](#dmp-060) | OPEN | Pending |
