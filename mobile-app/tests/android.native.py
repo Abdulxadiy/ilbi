@@ -66,11 +66,13 @@ def keyboard_top():
     raise AssertionError('An active IME has no measurable touch region.')
 
 
-def tap(label, tab=False, scroll=False):
+def tap(label, tab=False, scroll=False, input_only=False):
     for _ in range(5 if scroll else 1):
         root = tree()
         nodes = [n for n in root.iter('node') if n.get('text') == label or n.get('content-desc') == label]
-        nodes = [n for n in nodes if bounds(n)[2] > bounds(n)[0] and bounds(n)[3] > bounds(n)[1]]
+        if input_only:
+            nodes = [n for n in nodes if n.get('class') == 'android.widget.EditText']
+        nodes = [n for n in nodes if bounds(n)[2] > bounds(n)[0] and bounds(n)[3] - bounds(n)[1] >= (32 if scroll else 1)]
         ceiling = keyboard_top()
         if ceiling is not None:
             nodes = [n for n in nodes if bounds(n)[1] < ceiling and bounds(n)[3] <= ceiling]

@@ -4,6 +4,8 @@
 
 React Native + TypeScript, Expo SDK 58, Expo Router. Android and iOS share the feature code in `src/features/`. The app is a working UI prototype with partial API integration; it is **not ready for production acceptance**. Read [the review](docs/MOBILE_REVIEW.md) and [current progress](docs/MOBILE_PROGRESS.md) before continuing implementation.
 
+Support opens from **Menyu → Qo‘llab-quvvatlash**, with the bottom navigation preserved. Guests can open it from login. Text conversations, consent, retry, history and close/reopen use the existing support API. See [support verification and remaining media/profile work](docs/SUPPORT_MOBILE_VALIDATION.md).
+
 ## Start the interactive phone preview in Docker
 
 From the **repository root** (`ilbi/`):
@@ -52,7 +54,7 @@ Without `--no-deps`, Compose starts Nginx and its backend/database dependencies.
 
 ## Actual Android / iPhone development
 
-Docker hosts Metro and the browser preview. The Android emulator runs on the host with Android Studio/SDK and hardware acceleration. An iOS simulator requires macOS/Xcode. These tools were not available during this Linux review, so native checks remain unverified.
+Docker hosts Metro and the browser preview. The Android emulator runs on the host with Android Studio/SDK and hardware acceleration. An iOS simulator requires macOS/Xcode. Installed Android validation is recorded in [ANDROID_NATIVE_VALIDATION.md](docs/ANDROID_NATIVE_VALIDATION.md); its named checks do not imply physical-device or iOS acceptance.
 
 For a host development session:
 

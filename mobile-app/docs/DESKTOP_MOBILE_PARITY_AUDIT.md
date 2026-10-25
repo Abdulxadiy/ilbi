@@ -67,9 +67,9 @@ Status: **COMPLETE — source comparison and available checks; native/real-backe
 | [DMP-054](#dmp-054) | OPEN | Pending |
 | [DMP-055](#dmp-055) | OPEN | Pending |
 | [DMP-056](#dmp-056) | OPEN | Pending |
-| [DMP-057](#dmp-057) | IN_PROGRESS | 28 targeted mobile infrastructure/real-DTO checks and 19 actual PostgreSQL support tests pass, including guest/account isolation, idempotency and cursor history; strict lint/tsc pass. |
+| [DMP-057](#dmp-057) | TESTED_CODE | 222 mobile tests, strict lint/tsc, 19 PostgreSQL support tests, full host/Chrome regression and actual installed API 36 Android owner/guest sidebar flow passed; see SUPPORT_MOBILE_VALIDATION.md and support-* evidence. |
 | [DMP-058](#dmp-058) | OPEN | Pending |
-| [DMP-059](#dmp-059) | OPEN | Pending |
+| [DMP-059](#dmp-059) | IN_PROGRESS | Operator inbox/claim/close/reopen/read-through and assignment-gated replies implemented; component checks reject replying to another operator’s conversation, and actual PostgreSQL support tests cover assignment. |
 | [DMP-060](#dmp-060) | OPEN | Pending |
 | [DMP-061](#dmp-061) | OPEN | Pending |
 | [DMP-062](#dmp-062) | OPEN | Pending |

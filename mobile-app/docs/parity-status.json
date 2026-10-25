@@ -370,11 +370,12 @@
     },
     "DMP-057": {
       "title": "Authenticated and guest help conversations",
-      "status": "IN_PROGRESS",
+      "status": "TESTED_CODE",
       "evidence": [
-        "28 targeted mobile infrastructure/real-DTO checks and 19 actual PostgreSQL support tests pass, including guest/account isolation, idempotency and cursor history; strict lint/tsc pass."
+        "28 targeted mobile infrastructure/real-DTO checks and 19 actual PostgreSQL support tests pass, including guest/account isolation, idempotency and cursor history; strict lint/tsc pass.",
+        "222 mobile tests, strict lint/tsc, 19 PostgreSQL support tests, full host/Chrome regression and actual installed API 36 Android owner/guest sidebar flow passed; see SUPPORT_MOBILE_VALIDATION.md and support-* evidence."
       ],
-      "notes": "Latest owner request: dedicated sidebar support screen, no floating corner launcher. Chat UI and native interaction are the next slice."
+      "notes": "Dedicated sidebar page with five persistent tabs, guest help at login, UUID text retries, consent, history/read-through and close/reopen. Android SecureStore/IME/logout ownership checked against explicit synthetic API; backend contracts separately real. No floating launcher. iOS/physical/live delivery remain; media DMP-058 and profile DMP-059 are separate."
     },
     "DMP-058": {
       "title": "Attachments, voice, stickers and multilingual support UI",
@@ -384,9 +385,11 @@
     },
     "DMP-059": {
       "title": "Operator inbox and customer/tenant profile actions",
-      "status": "OPEN",
-      "evidence": [],
-      "notes": ""
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "Operator inbox/claim/close/reopen/read-through and assignment-gated replies implemented; component checks reject replying to another operator’s conversation, and actual PostgreSQL support tests cover assignment."
+      ],
+      "notes": "Customer/account/store profile controls and their reasoned audit actions remain. No native operator or production delivery acceptance claim."
     },
     "DMP-060": {
       "title": "Real notification inbox, unread count and actions",

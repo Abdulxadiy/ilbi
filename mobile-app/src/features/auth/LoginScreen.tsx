@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import { KeyboardRegion } from '../../components/ui/KeyboardRegion';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import React, { useState, useEffect } from 'react';
@@ -209,6 +210,7 @@ export const LoginScreen: React.FC = () => {
             </View>
           ) : null}
         </View>}
+        <Button title="Qo‘llab-quvvatlash" variant="ghost" onPress={() => router.push('/support')} />
       </ScrollView>
     </KeyboardRegion>
   );

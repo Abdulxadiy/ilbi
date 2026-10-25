@@ -1,3 +1,4 @@
+import { createPreviewSupport } from './previewSupport';
 /** Explicit, development-only design data. Never a fallback for a failed API call. */
 import { createPreviewCatalog, type PreviewVariant } from './previewCatalog';
 import { isDesignPreview } from '../api/environment';
@@ -20,6 +21,7 @@ const products: PreviewVariant[] = [
   barcode: '47800000000' + String(index + 1).padStart(2, '0'), stock_quantity: 50,
   quantity: Number(quantity),
 }));
+const supportRequest = createPreviewSupport();
 const catalogRequest = createPreviewCatalog(products, categories);
 const customers = [
   { id: 1, name: 'Ali Valiyev', phone_number: '', debt_amount: 230000, sales_count: 1 },
@@ -37,11 +39,13 @@ function makeSale(payload: any, id: number) {
 }
 sales.set(1043, makeSale({}, 1043));
 
-export async function previewRequest(endpoint: string, options: { method?: string; body?: any }): Promise<any> {
+export async function previewRequest(endpoint: string, options: { method?: string; body?: any; headers?: HeadersInit }): Promise<any> {
   if (!isDesignPreview) throw Error('Design preview is disabled');
   const url = new URL(endpoint, 'http://design.invalid'), path = url.pathname;
   const method = (options.method || 'GET').toUpperCase();
   const body = typeof options.body === 'string' ? JSON.parse(options.body) : options.body || {};
+  const supportResult = supportRequest(url, method, body, options.headers);
+  if (supportResult.handled) return supportResult.data;
   const catalogResult = catalogRequest(url, method, body);
   if (catalogResult.handled) return catalogResult.data;
   if (method === 'GET') {

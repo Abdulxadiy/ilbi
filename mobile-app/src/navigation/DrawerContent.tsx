@@ -3,7 +3,7 @@ import { usePermissions } from '../features/auth/usePermissions';
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { DrawerContentComponentProps } from 'expo-router/drawer';
-import { Archive, BarChart3, Clock, FileText, Home, LogOut, Moon, Package, Search, Settings, ShoppingCart, Store, Sun, Tv, User as UserIcon, Users, X } from 'lucide-react-native';
+import { Archive, BarChart3, Clock, FileText, Home, LifeBuoy, LogOut, Moon, Package, Search, Settings, ShoppingCart, Store, Sun, Tv, User as UserIcon, Users, X } from 'lucide-react-native';
 import { useAppNavigation } from './useAppNavigation';
 import { IlbiLogo } from '../components/brand/IlbiLogo';
 import { useAuth } from '../features/auth/AuthContext';
@@ -137,6 +137,9 @@ export const DrawerContent: React.FC<DrawerContentComponentProps> = ({ navigatio
 
       {/* Bottom Theme Selector (Ko'rinish: Tizim, Kunduz, Tun) */}
       <View style={[styles.themeFooter, { borderTopColor: colors.borderSubtle, paddingBottom: Math.max(spacing.md, insets.bottom) }]}>
+        {canOpen('Support') ? <TouchableOpacity accessibilityRole="button" accessibilityLabel="Qo‘llab-quvvatlash" onPress={() => { navigation.closeDrawer(); appNavigation.navigate('Support'); }} style={{ minHeight: 44, flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 10, marginBottom: 8 }}>
+          <LifeBuoy size={19} color={colors.text} /><Text style={{ color: colors.text, fontSize: typography.size.md, fontWeight: '600' }}>Qo‘llab-quvvatlash</Text>
+        </TouchableOpacity> : null}
         <Text style={[styles.themeLabel, { color: colors.textSecondary }]}>Ko&#39;rinish</Text>
         <View style={[styles.themeSegments, { backgroundColor: colors.surfaceSecondary }]}>
           <TouchableOpacity accessibilityRole="button"
