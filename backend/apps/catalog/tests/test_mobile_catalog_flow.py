@@ -51,7 +51,8 @@ def test_mobile_product_variant_prices_and_lifecycle(owner, tenant):
     assert detail.status_code == 200 and len(detail.data['variants']) == 2
     assert detail.data['is_active'] is False
     assert all(v['is_active'] is False for v in detail.data['variants'])
-    assert detail.data['variants'][0]['stock_quantity'] == '1.125'
+    retained = next(v for v in detail.data['variants'] if v['id'] == first['id'])
+    assert retained['stock_quantity'] == '1.125'
 
 
 @override_settings(DEBUG=True)
