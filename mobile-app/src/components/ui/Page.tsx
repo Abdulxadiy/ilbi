@@ -1,5 +1,6 @@
+import { KeyboardRegion } from './KeyboardRegion';
 import React from 'react';
-import { ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScreenHeader } from './ScreenHeader';
 import { useTheme } from '../../theme/ThemeContext';
@@ -8,10 +9,10 @@ export function Page({ title, children, onBack, onMenu, scroll = true, actions, 
   const { colors } = useTheme();
   return <SafeAreaView edges={insetBottom ? ['bottom'] : []} style={{ flex: 1, backgroundColor: colors.background }}>
     <ScreenHeader title={title} onGoBack={onBack} onOpenDrawer={onMenu} />
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
+    <KeyboardRegion style={{ flex: 1 }}>
       {scroll ? <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ padding: 16, gap: 14, flexGrow: 1 }}>{children}</ScrollView> : children}
       {actions && <View style={{ padding: 16, gap: 10, borderTopWidth: 1, borderColor: colors.border }}>{actions}</View>}
-    </KeyboardAvoidingView>
+    </KeyboardRegion>
   </SafeAreaView>;
 }
 export function Notice({ children, error = false }: { children: React.ReactNode; error?: boolean }) {

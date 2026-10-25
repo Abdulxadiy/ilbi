@@ -1,3 +1,4 @@
+import { KeyboardRegion } from '../../components/ui/KeyboardRegion';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRetailQuote } from './useRetailQuote';
 import { acceptedRetailSale } from './saleResponse';
@@ -5,7 +6,7 @@ import { isIsoDate } from '../../domain/date';
 import { usePermissions } from '../auth/usePermissions';
 import { tryMoney, moneyDifference, parseMoney } from '../../domain/money';
 import React, { useRef, useState } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useAppNavigation as useNavigation } from '../../navigation/useAppNavigation';
 import { Banknote, Check, Clock, CreditCard, Download, Plus, Receipt, Share2, X } from 'lucide-react-native';
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
@@ -237,8 +238,8 @@ const CheckoutBody: React.FC = () => {
 
   // Board 23B: Payment Screen
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    <KeyboardRegion
+
       style={[styles.container, { backgroundColor: colors.background }]}
     >
       <ScreenHeader onGoBack={() => navigation.goBack()} />
@@ -414,7 +415,7 @@ const CheckoutBody: React.FC = () => {
           style={styles.submitBtn}
         />
       </ScrollView>
-    </KeyboardAvoidingView>
+    </KeyboardRegion>
   );
 };
 

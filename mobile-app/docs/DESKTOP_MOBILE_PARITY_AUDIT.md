@@ -124,7 +124,7 @@ Status: **COMPLETE — source comparison and available checks; native/real-backe
 | [DMP-111](#dmp-111) | VERIFIED_RUNTIME | Docker Chrome phone test asserts editable price target height >=44px; price negotiation and fractional quantity interaction pass at the phone viewport. |
 | [DMP-112](#dmp-112) | TESTED_CODE | All current raw TextInputs have explicit accessible names; icon-only controls have labels; shared Button retains name and busy/disabled state while loading. 169 Jest tests, tsc and lint pass; phone browser regression passes. |
 | [DMP-113](#dmp-113) | TESTED_CODE | Fullscreen checkout/receipt and login handle bottom insets; secondary screens retain inset-aware tabs; drawer/footer and modal sheets consume bottom insets. Full 169-test/tsc/lint and web phone regression pass. |
-| [DMP-114](#dmp-114) | TESTED_CODE | Modal sheets use KeyboardAvoidingView on both platforms, inset padding, shrinkable content and optional scrolling; customer-create form avoids nested virtualized list. Price/quantity/customer component and web phone regressions pass. |
+| [DMP-114](#dmp-114) | TESTED_CODE | 199 tests, strict lint/tsc pass. Actual installed Android API36 test found and fixed missing absolute keyboard offset; real keyboard price/quantity/checkout interaction, process-restart draft and confirmed synthetic sale passed. |
 | [DMP-115](#dmp-115) | OPEN | Pending |
 | [DMP-116](#dmp-116) | TESTED_CODE | Neutral/cancel feedback defaults to informational icon; errors announce an alert and use an error icon, with explicit feedback types and no success icon. Component regressions plus full 169-test suite pass. |
 | [DMP-117](#dmp-117) | OPEN | Pending |

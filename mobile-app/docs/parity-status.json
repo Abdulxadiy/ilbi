@@ -778,9 +778,10 @@
       "title": "Price/customer/signature sheets lack verified keyboard avoidance",
       "status": "TESTED_CODE",
       "evidence": [
-        "Modal sheets use KeyboardAvoidingView on both platforms, inset padding, shrinkable content and optional scrolling; customer-create form avoids nested virtualized list. Price/quantity/customer component and web phone regressions pass."
+        "Modal sheets use KeyboardAvoidingView on both platforms, inset padding, shrinkable content and optional scrolling; customer-create form avoids nested virtualized list. Price/quantity/customer component and web phone regressions pass.",
+        "199 tests, strict lint/tsc pass. Actual installed Android API36 test found and fixed missing absolute keyboard offset; real keyboard price/quantity/checkout interaction, process-restart draft and confirmed synthetic sale passed."
       ],
-      "notes": "Physical soft-keyboard overlap, dismissal and signature-surface acceptance require native runtime."
+      "notes": "iOS, physical devices, signature sheet and full large-text/keyboard acceptance remain separate; Android native driver rejects taps under IME."
     },
     "DMP-115": {
       "title": "Large text and small-screen acceptance covers too little",

@@ -1,8 +1,7 @@
+import { KeyboardRegion } from '../../components/ui/KeyboardRegion';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import React, { useState, useEffect } from 'react';
 import {
-  KeyboardAvoidingView,
-  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -90,8 +89,8 @@ export const LoginScreen: React.FC = () => {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    <KeyboardRegion
+
       style={[styles.container, { backgroundColor: colors.background, paddingBottom: insets.bottom }]}
     >
       <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
@@ -211,7 +210,7 @@ export const LoginScreen: React.FC = () => {
           ) : null}
         </View>}
       </ScrollView>
-    </KeyboardAvoidingView>
+    </KeyboardRegion>
   );
 };
 
