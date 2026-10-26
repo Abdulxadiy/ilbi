@@ -120,31 +120,48 @@ export const CartScreen: React.FC = () => {
         </TouchableOpacity>
       </View>
 
-      <View style={{ paddingHorizontal: spacing.lg, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', minHeight: 44 }}><Text style={{ color: colors.text }}>Ulgurji narxlar</Text><Switch accessibilityLabel="Ulgurji narxlar" value={partner || false} onValueChange={value => { try { setPartner(value); } catch (error: any) { setToastMessage(error.message, 'error'); } }} /></View>
-      {/* Customer Selection Bar (Board 22A) */}
-      <TouchableOpacity accessibilityRole="button"
-        onPress={() => setShowCustomerPicker(true)}
-        activeOpacity={0.7}
-        style={[
-          styles.customerBar,
-          {
-            backgroundColor: colors.surface,
-            borderColor: colors.border,
-          },
-        ]}
-      >
-        <UserIcon size={18} color={colors.textSecondary} />
-        <Text
-          style={[
-            styles.customerName,
-            { color: customer ? colors.text : colors.textMuted },
-          ]}
-          numberOfLines={1}
+      {/* Customer & Wholesale Controls */}
+      <View style={[styles.controlsCard, { backgroundColor: colors.surface, borderColor: colors.borderSubtle }]}>
+        <TouchableOpacity accessibilityRole="button"
+          onPress={() => setShowCustomerPicker(true)}
+          activeOpacity={0.7}
+          style={styles.customerRow}
         >
-          {customer ? customer.name : 'Mijoz tanlash'}
-        </Text>
-        <Text style={[styles.chevron, { color: colors.textMuted }]}>›</Text>
-      </TouchableOpacity>
+          <View style={[styles.customerAvatar, { backgroundColor: colors.surfaceSecondary }]}>
+            <UserIcon size={16} color={colors.textSecondary} />
+          </View>
+          <View style={styles.customerInfoCol}>
+            <Text style={[styles.customerMicroLabel, { color: colors.textSecondary }]}>Mijoz</Text>
+            <Text
+              style={[
+                styles.customerName,
+                { color: customer ? colors.text : colors.textMuted },
+              ]}
+              numberOfLines={1}
+            >
+              {customer ? customer.name : 'Mijoz tanlash'}
+            </Text>
+          </View>
+          <Text style={[styles.chevron, { color: colors.textMuted }]}>›</Text>
+        </TouchableOpacity>
+
+        <View style={[styles.controlDivider, { backgroundColor: colors.borderSubtle }]} />
+
+        <View style={styles.wholesaleRow}>
+          <View style={styles.wholesaleInfo}>
+            <Text style={[styles.wholesaleTitle, { color: colors.text }]}>Ulgurji narxlar</Text>
+            <Text style={[styles.wholesaleSubtext, { color: colors.textSecondary }]}>Ulgurji tarif bo‘yicha hisoblash</Text>
+          </View>
+          <Switch
+            accessibilityLabel="Ulgurji narxlar"
+            value={partner || false}
+            onValueChange={value => {
+              try { setPartner(value); }
+              catch (error: any) { setToastMessage(error.message, 'error'); }
+            }}
+          />
+        </View>
+      </View>
 
       {/* Quick Add / Search Product Input Bar */}
       <View style={[styles.searchAddBar, { backgroundColor: colors.surface, borderColor: colors.border }]}>
@@ -486,31 +503,74 @@ const styles = StyleSheet.create({
     fontWeight: typography.weight.semibold,
     marginLeft: 4,
   },
-  customerBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  controlsCard: {
     marginHorizontal: spacing.lg,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
     borderRadius: radius.md,
     borderWidth: 1,
     marginBottom: spacing.sm,
+    overflow: 'hidden',
   },
-  customerName: {
+  customerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+  },
+  customerAvatar: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  customerInfoCol: {
     flex: 1,
     marginLeft: spacing.sm,
+  },
+  customerMicroLabel: {
+    fontSize: 10,
+    fontWeight: '500',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  customerName: {
     fontSize: typography.size.sm,
     fontWeight: typography.weight.semibold,
+    marginTop: 1,
   },
   chevron: {
     fontSize: typography.size.md,
+  },
+  controlDivider: {
+    height: 1,
+  },
+  wholesaleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs + 2,
+    minHeight: 44,
+  },
+  wholesaleInfo: {
+    flex: 1,
+    paddingRight: spacing.sm,
+  },
+  wholesaleTitle: {
+    fontSize: typography.size.sm,
+    fontWeight: typography.weight.semibold,
+  },
+  wholesaleSubtext: {
+    fontSize: typography.size.xs,
+    marginTop: 1,
   },
   searchAddBar: {
     flexDirection: 'row',
     alignItems: 'center',
     marginHorizontal: spacing.lg,
-    paddingHorizontal: spacing.md,
-    height: 42,
+    paddingLeft: spacing.md,
+    paddingRight: 6,
+    height: 44,
     borderRadius: radius.md,
     borderWidth: 1,
     marginBottom: spacing.md,
@@ -521,7 +581,11 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
   },
   scanIconBtn: {
-    padding: spacing.xs,
+    width: 32,
+    height: 32,
+    borderRadius: radius.sm,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   cartContent: {
     flex: 1,

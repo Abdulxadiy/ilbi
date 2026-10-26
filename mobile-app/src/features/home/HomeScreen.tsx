@@ -106,7 +106,7 @@ export const HomeScreen: React.FC = () => {
             styles.metricCard,
             {
               backgroundColor: colors.surface,
-              borderColor: colors.border,
+              borderColor: colors.borderSubtle,
             },
           ]}
         >
@@ -122,17 +122,17 @@ export const HomeScreen: React.FC = () => {
           <View style={[styles.metricDivider, { backgroundColor: colors.borderSubtle }]} />
 
           <View style={styles.subMetricsRow}>
-            <View style={styles.subMetric}>
-              <ShoppingCart size={16} color={colors.textSecondary} />
+            <View style={[styles.subMetric, { backgroundColor: colors.surfaceSecondary }]}>
+              <ShoppingCart size={15} color={colors.textSecondary} />
               <Text style={[styles.subMetricText, { color: colors.text }]}>
-                {metrics.salesCount} ta <Text style={{ color: colors.textSecondary }}>savdo</Text>
+                {metrics.salesCount} ta <Text style={{ color: colors.textSecondary, fontWeight: '400' }}>savdo</Text>
               </Text>
             </View>
 
-            <View style={styles.subMetric}>
-              <Clock size={16} color={colors.textSecondary} />
+            <View style={[styles.subMetric, { backgroundColor: colors.surfaceSecondary }]}>
+              <Clock size={15} color={colors.textSecondary} />
               <Text style={[styles.subMetricText, { color: colors.text }]}>
-                {metrics.debtSum} so&#39;m <Text style={{ color: colors.textSecondary }}>qarz</Text>
+                {metrics.debtSum} <Text style={{ color: colors.textSecondary, fontWeight: '400' }}>so&#39;m qarz</Text>
               </Text>
             </View>
           </View>
@@ -152,25 +152,31 @@ export const HomeScreen: React.FC = () => {
         <View style={styles.quickActionsRow}>
           {canOpen('Tovar') && <TouchableOpacity accessibilityRole="button"
             onPress={() => navigation.navigate('Tovar')}
-            style={[styles.quickActionBtn, { backgroundColor: colors.surface, borderColor: colors.border }]}
+            style={[styles.quickActionBtn, { backgroundColor: colors.surface, borderColor: colors.borderSubtle }]}
           >
-            <Package size={20} color={colors.text} />
+            <View style={[styles.quickActionIconWrap, { backgroundColor: colors.surfaceSecondary }]}>
+              <Package size={20} color={colors.text} />
+            </View>
             <Text style={[styles.quickActionText, { color: colors.text }]}>Tovar</Text>
           </TouchableOpacity>}
 
           {canOpen('Qarz') && <TouchableOpacity accessibilityRole="button"
             onPress={() => navigation.navigate('Qarz')}
-            style={[styles.quickActionBtn, { backgroundColor: colors.surface, borderColor: colors.border }]}
+            style={[styles.quickActionBtn, { backgroundColor: colors.surface, borderColor: colors.borderSubtle }]}
           >
-            <Clock size={20} color={colors.text} />
+            <View style={[styles.quickActionIconWrap, { backgroundColor: colors.surfaceSecondary }]}>
+              <Clock size={20} color={colors.text} />
+            </View>
             <Text style={[styles.quickActionText, { color: colors.text }]}>Qarz</Text>
           </TouchableOpacity>}
 
           {canOpen('Documents') && <TouchableOpacity accessibilityRole="button"
             onPress={() => navigation.navigate('Documents')}
-            style={[styles.quickActionBtn, { backgroundColor: colors.surface, borderColor: colors.border }]}
+            style={[styles.quickActionBtn, { backgroundColor: colors.surface, borderColor: colors.borderSubtle }]}
           >
-            <FileText size={20} color={colors.text} />
+            <View style={[styles.quickActionIconWrap, { backgroundColor: colors.surfaceSecondary }]}>
+              <FileText size={20} color={colors.text} />
+            </View>
             <Text style={[styles.quickActionText, { color: colors.text }]}>Hujjatlar</Text>
           </TouchableOpacity>}
         </View>
@@ -306,15 +312,20 @@ const styles = StyleSheet.create({
   subMetricsRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    gap: spacing.sm,
   },
   subMetric: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.sm,
+    borderRadius: radius.md,
   },
   subMetricText: {
-    marginLeft: spacing.sm,
-    fontSize: typography.size.sm,
+    marginLeft: spacing.xs + 2,
+    fontSize: typography.size.xs + 1,
     fontWeight: typography.weight.semibold,
   },
   newSaleBtn: {
@@ -324,20 +335,27 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: spacing.xl,
+    gap: spacing.sm,
   },
   quickActionBtn: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: spacing.md,
-    borderRadius: radius.md,
+    borderRadius: radius.lg,
     borderWidth: 1,
-    marginHorizontal: 4,
+  },
+  quickActionIconWrap: {
+    width: 44,
+    height: 44,
+    borderRadius: radius.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.xs,
   },
   quickActionText: {
-    marginTop: spacing.xs,
     fontSize: typography.size.xs,
-    fontWeight: typography.weight.medium,
+    fontWeight: typography.weight.semibold,
   },
   recentSectionHeader: {
     flexDirection: 'row',
