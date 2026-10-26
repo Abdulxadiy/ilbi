@@ -138,6 +138,8 @@ jobs:
         working-directory: .
         run: |
           cp .env.example .env
+          cp backend/.env.example backend/.env
+          cp telegram_bot_sms/.env.example telegram_bot_sms/.env
           docker compose --profile mobile up --build --no-deps -d mobile
       - name: Phone interaction and Fast Refresh regression
         run: npm run test:preview

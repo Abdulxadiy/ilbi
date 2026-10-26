@@ -26,3 +26,9 @@ The same full-working-tree TypeScript, strict lint and 237-test run covers these
 - Installed Android build 1 can offer a same-marketing-version build 2 after a genuine signed APK and its higher native build are published in the official feed. The implemented notice requires a signed-in account and foreground native app, checks on entry/foreground and periodically, and offers a dismissible reminder once per account/build/business day. It is an in-app reminder, not a phone OS push or silent APK installation.
 
 Platform `1.4.0` is separate from mobile `1.0.0`. The server publication scope is being clarified because the branch also contains backend/desktop changes. These observations are not a claim that those changes were merged or deployed.
+
+## CI preview startup correction
+
+The failed mobile job in run `40210504038` stopped before browser checks: Compose required `backend/.env`, but the clean runner only copied the root example. The mobile CI preparation now copies backend and bot examples as well, because Compose validates all declared `env_file` paths even when starting only the mobile service.
+
+An isolated clean-checkout simulation using only the committed Compose file and the three example env files passed `docker compose --profile mobile config --quiet`. No service or emulator was started by that probe. All three existing deploy-handoff tests passed, preserving main-only/superseded-commit guards. The separate dependency-security job remains a real gate; it was not suppressed by this startup correction.
