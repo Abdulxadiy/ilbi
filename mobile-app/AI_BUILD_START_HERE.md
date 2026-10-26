@@ -6,8 +6,9 @@ Read this first when continuing the owner's build task. It is an executable hand
 
 - Android APK now; iOS/IPA later.
 - Phone notifications are **discussion only** until the owner starts implementation. Their intended scope covers the whole platform; Z reports, chat and B2B were examples. Do not install notification/Firebase modules, alter the backend or send test pushes from a proposal document.
-- Platform `1.4.0`, mobile `1.0.0`, Android code `1`, iOS build `1`. Do not bump versions for build tooling or documentation.
-- Existing standalone APK: `dist/android/ILBI-1.0.0-android-1.apk`. Its runtime source is `6ac80b1b5b955587837ec5f58cd4ab690a90cca2`; later documentation/build-tool commits can legitimately be newer.
+- Platform `1.4.0`, mobile `1.0.0`, Android code `2`, iOS build `1`. Android code 2 is the UI update candidate for existing build-1 installations. Do not bump marketing/platform versions for build tooling or documentation.
+- First accepted standalone APK: `dist/android/ILBI-1.0.0-android-1.apk`, source `6ac80b1b5b955587837ec5f58cd4ab690a90cca2`. The current UI update needs `dist/android/ILBI-1.0.0-android-2.apk` built from its recorded source commit; do not relabel the old binary as build 2.
+- For the 2026-10-26 update task, leave every running emulator and its installed build unchanged. Artifact/source verification and server staging must not install, restart, inspect through ADB, clear data or otherwise drive the emulator. The owner will observe the update offer themselves.
 - `android-signing-public.json` pins the existing public certificate. Private signing material is outside Git under the owner's `~/.local/share/ilbi-signing/mobile/`.
 - No phone push transport is configured. Support polling and in-app update reminders already exist.
 

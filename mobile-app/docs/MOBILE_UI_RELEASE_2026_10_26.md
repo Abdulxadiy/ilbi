@@ -32,3 +32,11 @@ Platform `1.4.0` is separate from mobile `1.0.0`. The server publication scope i
 The failed mobile job in run `40210504038` stopped before browser checks: Compose required `backend/.env`, but the clean runner only copied the root example. The mobile CI preparation now copies backend and bot examples as well, because Compose validates all declared `env_file` paths even when starting only the mobile service.
 
 An isolated clean-checkout simulation using only the committed Compose file and the three example env files passed `docker compose --profile mobile config --quiet`. No service or emulator was started by that probe. All three existing deploy-handoff tests passed, preserving main-only/superseded-commit guards. The separate dependency-security job remains a real gate; it was not suppressed by this startup correction.
+
+## Android update candidate
+
+Only Android's native `versionCode` advances from 1 to 2, so the installed build 1 can recognize an actual newer package. Marketing version remains `1.0.0`, iOS build remains `1`, platform remains `1.4.0`. The update must use the established certificate and application ID; the earlier build-1 APK is retained as historical evidence and is never relabeled.
+
+The source change prepares a candidate; it is not proof that a build finished or the server feed was published. The owner's running emulator must remain unchanged. The publication scope remains the pending clarification above.
+
+After the metadata change, actual local signing/SDK preflight, TypeScript, strict ESLint and all 237 tests passed again. Native APK assembly and public server acceptance are separate subsequent checks.
