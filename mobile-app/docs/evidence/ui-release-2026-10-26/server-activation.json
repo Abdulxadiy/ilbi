@@ -1,0 +1,17 @@
+{
+  "release": {
+    "applicationId": "uz.ilbi.mobile",
+    "version": "1.0.0",
+    "buildNumber": "2",
+    "signerSha256": "09fc04394dfd3d8e63abe97a0b71f066ced06a90cd7e94773705f1efae2cd756",
+    "sourceCommit": "19183bb7c4d10a43840bd5156d2b77c7aaeef433",
+    "url": "/downloads/mobile/19183bb7c4d10a43840bd5156d2b77c7aaeef433/ILBI-1.0.0-android-2.apk",
+    "bytes": 75723829,
+    "sha256": "30d86bcca424fdf70246982d3a4389646453828028ec338dcf69f16489ae8adb",
+    "channel": "preview"
+  },
+  "desktopMetadataPreserved": true,
+  "platformImagesUnchanged": true,
+  "serverApkSha256": "30d86bcca424fdf70246982d3a4389646453828028ec338dcf69f16489ae8adb",
+  "platformSource": "2d799dd5596a92fb6a0e3be6cf51a2a018c88e2d"
+}

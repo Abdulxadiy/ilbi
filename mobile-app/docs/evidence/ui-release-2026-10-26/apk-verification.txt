@@ -1,0 +1,17 @@
+{
+  "status": "verified",
+  "apk": "/mnt/storage/Codes/Projects/Backend/ilbi/mobile-app/dist/android/ILBI-1.0.0-android-2.apk",
+  "applicationId": "uz.ilbi.mobile",
+  "version": "1.0.0",
+  "buildNumber": "2",
+  "signerSha256": "09fc04394dfd3d8e63abe97a0b71f066ced06a90cd7e94773705f1efae2cd756",
+  "sha256": "30d86bcca424fdf70246982d3a4389646453828028ec338dcf69f16489ae8adb",
+  "bytes": 75723829,
+  "architectures": [
+    "arm64-v8a",
+    "x86_64"
+  ],
+  "sourceCommit": "19183bb7c4d10a43840bd5156d2b77c7aaeef433",
+  "currentRuntimeMatches": true,
+  "scope": "artifact and source verification; native device acceptance is separate"
+}

@@ -54,3 +54,23 @@ The guard rejects the actual failed candidate as stale `src/theme/ThemeContext.t
 The full isolated host browser regression passed against a separate source copy and ports 8091/8092, including its source refresh/restoration. The owner's emulator and original Home source were not used for that probe. GitHub run `40305510360` then completed the functional assertions but failed its final clean-browser-log assertion because `/favicon.ico` returned HTTP 500 through Metro's image middleware in the slim container.
 
 The preview proxy now serves the existing ILBI PNG directly at `/favicon.ico`. A real HTTP probe against the isolated proxy confirmed 200, `image/png`, and an exact hash match with the asset. No error assertion was removed or ignored. This is a host preview-server change; the native app's source/payload does not change and its verified APK does not need another rebuild for this route.
+
+## Published signed APK — completed
+
+The corrected full CNG/Gradle build completed in 8m 6s. The final APK is `1.0.0` / Android build `2`, application ID `uz.ilbi.mobile`, ARM64 and x86_64, signed with the original certificate. Its actual packaged Hermes payload is bound to 112 verified application source files and includes the new theme/cart/catalog controls. Source commit: `19183bb7c4d10a43840bd5156d2b77c7aaeef433`. Later preview-server/documentation commits do not change the native runtime.
+
+- APK size: 75,723,829 bytes.
+- APK SHA-256: `30d86bcca424fdf70246982d3a4389646453828028ec338dcf69f16489ae8adb`.
+- Packaged Hermes SHA-256: `9fb6b5852a7a1b1d7ff092c720ae4897706a4005b897aa0ed579cc93a0f0e59a`.
+- Public certificate SHA-256: `09fc04394dfd3d8e63abe97a0b71f066ced06a90cd7e94773705f1efae2cd756`.
+- [Actual published APK](https://ilbi.uz/downloads/mobile/19183bb7c4d10a43840bd5156d2b77c7aaeef433/ILBI-1.0.0-android-2.apk).
+
+The standalone verifier passed, including native identity/signature, alignment, actual bundle/source hashes and current-runtime comparison. The genuine exporter and an isolated activation against the real previous server feed passed. The APK and metadata were uploaded to private server staging; only after transfer completion and server hash verification was the immutable APK path exposed and the official mobile feed atomically activated.
+
+The public HTTPS feed equals the verified release metadata. A full curl download returned HTTP 200, all 75,723,829 bytes and the exact APK SHA-256 above. An earlier streaming probe did not establish a full-body match; the completed download is the passing evidence. Server-side bytes/hash independently matched. Windows/Linux feed objects were preserved exactly; the recorded web/backend/bot image tags still point to platform source `2d799dd5596a92fb6a0e3be6cf51a2a018c88e2d`. Main was not merged or deployed. Server desktop activation code matches the reviewed local code and preserves mobile metadata on later desktop releases.
+
+A source-level check parsed the actual public feed: installed Android identity `1.0.0`/build `1` receives candidate build `2`, while build `2` receives no newer candidate. This is not an observation on the owner's device. No emulator/ADB action, app installation, restart or data reset was performed during this task. The owner will observe the in-app notice and approve installation themselves.
+
+Public evidence is in `evidence/ui-release-2026-10-26/`: native manifest, standalone verifier output, server activation, published feed and completed-download verification. The native marketing version stays `1.0.0`, iOS build `1`, platform `1.4.0`. The outstanding dependency audit (five high entries involving existing node-forge/Zod tooling dependencies) remains reported; it was not disabled or solved by a forced Expo downgrade. This preview APK publication does not claim full production/native business acceptance.
+
+[GitHub CI run 40307768394](https://github.com/Abdulxadiy/ilbi/actions/runs/40307768394) confirms the corrected mobile job passed, along with backend, frontend, production-edge, bot, automation and the separate platform dependency check. The mobile dependency-security job remains red, so the overall run is not described as green. Desktop build jobs are skipped for this PR branch. Later evidence-only commits do not change the APK runtime or its recorded source commit.
