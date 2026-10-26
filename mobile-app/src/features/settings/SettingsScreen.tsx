@@ -2,7 +2,7 @@ import { useFeedback } from '../../hooks/useFeedback';
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useAppNavigation as useNavigation } from '../../navigation/useAppNavigation';
-import { Database, Info, LogOut, Moon, Store, Sun, Trash2, Tv } from 'lucide-react-native';
+import { Database, Info, LogOut, Moon, Store, Sun, Trash2 } from 'lucide-react-native';
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
@@ -112,14 +112,14 @@ export const SettingsScreen: React.FC = () => {
           </View>
         </View>
 
-        {/* Theme Settings (Board 24C) */}
+        {/* Theme Settings (Kunduz / Tun) */}
         <View style={[styles.sectionCard, { backgroundColor: colors.surface, borderColor: colors.borderSubtle }]}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>Tizim ko&#39;rinishi (Mavzu)</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Mavzu</Text>
           <View style={[styles.themePillsRow, { backgroundColor: colors.surfaceSecondary }]}>
-            {(['system', 'light', 'dark'] as const).map((m) => {
+            {(['light', 'dark'] as const).map((m) => {
               const active = mode === m;
-              const label = m === 'system' ? 'Tizim' : m === 'light' ? 'Kunduz' : 'Tun';
-              const Icon = m === 'system' ? Tv : m === 'light' ? Sun : Moon;
+              const label = m === 'light' ? 'Kunduz' : 'Tun';
+              const Icon = m === 'light' ? Sun : Moon;
 
               return (
                 <TouchableOpacity accessibilityRole="button"
@@ -130,7 +130,7 @@ export const SettingsScreen: React.FC = () => {
                     active && { backgroundColor: colors.surface, shadowColor: '#000', elevation: 2 },
                   ]}
                 >
-                  <Icon size={14} color={active ? colors.text : colors.textSecondary} />
+                  <Icon size={16} color={active ? colors.text : colors.textSecondary} />
                   <Text
                     style={[
                       styles.themePillText,

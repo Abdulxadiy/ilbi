@@ -1,4 +1,7 @@
+import React from 'react';
+import { render, act } from '@testing-library/react-native';
 import { darkColors, lightColors, spacing, typography } from '../src/theme/tokens';
+import { ThemeProvider, useTheme } from '../src/theme/ThemeContext';
 
 describe('Theme and Design Tokens', () => {
   test('Light theme tokens match monochrome design specifications', () => {
@@ -28,5 +31,35 @@ describe('Theme and Design Tokens', () => {
     expect(spacing.md).toBe(12);
     expect(spacing.lg).toBe(16);
     expect(typography.size.md).toBe(15);
+  });
+
+  test('ThemeProvider defaults to light theme and toggles between light and dark', async () => {
+    let currentMode: any;
+    let isDarkValue: any;
+    let toggle: any;
+
+    const TestComponent = () => {
+      const { mode, isDark, toggleTheme } = useTheme();
+      currentMode = mode;
+      isDarkValue = isDark;
+      toggle = toggleTheme;
+      return null;
+    };
+
+    await render(
+      <ThemeProvider>
+        <TestComponent />
+      </ThemeProvider>
+    );
+
+    expect(currentMode).toBe('light');
+    expect(isDarkValue).toBe(false);
+
+    await act(async () => {
+      await toggle();
+    });
+
+    expect(currentMode).toBe('dark');
+    expect(isDarkValue).toBe(true);
   });
 });

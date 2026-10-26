@@ -3,7 +3,7 @@ import { usePermissions } from '../features/auth/usePermissions';
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { DrawerContentComponentProps } from 'expo-router/drawer';
-import { Archive, BarChart3, Clock, Download, FileText, Home, LifeBuoy, LogOut, Moon, Package, Search, Settings, ShoppingCart, Store, Sun, Tv, User as UserIcon, Users, X } from 'lucide-react-native';
+import { Archive, BarChart3, Clock, Download, FileText, Home, LifeBuoy, LogOut, Moon, Package, Search, Settings, ShoppingCart, Store, Sun, User as UserIcon, Users, X } from 'lucide-react-native';
 import { useAppNavigation } from './useAppNavigation';
 import { IlbiLogo } from '../components/brand/IlbiLogo';
 import { useAuth } from '../features/auth/AuthContext';
@@ -143,38 +143,21 @@ export const DrawerContent: React.FC<DrawerContentComponentProps> = ({ navigatio
         {canOpen('Support') ? <TouchableOpacity accessibilityRole="button" accessibilityLabel="Qo‘llab-quvvatlash" onPress={() => { navigation.closeDrawer(); appNavigation.navigate('Support'); }} style={{ minHeight: 44, flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 10, marginBottom: 8 }}>
           <LifeBuoy size={19} color={colors.text} /><Text style={{ color: colors.text, fontSize: typography.size.md, fontWeight: '600' }}>Qo‘llab-quvvatlash</Text>
         </TouchableOpacity> : null}
-        <Text style={[styles.themeLabel, { color: colors.textSecondary }]}>Ko&#39;rinish</Text>
+        <Text style={[styles.themeLabel, { color: colors.textSecondary }]}>Mavzu</Text>
         <View style={[styles.themeSegments, { backgroundColor: colors.surfaceSecondary }]}>
-          <TouchableOpacity accessibilityRole="button"
-            onPress={() => setMode('system')}
-            style={[
-              styles.themeSegmentBtn,
-              mode === 'system' && { backgroundColor: isDark ? '#262626' : '#FFFFFF' },
-            ]}
-          >
-            <Tv size={14} color={mode === 'system' ? colors.text : colors.textMuted} />
-            <Text
-              style={[
-                styles.themeSegmentText,
-                { color: mode === 'system' ? colors.text : colors.textMuted },
-              ]}
-            >
-              Tizim
-            </Text>
-          </TouchableOpacity>
-
           <TouchableOpacity accessibilityRole="button"
             onPress={() => setMode('light')}
             style={[
               styles.themeSegmentBtn,
-              mode === 'light' && { backgroundColor: '#FFFFFF' },
+              mode === 'light' && { backgroundColor: isDark ? '#262626' : '#FFFFFF', shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2, elevation: 1 },
             ]}
           >
-            <Sun size={14} color={mode === 'light' ? colors.text : colors.textMuted} />
+            <Sun size={15} color={mode === 'light' ? colors.text : colors.textMuted} />
             <Text
               style={[
                 styles.themeSegmentText,
                 { color: mode === 'light' ? colors.text : colors.textMuted },
+                mode === 'light' && { fontWeight: '600' },
               ]}
             >
               Kunduz
@@ -185,14 +168,15 @@ export const DrawerContent: React.FC<DrawerContentComponentProps> = ({ navigatio
             onPress={() => setMode('dark')}
             style={[
               styles.themeSegmentBtn,
-              mode === 'dark' && { backgroundColor: '#262626' },
+              mode === 'dark' && { backgroundColor: isDark ? '#262626' : '#FFFFFF', shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2, elevation: 1 },
             ]}
           >
-            <Moon size={14} color={mode === 'dark' ? colors.text : colors.textMuted} />
+            <Moon size={15} color={mode === 'dark' ? colors.text : colors.textMuted} />
             <Text
               style={[
                 styles.themeSegmentText,
                 { color: mode === 'dark' ? colors.text : colors.textMuted },
+                mode === 'dark' && { fontWeight: '600' },
               ]}
             >
               Tun
