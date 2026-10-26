@@ -15,10 +15,10 @@ const sourcePath = new URL('../src/features/home/HomeScreen.tsx', import.meta.ur
 const evidence = new URL('../docs/evidence/', import.meta.url);
 const marker = 'Bugungi holat · LIVE QA';
 let changed = false;
-const doc = "document.querySelector('#app').contentDocument";
+const doc = "document.querySelector('#app')?.contentDocument";
 const waitFor = async (expression, label) => {
   for (let i = 0; i < 140; i++) {
-    if (await browser.evaluate('Boolean(' + expression + ')')) return;
+    if (await browser.evaluate(`Boolean(${doc}?.body && (${expression}))`)) return;
     await pause(150);
   }
   const failure = await browser.call('Page.captureScreenshot', { format: 'png' });
