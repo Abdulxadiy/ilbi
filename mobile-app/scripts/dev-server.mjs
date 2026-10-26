@@ -7,6 +7,7 @@ const metro = new URL('http://127.0.0.1:8081');
 const backend = new URL(process.env.MOBILE_API_PROXY_TARGET || 'http://nginx:80');
 if (!['http:', 'https:'].includes(backend.protocol) || backend.username || backend.password) throw Error('Invalid API proxy target');
 const preview = await readFile(new URL('../preview/index.html', import.meta.url));
+const favicon = await readFile(new URL('../assets/favicon.png', import.meta.url));
 const hopHeaders = ['connection', 'keep-alive', 'proxy-authenticate', 'proxy-authorization', 'te', 'trailer', 'transfer-encoding', 'upgrade'];
 
 function forward(req, res, target) {
@@ -32,6 +33,9 @@ const server = http.createServer(async (req, res) => {
   if (pathname === '/preview' || pathname === '/preview/') {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' });
     res.end(preview);
+  } else if (pathname === '/favicon.ico') {
+    res.writeHead(200, { 'Content-Type': 'image/png', 'Cache-Control': 'no-store' });
+    res.end(favicon);
   } else if (pathname === '/healthz') {
     try {
       const response = await fetch(new URL('/status', metro), { signal: AbortSignal.timeout(3000) });
