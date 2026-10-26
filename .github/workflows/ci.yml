@@ -57,6 +57,7 @@ jobs:
           python3 -m unittest discover -s tests/deployment -p 'test_mobile_downloads.py' -v
           python3 -m unittest discover -s tests/deployment -p 'test_mobile_build_setup.py' -v
           python3 -m unittest discover -s tests/deployment -p 'test_mobile_apk_verification.py' -v
+          python3 -m unittest discover -s tests/deployment -p 'test_mobile_bundle_sources.py' -v
           python3 -m unittest discover -s tests/deployment -p 'test_linux_downloads.py' -v
           python3 -m unittest discover -s tests/deployment -p 'test_release*.py' -v
       - name: Fetch isolated test images

@@ -25,7 +25,7 @@ The same full-working-tree TypeScript, strict lint and 237-test run covers these
 - Current production deployment builds web/backend/bot images and Windows/Linux packages. It has no Android APK build/upload/feed activation step. GitHub source push alone cannot replace installed mobile code or publish a native update.
 - Installed Android build 1 can offer a same-marketing-version build 2 after a genuine signed APK and its higher native build are published in the official feed. The implemented notice requires a signed-in account and foreground native app, checks on entry/foreground and periodically, and offers a dismissible reminder once per account/build/business day. It is an in-app reminder, not a phone OS push or silent APK installation.
 
-Platform `1.4.0` is separate from mobile `1.0.0`. The server publication scope is being clarified because the branch also contains backend/desktop changes. These observations are not a claim that those changes were merged or deployed.
+Platform `1.4.0` is separate from mobile `1.0.0`. The owner explicitly selected **only the new mobile APK**, leaving the platform branch unmerged and its deployed images unchanged.
 
 ## CI preview startup correction
 
@@ -37,6 +37,14 @@ An isolated clean-checkout simulation using only the committed Compose file and 
 
 Only Android's native `versionCode` advances from 1 to 2, so the installed build 1 can recognize an actual newer package. Marketing version remains `1.0.0`, iOS build remains `1`, platform remains `1.4.0`. The update must use the established certificate and application ID; the earlier build-1 APK is retained as historical evidence and is never relabeled.
 
-The source change prepares a candidate; it is not proof that a build finished or the server feed was published. The owner's running emulator must remain unchanged. The publication scope remains the pending clarification above.
+The source change prepares a candidate; it is not proof that a build finished or the server feed was published. The owner's running emulator must remain unchanged. Only the signed APK and mobile feed are authorized for this publication.
 
 After the metadata change, actual local signing/SDK preflight, TypeScript, strict ESLint and all 237 tests passed again. Native APK assembly and public server acceptance are separate subsequent checks.
+
+## Rejected stale-bundle candidate and build correction
+
+The first build-2 assembly completed in 9m 36s and passed native identity/signature checks, but a further payload comparison caught an unchanged Hermes bundle. Its APK SHA-256 was `b9fa935dc6987e61f0aa56f83107fa49bf327cf8249fddc880b8a6dd5f23c845`; it was never published or installed. The generated source map still referenced the first build's `standalone-b7kgja0f` copy, and its source contents did not include the supplied new theme/layout. The rejected candidate and its manifest were moved out of deliverable `dist/`.
+
+The installed SDK 58 CLI disables Gradle's requested Metro cache reset under `CI=1`. The isolated CNG copies shared node_modules transforms; cached Expo Router context paths selected an older copy. A project-local Metro transform store, file-map directory and root-specific cache version now isolate these copies. The builder additionally compares all bundled application source-map contents with actual files and checks that the source-verified generated Hermes payload is exactly the one packaged into the APK. The manifest records bundle/source hashes, and standalone verification rejects old/unbound records or changed source.
+
+The guard rejects the actual failed candidate as stale `src/theme/ThemeContext.tsx`. A fresh isolated Metro Android export contains the new theme/cart/catalog markers, and all 112 mapped application source files match the current tree. Six focused regression tests cover stale contexts, packaged-payload mismatch, legacy/mutated records, generated Router context entries and path traversal; all 20 mobile Python checks pass. These export/source checks are not an emulator test or a successful final APK publication.

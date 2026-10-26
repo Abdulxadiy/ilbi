@@ -11,6 +11,7 @@ from pathlib import Path
 
 from export_downloads import inspect_apk
 from prepare_signing import APP, DEFAULT_RECORD
+from bundle_sources import verify_bundle_sources
 
 TOOLS = Path('/mnt/storage/.cache/ilbi-native-tools')
 
@@ -75,7 +76,7 @@ def build(args):
     modified = subprocess.run(['git', 'status', '--porcelain', '--untracked-files=normal', '--', '.'], cwd=APP, capture_output=True, text=True, check=False).stdout.strip()
     copy_project(APP, project)
     if not any((project / name).exists() for name in ['metro.config.js', 'metro.config.cjs']):
-        (project / 'metro.config.cjs').write_text("const { getDefaultConfig } = require('expo/metro-config');\nconst config = getDefaultConfig(__dirname);\nconfig.maxWorkers = 2;\nmodule.exports = config;\n")
+        raise ValueError('Restore the project Metro configuration before building; shared caches can bundle an older CNG copy.')
     print('Generating native project outside the repository:', work, flush=True)
     subprocess.run(['node', 'node_modules/expo/bin/cli', 'prebuild', '--platform', 'android', '--no-install'], cwd=project, env=environment, check=True)
     subprocess.run(['./gradlew', ':app:assembleRelease', '--no-daemon', '--max-workers=1', '-PreactNativeArchitectures=' + args.architectures,
@@ -83,6 +84,7 @@ def build(args):
     apk = project / 'android/app/build/outputs/apk/release/app-release.apk'
     if not apk.is_file():
         raise ValueError('Gradle did not produce the expected standalone APK')
+    bundled = verify_bundle_sources(project, apk)
     output = Path(args.output).expanduser().resolve()
     output.mkdir(parents=True, exist_ok=True)
     name = f"ILBI-{config['expo']['version']}-android-{config['expo']['android']['versionCode']}.apk"
@@ -98,6 +100,7 @@ def build(args):
     with final.open('rb') as source:
         digest = hashlib.file_digest(source, 'sha256').hexdigest()
     manifest = {**inspection, 'artifact': name, 'sha256': digest, 'bytes': final.stat().st_size, 'sourceCommit': commit, 'sourceModified': bool(modified), 'architectures': args.architectures.split(','), 'standalone': True, 'designPreview': False, 'builtAt': datetime.now(timezone.utc).isoformat()}
+    manifest.update(bundled)
     (output / 'android-build-manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
     print('Standalone owner-signed APK:', final, flush=True)
     print('Mobile version/build unchanged:', inspection['version'], inspection['buildNumber'], flush=True)

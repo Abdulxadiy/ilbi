@@ -35,6 +35,10 @@ npm run verify:apk:local
 
 The first checks available dependencies, Java/SDK tools, mobile versions and the established signing identity without building. The second verifies the actual APK signature, identity, size/hash, bundled JavaScript, ABIs and runtime-source changes without reading private passwords.
 
+The builder additionally audits the generated Hermes source map against the copied application source, verifies that exact payload is inside the APK, and records source-file digests plus the bundle hash. The standalone verifier checks those records against the current source. Do not fabricate these fields for an older artifact. The 2026-10-26 first build-2 attempt had a valid native identity but stale screens and was rejected before publication.
+
+Keep `metro.config.cjs`: isolated CNG projects share dependencies, so their Router transforms and file-map caches must be isolated by project root. Expo SDK 58 disables the Gradle-requested cache reset when `CI=1`; native package metadata and a clean Git commit alone do not prove the bundled screens are current. Never clear an unrelated running emulator/app to fix bundling.
+
 If verification passes and the app runtime is unchanged, the existing APK is current. Do not claim it was newly rebuilt. Documentation and host npm helper commands do not require a new application binary. New/edited app files, assets, routes, native dependencies or relevant configuration require a new build; untracked runtime files are also detected.
 
 When a fresh APK is required:

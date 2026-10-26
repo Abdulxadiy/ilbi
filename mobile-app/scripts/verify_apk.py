@@ -14,6 +14,7 @@ from pathlib import Path
 
 from build_apk import APP, TOOLS, select_build_tools, validate_signer
 from export_downloads import inspect_apk
+from bundle_sources import verify_source_record
 
 RUNTIME_PATHS = ['src', 'assets', 'plugins', 'App.tsx', 'index.js', 'index.ts', 'app.json', 'app.config.js', 'app.config.ts',
                  'package.json', 'package-lock.json', 'babel.config.js', 'babel.config.cjs', 'metro.config.js', 'metro.config.cjs', 'tsconfig.json', 'eas.json']
@@ -74,6 +75,7 @@ def verify(apk, manifest_path, sdk, jdk, app=APP):
         architectures = {name.split('/')[1] for name in names if name.startswith('lib/') and name.endswith('.so')}
         if not architectures or architectures != set(manifest.get('architectures', [])) or 'assets/index.android.bundle' not in names:
             raise ValueError('APK native architectures or embedded JavaScript are missing/inconsistent')
+        verify_source_record(app, manifest, archive.read('assets/index.android.bundle'))
     return {'status': 'verified', 'apk': str(apk.resolve()), **inspection, 'sha256': digest, 'bytes': apk.stat().st_size,
             'architectures': sorted(architectures), 'sourceCommit': manifest['sourceCommit'], 'currentRuntimeMatches': True,
             'scope': 'artifact and source verification; native device acceptance is separate'}
