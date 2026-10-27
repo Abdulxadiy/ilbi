@@ -1,0 +1,18 @@
+{
+  "release": {
+    "applicationId": "uz.ilbi.mobile",
+    "version": "1.0.0",
+    "buildNumber": "3",
+    "signerSha256": "09fc04394dfd3d8e63abe97a0b71f066ced06a90cd7e94773705f1efae2cd756",
+    "sourceCommit": "471c8be131ad6304025bf5b8f012f04a1556d522",
+    "url": "/downloads/mobile/471c8be131ad6304025bf5b8f012f04a1556d522/ILBI-1.0.0-android-3.apk",
+    "bytes": 76190829,
+    "sha256": "5af126261d0119faf6a389502b3dc73947f286ea086a3d46b78f3fa8c93b576a",
+    "channel": "preview"
+  },
+  "serverSha256": "5af126261d0119faf6a389502b3dc73947f286ea086a3d46b78f3fa8c93b576a",
+  "desktopMetadataPreserved": true,
+  "iosMetadataPreserved": true,
+  "platformImagesUnchanged": true,
+  "backup": "/srv/ilbi/desktop/.releases-before-mobile-471c8be131ad6304025bf5b8f012f04a1556d522.json"
+}

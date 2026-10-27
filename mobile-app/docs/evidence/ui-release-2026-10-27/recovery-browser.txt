@@ -1,0 +1,10 @@
+click: Menyu
+click: Chiqish
+click: Parolni unutdingizmi?
+click: Tiklash havolasini yuborish
+click: Kodni kiritish
+click: Yangi parolni saqlash
+click: Parolni unutdingizmi?
+click: Kodni kiritish
+click: Parolni tiklashni yopish
+PASS: isolated browser login illustration, recovery sheet, synthetic link/token flow, timed dismissal and cleared secrets. No real recovery email/password request; no emulator interaction.

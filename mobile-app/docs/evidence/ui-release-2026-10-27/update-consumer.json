@@ -1,0 +1,19 @@
+{
+  "status": "verified",
+  "source": "real public HTTPS feed; current source consumer; installed identities are fixtures, no device query",
+  "offered": [
+    {
+      "installedBuild": "1",
+      "offeredBuild": "3"
+    },
+    {
+      "installedBuild": "2",
+      "offeredBuild": "3"
+    },
+    {
+      "installedBuild": "3",
+      "offeredBuild": null
+    }
+  ],
+  "desktopAndIosPreserved": true
+}

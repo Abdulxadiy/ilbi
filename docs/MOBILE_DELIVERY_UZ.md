@@ -13,7 +13,7 @@ Amaldagi GitHub production workflow Windows/Linux paketlari va web/backend/bot i
 ## Yangi APK chiqarish ketma-ketligi
 
 1. Ilova o‘zgarishlarini tekshiring, mazmunli commitlarga ajrating va push qiling.
-2. Android `versionCode`ni oldingi tarqatilgan build’dan oshiring. Oddiy yangilanish uchun mobil marketing versiyasi yoki butun platforma versiyasini oshirish shart emas. 2026-10-27 nomzodi: mobil `1.0.0`, Android build `3`; platforma `1.4.0`, iOS build `1`.
+2. Android `versionCode`ni oldingi tarqatilgan build’dan oshiring. Oddiy yangilanish uchun mobil marketing versiyasi yoki butun platforma versiyasini oshirish shart emas. 2026-10-27 nashri: mobil `1.0.0`, Android build `3`; platforma `1.4.0`, iOS build `1`. Keyingi nashrning Android build raqami 3 dan katta bo‘lishi kerak.
 3. `mobile-app/` ichida preflight, TypeScript, qat’iy lint va tegishli testlarni bajaring. `npm run build:apk:local` bilan mavjud doimiy kalitda mustaqil APK yig‘ing. `npm run verify:apk:local` bilan haqiqiy paket va uning manbasini tekshiring.
 4. `mobile-app/scripts/export_downloads.py` orqali tasdiqlangan APK’ni o‘zgarmas `/downloads/mobile/<source-commit>/...apk` yo‘liga stage qiling. Manifestdagi haqiqiy source commit’dan foydalaning; keyingi hujjat commitini binarning manbasi deb ko‘rsatmang.
 5. Oldingi rasmiy feed bilan alohida katalogda activation sinovini bajaring. Windows/Linux/iOS metama’lumotlari saqlanishini tekshiring.
@@ -24,7 +24,7 @@ Private imzolash kaliti APK bilan serverga uzatilmaydi. Android application ID v
 
 ## Eski ilovada qanday eslatma chiqadi?
 
-O‘rnatilgan APK rasmiy `https://ilbi.uz/downloads/releases.json` ro‘yxatini o‘qiydi. Android build `1` uchun shu mobil versiyadagi build `2` ham yangi yangilanish hisoblanadi.
+O‘rnatilgan APK rasmiy `https://ilbi.uz/downloads/releases.json` ro‘yxatini o‘qiydi. Android build `1` yoki `2` uchun shu mobil versiyadagi build `3` ham yangi yangilanish hisoblanadi.
 
 - Hisobga kirilgan haqiqiy Android/iOS ilovasida ishlaydi. Brauzer va Expo Go o‘rnatilgan ILBI binary’si sifatida qabul qilinmaydi.
 - Ilova faol holatga qaytganda va hisobga kirilganda ro‘yxat tekshiriladi; faol sessiyada odatda har 15 daqiqada qayta tekshiradi. “Yuklab olish → Yangilanish” ichida qo‘lda tekshirish ham bor.
@@ -35,5 +35,7 @@ O‘rnatilgan APK rasmiy `https://ilbi.uz/downloads/releases.json` ro‘yxatini 
 O‘rnatilgan APK yangi commit chiqqan zahoti o‘z kodini avtomatik almashtirmaydi. Hozir EAS Update / `expo-updates` orqali OTA tarqatish ham sozlanmagan. Metro Fast Refresh development build uchun ishlaydi; u foydalanuvchilarga APK yangilanishini tarqatish bilan bir xil jarayon emas.
 
 2026-10-26 chiqarishining aniq tekshiruvlari: [mobile UI release dalillari](../mobile-app/docs/MOBILE_UI_RELEASE_2026_10_26.md). Bunda egasining emulatori o‘zgartirilmaydi; eslatmani egasi o‘zi kuzatadi.
+
+2026-10-27 yangi kirish/parolni tiklash, bosh sahifa va savat ko‘rinishlari build 3 sifatida alohida chiqarildi: [build 3 dalillari](../mobile-app/docs/MOBILE_UI_RELEASE_2026_10_27.md). Manba `471c8be131ad6304025bf5b8f012f04a1556d522`; main birlashtirilmadi, platforma image’lari va emulator o‘zgartirilmadi. Mobil CI o‘tdi, avvalgi dependency xavfsizlik auditi esa hali ochiq.
 
 Rasmiy ma’lumot: [Android versiyalash](https://developer.android.com/studio/publish/versioning), [Expo SDK 58 versionCode](https://docs.expo.dev/versions/v58.0.0/config/app/#versioncode).

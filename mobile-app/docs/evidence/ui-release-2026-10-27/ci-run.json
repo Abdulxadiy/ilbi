@@ -1,0 +1,58 @@
+{
+  "url": "https://github.com/Abdulxadiy/ilbi/actions/runs/40450786683",
+  "headSha": "471c8be131ad6304025bf5b8f012f04a1556d522",
+  "status": "completed",
+  "conclusion": "failure",
+  "jobs": [
+    {
+      "name": "production-edge",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "mobile",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "bot",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "automation",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "frontend",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "dependency-security",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "backend",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "mobile-dependency-security",
+      "status": "completed",
+      "conclusion": "failure"
+    },
+    {
+      "name": "desktop-linux",
+      "status": "completed",
+      "conclusion": "skipped"
+    },
+    {
+      "name": "desktop",
+      "status": "completed",
+      "conclusion": "skipped"
+    }
+  ]
+}
