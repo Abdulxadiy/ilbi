@@ -1,0 +1,11 @@
+Source: 9a025e0c5a475a8b9d667b7a768b6d457fe1852a
+Normalized candidate: /mnt/storage/.cache/ilbi-mobile-backend-candidate/final-9a025e0c
+
+Full local run stopped at the first Docker-dependent fixture because no local Docker daemon is running. This is not claimed as a full local pass.
+1082 passed, 16 warnings, 1 error in 57.42s
+
+The remaining 39 non-Docker cases were selected from the actual final collection order and executed without suppressing any application failure:
+.......................................                                  [100%]
+39 passed, 8 warnings in 0.73s
+
+All 1126 source-backend cases, including the five Docker cases, passed on the exact-source GitHub backend job; see backend-ci.json.

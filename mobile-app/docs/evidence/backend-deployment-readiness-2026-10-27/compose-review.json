@@ -1,0 +1,10 @@
+{
+  "compose_version": "5.6.0",
+  "merged_configuration_valid": true,
+  "sender_disabled": true,
+  "web_worker_readonly_secret_mount": true,
+  "existing_media_volumes_preserved": true,
+  "beat_has_no_private_key_mount": true,
+  "configuration_values": "synthetic review inputs only; no server configuration printed",
+  "containers_started": false
+}

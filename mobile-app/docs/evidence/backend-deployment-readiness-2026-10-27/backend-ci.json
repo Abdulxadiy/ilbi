@@ -1,0 +1,12 @@
+{
+  "source_commit": "9a025e0c5a475a8b9d667b7a768b6d457fe1852a",
+  "backend_job_url": "https://github.com/Abdulxadiy/ilbi/actions/runs/40485416751/job/122125862461",
+  "backend_job_conclusion": "success",
+  "frozen_dependency_sync": "success",
+  "strict_schema_validation": "success",
+  "pytest_summary": [
+    "1126 passed, 16 warnings in 119.40s (0:01:59)"
+  ],
+  "scope": "Actual full source-backend CI suite with isolated PostgreSQL/Redis services and Docker integration tests. Local normalized worktree is separately verified; do not call the whole workflow successful.",
+  "whole_workflow_conclusion": "failure"
+}

@@ -1,0 +1,11 @@
+test_candidate_uses_committed_backend_and_preserves_original_web_without_private_inputs (test_mobile_backend_candidate.MobileBackendCandidateTests.test_candidate_uses_committed_backend_and_preserves_original_web_without_private_inputs) ... Preparing worktree (detached HEAD a66f195)
+HEAD is now at a66f195 fixture
+ok
+test_changed_dependency_boundary_fails_before_creating_a_worktree (test_mobile_backend_candidate.MobileBackendCandidateTests.test_changed_dependency_boundary_fails_before_creating_a_worktree) ... ok
+test_deletions_are_not_silently_treated_as_additive_changes (test_mobile_backend_candidate.MobileBackendCandidateTests.test_deletions_are_not_silently_treated_as_additive_changes) ... ok
+test_existing_destination_is_preserved (test_mobile_backend_candidate.MobileBackendCandidateTests.test_existing_destination_is_preserved) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.185s
+
+OK
