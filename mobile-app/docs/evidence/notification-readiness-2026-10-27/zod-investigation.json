@@ -1,0 +1,99 @@
+{
+  "date": "2026-10-27",
+  "scope": "Read-only package/source inspection and bounded tiny reproduction; documentation/evidence writes only. No package, lockfile, node_modules, APK source, runtime or server changes.",
+  "installed": {
+    "expo": "58.0.19",
+    "expo_cli": "58.1.15",
+    "cli_zod_range": "^3.25.76",
+    "zod": "3.25.76",
+    "root_entry": "zod/index.cjs -> v3/external.cjs -> v3/types.cjs"
+  },
+  "npm_metadata_observed": {
+    "commands": [
+      "npm view 'zod@^3.25.76' version --json",
+      "npm view @expo/cli version dependencies.zod --json",
+      "npm view expo version dependencies.@expo/cli --json",
+      "npm view zod version dist-tags --json"
+    ],
+    "latest_compatible_zod3": "3.25.76",
+    "latest_zod": "4.6.7",
+    "latest_expo": "58.0.19",
+    "latest_expo_cli": "58.1.15",
+    "latest_cli_zod_range": "^3.25.76"
+  },
+  "reproduction": {
+    "method": "safeParse / safeParseAsync on installed Zod3; exactly1000items each; no memory exhaustion attempted",
+    "results": [
+      {
+        "name": "array_max",
+        "input_count": 1000,
+        "upper_bound": 2,
+        "success": false,
+        "issue_count": 1001,
+        "first_issue": "too_big"
+      },
+      {
+        "name": "array_length",
+        "input_count": 1000,
+        "upper_bound": 2,
+        "success": false,
+        "issue_count": 1001,
+        "first_issue": "too_big"
+      },
+      {
+        "name": "set_max",
+        "input_count": 1000,
+        "upper_bound": 2,
+        "success": false,
+        "issue_count": 1001,
+        "first_issue": "too_big"
+      },
+      {
+        "name": "array_max_async",
+        "input_count": 1000,
+        "upper_bound": 2,
+        "success": false,
+        "issue_count": 1001,
+        "first_issue": "too_big"
+      }
+    ]
+  },
+  "direct_cli_consumers": {
+    "files": [
+      "src/start/server/DevToolsPlugin.schema.js",
+      "src/start/server/createMCPDevToolsExtensionSchema.js"
+    ],
+    "descriptor_input": "Autolinked installed local devtools packages via DevToolsPluginManager",
+    "output_input": "CLI extension child-process results / MCP extension output",
+    "schema_bounds": "Descriptor/output arrays are unconstrained above (no .max/.length upper bound); MCP arguments are primitive/enum fields.",
+    "finding": "Bounded collection backport alone does not bound these actual CLI inputs; no public ILBI production API path or mobile runtime import established."
+  },
+  "audit": {
+    "command": "npm audit --json",
+    "exit_code": 1,
+    "counts": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 3,
+      "critical": 0,
+      "total": 3
+    },
+    "underlying_advisories": [
+      "https://github.com/advisories/GHSA-mrhx-c7xc-m3w5"
+    ],
+    "affected_packages": [
+      "@expo/cli",
+      "expo",
+      "zod"
+    ]
+  },
+  "primary_sources": [
+    "https://github.com/advisories/GHSA-mrhx-c7xc-m3w5",
+    "https://github.com/colinhacks/zod/pull/6652",
+    "https://github.com/colinhacks/zod/issues/6653",
+    "https://github.com/dokson/zod/commit/9f5b6c52",
+    "https://github.com/expo/expo/blob/main/packages/@expo/cli/package.json"
+  ],
+  "resolution": "No compatible upstream Zod3/Expo58 fix found. Contributor V3 backport was inspected, not applied/tested as a complete vendor fix; unfiltered audit remains active. Do not force-major override or relabel versions."
+}
