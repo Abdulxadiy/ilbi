@@ -1,11 +1,13 @@
 import React from 'react';
-import { fireEvent, render } from '@testing-library/react-native';
+import { fireEvent, render, waitFor } from '@testing-library/react-native';
 import { SupportScreen } from '../src/features/support/SupportScreen';
 import { ThemeProvider } from '../src/theme/ThemeContext';
 import { request } from '../src/api/client';
 import wire from './contracts/support.json';
 let mockUser: any = { id: 1, username: 'mobile-test', first_name: 'Test', last_name: 'User', role: 'owner' };
 let mockTenant: any = { id: 2 };
+let mockParams: { conversationId?: string } = {};
+jest.mock('expo-router', () => ({ useLocalSearchParams: () => mockParams, router: { push: jest.fn() } }));
 jest.mock('../src/api/client', () => ({ request: jest.fn(), captureAuthScope: () => ({}), assertAuthScope: jest.fn() }));
 jest.mock('../src/api/storage', () => ({ secureStorage: { getItem: async () => null, setItem: async () => {} } }));
 jest.mock('../src/features/auth/AuthContext', () => ({ useAuth: () => ({ user: mockUser, activeTenant: mockTenant, isLoading: false }) }));
@@ -28,7 +30,25 @@ function api(path: string, options: any = {}) {
 }
 const show = () => render(<ThemeProvider><SupportScreen tabbed /></ThemeProvider>);
 describe('Dedicated support page', () => {
-  beforeEach(() => { jest.clearAllMocks(); current = { ...conversation }; mockUser = { id: 1, username: 'mobile-test', first_name: 'Test', last_name: 'User', role: 'owner' }; mockTenant = { id: 2 }; jest.mocked(request).mockImplementation(api); });
+  beforeEach(() => { jest.clearAllMocks(); mockParams = {}; current = { ...conversation }; mockUser = { id: 1, username: 'mobile-test', first_name: 'Test', last_name: 'User', role: 'owner' }; mockTenant = { id: 2 }; jest.mocked(request).mockImplementation(api); });
+  test('valid notification parameter opens the authenticated thread; changed parameter cannot show an old thread', async () => {
+    mockParams = { conversationId: conversation.id };
+    const screen = await show();
+    expect(await screen.findByText('Synthetic operator answer')).toBeTruthy();
+    expect(jest.mocked(request).mock.calls.some(([path]) => path === '/support/conversations/' + conversation.id + '/')).toBe(true);
+    const foreign = '00000000-0000-4000-8000-000000000099';
+    jest.mocked(request).mockImplementation((path, options) => path.includes(foreign) ? Promise.reject(Object.assign(Error('Not found'), { status: 404 })) : api(path, options));
+    mockParams = { conversationId: foreign }; await screen.rerender(<ThemeProvider><SupportScreen tabbed /></ThemeProvider>);
+    await waitFor(() => expect(jest.mocked(request).mock.calls.some(([path]) => path.includes(foreign))).toBe(true));
+    expect(screen.queryByText('Synthetic operator answer')).toBeNull();
+    expect(screen.queryByLabelText('Yordamga xabar')).toBeNull();
+    await screen.findAllByText('Not found');
+  });
+  test('malformed conversation parameter cannot become a request path', async () => {
+    mockParams = { conversationId: '../platform/private' };
+    const screen = await show(); await screen.findByLabelText(conversation.subject + ': yozishmalarni ochish');
+    expect(jest.mocked(request).mock.calls.some(([path]) => path.includes('platform/private'))).toBe(false);
+  });
   test('opens an owned real-DTO conversation and sends one identified text message', async () => {
     const screen = await show();
     await fireEvent.press(await screen.findByLabelText(conversation.subject + ': yozishmalarni ochish'));
@@ -98,11 +118,12 @@ describe('Dedicated support page', () => {
     expect(jest.mocked(request).mock.calls.some(([path]) => path.startsWith('/support/inbox/'))).toBe(true);
   });
   test('logged-out help uses a protected guest key without a store context', async () => {
-    mockUser = null; mockTenant = null;
+    mockUser = null; mockTenant = null; mockParams = { conversationId: conversation.id };
     const screen = await show(); await screen.findByText(conversation.subject);
     const guestCall = jest.mocked(request).mock.calls.find(([path]) => path.startsWith('/support/guest/'));
     expect(guestCall?.[1]?.skipTenant).toBe(true);
     expect(new Headers(guestCall?.[1]?.headers).get('X-Support-Token')).toMatch(/^[a-f\d]{64}$/);
     expect(new Headers(guestCall?.[1]?.headers).get('X-Tenant-ID')).toBeNull();
+    expect(jest.mocked(request).mock.calls.some(([path]) => path.includes(conversation.id))).toBe(false);
   });
 });

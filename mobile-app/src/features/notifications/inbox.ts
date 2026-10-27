@@ -21,6 +21,8 @@ export const mergeInbox = (previous: InboxNotification[], next: InboxNotificatio
 
 /** Only known internal destinations. Never open a notification's arbitrary URL. */
 export function notificationDestination(row: InboxNotification): { module: string; label: string; params?: any } | null {
+  const support = row.link.match(/^\/support\?conversation=([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})$/i);
+  if (row.type === 'support_message') return support ? { module: 'Support', label: 'Yordam suhbatini ochish', params: { conversationId: support[1].toLowerCase() } } : null;
   if (row.type === 'daily_z_report') return { module: 'Reports', label: 'Hisobotlarni ochish' };
   if (row.type === 'low_stock_alert') return { module: 'Inventory', label: 'Omborni ochish' };
   if (['debt_due_reminder', 'debt_threshold_warning'].includes(row.type)) return { module: 'Qarz', label: 'Qarzlarni ochish' };
@@ -35,6 +37,8 @@ export function notificationDestination(row: InboxNotification): { module: strin
 }
 
 export function notificationCategory(type: string) {
+  if (type === 'support_message') return 'Yordam';
+  if (['workspace_assigned', 'workspace_due'].includes(type)) return 'Eslatma';
   if (type.startsWith('b2b_transfer_')) return 'B2B';
   if (type.startsWith('debt_')) return 'Qarz';
   if (type === 'daily_z_report') return 'Z-hisobot';

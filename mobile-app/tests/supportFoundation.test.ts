@@ -29,6 +29,21 @@ describe('Private support identity and serial polling', () => {
     expect(path).toBe('/support/conversations/'); expect(options?.skipTenant).toBe(true);
     expect(new Headers(options?.headers).get('X-Support-Token')).toBeNull(); expect(assertAuthScope).toHaveBeenCalled();
   });
+  test('only authenticated visitor writes carry the explicitly selected store', async () => {
+    jest.mocked(request).mockResolvedValue({});
+    await createSupportSession({ userId: 8, tenantId: 2 }).call('thread/messages/', { method: 'POST', body: {} });
+    expect(new Headers(jest.mocked(request).mock.calls[0][1]?.headers).get('X-Tenant-ID')).toBe('2');
+    await createSupportSession({ userId: 9, operator: true, tenantId: 2 }).call('thread/messages/', { method: 'POST', body: {} });
+    expect(new Headers(jest.mocked(request).mock.calls[1][1]?.headers).get('X-Tenant-ID')).toBeNull();
+    await createSupportSession({ userId: 8, tenantId: 2 }).call('thread/');
+    expect(new Headers(jest.mocked(request).mock.calls[2][1]?.headers).get('X-Tenant-ID')).toBeNull();
+  });
+  test('a stale support session cannot send a write after account/store epoch changes', async () => {
+    const session = createSupportSession({ userId: 8, tenantId: 2 });
+    jest.mocked(assertAuthScope).mockImplementationOnce(() => { throw Error('Session changed'); });
+    await expect(session.call('thread/messages/', { method: 'POST', body: {} })).rejects.toThrow('Session changed');
+    expect(request).not.toHaveBeenCalled();
+  });
   test('guest credentials stay in headers and never enter a route or visible scope key', async () => {
     const token = 'b'.repeat(64), session = createSupportSession({ userId: null, guest: { origin: getServerScope(), id: '00000000-0000-4000-8000-000000000002', token } });
     await session.call('?page=1');

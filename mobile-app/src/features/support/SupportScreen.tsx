@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { BackHandler, Keyboard, FlatList, Text, TouchableOpacity, View } from 'react-native';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import * as Crypto from 'expo-crypto';
 import * as Linking from 'expo-linking';
 import { getServerScope } from '../../api/environment';
@@ -16,7 +16,7 @@ import { usePagedResource } from '../../hooks/usePagedResource';
 import { useAppNavigation } from '../../navigation/useAppNavigation';
 import { useTheme } from '../../theme/ThemeContext';
 import { useAuth } from '../auth/AuthContext';
-import { Conversation, parseConversation, parseMessage, SupportLanguage, SupportMessage } from './model';
+import { Conversation, parseConversation, parseMessage, SupportLanguage, SupportMessage, isUuid } from './model';
 import { createSupportSession, GuestIdentity, loadGuestIdentity, SupportSession } from './session';
 import { uncertainSupportWrite, useSupportActivity, useSupportFeed, useSupportWrite } from './useSupport';
 import { formError, fieldErrors } from '../../api/validation';
@@ -119,7 +119,13 @@ function ConversationThread({ session, id, active, onBack, tabbed }: { session: 
 }
 function SupportBody({ session, tabbed, onBack }: { session: SupportSession; tabbed: boolean; onBack: () => void }) {
   const active = useSupportActivity(), { colors } = useTheme();
-  const [selected, setSelected] = useState<string | null>(null), [creating, setCreating] = useState(false), [contactError, setContactError] = useState('');
+  const params = useLocalSearchParams<{ conversationId?: string }>();
+  const requested = session.userId && typeof params.conversationId === 'string' && isUuid(params.conversationId) ? params.conversationId.toLowerCase() : null;
+  const [selection, setSelection] = useState<{ requested: string | null; id: string | null }>({ requested, id: requested }), [creating, setCreating] = useState(false), [contactError, setContactError] = useState('');
+  // A new route parameter supersedes the previous thread immediately. The
+  // authenticated detail endpoint decides access; no cached ticket fallback.
+  const selected = selection.requested === requested ? selection.id : requested;
+  const setSelected = useCallback((id: string | null) => setSelection({ requested, id }), [requested]);
   const conversations = usePagedResource(!selected && active ? session.root : null, parseConversation, session.options);
   const metadata = useApiResource<any>(active ? '/support/metadata/' : null, undefined, useMemo(() => ({ skipTenant: true }), []));
   useEffect(() => {
@@ -127,7 +133,7 @@ function SupportBody({ session, tabbed, onBack }: { session: SupportSession; tab
     const timer = setTimeout(() => { void conversations.reload(); }, Math.max(15000, conversations.error?.retryAfterMs || 0));
     return () => clearTimeout(timer);
   }, [active, selected, conversations]);
-  useEffect(() => { if (!selected || !active) return; const listener = BackHandler.addEventListener('hardwareBackPress', () => { setSelected(null); return true; }); return () => listener.remove(); }, [selected, active]);
+  useEffect(() => { if (!selected || !active) return; const listener = BackHandler.addEventListener('hardwareBackPress', () => { setSelected(null); return true; }); return () => listener.remove(); }, [selected, active, setSelected]);
   const openContact = async (uri: string) => { try { await Linking.openURL(uri); } catch { setContactError('Aloqa ilovasi ochilmadi.'); } };
   return <>
     {selected ? <ConversationThread key={selected} session={session} id={selected} active={active} onBack={() => setSelected(null)} tabbed={tabbed} /> : <Page title="Qo‘llab-quvvatlash" onBack={onBack} insetBottom={!tabbed} scroll={false}>

@@ -24,6 +24,7 @@ from api.permissions import IsPlatformAdmin
 from apps.accounts.services.tenant_context_service import resolve_active_context
 from apps.support.models import Conversation, Message
 from apps.support.tasks import enqueue_notification
+from apps.support.notifications import notify_support_message, mark_support_read, suppress_unassigned_operator_alerts
 
 from .serializers import (
     ConversationPageSerializer,
@@ -175,6 +176,11 @@ class ConversationsView(SupportView):
         data = StartSerializer(data=request.data)
         data.is_valid(raise_exception=True)
         values = data.validated_data
+        if request.user.is_authenticated:
+            # Serialize concurrent copies of the authenticated start request.
+            # No-key locking still permits normal FK references to this user.
+            from apps.accounts.models import User
+            User.objects.select_for_update(no_key=True).get(pk=request.user.pk)
         existing = accessible(request).filter(messages__client_id=values["client_id"]).first()
         if existing:
             return Response(ConversationSerializer(existing).data)
@@ -191,7 +197,7 @@ class ConversationsView(SupportView):
             subject=values["subject"],
             language=values["language"],
         )
-        Message.objects.create(
+        message = Message.objects.create(
             conversation=conversation,
             sender="visitor",
             author=request.user if request.user.is_authenticated else None,
@@ -204,6 +210,7 @@ class ConversationsView(SupportView):
             voice_duration=values.get("voice_duration", 0),
             sticker=values.get("sticker", ""),
         )
+        notify_support_message(message)
         transaction.on_commit(lambda: enqueue_notification(conversation.pk))
         return Response(ConversationSerializer(conversation).data, status=201)
 
@@ -268,6 +275,8 @@ class ConversationView(SupportView):
             key = "operator_read_id" if self.inbox else "visitor_read_id"
             setattr(conversation, key, max(getattr(conversation, key), min(through, latest)))
             conversation.save(update_fields=[key])
+            if through >= latest:
+                mark_support_read(conversation, request.user if request.user.is_authenticated else None)
             return Response({"ok": True})
         if action == "claim" and self.inbox:
             if conversation.status == "closed":
@@ -291,6 +300,8 @@ class ConversationView(SupportView):
         else:
             raise ValidationError("Unknown action or invalid conversation state.")
         conversation.save(update_fields=["operator", "status", "updated_at"])
+        if action in {'claim', 'close'}:
+            suppress_unassigned_operator_alerts(conversation)
         Message.objects.create(
             conversation=conversation,
             sender="system",
@@ -358,6 +369,12 @@ class MessagesView(ConversationView):
         if self.inbox and (conversation.operator_id != request.user.pk or conversation.status != "active"):
             return Response({"detail": "Accept the conversation before replying."}, status=409)
 
+        # Legacy personal threads remain private; bind only an explicitly
+        # selected, authenticated visitor store, never an operator's guess.
+        if not self.inbox and request.user.is_authenticated and conversation.tenant_id is None and request.headers.get('X-Tenant-ID'):
+            conversation.tenant = resolve_active_context(request.user, request.headers.get('X-Tenant-ID')).tenant
+            conversation.save(update_fields=['tenant'])
+
         reply_to = None
         reply_to_id = data.get("reply_to_id")
         if reply_to_id:
@@ -385,6 +402,7 @@ class MessagesView(ConversationView):
         previous_update = conversation.updated_at
         conversation.updated_at = timezone.now()
         conversation.save(update_fields=["updated_at"])
+        notify_support_message(message)
         if not self.inbox and (
             conversation.status == "waiting" or (conversation.updated_at - previous_update).total_seconds() > 60
         ):

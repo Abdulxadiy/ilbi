@@ -13,6 +13,9 @@ class Notification(BaseModel):
     TYPE_DEBT_DUE = 'debt_due_reminder'
     TYPE_DAILY_Z_REPORT = 'daily_z_report'
     TYPE_LOW_STOCK_ALERT = 'low_stock_alert'
+    TYPE_SUPPORT_MESSAGE = 'support_message'
+    TYPE_WORKSPACE_ASSIGNED = 'workspace_assigned'
+    TYPE_WORKSPACE_DUE = 'workspace_due'
 
     TYPE_CHOICES = [
         (TYPE_B2B_REQUEST, 'B2B O\'tkazma so\'rovi'),
@@ -24,6 +27,9 @@ class Notification(BaseModel):
         (TYPE_DEBT_DUE, 'Qarzni qaytarish sanasi'),
         (TYPE_DAILY_Z_REPORT, 'Kunlik Z-Hisobot'),
         (TYPE_LOW_STOCK_ALERT, 'Kamayib qolgan tovarlar ogohlantirishi'),
+        (TYPE_SUPPORT_MESSAGE, 'Yordam markazida yangi xabar'),
+        (TYPE_WORKSPACE_ASSIGNED, 'Eslatma biriktirildi'),
+        (TYPE_WORKSPACE_DUE, 'Eslatma vaqti keldi'),
     ]
 
     recipient = models.ForeignKey(

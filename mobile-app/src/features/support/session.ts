@@ -29,11 +29,14 @@ export function createSupportSession({ userId, tenantId = null, guest, operator 
   if (!userId && guest?.origin !== origin) throw new ApiError('Mehmon seansi boshqa serverga tegishli.', 0, null, 0, 'SESSION_CHANGED');
   const root = '/support/' + (userId ? operator ? 'inbox' : 'conversations' : 'guest') + '/';
   const options = { expectedServerScope: origin, skipTenant: true as const, headers: guest && !userId ? { 'X-Support-Token': guest.token } : {} as Record<string, string> };
+  const sessionScope = captureAuthScope();
   return { key: [origin, userId || 'guest:' + guest!.id, tenantId, operator].join('|'), root, userId, tenantId, operator, options,
     async call<T>(path = '', extra: RequestOptions = {}) {
       if (getServerScope() !== origin) throw new ApiError('Yordam serveri o‘zgargan.', 0, null, 0, 'SESSION_CHANGED');
+      assertAuthScope(sessionScope);
       const scope = captureAuthScope();
       const headers = new Headers(options.headers); new Headers(extra.headers).forEach((value, key) => headers.set(key, value));
+      if (userId && !operator && Number.isSafeInteger(tenantId) && tenantId! > 0 && extra.method === 'POST') headers.set('X-Tenant-ID', String(tenantId));
       const result = await request<T>(root + path, { ...extra, expectedServerScope: origin, skipTenant: true, headers }); assertAuthScope(scope); return result;
     },
   };

@@ -15,6 +15,7 @@ from apps.accounts.services.permission_service import PermissionService
 from apps.catalog.models import ProductVariant
 from apps.core import event_clock as timezone
 from apps.core.models import WorkspaceReminder
+from apps.core.services.workspace_notifications import notify_assignment, mark_reminder_notifications_read
 from apps.sales.models import Counterparty, Sale
 
 
@@ -123,6 +124,7 @@ class ReminderListView(WorkspaceView):
             completed_at=timezone.now() if completed else None,
             **data,
         )
+        notify_assignment(reminder, request.user)
         return Response(ReminderOutputSerializer(reminder).data, status=201)
 
 
@@ -130,10 +132,11 @@ class ReminderDetailView(WorkspaceView):
     @extend_schema(request=ReminderInputSerializer, responses=ReminderOutputSerializer)
     @transaction.atomic
     def patch(self, request, pk):
-        reminder = get_object_or_404(self.reminders().select_for_update(), pk=pk)
+        reminder = get_object_or_404(self.reminders().select_for_update(of=('self',)), pk=pk)
         serializer = ReminderInputSerializer(data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         data = dict(serializer.validated_data)
+        previous_assignee, previous_due, was_completed = reminder.assigned_to_id, reminder.due_at, reminder.completed_at is not None
         if "assigned_to_id" in data:
             reminder.assigned_to_id = reminder_assignee(self, data)
         if "completed" in data:
@@ -141,12 +144,23 @@ class ReminderDetailView(WorkspaceView):
         for field in ("title", "due_at"):
             if field in data:
                 setattr(reminder, field, data[field])
+        changed_assignment = previous_assignee != reminder.assigned_to_id
+        if changed_assignment or previous_due != reminder.due_at or (was_completed and reminder.completed_at is None):
+            mark_reminder_notifications_read(reminder)
+            reminder.due_notified_at = None
+        if reminder.completed_at is not None:
+            mark_reminder_notifications_read(reminder)
         reminder.save()
+        if changed_assignment:
+            notify_assignment(reminder, request.user)
         return Response(ReminderOutputSerializer(reminder).data)
 
     @extend_schema(responses={204: None})
     def delete(self, request, pk):
-        get_object_or_404(self.reminders(), pk=pk).delete()
+        with transaction.atomic():
+            reminder = get_object_or_404(self.reminders().select_for_update(of=('self',)), pk=pk)
+            mark_reminder_notifications_read(reminder)
+            reminder.delete()
         return Response(status=204)
 
 
