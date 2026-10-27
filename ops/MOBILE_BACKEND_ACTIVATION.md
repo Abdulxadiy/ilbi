@@ -45,3 +45,23 @@ Activation holds the existing `.operations.lock`, repeats drift checks, stops cu
 On failure, the helper stops only its own migration container and known writer services, restores the previous loaded backend image reference, and restores prior running states. **It retains additive schema/migration records and all backups.** It never restores a database backup over newer business transactions or reverses/drops receipt tables. If rollback cannot complete, it stops with a controlled message requiring operator attention; inspect private logs and actual container state before further actions.
 
 Root deployment work still owns public HTTP/API readiness checks, Nginx configuration checks, private FCM activation and delivery acceptance, and APK publication. Local safety tests use synthetic files and a Docker model; they do not constitute a live deployment or actual native/push acceptance.
+
+## Repeatable file-only CI image verification
+
+Use `verify_mobile_backend_artifact.py` with the exact archive and metadata JSON downloaded from the successful, reviewed CI run. The metadata file is a trusted CI handoff; obtaining/authenticating that artifact and verifying any outer GitHub ZIP remain the operator's responsibility. Supply expected candidate/source/reference from the reviewed release, rather than reading them back from an untrusted file to satisfy the command.
+
+```bash
+python3 ops/verify_mobile_backend_artifact.py \
+  --archive /absolute/staging/mobile-backend-image.tar.gz \
+  --metadata /absolute/staging/mobile-backend-image.json \
+  --expected-candidate-commit '<full-reviewed-candidate-commit>' \
+  --expected-backend-source '<full-reviewed-backend-source-commit>' \
+  --expected-image-reference 'ghcr.io/owner/ilbi/backend:sha-<full-reviewed-candidate-commit>' \
+  --output /absolute/private/new-verified-identity.json
+```
+
+The verifier requires the current Docker export layout: one exactly tagged OCI manifest plus matching Docker compatibility metadata, linux/amd64, UID 1000, and raw uncompressed tar layers. It checks archive name/size/SHA against CI metadata; hashes every content-addressed blob; checks index→manifest→config, OCI revision/source, descriptor sizes, ordered layer hashes against config diff IDs, and Docker tag/final-layer mappings. JSON, member counts and total content sizes are bounded. Unsupported paths, extended headers, links, compressed-layer variants, ambiguous manifests and unexplained identity mismatches fail closed. It streams image bytes without extracting or loading them and outputs only selected identity data, never full Config/Env or credentials. `--output` creates a new owner-only file and refuses to overwrite an existing identity record.
+
+The result separates `portable_config_digest`/`classic_expected_image_id` from `containerd_expected_image_id` (the verified exported OCI manifest). It records the published registry digest separately because re-exported manifest bytes can have a different digest. The verifier does not treat these digests as interchangeable and does not accept an arbitrary host ID.
+
+Before live activation, separately compare the loaded host image's full Config and ordered RootFS diff IDs with the verified archive, including the engine's descriptor semantics. That operator check remains mandatory: a successful file-only result reports `loaded_host_verified:false`, `archive_extracted:false` and `server_modified:false`. Pass only the one archive-derived engine ID applicable to that verified host into the activation helper.
