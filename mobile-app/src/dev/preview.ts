@@ -1,5 +1,6 @@
 import { createPreviewCore } from './previewCore';
 import { createPreviewB2B } from './previewB2B';
+import { createPreviewStoreSettings } from './previewStoreSettings';
 import { createPreviewSupport } from './previewSupport';
 import { createPreviewNotifications, previewNotificationSettings } from './previewNotifications';
 /** Explicit, development-only design data. Never a fallback for a failed API call. */
@@ -26,6 +27,7 @@ const products: PreviewVariant[] = [
 }));
 const supportRequest = createPreviewSupport();
 const notificationRequest = createPreviewNotifications();
+const storePreview = createPreviewStoreSettings(previewUser.tenants[0].id, previewUser.tenants[0].name, previewNotificationSettings);
 const catalogRequest = createPreviewCatalog(products, categories);
 const customers = [
   { id: 1, name: 'Ali Valiyev', phone_number: '', debt_amount: 230000, sales_count: 1 },
@@ -41,7 +43,7 @@ function makeSale(payload: any, id: number) {
     return { ...line, id: id * 1000 + index + 1, product_variant: Number(line.product_variant_id), product_name: product?.product_name || 'Demo tovar', product_variant_name: product?.name || 'Standart', voided_quantity: '0.000', status: 'active', unit: product?.unit || 'dona', total_price: Number(line.quantity) * Number(line.unit_price) };
   });
   const total = items.reduce((sum: number, line: any) => sum + line.total_price, 0);
-  return { id, receipt_number: 'DEMO-' + id, currency: 'UZS', status: 'completed', b2b_target_tenant: null, items, total_amount: total, refunded_amount: '0.00', net_amount: total,
+  return { id, receipt_number: 'DEMO-' + id, receipt_snapshot: storePreview.receiptSnapshot(), currency: 'UZS', status: 'completed', b2b_target_tenant: null, items, total_amount: total, refunded_amount: '0.00', net_amount: total,
     counterparty: payload.counterparty_id || 1, counterparty_name: 'Ali Valiyev', payment_type: payload.payment_type || 'cash', created_at: new Date().toISOString(), _preview: true };
 }
 sales.set(1043, makeSale({}, 1043));
@@ -53,6 +55,8 @@ export async function previewRequest(endpoint: string, options: { method?: strin
   const url = new URL(endpoint, 'http://design.invalid'), path = url.pathname;
   const method = (options.method || 'GET').toUpperCase();
   const body = typeof options.body === 'string' ? JSON.parse(options.body) : options.body || {};
+  const storeResult = storePreview.request(url, method, body, options.headers);
+  if (storeResult.handled) return storeResult.data;
   const b2bResult = b2bRequest(url, method, body);
   if (b2bResult.handled) return b2bResult.data;
   const coreResult = coreRequest(url, method, body);
@@ -64,7 +68,6 @@ export async function previewRequest(endpoint: string, options: { method?: strin
   const catalogResult = catalogRequest(url, method, body);
   if (catalogResult.handled) return catalogResult.data;
   if (method === 'GET') {
-    if (path === '/tenants/current/') return { id: previewUser.tenants[0].id, name: 'Demo do‘kon', usd_rate: '12000.00', ...previewNotificationSettings, receipt_settings: { is_vat_payer: false, vat_rate: '12.00', price_includes_vat: true } };
     if (path === '/auth/me/') return previewUser;
     if (path === '/tenants/my/') return previewUser.tenants;
     if (path === '/analytics/dashboard/') return { today_sales_sum: 2450000, sales_count: 24, debt_sum: 860000 };

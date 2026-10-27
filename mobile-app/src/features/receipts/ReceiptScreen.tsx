@@ -18,6 +18,7 @@ import { useTheme } from '../../theme/ThemeContext';
 import { radius, spacing, typography } from '../../theme/tokens';
 import { request } from '../../api/client';
 import * as Clipboard from 'expo-clipboard';
+import { escapeReceiptHtml, receiptMoney, receiptView } from './receiptModel';
 
 export const ReceiptScreen: React.FC = () => {
   const params = useLocalSearchParams<{ saleId?: string; mode?: string }>();
@@ -52,16 +53,14 @@ const ReceiptBody: React.FC<{ params: { saleId?: string; mode?: string } }> = ({
     return () => abort.abort();
   }, [params.saleId, validId, saleRecord, attempt]);
   const sale = saleRecord || { items: [], total_amount: 0 };
-  const receiptItems: { productName: string; quantity: number; unitPrice: number }[] = (sale.items || []).map((item: any) => ({
-    productName: item.product_name || '', quantity: Number(item.quantity), unitPrice: Number(item.unit_price),
-  }));
+  const savedReceipt = receiptView(sale), receiptItems = savedReceipt.items;
   const currencyLabel = sale.currency === 'USD' ? 'USD' : sale.currency === 'UZS' || !sale.currency ? 'so‘m' : String(sale.currency);
   const statusLabel = ({ completed: 'Yakunlangan', voided: 'Bekor qilingan', partially_voided: 'Qisman qaytarilgan', b2b_pending: 'B2B: qabul kutilmoqda', b2b_rejected: 'B2B: rad etilgan', b2b_accepted: 'B2B: qabul qilingan', b2b_partially_accepted: 'B2B: qisman qabul qilingan', b2b_cancelled: 'B2B: bekor qilingan', b2b_return_pending: 'B2B: qaytarish kutilmoqda' } as Record<string, string>)[sale.status] || sale.status || '';
   const paymentLabel = ({ cash: 'Naqd', card: 'Karta', debt: 'Nasiya' } as Record<string, string>)[sale.payment_type] || 'To‘lov';
   const paymentAmount = sale.payment_type === 'cash' ? sale.cash_received : sale.total_amount;
   const publicToken = typeof sale.public_token === 'string' && /^[A-Za-z0-9_-]{40,64}$/.test(sale.public_token) ? sale.public_token : null;
   const receiptUrl = publicToken && !sale._preview ? 'https://ilbi.uz/r/' + publicToken : null;
-  const escapeHtml = (value: unknown) => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]!));
+  const escapeHtml = escapeReceiptHtml;
 
   const [showShareModal, setShowShareModal] = useState(params.mode === 'ShareSheet' || params.mode === 'PdfExport');
   const [pdfReady, setPdfReady] = useState(false);
@@ -69,12 +68,16 @@ const ReceiptBody: React.FC<{ params: { saleId?: string; mode?: string } }> = ({
   const [pdfUri, setPdfUri] = useState<string | null>(null);
 
   const generateHtml = () => `
-    <html>
+    <!DOCTYPE html><html lang="uz">
       <head>
+        <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
         <style>
-          body { font-family: monospace; padding: 20px; font-size: 13px; max-width: 320px; margin: auto; }
+          @page { size: ${savedReceipt.paperWidth} auto; margin: 2mm; }
+          * { box-sizing: border-box; overflow-wrap: anywhere; }
+          body { font-family: monospace; padding: 0; font-size: 10px; width: 100%; margin: 0; }
           .center { text-align: center; }
+          .saved-text { white-space: pre-wrap; }
           .bold { font-weight: bold; }
           .row { display: flex; justify-content: space-between; margin: 4px 0; }
           .divider { border-top: 1px dashed #000; margin: 8px 0; }
@@ -82,26 +85,34 @@ const ReceiptBody: React.FC<{ params: { saleId?: string; mode?: string } }> = ({
       </head>
       <body>
         <div class="center bold" style="font-size: 16px;">ilbi.uz</div>
-        <div class="center">${escapeHtml(sale.tenant_name || '—')}</div>
+        <div class="center">${escapeHtml(savedReceipt.storeName || '—')}</div>
+        ${savedReceipt.sellerName ? `<div class="center">${escapeHtml(savedReceipt.sellerName)}</div>` : ''}
+        ${savedReceipt.sellerTaxIdentifier ? `<div class="center">STIR: ${escapeHtml(savedReceipt.sellerTaxIdentifier)}</div>` : ''}
+        ${savedReceipt.storeCode ? `<div class="center">Do‘kon: ${escapeHtml(savedReceipt.storeCode)}</div>` : ''}
+        ${savedReceipt.address ? `<div class="center saved-text">${escapeHtml(savedReceipt.address)}</div>` : ''}
+        ${savedReceipt.phone ? `<div class="center">${escapeHtml(savedReceipt.phone)}</div>` : ''}
+        ${savedReceipt.header ? `<div class="center saved-text">${escapeHtml(savedReceipt.header)}</div>` : ''}
         <div class="center">${escapeHtml(sale.created_at || '')}</div>
         <div class="divider"></div>
         <div class="bold">Chek #${escapeHtml(sale.receipt_number || sale.id || '—')}</div>
         ${statusLabel ? `<div>Holat: ${escapeHtml(statusLabel)}</div>` : ''}
-        <div>Mijoz: ${escapeHtml(sale.counterparty_name || 'Umumiy mijoz')}</div>
+        ${savedReceipt.showCashier ? `<div>Sotuvchi: ${escapeHtml(sale.sold_by_name || '—')}</div>` : ''}
+        ${savedReceipt.showCustomer ? `<div>Mijoz: ${escapeHtml(sale.counterparty_name || 'Umumiy mijoz')}</div>` : ''}
         <div class="divider"></div>
         ${receiptItems.map(
           (item: any) => `
           <div class="row">
             <span>${escapeHtml(item.productName)}</span>
-            <span>${(item.quantity * item.unitPrice).toLocaleString('ru-RU')}</span>
+            <span>${escapeHtml(item.lineTotal)}</span>
           </div>
-          <div style="font-size: 11px; color: #555;">${item.quantity} x ${item.unitPrice.toLocaleString('ru-RU')}</div>
+          <div style="font-size: 9px; color: #555;">${escapeHtml(item.quantity)} ${escapeHtml(item.unit)} × ${escapeHtml(item.unitPrice)}</div>
+          ${savedReceipt.showItemTax && item.taxAmount !== '—' ? `<div>QQS${item.taxRate !== '—' ? ' ' + escapeHtml(item.taxRate) + '%' : ''}: ${escapeHtml(item.taxAmount)} ${escapeHtml(currencyLabel)}</div>` : ''}
         `
         ).join('')}
         <div class="divider"></div>
         <div class="row bold" style="font-size: 15px;">
           <span>Jami:</span>
-          <span>${Number(sale.total_amount).toLocaleString('ru-RU')} ${escapeHtml(currencyLabel)}</span>
+          <span>${receiptMoney(sale.total_amount)} ${escapeHtml(currencyLabel)}</span>
         </div>
         ${Number(sale.tax_amount) > 0 ? `<div class="row"><span>QQS:</span><span>${Number(sale.tax_amount).toLocaleString('ru-RU')} ${escapeHtml(currencyLabel)}</span></div>` : ''}
         ${Number(sale.refunded_amount) > 0 ? `<div class="row"><span>Qaytarilgan:</span><span>${Number(sale.refunded_amount).toLocaleString('ru-RU')} ${escapeHtml(currencyLabel)}</span></div>` : ''}
@@ -115,8 +126,9 @@ const ReceiptBody: React.FC<{ params: { saleId?: string; mode?: string } }> = ({
           <span>${sale.change == null ? '—' : Number(sale.change).toLocaleString('ru-RU')} ${escapeHtml(currencyLabel)}</span>
         </div>` : ''}
         <div class="divider"></div>
+        ${savedReceipt.footer ? `<div class="center saved-text">${escapeHtml(savedReceipt.footer)}</div>` : ''}
         <div class="center" style="font-size: 10px; margin-top: 10px;">
-          Elektron chek. Ushbu chek ilbi.uz tizimida yaratilgan.
+          Elektron savdo nusxasi. Fiskal chek emas.
         </div>
       </body>
     </html>
@@ -126,7 +138,7 @@ const ReceiptBody: React.FC<{ params: { saleId?: string; mode?: string } }> = ({
   const handleExportPdf = async () => {
     setShowShareModal(false);
     try {
-      const { uri } = await Print.printToFileAsync({ html: generateHtml() });
+      const { uri } = await Print.printToFileAsync({ html: generateHtml(), width: savedReceipt.pdfWidth, margins: { left: 6, right: 6, top: 6, bottom: 6 } });
       setPdfUri(uri);
       setPdfReady(true);
       setToastMessage('PDF tayyorlandi (vaqtinchalik fayl)', 'success');
@@ -138,7 +150,7 @@ const ReceiptBody: React.FC<{ params: { saleId?: string; mode?: string } }> = ({
 
   const handlePrint = async () => {
     try {
-      await Print.printAsync({ html: generateHtml() });
+      await Print.printAsync({ html: generateHtml(), width: savedReceipt.pdfWidth });
     } catch {
       setToastMessage('Chop etish bekor qilindi');
     }
@@ -216,14 +228,14 @@ const ReceiptBody: React.FC<{ params: { saleId?: string; mode?: string } }> = ({
             <View style={[styles.miniReceiptCard, { backgroundColor: colors.paperBackground }]}>
               <View style={styles.miniReceiptTop}>
                 <IlbiLogo height={16} monochromeColor="#0B0909" />
-                <Text style={styles.miniStoreName}>{sale.tenant_name || (sale._preview ? 'Demo do‘kon' : '—')}</Text>
+                <Text style={styles.miniStoreName}>{savedReceipt.storeName || '—'}</Text>
                 <Text style={styles.miniDate}>{sale.created_at ? new Date(sale.created_at).toLocaleString('uz-UZ') : '—'}</Text>
               </View>
 
               <View style={styles.miniDivider} />
 
               <View style={styles.miniItems}>
-                {receiptItems.map((item, index) => <Text key={index} style={styles.miniItemRow}>{item.productName}  {(item.quantity * item.unitPrice).toLocaleString('ru-RU')}</Text>)}
+                {receiptItems.map((item, index) => <Text key={index} style={styles.miniItemRow}>{item.productName}  {item.lineTotal}</Text>)}
               </View>
               <View style={styles.miniDivider} />
               <Text style={styles.miniTotal}>Jami: {Number(sale.total_amount).toLocaleString('ru-RU')} {currencyLabel}</Text>
@@ -259,13 +271,22 @@ const ReceiptBody: React.FC<{ params: { saleId?: string; mode?: string } }> = ({
           /* Board 26A: Thermal Receipt Viewer */
           <View style={styles.receiptViewContainer}>
             {/* White Paper Receipt Container */}
-            <View style={[styles.receiptPaper, { backgroundColor: colors.paperBackground }]}>
+            <View accessibilityLabel={'Saqlangan chek: ' + savedReceipt.paperWidth} style={[styles.receiptPaper, { maxWidth: savedReceipt.paperWidth === '80mm' ? 380 : 300, backgroundColor: colors.paperBackground }]}>
               {/* Header */}
               <View style={styles.receiptHeader}>
                 <IlbiLogo height={22} monochromeColor="#0B0909" />
-                <Text style={styles.receiptStoreTitle}>{sale.tenant_name || (sale._preview ? 'Demo do‘kon' : '—')}</Text>
+                <Text style={styles.receiptStoreTitle}>{savedReceipt.storeName || '—'}</Text>
+                {savedReceipt.sellerName ? <Text style={styles.receiptTimestamp}>{savedReceipt.sellerName}</Text> : null}
+                {savedReceipt.sellerTaxIdentifier ? <Text style={styles.receiptTimestamp}>STIR: {savedReceipt.sellerTaxIdentifier}</Text> : null}
+                {savedReceipt.storeCode ? <Text style={styles.receiptTimestamp}>Do‘kon: {savedReceipt.storeCode}</Text> : null}
+                {savedReceipt.address ? <Text style={styles.receiptTimestamp}>{savedReceipt.address}</Text> : null}
+                {savedReceipt.phone ? <Text style={styles.receiptTimestamp}>{savedReceipt.phone}</Text> : null}
+                {savedReceipt.header ? <Text style={styles.receiptTimestamp}>{savedReceipt.header}</Text> : null}
                 <Text style={styles.receiptTimestamp}>{sale.created_at ? new Date(sale.created_at).toLocaleString('uz-UZ') : '—'}</Text>
               </View>
+
+              {savedReceipt.showCashier ? <Text style={styles.receiptTimestamp}>Sotuvchi: {sale.sold_by_name || '—'}</Text> : null}
+              {savedReceipt.showCustomer ? <Text style={styles.receiptTimestamp}>Mijoz: {sale.counterparty_name || 'Umumiy mijoz'}</Text> : null}
 
               <View style={styles.receiptDashedLine} />
 
@@ -276,11 +297,12 @@ const ReceiptBody: React.FC<{ params: { saleId?: string; mode?: string } }> = ({
                     <View>
                       <Text style={styles.receiptItemName}>{item.productName}</Text>
                       <Text style={styles.receiptItemCalc}>
-                        {item.quantity} × {item.unitPrice.toLocaleString('ru-RU')}
+                        {item.quantity} {item.unit} × {item.unitPrice}
                       </Text>
+                      {savedReceipt.showItemTax && item.taxAmount !== '—' ? <Text style={styles.receiptItemCalc}>QQS{item.taxRate !== '—' ? ' ' + item.taxRate + '%' : ''}: {item.taxAmount} {currencyLabel}</Text> : null}
                     </View>
                     <Text style={styles.receiptItemTotal}>
-                      {(item.quantity * item.unitPrice).toLocaleString('ru-RU')}
+                      {item.lineTotal}
                     </Text>
                   </View>
                 ))}
@@ -288,7 +310,6 @@ const ReceiptBody: React.FC<{ params: { saleId?: string; mode?: string } }> = ({
               </View>
 
               <View style={styles.receiptDashedLine} />
-
               {/* Totals */}
               <View style={styles.receiptTotalRow}>
                 <Text style={styles.receiptTotalLabel}>Jami:</Text>
@@ -316,6 +337,9 @@ const ReceiptBody: React.FC<{ params: { saleId?: string; mode?: string } }> = ({
               </View>}
 
               <View style={styles.receiptDashedLine} />
+
+              {savedReceipt.footer ? <Text style={styles.receiptTimestamp}>{savedReceipt.footer}</Text> : null}
+              <Text style={styles.receiptTimestamp}>Elektron savdo nusxasi. Fiskal chek emas.</Text>
 
               {/* Electronic QR section */}
               <View style={styles.qrSection}>

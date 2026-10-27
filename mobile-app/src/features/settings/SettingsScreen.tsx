@@ -10,6 +10,7 @@ import { Toast } from '../../components/ui/Toast';
 import { useTheme } from '../../theme/ThemeContext';
 import { radius, spacing, typography } from '../../theme/tokens';
 import { useAuth } from '../auth/AuthContext';
+import { usePermissions } from '../auth/usePermissions';
 import { getApiBaseUrl, setApiBaseUrl } from '../../api/client';
 import { normalizeApiBaseUrl } from '../../api/environment';
 import { useFormErrors } from '../../hooks/useFormErrors';
@@ -21,6 +22,7 @@ export const SettingsScreen: React.FC = () => {
   const navigation = useNavigation();
   const { colors, mode, setMode } = useTheme();
   const { user, activeTenant, logout } = useAuth();
+  const { canOpen } = usePermissions();
 
   const validation = useFormErrors();
   const installed = installedApp();
@@ -86,6 +88,7 @@ export const SettingsScreen: React.FC = () => {
       />
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
+        {canOpen('StoreSettings') && <Button title="Do‘kon va chek sozlamalari" variant="secondary" onPress={() => navigation.navigate('StoreSettings')} />}
         {/* Active Store & Profile */}
         <View style={[styles.sectionCard, { backgroundColor: colors.surface, borderColor: colors.borderSubtle }]}>
           <Text style={[styles.sectionTitle, { color: colors.text }]}>Faol do&#39;kon va hisob</Text>

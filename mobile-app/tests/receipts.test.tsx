@@ -4,6 +4,7 @@ import { ReceiptScreen } from '../src/features/receipts/ReceiptScreen';
 import { ThemeProvider } from '../src/theme/ThemeContext';
 import { request } from '../src/api/client';
 import * as Print from 'expo-print';
+import { receiptView } from '../src/features/receipts/receiptModel';
 let mockParams: any = { saleId: '1' };
 jest.mock('expo-router', () => ({ useLocalSearchParams: () => mockParams }));
 jest.mock('../src/api/client', () => ({ request: jest.fn() }));
@@ -58,6 +59,47 @@ describe('Receipt identity and payment display', () => {
     expect(screen.queryByText('Item 1')).toBeNull();
     expect(screen.queryByText('PDF tayyor')).toBeNull();
     expect(Print.printToFileAsync).toHaveBeenCalledTimes(1);
+  });
+  test('saved receipt identity/layout wins over renamed current store and all PDF fields are escaped', async () => {
+    const snapshot = { version: 1, store_name: 'Saved <store>', store_address: 'Old <street>', store_code: 'OLD1', seller_name: 'Original seller', seller_tax_identifier: '123456789', receipt_header: 'Hello <buyer>', receipt_footer: 'Keep <script>alert(1)</script>', receipt_phone: '+998901234567', receipt_paper_width: '80mm', receipt_show_customer: false, receipt_show_cashier: false, receipt_show_item_tax: true };
+    jest.mocked(request).mockResolvedValueOnce({ ...sale(1), tenant_name: 'Renamed current store', receipt_snapshot: snapshot, sold_by_name: 'Hidden cashier', counterparty_name: 'Hidden customer', total_amount: '112.00', tax_amount: '12.00', items: [{ product_name: 'Item <one>', quantity: '1.000', unit: 'dona', unit_price: '100.00', total_price: '112.00', tax_amount: '12.00', tax_rate: '12.00' }] });
+    const screen = await render(<ThemeProvider><ReceiptScreen /></ThemeProvider>);
+    expect(await screen.findByText('Saved <store>')).toBeTruthy();
+    expect(screen.getByText('Old <street>')).toBeTruthy();
+    expect(screen.getByText('Keep <script>alert(1)</script>')).toBeTruthy();
+    expect(screen.getByLabelText('Saqlangan chek: 80mm')).toBeTruthy();
+    expect(screen.queryByText('Renamed current store')).toBeNull();
+    expect(screen.queryByText(/Hidden cashier|Hidden customer/)).toBeNull();
+    expect(screen.getByText('112')).toBeTruthy(); // Authoritative line total includes server VAT.
+    expect(screen.getByText('QQS 12%: 12 so‘m')).toBeTruthy();
+    await fireEvent.press(screen.getByText('Ulashish'));
+    await fireEvent.press(screen.getByText('PDF yuklab olish'));
+    const options = jest.mocked(Print.printToFileAsync).mock.calls[0][0]!;
+    expect(options.width).toBe(227);
+    expect(options.html).toContain('size: 80mm auto');
+    expect(options.html).toContain('Saved &lt;store&gt;');
+    expect(options.html).toContain('Keep &lt;script&gt;alert(1)&lt;/script&gt;');
+    expect(options.html).toContain('Item &lt;one&gt;');
+    expect(options.html).not.toContain('<script>');
+    expect(options.html).not.toContain('Hidden cashier'); expect(options.html).not.toContain('Hidden customer');
+    expect(options.html).not.toContain('Renamed current store');
+    expect(request).toHaveBeenCalledTimes(1); // No request for today's tenant settings.
+  });
+  test('saved visibility flags also hide item tax in screen and print; totals remain server values', async () => {
+    jest.mocked(request).mockResolvedValueOnce({ ...sale(1), total_amount: '112.00', receipt_snapshot: { version: 1, store_name: 'Saved store', receipt_paper_width: '58mm', receipt_show_cashier: true, receipt_show_customer: true, receipt_show_item_tax: false }, sold_by_name: 'Saved cashier', counterparty_name: 'Saved customer', items: [{ product_name: 'VAT item', quantity: '1.000', unit_price: '100.00', total_price: '112.00', tax_amount: '12.00', tax_rate: '12.00' }] });
+    const screen = await render(<ThemeProvider><ReceiptScreen /></ThemeProvider>);
+    expect(await screen.findByText('Sotuvchi: Saved cashier')).toBeTruthy();
+    expect(screen.getByText('Mijoz: Saved customer')).toBeTruthy();
+    expect(screen.queryByText('QQS 12%: 12 so‘m')).toBeNull();
+    await fireEvent.press(screen.getByText('Chop etish'));
+    const options = jest.mocked(Print.printAsync).mock.calls[0][0]!;
+    expect(options.width).toBe(165);
+    expect(options.html).toContain('Saved cashier'); expect(options.html).not.toContain('QQS 12%:');
+  });
+  test('missing historical line totals are never reconstructed from price and quantity', () => {
+    const view = receiptView({ ...sale(1), items: [{ product_name: 'Fractional taxed line', quantity: '1.250', unit_price: '100.00' }] });
+    expect(view.items[0].lineTotal).toBe('—');
+    expect(view.items[0].unitPrice).toBe('100');
   });
   test('late response for previous ID cannot replace the new receipt', async () => {
     let finish!: (v: any) => void;
