@@ -17,7 +17,7 @@ const ThemedApp: React.FC = () => {
   const { persistenceError, retryPersistence, saving } = useCart();
 
   return (
-    <SafeAreaView edges={['top', 'left', 'right']} style={styles.container}>
+    <SafeAreaView edges={['top']} style={styles.container}>
       <StatusBar style={isDark ? 'light' : 'dark'} />
       {isDesignPreview && <View style={{ backgroundColor: '#e9dfc2', padding: 5 }}><Text style={{ color: '#3b3018', fontSize: 10, textAlign: 'center' }}>DIZAYN PREVIEW · Sun’iy ma’lumotlar · Haqiqiy savdo emas</Text></View>}
       {persistenceError && <View accessibilityRole="alert" style={{ padding: 10, backgroundColor: colors.surface }}><Text style={{ color: colors.danger }}>{persistenceError}</Text><Text onPress={retryPersistence} accessibilityRole="button" style={{ paddingTop: 8, color: colors.text }}>Qayta urinish</Text></View>}

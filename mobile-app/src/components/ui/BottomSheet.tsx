@@ -106,11 +106,14 @@ const styles = StyleSheet.create({
   overlay: {
     flex: 1,
     justifyContent: 'flex-end',
+    width: '100%',
   },
   scrim: {
     ...StyleSheet.absoluteFill,
   },
   sheet: {
+    width: '100%',
+    alignSelf: 'stretch',
     borderTopLeftRadius: radius.lg * 1.5,
     borderTopRightRadius: radius.lg * 1.5,
     borderTopWidth: 1,

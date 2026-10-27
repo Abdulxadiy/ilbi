@@ -92,5 +92,14 @@ export async function previewRequest(endpoint: string, options: { method?: strin
     customers.push(customer); return customer;
   }
   if (method === 'POST' && /^\/sales\/counterparties\/\d+\/payments\/$/.test(path)) return { id: Date.now(), ...body, _preview: true };
+  if (method === 'POST' && path === '/auth/password-reset/request/') {
+    return { detail: 'Tiklash havolasi emailingizga yuborildi. Spam papkasini ham tekshiring.', has_email: true, email_hint: 'de***@ilbi.uz' };
+  }
+  if (method === 'POST' && path === '/auth/password-reset/confirm/') {
+    return { detail: 'Parol muvaffaqiyatli yangilandi.', username: body.username || 'preview' };
+  }
+  if (method === 'POST' && path === '/auth/password-reset/change-with-old/') {
+    return { detail: 'Parol muvaffaqiyatli almashtirildi.' };
+  }
   throw Error('Bu amal dizayn preview rejimida ulanmagan; haqiqiy serverga yuborilmadi.');
 }
