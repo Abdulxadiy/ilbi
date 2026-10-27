@@ -423,20 +423,26 @@ def test_operator_customer_profile_get_and_patch():
     assert res2.data["user"]["first_name"] == "Alisher"
     assert res2.data["user"]["role"] == "owner"
 
-    # Operator edits customer profile (e.g. changes first_name, email, blocks user)
+    # Support edits contact metadata; login email/status require protected account flows.
+    forbidden = op_client.patch(
+        f"/api/v1/support/inbox/{conv_id}/customer/",
+        {"first_name": "Must not apply", "email": "ali_new@example.com", "is_active": False},
+        format="json",
+    )
+    assert forbidden.status_code == 400
     patch_res = op_client.patch(
         f"/api/v1/support/inbox/{conv_id}/customer/",
-        {"first_name": "Ali", "email": "ali_new@example.com", "is_active": False},
+        {"first_name": "Ali", "contact_phone": "+998901234567"},
         format="json",
     )
     assert patch_res.status_code == 200
     assert patch_res.data["user"]["first_name"] == "Ali"
-    assert patch_res.data["user"]["email"] == "ali_new@example.com"
-    assert patch_res.data["user"]["is_active"] is False
+    assert patch_res.data["user"]["email"] == "alisher@example.com"
+    assert patch_res.data["user"]["is_active"] is True
 
     customer.refresh_from_db()
     assert customer.first_name == "Ali"
-    assert customer.is_active is False
+    assert customer.is_active is True
 
 
 

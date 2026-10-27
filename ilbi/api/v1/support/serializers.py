@@ -180,13 +180,17 @@ class CustomerProfileSerializer(serializers.Serializer):
 class CustomerProfileUpdateSerializer(serializers.Serializer):
     first_name = serializers.CharField(max_length=50, required=False, allow_blank=True)
     last_name = serializers.CharField(max_length=50, required=False, allow_blank=True)
-    email = serializers.EmailField(required=False, allow_blank=True, allow_null=True)
     contact_phone = serializers.CharField(max_length=20, required=False, allow_blank=True, allow_null=True)
-    role = serializers.ChoiceField(choices=['owner', 'staff', 'platform_admin'], required=False)
-    is_active = serializers.BooleanField(required=False)
     tenant_name = serializers.CharField(max_length=100, required=False)
     tenant_address = serializers.CharField(max_length=255, required=False, allow_blank=True)
-    tenant_is_active = serializers.BooleanField(required=False)
+
+    def to_internal_value(self, data):
+        from collections.abc import Mapping
+        if isinstance(data, Mapping):
+            unexpected = set(data) - set(self.fields)
+            if unexpected:
+                raise serializers.ValidationError({key: 'Bu ma’lumotni yordam oynasidan o‘zgartirish mumkin emas. Himoyalangan hisob boshqaruvidan foydalaning.' for key in sorted(unexpected)})
+        return super().to_internal_value(data)
 
 
 class SupportMetadataSerializer(serializers.Serializer):

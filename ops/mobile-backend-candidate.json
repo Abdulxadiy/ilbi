@@ -1,6 +1,6 @@
 {
   "production_base": "2d799dd5596a92fb6a0e3be6cf51a2a018c88e2d",
-  "backend_source": "9a025e0c5a475a8b9d667b7a768b6d457fe1852a",
+  "backend_source": "38aa63dccce8831ecf32b296f3a7e913980ec7cd",
   "layout": "Original ilbi/ backend; frontend, bot, desktop and platform version unchanged.",
   "activation": "FCM override remains inactive under ops/ until separately staged.",
   "files": [
@@ -14,7 +14,11 @@
     },
     {
       "path": "ilbi/api/v1/accounts/views/docs_views.py",
-      "sha256": "81be028a714fca15696243699482a664795ca14475a5f687fb77f3699902a02a"
+      "sha256": "99c69d2e67df5ad1f3a4a942c725695d3d22600fc68c80af0d3c5cabf0cca96e"
+    },
+    {
+      "path": "ilbi/api/v1/audit/serializers.py",
+      "sha256": "ee81262b5ec7644069a69d7396da819f4ef394179b8a5964b0222d70ac9e9471"
     },
     {
       "path": "ilbi/api/v1/cashbox/serializers.py",
@@ -27,6 +31,10 @@
     {
       "path": "ilbi/api/v1/cashbox/views/cashbox_views.py",
       "sha256": "b31ed3b210124784a00fabea4461ca331294f9b66f89c791ab32ed362870720a"
+    },
+    {
+      "path": "ilbi/api/v1/catalog/views/product_views.py",
+      "sha256": "cff9ac1c80db675070b746b13da7d72583bb0f4d6aff6a153ac0b5afb1f07719"
     },
     {
       "path": "ilbi/api/v1/inventory/idempotency.py",
@@ -81,8 +89,12 @@
       "sha256": "7a10ce7c37fb0a4e9c0ca064bf0eb3805a1e5c34c76e58229e2cda4bb7a4d47e"
     },
     {
+      "path": "ilbi/api/v1/support/serializers.py",
+      "sha256": "d537b70a262e193a7993d6cebe27330e0f9cc165ef97219b8b403b5109cc7ccf"
+    },
+    {
       "path": "ilbi/api/v1/support/views.py",
-      "sha256": "e55c515dc4ec9628c0178491057a40d984cf6970dbb0e503801755811ffbc6e1"
+      "sha256": "c115cebdec069b100335c35a8e0bb7c1e928b2194209db9b88ea1bc342e34c10"
     },
     {
       "path": "ilbi/api/v1/tenants/serializers.py",
@@ -121,12 +133,20 @@
       "sha256": "8f5b2c4a1ea8a6ba35c18766d1ba3ee67cf9436cd94413d2025e0d320e1bce2f"
     },
     {
+      "path": "ilbi/apps/core/audit_privacy.py",
+      "sha256": "0a8aed1c0cc8aa6b7bc86eb2ac54a718a5560a4c568a61e77c758bca64f224bf"
+    },
+    {
       "path": "ilbi/apps/core/migrations/0017_workspacereminder_due_notified_at.py",
       "sha256": "3e3c3208c8133fe0d5172a664ae47dcc185e645bb067f27e906eb83846c2931b"
     },
     {
       "path": "ilbi/apps/core/models.py",
-      "sha256": "8fbe291d4849d1845dfd7bc683f632edecf5893e89a9cf0e1a889dd29efd0893"
+      "sha256": "9fa582547450df90ac4a772e0f5fbe9b90d254c9e09e720f827b3154937804ea"
+    },
+    {
+      "path": "ilbi/apps/core/services/history_service.py",
+      "sha256": "b25dfc413bc982956a1fcd60596e5ccf862e055e3d994857f558d523a44ba456"
     },
     {
       "path": "ilbi/apps/core/services/workspace_notifications.py",
@@ -139,6 +159,10 @@
     {
       "path": "ilbi/apps/core/tests/test_mobile_api_readiness.py",
       "sha256": "c5e5db5341b83b37000b0d6381a468b2faf97efe19b3119e5c7d471e1b9ba914"
+    },
+    {
+      "path": "ilbi/apps/core/tests/test_security_presentation.py",
+      "sha256": "776d5e849c8c73fdea3db9711391e4341d3e7f46139d0e2f5cbd0a49a143dda5"
     },
     {
       "path": "ilbi/apps/inventory/migrations/0014_inventorymutationreceipt.py",
@@ -274,7 +298,7 @@
     },
     {
       "path": "ilbi/apps/support/tests/test_support.py",
-      "sha256": "cd20c6d95c30c3a384234a98c987a52e66e0f2e9847b1581d97fcfd443edc2eb"
+      "sha256": "540274247de1413acae9a36ae932ed5dfcae98070bd07010bf4dc370e1bc46c0"
     },
     {
       "path": "ilbi/apps/tenants/settings_revision.py",

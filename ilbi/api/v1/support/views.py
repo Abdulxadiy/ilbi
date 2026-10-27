@@ -520,7 +520,6 @@ class CustomerProfileView(SupportView):
             guest_data = {
                 "name": conversation.name,
                 "language": conversation.language,
-                "guest_hash": conversation.guest_hash,
             }
 
         tenant_data = None
@@ -588,31 +587,39 @@ class CustomerProfileView(SupportView):
         serializer = CustomerProfileUpdateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         validated = serializer.validated_data
+        changed_fields = []
 
         user = conversation.user
         if user:
-            user_updated = False
-            for field in ("first_name", "last_name", "email", "contact_phone", "role", "is_active"):
+            user_fields = []
+            for field in ("first_name", "last_name", "contact_phone"):
                 if field in validated:
                     setattr(user, field, validated[field])
-                    user_updated = True
-            if user_updated:
-                user.save()
+                    user_fields.append(field)
+            if user_fields:
+                user.save(update_fields=user_fields)
+                changed_fields.extend(user_fields)
 
         tenant = conversation.tenant or (user and getattr(user, "owned_tenants", None) and user.owned_tenants.first())
         if tenant:
-            tenant_updated = False
+            tenant_fields = []
             if "tenant_name" in validated:
                 tenant.name = validated["tenant_name"]
-                tenant_updated = True
+                tenant_fields.append('name')
             if "tenant_address" in validated:
                 tenant.address = validated["tenant_address"]
-                tenant_updated = True
-            if "tenant_is_active" in validated:
-                tenant.is_active = validated["tenant_is_active"]
-                tenant_updated = True
-            if tenant_updated:
-                tenant.save()
+                tenant_fields.append('address')
+            if tenant_fields:
+                tenant.save(update_fields=tenant_fields)
+                changed_fields.extend('tenant_' + field for field in tenant_fields)
+
+        if changed_fields:
+            from apps.core.models import AuditAction
+            from apps.core.services.audit_service import AuditService
+            AuditService.log(action=AuditAction.ACCOUNT_IDENTITY_UPDATE, actor=request.user, tenant=tenant,
+                target_model='User' if user else 'SupportConversation', target_id=str(user.pk if user else conversation.pk),
+                changes={'operation': 'support_contact_update', 'fields': sorted(changed_fields)}, request=request,
+                description='Yordam markazida aloqa ma’lumotlari tahrirlandi')
 
         data = self._build_profile_data(conversation)
         return Response(CustomerProfileSerializer(data).data)
