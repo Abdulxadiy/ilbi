@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from api.permissions import HasEmployeePermission
 from api.query_params import positive_id
 from api.schema import optional_pagination
+from api.v1.inventory.idempotency import keyed_inventory_mutation
 from api.v1.inventory.serializers import (
     AdjustCreateSerializer,
     BatchIntakeCreateSerializer,
@@ -78,6 +79,7 @@ class _BaseMovementCreateView(InventoryAPIView):
     service_method_name = None
 
     @extend_schema(responses={201: StockMovementOutputSerializer})
+    @keyed_inventory_mutation('movement')
     def post(self, request):
         serializer = self.serializer_class(
             data=request.data,
@@ -85,6 +87,7 @@ class _BaseMovementCreateView(InventoryAPIView):
         )
         serializer.is_valid(raise_exception=True)
         val_data = dict(serializer.validated_data)
+        val_data.pop('idempotency_key', None)
 
         service_method = getattr(StockService, self.service_method_name)
         try:
@@ -111,6 +114,7 @@ class StockBatchIntakeCreateView(InventoryAPIView):
     required_permission = "inventory.add_stock_intake"
 
     @extend_schema(request=BatchIntakeCreateSerializer, responses={201: StockMovementOutputSerializer(many=True)})
+    @keyed_inventory_mutation('movement_list', 'stock.batch_intake')
     def post(self, request):
         serializer = BatchIntakeCreateSerializer(
             data=request.data,

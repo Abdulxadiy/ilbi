@@ -1,8 +1,10 @@
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError
 
 from api.permissions import HasEmployeePermission
+from api.v1.inventory.idempotency import keyed_inventory_mutation
 from api.v1.inventory.serializers import (
     TenantTransferCreateSerializer,
     TenantTransferDiscrepancyCloseSerializer,
@@ -30,9 +32,20 @@ class TenantTransferListCreateView(InventoryAPIView):
         ).prefetch_related(
             "items__source_variant__product", "items__destination_variant__product"
         ).distinct()
+        state = request.query_params.get('status')
+        if state:
+            if state not in dict(TenantTransfer.STATUS_CHOICES):
+                raise ValidationError({'status': ['Transfer holati noto‘g‘ri.']})
+            transfers = transfers.filter(status=state)
+        if request.query_params.get('page'):
+            from api.pagination import StandardResultsSetPagination
+            pagination = StandardResultsSetPagination()
+            rows = pagination.paginate_queryset(transfers, request)
+            return pagination.get_paginated_response(TenantTransferOutputSerializer(rows, many=True).data)
         return Response(TenantTransferOutputSerializer(transfers, many=True).data)
 
     @extend_schema(request=TenantTransferCreateSerializer, responses={201: TenantTransferOutputSerializer})
+    @keyed_inventory_mutation('transfer', 'transfer.dispatch')
     def post(self, request):
         serializer = TenantTransferCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -56,6 +69,7 @@ class TenantTransferReceiveView(InventoryAPIView):
     required_permission = "inventory.transfer_stock"
 
     @extend_schema(request=TenantTransferReceiveSerializer, responses={200: TenantTransferOutputSerializer})
+    @keyed_inventory_mutation('transfer', 'transfer.receive')
     def post(self, request, transfer_id):
         serializer = TenantTransferReceiveSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -78,6 +92,7 @@ class TenantTransferReturnView(InventoryAPIView):
     required_permission = "inventory.transfer_stock"
 
     @extend_schema(request=TenantTransferReturnSerializer, responses={201: TenantTransferOutputSerializer})
+    @keyed_inventory_mutation('transfer', 'transfer.return')
     def post(self, request, transfer_id):
         serializer = TenantTransferReturnSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -103,6 +118,7 @@ class TenantTransferCloseDiscrepancyView(InventoryAPIView):
     required_permission = "inventory.transfer_stock"
 
     @extend_schema(request=TenantTransferDiscrepancyCloseSerializer, responses={200: TenantTransferOutputSerializer})
+    @keyed_inventory_mutation('transfer', 'transfer.close_discrepancy')
     def post(self, request, transfer_id):
         serializer = TenantTransferDiscrepancyCloseSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)

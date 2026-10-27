@@ -1,0 +1,106 @@
+import React from 'react';
+import { act, fireEvent, render, waitFor } from '@testing-library/react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { InventoryOperationSheet } from '../src/features/inventory/InventoryOperationSheet';
+import { ThemeProvider } from '../src/theme/ThemeContext';
+import { request } from '../src/api/client';
+import { recordStore } from '../src/storage/recordStore';
+import { inventoryDraft } from '../src/features/inventory/drafts';
+import { INVENTORY_PROTOCOL } from '../src/features/inventory/commands';
+import { InventoryBatchPicker } from '../src/features/inventory/InventoryBatchPicker';
+import { InventoryScreen } from '../src/features/inventory/InventoryScreen';
+const mockTenant = { id: 1, name: 'A', is_owner: true, permissions: [] };
+const mockUser = { id: 1, username: 'owner', role: 'owner', terms_accepted: true, tenants: [mockTenant] };
+const stock = { id: 7, product_variant: 11, product_name: 'Rice' };
+jest.mock('../src/storage/recordStore', () => { jest.requireActual('fake-indexeddb/auto'); return jest.requireActual('../src/storage/recordStore.web'); });
+jest.mock('../src/features/auth/AuthContext', () => ({ useAuth: () => ({ user: mockUser, activeTenant: mockTenant }) }));
+jest.mock('../src/api/client', () => ({ request: jest.fn(), captureAuthScope: jest.fn(() => ({ server: jest.requireActual('../src/api/environment').getServerScope() })), assertAuthScope: jest.fn() }));
+const capability = { protocol: INVENTORY_PROTOCOL, operations: ['stock.write_off', 'transfer.receive'] };
+describe('Inventory production forms', () => {
+  beforeEach(async () => {
+    jest.clearAllMocks(); await AsyncStorage.clear(); for (const [key] of await recordStore.entries()) await recordStore.update(key, () => null);
+    jest.mocked(request).mockImplementation(async path => path.endsWith('capabilities/') ? capability : { categories: [], targets: [] });
+  });
+  test('invalid quantity and missing reason become inline field errors without POST', async () => {
+    const screen = await render(<ThemeProvider><InventoryOperationSheet kind="write-off" source={stock} onClose={jest.fn()} onSaved={jest.fn()} /></ThemeProvider>);
+    await waitFor(() => expect(screen.getByText('Tasdiqlash va saqlash').parent?.props.accessibilityState?.disabled).not.toBe(true));
+    await fireEvent.press(screen.getByText('Tasdiqlash va saqlash'));
+    expect(await screen.findByText('Musbat sonni to‘g‘ri kiriting.')).toBeTruthy();
+    await waitFor(() => expect(screen.getByLabelText('Miqdor').props.editable).toBe(true));
+    expect(screen.getByLabelText('Miqdor').props['aria-invalid']).toBe(true);
+    await fireEvent.changeText(screen.getByLabelText('Miqdor'), '1.250');
+    await fireEvent.press(screen.getByText('Tasdiqlash va saqlash'));
+    expect(await screen.findByText('Ombor amali sababini kiriting.')).toBeTruthy();
+    await waitFor(() => expect(screen.getByLabelText('Amal sababi').props.editable).toBe(true));
+    expect(screen.getByLabelText('Amal sababi').props['aria-invalid']).toBe(true);
+    expect(jest.mocked(request).mock.calls.some(([, value]) => value?.method === 'POST')).toBe(false);
+  });
+  test('edits persist and restoring a closed form keeps original draft identity', async () => {
+    const close = jest.fn();
+    const screen = await render(<ThemeProvider><InventoryOperationSheet kind="write-off" source={stock} onClose={close} onSaved={jest.fn()} /></ThemeProvider>);
+    await waitFor(() => expect(screen.getByLabelText('Tovar varianti: Rice')).toBeTruthy());
+    await fireEvent.changeText(screen.getByLabelText('Miqdor'), '1.250');
+    await fireEvent.changeText(screen.getByLabelText('Amal sababi'), 'Expired packaging');
+    await fireEvent.press(screen.getByLabelText('Hisobdan chiqarishni yopish'));
+    await waitFor(() => expect(close).toHaveBeenCalledTimes(1));
+    const restored = await inventoryDraft('write-off', null, 1, 1, {});
+    expect(restored.body.quantity).toBe('1.250'); expect(restored.body.note).toBe('Expired packaging');
+    await screen.unmount();
+    const next = await render(<ThemeProvider><InventoryOperationSheet kind="write-off" source={stock} onClose={jest.fn()} onSaved={jest.fn()} /></ThemeProvider>);
+    await waitFor(() => expect(next.getByLabelText('Miqdor').props.value).toBe('1.250'));
+  });
+  test('in-flight repeat tap sends once and successful stock acknowledgement completes once', async () => {
+    let finish!: (value: any) => void; const saved = jest.fn(), close = jest.fn();
+    jest.mocked(request).mockImplementation(async (path, options) => path.endsWith('capabilities/') ? capability : options?.method === 'POST' ? new Promise(resolve => { finish = resolve; }) : { categories: [], targets: [] });
+    const screen = await render(<ThemeProvider><InventoryOperationSheet kind="write-off" source={stock} onClose={close} onSaved={saved} /></ThemeProvider>);
+    await waitFor(() => expect(screen.getByLabelText('Tovar varianti: Rice')).toBeTruthy());
+    await fireEvent.changeText(screen.getByLabelText('Miqdor'), '1.250'); await fireEvent.changeText(screen.getByLabelText('Amal sababi'), 'Expired packaging');
+    await fireEvent.press(screen.getByText('Tasdiqlash va saqlash'));
+    await waitFor(() => expect(typeof finish).toBe('function'));
+    expect(screen.getByLabelText('Miqdor').props.editable).toBe(false);
+    const posts = jest.mocked(request).mock.calls.filter(([, value]) => value?.method === 'POST'); expect(posts).toHaveLength(1);
+    await act(async () => { finish({ id: 9, product_variant: 11, quantity: '1.250', type: 'isrofgarchilik', direction: 'out', created_by: 1 }); });
+    await waitFor(() => expect(saved).toHaveBeenCalledTimes(1)); expect(close).toHaveBeenCalledTimes(1);
+  });
+  test('partial receive requires discrepancy reason and never submits excessive quantity', async () => {
+    const transfer = { id: 8, kind: 'internal', items: [{ id: 5, source_product_name: 'Rice', source_variant_name: 'Fine', quantity_sent: '2.000' }] };
+    const screen = await render(<ThemeProvider><InventoryOperationSheet kind="receive" source={transfer} onClose={jest.fn()} onSaved={jest.fn()} /></ThemeProvider>);
+    await waitFor(() => expect(screen.getByLabelText('Qator 1: qabul miqdori').props.value).toBe('2.000'));
+    await fireEvent.changeText(screen.getByLabelText('Qator 1: qabul miqdori'), '3.000');
+    await fireEvent.press(screen.getByText('Tasdiqlash va saqlash'));
+    expect(await screen.findByText('Qabul miqdori jo‘natilganidan oshmasin.')).toBeTruthy();
+    await waitFor(() => expect(screen.getByLabelText('Qator 1: qabul miqdori').props.editable).toBe(true));
+    await fireEvent.changeText(screen.getByLabelText('Qator 1: qabul miqdori'), '1.250'); await fireEvent.press(screen.getByText('Tasdiqlash va saqlash'));
+    expect(await screen.findByText('Tafovut sababini kiriting.')).toBeTruthy();
+    await waitFor(() => expect(screen.getByLabelText('Qator 1: tafovut sababi').props.editable).toBe(true));
+    expect(jest.mocked(request).mock.calls.some(([, value]) => value?.method === 'POST')).toBe(false);
+  });
+  test('batch picker uses actual variant batches and keeps selected batch identity', async () => {
+    const changed = jest.fn();
+    jest.mocked(request).mockResolvedValue([{ id: 21, product_variant: 11, batch_code: 'B21', quantity: '1.250', unit: 'kg', expires_on: '2026-01-01', expiry_status: 'expired' }]);
+    const screen = await render(<ThemeProvider><InventoryBatchPicker variantId={11} value={null} disabled={false} onChange={changed} /></ThemeProvider>);
+    await fireEvent.press(screen.getByLabelText('Partiya: Avtomatik taqsimlash'));
+    await fireEvent.press(await screen.findByLabelText('Partiya #21ni tanlash'));
+    expect(changed).toHaveBeenCalledWith(21);
+    expect(jest.mocked(request).mock.calls[0][0]).toContain('/inventory/batches/?product_variant_id=11');
+  });
+  test('physical return marks the actual row when remaining received stock is exceeded', async () => {
+    const transfer = { id: 8, kind: 'internal', items: [{ id: 5, source_product_name: 'Rice', source_variant_name: 'Fine', quantity_received: '2.000', quantity_returned: '1.000', quantity_return_in_transit: '0.250' }] };
+    const screen = await render(<ThemeProvider><InventoryOperationSheet kind="return" source={transfer} onClose={jest.fn()} onSaved={jest.fn()} /></ThemeProvider>);
+    const label = 'Qator 1: qaytarish miqdori (0 = qaytarmaslik)';
+    await waitFor(() => expect(screen.getByLabelText(label).props.value).toBe('0'));
+    await fireEvent.changeText(screen.getByLabelText(label), '1.000'); await fireEvent.press(screen.getByText('Tasdiqlash va saqlash'));
+    expect(await screen.findByText('Qaytarish miqdori qabul qilingan mavjud qoldiqdan oshmasin.')).toBeTruthy();
+    await waitFor(() => expect(screen.getByLabelText(label).props.editable).toBe(true));
+    expect(screen.getByLabelText(label).props['aria-invalid']).toBe(true);
+    expect(jest.mocked(request).mock.calls.some(([, value]) => value?.method === 'POST')).toBe(false);
+  });
+  test('batch expiry filter is server-backed and absent cost/supplier fields are not invented', async () => {
+    jest.mocked(request).mockImplementation(async path => path.startsWith('/inventory/stock/') ? [{ ...stock, variant_name: 'Fine', quantity: '2.750', unit: 'kg', currency: 'UZS' }] : path.startsWith('/inventory/batches/') ? [{ id: 21, quantity: '2.750', received_on: '2026-01-01', expires_on: '2026-01-02', expiry_status: 'expired', batch_code: 'B21' }] : []);
+    const screen = await render(<ThemeProvider><InventoryScreen /></ThemeProvider>);
+    await fireEvent.press(await screen.findByLabelText('Rice: ombor tafsilotlari')); await fireEvent.press(screen.getByText('Partiyalar'));
+    await fireEvent.press(screen.getByLabelText('Partiya muddati: Muddati o‘tgan'));
+    await waitFor(() => expect(jest.mocked(request).mock.calls.some(([path]) => path.includes('/inventory/batches/?product_variant_id=11&status=expired'))).toBe(true));
+    expect(screen.queryByText(/Tannarx:/)).toBeNull();
+  });
+});
