@@ -30,6 +30,14 @@ describe('Category administration integration', () => {
     expect(screen.queryByText('Yangi kategoriya')).toBeNull();
     expect(screen.queryByText('Imported: tahrirlash')).toBeNull();
   });
+  test('category action menu opens the selected category editor', async () => {
+    jest.mocked(request).mockResolvedValue({ results: [parent] });
+    const screen = await show();
+    await fireEvent.press(await screen.findByLabelText('Kategoriya amallari'));
+    await fireEvent.press(screen.getByText('Kategoriyani tahrirlash'));
+    expect(screen.getByLabelText('Kategoriya nomi').props.value).toBe('Imported');
+    expect(screen.queryByText('Ichki kategoriyalarni ko‘rish')).toBeNull();
+  });
   test('a dependent category deletion keeps the form and shows the real rejection', async () => {
     jest.mocked(request).mockImplementation(async (_path, options) => { if (options?.method === 'DELETE') throw Error('Faol mahsulot mavjud.'); return { results: [parent] }; });
     const screen = await show();

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { ScrollView, Text, TouchableOpacity } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ChevronRight, LogOut, RefreshCw, Store } from 'lucide-react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useAuth } from './AuthContext';
 import { Page, Notice, Loading, Retry } from '../../components/ui/Page';
@@ -28,10 +29,90 @@ export function StoreSelection() {
   const { user, selectTenant, refreshProfile, logout } = useAuth();
   const { colors } = useTheme();
   const [busy, setBusy] = useState(false), [error, setError] = useState('');
-  return <Page title="Do‘konni tanlang"><Notice>{user?.tenants.length ? 'Savdo qaysi do‘kon nomidan bajarilishini tanlang.' : 'Faol do‘kon vakolati topilmadi. Do‘kon egasi bilan bog‘laning yoki hisobni qayta tekshiring.'}</Notice>
-    {user?.tenants.map(tenant => <Button key={tenant.id} title={tenant.name} disabled={busy} variant="secondary" onPress={async () => { setBusy(true); try { await selectTenant(tenant.id); router.replace('/'); } catch (error: any) { setError(error.message); } finally { setBusy(false); } }} />)}
-    {error ? <Text style={{ color: colors.danger }}>{error}</Text> : null}<Button title="Vakolatlarni qayta tekshirish" variant="secondary" onPress={() => refreshProfile().catch(error => setError(error.message))} /><Button title="Hisobdan chiqish" variant="ghost" onPress={() => logout().catch(error => setError(error.message))} />
-  </Page>;
+
+  return (
+    <Page title="Do‘konni tanlang">
+      <Notice>
+        {user?.tenants.length
+          ? 'Savdo qaysi do‘kon yoki filial nomidan bajarilishini tanlang.'
+          : 'Faol do‘kon vakolati topilmadi. Do‘kon egasi bilan bog‘laning yoki hisobni qayta tekshiring.'}
+      </Notice>
+
+      <View style={gateStyles.storesList}>
+        {user?.tenants.map(tenant => (
+          <TouchableOpacity
+            key={tenant.id}
+            disabled={busy}
+            accessibilityRole="button"
+            onPress={async () => {
+              setBusy(true);
+              try {
+                await selectTenant(tenant.id);
+                router.replace('/');
+              } catch (err: any) {
+                setError(err.message);
+              } finally {
+                setBusy(false);
+              }
+            }}
+            style={[
+              gateStyles.storeCard,
+              {
+                backgroundColor: colors.surface,
+                borderColor: colors.border,
+              },
+            ]}
+          >
+            <View style={[gateStyles.storeIconWrap, { backgroundColor: colors.surfaceSecondary }]}>
+              <Store size={22} color={colors.text} />
+            </View>
+
+            <View style={gateStyles.storeDetails}>
+              <Text style={[gateStyles.storeName, { color: colors.text }]}>{tenant.name}</Text>
+              <View style={gateStyles.storeBadgesRow}>
+                <View style={[gateStyles.badgePill, { backgroundColor: colors.surfaceSecondary }]}>
+                  <Text style={[gateStyles.badgeText, { color: colors.textSecondary }]}>
+                    {tenant.is_owner ? 'Do‘kon egasi' : 'Xodim'}
+                  </Text>
+                </View>
+                <Text style={[gateStyles.storeIdText, { color: colors.textMuted }]}>
+                  ID: #{tenant.id}
+                </Text>
+              </View>
+            </View>
+
+            <ChevronRight size={18} color={colors.textMuted} />
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      {error ? <Notice error>{error}</Notice> : null}
+
+      <View style={gateStyles.actionsFooter}>
+        <TouchableOpacity
+          accessibilityRole="button"
+          onPress={() => refreshProfile().catch(err => setError(err.message))}
+          style={gateStyles.footerActionBtn}
+        >
+          <RefreshCw size={15} color={colors.textSecondary} />
+          <Text style={[gateStyles.footerActionText, { color: colors.textSecondary }]}>
+            Vakolatlarni qayta tekshirish
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          accessibilityRole="button"
+          onPress={() => logout().catch(err => setError(err.message))}
+          style={[gateStyles.footerActionBtn, { marginTop: 12 }]}
+        >
+          <LogOut size={15} color={colors.danger} />
+          <Text style={[gateStyles.footerActionText, { color: colors.danger }]}>
+            Hisobdan chiqish
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </Page>
+  );
 }
 export function LegalDocument() {
   const { doc = 'ommaviy_oferta' } = useLocalSearchParams<{ doc?: string }>();
@@ -48,3 +129,65 @@ export function LegalDocument() {
     {current?.error ? <Retry error={current.error} retry={() => { setState({ key: '' }); setVersion(value => value + 1); }} /> : current?.value ? <ScrollView><Text selectable style={{ color: colors.text, fontSize: 15, lineHeight: 24 }}>{current.value.content}</Text></ScrollView> : <Loading />}
   </Page>;
 }
+
+const gateStyles = StyleSheet.create({
+  storesList: {
+    gap: 12,
+    marginVertical: 12,
+  },
+  storeCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    borderRadius: 14,
+    borderWidth: 1,
+    gap: 14,
+  },
+  storeIconWrap: {
+    width: 46,
+    height: 46,
+    borderRadius: 23,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  storeDetails: {
+    flex: 1,
+  },
+  storeName: {
+    fontSize: 16,
+    fontWeight: '700',
+    marginBottom: 4,
+  },
+  storeBadgesRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  badgePill: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 12,
+  },
+  badgeText: {
+    fontSize: 11,
+    fontWeight: '600',
+  },
+  storeIdText: {
+    fontSize: 11,
+  },
+  actionsFooter: {
+    marginTop: 20,
+    alignItems: 'center',
+  },
+  footerActionBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+  },
+  footerActionText: {
+    fontSize: 13,
+    fontWeight: '500',
+  },
+});
