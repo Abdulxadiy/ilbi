@@ -14,6 +14,7 @@ export const modulePermissions: Record<string, string | string[]> = {
   Documents: 'sales.view_sale', ReceiptView: 'sales.view_sale', ShareSheet: 'sales.view_sale', PdfExport: 'sales.view_sale',
   SalesHistory: 'sales.view_sale',
   Cashbox: 'cashbox.view_cashbox',
+  B2B: 'sales.manage_b2b',
   Inventory: 'inventory.view_stock', Reports: ['analytics.view_dashboard', 'cashbox.view_cashbox'],
 };
 export function canOpenModule(user: UserProfile | null, tenant: UserTenant | null, module: string) {

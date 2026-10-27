@@ -44,4 +44,11 @@ describe('Active-store permissions', () => {
     expect(canOpenModule(staff, membership, 'Cashbox')).toBe(true);
     expect(canOpenModule(staff, membership, 'Reports')).toBe(true);
   });
+  test('B2B navigation checks the current membership and denies platform operators', () => {
+    const membership = { ...b, permissions: ['sales.manage_b2b'] };
+    const staff = { ...user, tenants: [a, membership] };
+    expect(canOpenModule(staff, a, 'B2B')).toBe(false);
+    expect(canOpenModule(staff, membership, 'B2B')).toBe(true);
+    expect(canOpenModule({ ...staff, role: 'platform_admin' }, membership, 'B2B')).toBe(false);
+  });
 });

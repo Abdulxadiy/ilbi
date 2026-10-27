@@ -274,10 +274,12 @@ class B2BAcceptItemSerializer(serializers.Serializer):
 
 
 class B2BAcceptInputSerializer(serializers.Serializer):
+    operation_id = serializers.UUIDField(required=False, write_only=True)
     items = B2BAcceptItemSerializer(many=True)
 
 
 class B2BRejectInputSerializer(serializers.Serializer):
+    operation_id = serializers.UUIDField(required=False, write_only=True)
     reason = serializers.CharField(required=True, allow_blank=False)
 
 
@@ -287,12 +289,14 @@ class B2BReturnItemInputSerializer(serializers.Serializer):
 
 
 class B2BReturnInputSerializer(serializers.Serializer):
+    operation_id = serializers.UUIDField(required=False, write_only=True)
     idempotency_key = serializers.CharField(max_length=64, allow_blank=False)
     reason = serializers.CharField(required=True, allow_blank=False)
     items = B2BReturnItemInputSerializer(many=True, allow_empty=False)
 
 
 class B2BReturnDiscrepancyCloseInputSerializer(serializers.Serializer):
+    operation_id = serializers.UUIDField(required=False, write_only=True)
     idempotency_key = serializers.CharField(max_length=64, allow_blank=False)
     reason = serializers.CharField(required=True, allow_blank=False)
     items = B2BReturnItemInputSerializer(many=True, allow_empty=False)

@@ -21,7 +21,9 @@ describe('Real notification inbox contract', () => {
   test('targets cannot open arbitrary URLs and history URLs are client-owned', () => {
     expect(notificationDestination({ ...row(), type: 'unknown', link: 'https://evil.invalid' })).toBeNull();
     expect(notificationDestination({ ...row(), type: 'unknown', link: '//evil.invalid' })).toBeNull();
-    expect(notificationDestination({ ...row(), type: 'b2b_transfer_accepted', link: '/sales/45/' })).toEqual({ module: 'ReceiptView', label: 'Chekni ochish', params: { sale: { id: 45 } } });
+    expect(notificationDestination({ ...row(), type: 'b2b_transfer_accepted', link: '/sales/45/' })).toEqual({ module: 'B2B', label: 'B2B hujjatini ochish', params: { saleId: '45' } });
+    expect(notificationDestination({ ...row(), type: 'b2b_transfer_request', link: '/sales/b2b/inbox/' })).toEqual({ module: 'B2B', label: 'B2B savdolarni ochish' });
+    expect(notificationDestination({ ...row(), type: 'b2b_transfer_request', link: 'https://evil.invalid' })).toBeNull();
     expect(inboxUrl(12)).toBe('/sales/notifications/?page=1&page_size=20&before_id=12');
   });
   test('loads the real endpoint and server cursor without following a returned next URL', async () => {

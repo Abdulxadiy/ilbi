@@ -88,5 +88,6 @@ function operationLabel(operation: string) {
   if (operation.startsWith('void-')) return 'Savdoni qaytarish';
   if (operation.startsWith('inventory:')) return 'Ombor amali';
   if (operation.startsWith('cashbox:')) return 'Kassa amali';
+  if (operation.startsWith('b2b:')) return 'B2B amali';
   return operation.startsWith('sale') ? 'Savdo' : 'Qarz to‘lovi';
 }

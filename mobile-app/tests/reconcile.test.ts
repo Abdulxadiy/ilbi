@@ -59,6 +59,19 @@ describe('Uncertain operation reconciliation', () => {
     expect((await getFinancialIntent(operation, 1, 2))?.status).toBe('confirmed');
     expect(await listFinancialIntents(1, 2)).toHaveLength(0);
   });
+  test('B2B journal dispatch preserves the original operation key and reason', async () => {
+    const operation = 'b2b:reject:11111111-1111-4111-8111-111111111111';
+    const payload = { sale_id: 15, kind: 'reject', reason: 'Synthetic reason' };
+    const identity = await withFinancialIdentity(operation, payload, 1, 2);
+    const intent = (await getFinancialIntent(operation, 1, 2))!;
+    jest.mocked(request).mockImplementation(async path => path === '/sales/b2b/capabilities/'
+      ? { b2b_mutations: 1, operations: ['accept', 'reject', 'receive', 'close_discrepancy'] }
+      : { id: 15, status: 'b2b_rejected', currency: 'UZS', total_amount: '100.00', refunded_amount: '0.00', net_amount: '100.00', items: [], b2b_operation: { operation_id: identity.idempotency_key, kind: 'reject', actor_id: 1, tenant_id: 2, sale_id: 15 } });
+    await reconcileFinancialIntent(intent, user, tenant);
+    expect(request).toHaveBeenCalledWith('/sales/b2b/15/reject/', { method: 'POST', body: { reason: 'Synthetic reason', operation_id: identity.idempotency_key } });
+    expect((await getFinancialIntent(operation, 1, 2))?.status).toBe('confirmed');
+    expect(await listFinancialIntents(1, 2)).toHaveLength(0);
+  });
   test('other-origin or unauthorized records cannot be submitted', async () => {
     await withFinancialIdentity('sale:uncertain', {}, 1, 2);
     const intent = (await getFinancialIntent('sale:uncertain', 1, 2))!;

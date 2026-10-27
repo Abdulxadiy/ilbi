@@ -1,4 +1,5 @@
 import { createPreviewCore } from './previewCore';
+import { createPreviewB2B } from './previewB2B';
 import { createPreviewSupport } from './previewSupport';
 import { createPreviewNotifications, previewNotificationSettings } from './previewNotifications';
 /** Explicit, development-only design data. Never a fallback for a failed API call. */
@@ -45,12 +46,15 @@ function makeSale(payload: any, id: number) {
 }
 sales.set(1043, makeSale({}, 1043));
 const coreRequest = createPreviewCore({ user: previewUser, customers, sales, products });
+const b2bRequest = createPreviewB2B(previewUser.id, previewUser.tenants[0].id);
 
 export async function previewRequest(endpoint: string, options: { method?: string; body?: any; headers?: HeadersInit }): Promise<any> {
   if (!isDesignPreview) throw Error('Design preview is disabled');
   const url = new URL(endpoint, 'http://design.invalid'), path = url.pathname;
   const method = (options.method || 'GET').toUpperCase();
   const body = typeof options.body === 'string' ? JSON.parse(options.body) : options.body || {};
+  const b2bResult = b2bRequest(url, method, body);
+  if (b2bResult.handled) return b2bResult.data;
   const coreResult = coreRequest(url, method, body);
   if (coreResult.handled) return coreResult.data;
   const notificationResult = notificationRequest(url, method, body);

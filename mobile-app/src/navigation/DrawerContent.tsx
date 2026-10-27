@@ -33,6 +33,7 @@ export const DrawerContent: React.FC<DrawerContentComponentProps> = ({ navigatio
     { id: 'hisobotlar', label: 'Hisobotlar', icon: BarChart3, drawerRoute: 'Reports' },
     { id: 'tarix', label: 'Tarix', icon: Clock, route: 'History' },
     { id: 'savdolar-tarixi', label: 'Savdolar tarixi', icon: Clock, route: 'SalesHistory' },
+    { id: 'b2b', label: 'B2B savdolar', icon: Store, route: 'B2B' },
     { id: 'bildirishnomalar', label: 'Bildirishnomalar', icon: Bell, route: 'Notifications' },
     { id: 'profil', label: 'Profil', icon: UserIcon, route: 'Profile' },
     { id: 'sync', label: 'Amallar va sinxronlash', icon: Archive, route: 'Sync' },

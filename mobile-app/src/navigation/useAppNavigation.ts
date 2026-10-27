@@ -11,6 +11,7 @@ const paths: Record<string, string> = {
   Notifications: '/(app)/(tabs)/notifications', Profile: '/(app)/(tabs)/profile', History: '/(app)/(tabs)/history',
   SalesHistory: '/(app)/(tabs)/sales-history',
   Cashbox: '/(app)/(tabs)/cashbox',
+  B2B: '/(app)/(tabs)/b2b',
   Sync: '/(app)/(tabs)/sync', Categories: '/(app)/(tabs)/categories',
   Product: '/(app)/(tabs)/product', NewProduct: '/(app)/(tabs)/product', Stores: '/stores', Admin: '/(app)/admin',
 };

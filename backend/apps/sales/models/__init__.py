@@ -1,3 +1,4 @@
+from .b2b_mutation_model import B2BMutationReceipt
 from .counterparty_model import Counterparty
 from .import_model import CounterpartyImportJob
 from .debt_payment_model import DebtPayment
@@ -14,6 +15,7 @@ from .b2b_return_receipt_model import (
 )
 
 __all__ = [
+    'B2BMutationReceipt',
     'Counterparty',
     'CounterpartyImportJob',
     'DebtPayment',
