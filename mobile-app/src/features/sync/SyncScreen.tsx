@@ -71,7 +71,7 @@ function SyncBody() {
       <Text style={{ color: colors.text, fontWeight: '700' }}>{current.rows.length} ta amal tekshirishni kutmoqda</Text>
       {current.rows.map(intent => <View key={intent.key} style={{ borderWidth: 1, borderColor: colors.border, borderRadius: 12, padding: 14, gap: 10 }}>
         <Text style={{ color: colors.text, fontWeight: '700' }}>{operationLabel(intent.operation)}</Text>
-        <Text selectable style={{ color: colors.textSecondary }}>Vaqt: {intent.createdAt}{'\n'}Kalit: {intent.key}</Text>
+        <Text style={{ color: colors.textSecondary }}>Vaqt: {intent.createdAt}</Text>
         {(intent.payload as any).items?.map((item: any) => <Text key={item.product_variant_id} style={{ color: colors.text }}>Tovar #{item.product_variant_id} · {item.quantity} × {item.unit_price}</Text>)}
         {intent.operation.startsWith('void-') ? <Notice>Sabab: {String((intent.payload as any).reason || '—')}{(intent.payload as any).quantity ? ' · Miqdor: ' + (intent.payload as any).quantity : ''}</Notice> : null}
         {(intent.payload as any).amount != null ? <Text style={{ color: colors.text }}>{(intent.payload as any).amount} {(intent.payload as any).currency}</Text> : null}

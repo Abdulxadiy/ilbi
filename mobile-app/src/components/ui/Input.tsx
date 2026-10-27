@@ -11,6 +11,7 @@ import {
 import { X } from 'lucide-react-native';
 import { useTheme } from '../../theme/ThemeContext';
 import { radius, spacing, typography } from '../../theme/tokens';
+import { safeDisplayText } from '../../security/presentation';
 
 interface InputProps extends TextInputProps {
   label?: string;
@@ -34,6 +35,8 @@ export const Input: React.FC<InputProps> = ({
   ...props
 }) => {
   const { colors } = useTheme();
+  const passwordField = props.secureTextEntry || /parol|password/i.test(label || accessibilityLabel || '');
+  const shownError = error ? safeDisplayText(error, undefined, passwordField && value ? [value] : []) : undefined;
 
   return (
     <View style={[styles.container, containerStyle]}>
@@ -62,7 +65,6 @@ export const Input: React.FC<InputProps> = ({
           value={value}
           placeholderTextColor={colors.textMuted}
           aria-invalid={Boolean(error)}
-          accessibilityHint={error || props.accessibilityHint}
           style={[
             styles.input,
             {
@@ -72,6 +74,7 @@ export const Input: React.FC<InputProps> = ({
             style,
           ]}
           {...props}
+          accessibilityHint={shownError || props.accessibilityHint}
         />
 
         {onClear && value && value.length > 0 ? (
@@ -95,7 +98,7 @@ export const Input: React.FC<InputProps> = ({
           )
         ) : null}
       </View>
-      {error ? <Text accessibilityRole="alert" accessibilityLiveRegion="polite" style={[styles.error, { color: colors.danger }]}>{error}</Text> : null}
+      {error ? <Text accessibilityRole="alert" accessibilityLiveRegion="polite" style={[styles.error, { color: colors.danger }]}>{shownError}</Text> : null}
     </View>
   );
 };

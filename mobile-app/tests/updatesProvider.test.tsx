@@ -64,6 +64,8 @@ describe('Native update reminder and download flow', () => {
   test('downloads share the official feed and show independent mobile version plus unavailable iOS', async () => {
     const screen = await render(<DownloadsScreen tabbed />, { wrapper });
     expect(await screen.findByText('Android uchun ILBI')).toBeTruthy();
+    expect(screen.queryByText(/SHA-256/)).toBeNull();
+    expect(screen.queryByText(android.sha256)).toBeNull();
     await fireEvent.press(await screen.findByText('Android uchun yuklab olish'));
     expect(Linking.openURL).toHaveBeenCalledWith('https://ilbi.uz' + android.url);
     expect(screen.getByText('iPhone va iPad uchun ILBI')).toBeTruthy();

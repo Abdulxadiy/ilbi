@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { Page, Notice } from '../../components/ui/Page';
 import { Button } from '../../components/ui/Button';
@@ -12,12 +12,11 @@ import type { Release, ReleasePlatform } from './releases';
 
 const labels: Record<ReleasePlatform, string> = { android: 'Android', ios: 'iPhone va iPad', windows: 'Windows · 64 bit', linux: 'Linux · x86_64' };
 function ReleaseCard({ platform, release }: { platform: ReleasePlatform; release: Release | null }) {
-  const { colors } = useTheme(), updates = useUpdates(), [checksum, setChecksum] = useState(false);
+  const { colors } = useTheme(), updates = useUpdates();
   return <View style={{ borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surface, borderRadius: 14, padding: 16, gap: 10 }}>
     <Text style={{ color: colors.text, fontWeight: '700', fontSize: 18 }}>{labels[platform]} uchun ILBI</Text>
     {release ? <><Notice>v{release.version}{release.buildNumber ? ' · ' + release.buildNumber : ''}{release.bytes ? ' · ' + (release.bytes / 1024 ** 2).toFixed(1) + ' MB' : ''}{release.channel === 'preview' ? ' · Sinov nusxasi' : ''}</Notice>
       <Button title={release.kind === 'store' ? 'Ilovalar do‘konida ochish' : labels[platform] + ' uchun yuklab olish'} disabled={isDesignPreview || updates.opening} onPress={() => { void updates.open(release); }} />
-      {release.sha256 ? <><TouchableOpacity accessibilityRole="button" accessibilityLabel={labels[platform] + ': SHA-256 qiymati'} style={{ minHeight: 44, justifyContent: 'center' }} onPress={() => setChecksum(value => !value)}><Text style={{ color: colors.textSecondary }}>Faylning SHA-256 qiymati {checksum ? '⌃' : '⌄'}</Text></TouchableOpacity>{checksum ? <Text selectable style={{ color: colors.textSecondary, fontSize: 12 }}>{release.sha256}</Text> : null}</> : null}
     </> : <Notice>Rasmiy yuklama hali joylanmagan.</Notice>}
   </View>;
 }

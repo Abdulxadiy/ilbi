@@ -4,6 +4,7 @@ import { secureStorage } from './storage';
 import { isDesignPreview, previewRequest } from '../dev/preview';
 import { commitApiBaseUrl, getApiBaseUrl, getServerScope, normalizeApiBaseUrl } from './environment';
 import { ApiError, errorMessage } from './errors';
+import { safeErrorData, submittedSecretValues } from '../security/presentation';
 export { getApiBaseUrl } from './environment';
 export { ApiError } from './errors';
 
@@ -135,7 +136,8 @@ export async function refreshAccessToken(): Promise<string> {
     if (generation !== authGeneration) throw new ApiError('Sessiya o‘zgargan.', 0, null, 0, 'SESSION_CHANGED');
     if (!response.ok) {
       if (response.status === 401) await clearTokens();
-      throw new ApiError(errorMessage(data, 'Token yangilanmadi.'), response.status, data, Number(response.headers.get('Retry-After') || 0) * 1000);
+      const safe = safeErrorData(data, [currentRefresh]);
+      throw new ApiError(errorMessage(safe, 'Token yangilanmadi.'), response.status, safe, Number(response.headers.get('Retry-After') || 0) * 1000);
     }
     await setTokens(data?.access, data?.refresh || currentRefresh, true);
     return data.access as string;
@@ -170,7 +172,12 @@ export async function request<T = any>(endpoint: string, options: RequestOptions
   const json = (response.headers.get('content-type') || '').includes('json');
   const data = json ? await response.json() : await response.text();
   if (response.status !== 401) assertCurrent();
-  if (!response.ok) throw new ApiError(errorMessage(data), response.status, data, Number(response.headers.get('Retry-After') || data?.retry_after_seconds || 0) * 1000);
+  if (!response.ok) {
+    const secrets = submittedSecretValues(form ? null : inputBody);
+    const supportToken = headers.get('X-Support-Token'); if (supportToken) secrets.push(supportToken);
+    const safe = safeErrorData(data, secrets);
+    throw new ApiError(errorMessage(safe), response.status, safe, Number(response.headers.get('Retry-After') || data?.retry_after_seconds || 0) * 1000);
+  }
   if (!['GET', 'HEAD', 'OPTIONS'].includes((options.method || 'GET').toUpperCase())) resourceChanged(endpoint);
   return data as T;
 }

@@ -21,6 +21,7 @@ import { getApiBaseUrl, request, setApiBaseUrl } from '../../api/client';
 import { isDesignPreview } from '../../dev/preview';
 import { useFormErrors } from '../../hooks/useFormErrors';
 import { LoginHero } from './LoginHero';
+import { safeDisplayText } from '../../security/presentation';
 
 export const LoginScreen: React.FC = () => {
   const { colors } = useTheme();
@@ -331,7 +332,7 @@ export const LoginScreen: React.FC = () => {
                 }
               />
 
-              {error ? <Text style={[styles.error, { color: colors.danger }]}>{error}</Text> : null}
+              {error ? <Text style={[styles.error, { color: colors.danger }]}>{safeDisplayText(error)}</Text> : null}
 
               <Button
                 title="Kirish"
@@ -388,7 +389,7 @@ export const LoginScreen: React.FC = () => {
                 onPress={() => checkTelegram().catch(error => setError(error.message))}
                 fullWidth
               />
-              {error ? <Text accessibilityRole="alert" style={{ color: colors.danger }}>{error}</Text> : null}
+              {error ? <Text accessibilityRole="alert" style={{ color: colors.danger }}>{safeDisplayText(error)}</Text> : null}
               <Button
                 title="Login va parolga qaytish"
                 variant="ghost"
@@ -419,7 +420,7 @@ export const LoginScreen: React.FC = () => {
                 onSubmitEditing={() => { void handleVerifyOtp(); }}
               />
 
-              {error ? <Text style={[styles.error, { color: colors.danger }]}>{error}</Text> : null}
+              {error ? <Text style={[styles.error, { color: colors.danger }]}>{safeDisplayText(error)}</Text> : null}
 
               <Button
                 title="Tasdiqlash"

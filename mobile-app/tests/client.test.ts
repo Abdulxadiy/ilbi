@@ -14,6 +14,21 @@ describe('Session refresh and stale responses', () => {
     expect(() => assertAuthScope(captureAuthScope(2, 8))).toThrow('Sessiya yoki do‘kon');
     expect(() => assertAuthScope(captureAuthScope(2, 7))).not.toThrow();
   });
+  test('failed authentication cannot echo the submitted password in a banner or field data', async () => {
+    const password = 'Synthetic Example Password!';
+    jest.spyOn(globalThis, 'fetch').mockResolvedValueOnce(reply({ error: { message: 'Rejected value «' + password + '»', details: { password: ['Rejected «' + password + '»'], access: 'synthetic-response-token' } } }, 400));
+    let failure: any;
+    try { await request('/auth/token/', { method: 'POST', body: { username: 'synthetic', password } }); } catch (error) { failure = error; }
+    expect(failure.message).not.toContain(password); expect(JSON.stringify(failure.data)).not.toContain(password);
+    expect(JSON.stringify(failure.data)).not.toContain('synthetic-response-token');
+  });
+  test('credential-safe error presentation never alters outgoing credentials or successful token responses', async () => {
+    const password = 'Synthetic Example Password!';
+    const result = { access: 'synthetic-response-token', refresh: 'synthetic-refresh-token' };
+    const spy = jest.spyOn(globalThis, 'fetch').mockResolvedValueOnce(reply(result));
+    expect(await request('/auth/token/', { method: 'POST', body: { username: 'synthetic', password } })).toEqual(result);
+    expect(JSON.parse(String(spy.mock.calls[0][1]?.body)).password).toBe(password);
+  });
   test('public support metadata and guest requests exclude an existing account and tenant', async () => {
     await setTokens('existing-private-access', refresh); await setActiveTenantId('7');
     const fetchSpy = jest.spyOn(globalThis, 'fetch').mockResolvedValue(reply({ results: [] }));

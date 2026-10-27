@@ -1,4 +1,5 @@
 import { ApiError } from './errors';
+import { safeDisplayText, sensitiveField } from '../security/presentation';
 
 export type FieldErrors = Record<string, string>;
 const general = new Set(['detail', 'message', 'error', 'non_field_errors', '__all__']);
@@ -17,14 +18,15 @@ export function fieldErrors(failure: unknown): FieldErrors {
   const walk = (value: unknown, path: string, depth: number) => {
     if (depth > 6 || Object.keys(result).length >= 100) return;
     if (typeof value === 'string' && path) {
-      if (value.trim()) result[path] = value.slice(0, 500);
+      if (value.trim()) result[path] = safeDisplayText(value, 'Ushbu maydonni tekshiring.');
     } else if (Array.isArray(value)) {
       if (value.every(item => typeof item === 'string')) {
-        if (path && value.length) result[path] = value.join(' ').slice(0, 500);
+        if (path && value.length) result[path] = safeDisplayText(value.join(' '), 'Ushbu maydonni tekshiring.');
       } else value.slice(0, 100).forEach((item, index) => walk(item, path ? `${path}.${index}` : String(index), depth + 1));
     } else if (value && typeof value === 'object') {
       Object.entries(value).slice(0, 100).forEach(([key, item]) => {
         if (unsafe.has(key) || ['non_field_errors', '__all__'].includes(key)) return;
+        if (sensitiveField(key) && !['password', 'old_password', 'new_password', 'current_password', 'confirm_password', 'parol'].includes(key.toLowerCase())) return;
         if (details === data && !path && (general.has(key) || key === 'code' && (data.detail || data.message) && typeof item === 'string')) return;
         walk(item, path ? `${path}.${key}` : key, depth + 1);
       });

@@ -3,6 +3,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Check, CircleAlert, Info, X } from 'lucide-react-native';
 import { useTheme } from '../../theme/ThemeContext';
 import { radius, spacing, typography } from '../../theme/tokens';
+import { safeDisplayText } from '../../security/presentation';
 
 export interface ToastProps {
   visible?: boolean;
@@ -79,7 +80,7 @@ export const Toast: React.FC<ToastProps> = ({
       <View style={[styles.iconWrapper, { backgroundColor: styleConfig.iconBg }]}>
         {actualType === 'success' ? <Check size={14} color={styleConfig.iconColor} /> : actualType === 'error' ? <CircleAlert size={14} color={styleConfig.iconColor} /> : <Info size={14} color={styleConfig.iconColor} />}
       </View>
-      <Text accessibilityRole={actualType === 'error' ? 'alert' : undefined} accessibilityLiveRegion="polite" style={[styles.message, { color: styleConfig.text }]}>{message}</Text>
+      <Text accessibilityRole={actualType === 'error' ? 'alert' : undefined} accessibilityLiveRegion="polite" style={[styles.message, { color: styleConfig.text }]}>{safeDisplayText(message)}</Text>
       <TouchableOpacity
         accessibilityLabel="Xabarni yopish"
         accessibilityRole="button"

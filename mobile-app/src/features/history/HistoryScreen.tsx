@@ -11,6 +11,7 @@ import { useAuth } from '../auth/AuthContext';
 import { useScopedQuery } from '../../hooks/useScopedQuery';
 import { useDebounced } from '../../hooks/usePagedResource';
 import { positiveId, formatAmount } from '../reports/model';
+import { redactSensitiveData } from '../../security/presentation';
 
 type Event = { id: string; source: string; object_id: number; title: string; subtitle: string; created_at: string; actor_name: string; amount: string | null; currency: string; sale_id?: number | null; status?: string };
 function parseEvent(value: any): Event {
@@ -24,7 +25,7 @@ function parseHistory(value: any) {
 }
 function parseDetail(value: any) {
   if (!value || !value.details || !Array.isArray(value.details.fields)) throw Error('Tarix tafsilotlari tasdiqlanmadi.');
-  return { event: parseEvent(value.event), details: value.details, sale: value.sale || null };
+  return { event: parseEvent(value.event), details: redactSensitiveData(value.details), sale: value.sale || null };
 }
 const categories = [['all', 'Barchasi'], ['sales', 'Savdolar'], ['inventory', 'Ombor'], ['catalog', 'Tovarlar'], ['finance', 'Moliya'], ['team', 'Jamoa'], ['settings', 'Sozlamalar']] as const;
 export const HistoryScreen: React.FC = () => {

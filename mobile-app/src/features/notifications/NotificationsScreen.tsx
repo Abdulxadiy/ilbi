@@ -13,6 +13,7 @@ import { useTheme } from '../../theme/ThemeContext';
 import { useNotifications } from './NotificationsContext';
 import { NotificationPreferences } from './NotificationPreferences';
 import { notificationCategory, notificationDestination, type InboxNotification } from './inbox';
+import { safeDisplayText } from '../../security/presentation';
 
 export function NotificationsScreen() {
   const { colors } = useTheme(), navigation = useAppNavigation(), { canOpen } = usePermissions(), inbox = useNotifications();
@@ -51,7 +52,7 @@ export function NotificationsScreen() {
       <TouchableOpacity accessibilityRole="button" accessibilityLabel="Barchasini o‘qilgan qilish" disabled={!inbox.unreadCount || Boolean(inbox.busy)} onPress={() => { void inbox.markAllRead(); }} style={styles.icon}><CheckCheck size={22} color={!inbox.unreadCount || inbox.busy ? colors.textMuted : colors.text} /></TouchableOpacity>
       <TouchableOpacity accessibilityRole="button" accessibilityLabel="Bildirishnomalarni tozalash" disabled={!inbox.rows.length || Boolean(inbox.busy)} onPress={() => setConfirm('all')} style={styles.icon}><Trash2 size={20} color={!inbox.rows.length || inbox.busy ? colors.textMuted : colors.danger} /></TouchableOpacity>
     </View>
-    {(inbox.error || targetError) && <View style={styles.message}><Text accessibilityRole="alert" style={{ color: colors.danger }}>{targetError || inbox.error}</Text><Button title="Qayta urinish" variant="secondary" onPress={() => { void inbox.refresh(); }} /></View>}
+    {(inbox.error || targetError) && <View style={styles.message}><Text accessibilityRole="alert" style={{ color: colors.danger }}>{safeDisplayText(targetError || inbox.error)}</Text><Button title="Qayta urinish" variant="secondary" onPress={() => { void inbox.refresh(); }} /></View>}
     <FlatList data={inbox.rows} keyExtractor={row => String(row.id)} contentContainerStyle={styles.list}
       refreshControl={<RefreshControl refreshing={inbox.loading} onRefresh={() => { void inbox.refresh(); }} />}
       ListEmptyComponent={<View style={styles.empty}>{inbox.loading ? <ActivityIndicator color={colors.text} /> : <><Bell size={36} color={colors.textMuted} /><Text style={{ color: colors.textSecondary }}>{inbox.error ? 'Ro‘yxatni yuklash uchun qayta urining.' : 'Hozircha bildirishnoma yo‘q'}</Text></>}</View>}
