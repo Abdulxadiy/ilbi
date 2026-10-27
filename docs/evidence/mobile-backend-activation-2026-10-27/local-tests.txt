@@ -12,7 +12,7 @@ Result: All checks passed!; exit 0.
 
 Python compile and git diff whitespace checks passed.
 
-Coverage includes exact loaded image/config-ID/revision/user1000 checks; retained old image; cross-repository reviewed reference preservation; current-state drift, including a target retagged during backup before migration; real operations locking; failed/missing rehearsal rejection; private metadata/log output; bounded migrations; backend-only environment changes; originally stopped services; unchanged bot identity; backup/migration/health failure rollback; owned one-off cleanup; and additive schema retention.
+Coverage includes exact loaded image/verified-engine-ID/revision/user1000 checks; retained old image; cross-repository reviewed reference preservation; current-state drift, including a target retagged during backup before migration; real operations locking; failed/missing rehearsal rejection; private metadata/log output; bounded migrations; backend-only environment changes; originally stopped services; unchanged bot identity; backup/migration/health failure rollback; owned one-off cleanup; and additive schema retention.
 
 The first test attempt used /usr/bin/python, which has no pytest installed. It did not execute tests. The explicit isolated test virtual environment above then executed the actual passing suite. No test assertion or rollout guard was disabled.
 

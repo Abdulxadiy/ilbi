@@ -119,8 +119,8 @@ class Deployment:
         self.run_id = uuid.uuid4().hex
         self.migration_name = 'ilbi-mobile-migrate-' + self.run_id[:16]
         if not IMAGE.fullmatch(image) or not IMAGE.fullmatch(expected_current_image) or not IMAGE_ID.fullmatch(expected_image_id):
-            raise ActivationError('Exact immutable backend image references and a sha256 image config ID are required.')
-        # An explicit reviewed ref/config-ID pair also authorizes a repository
+            raise ActivationError('Exact immutable backend image references and a verified sha256 engine image ID are required.')
+        # An explicit reviewed ref/verified-engine-ID pair authorizes a repository
         # rename; never retag a CI image to pretend it came from the old repo.
         if image == expected_current_image:
             raise ActivationError('Use a new reviewed backend image.')
@@ -301,7 +301,8 @@ def main():
     parser.add_argument('--root', type=Path, default=Path(__file__).resolve().parents[1])
     parser.add_argument('--image', required=True)
     parser.add_argument('--expected-current-image', required=True)
-    parser.add_argument('--expected-image-id', required=True)
+    parser.add_argument('--expected-image-id', required=True,
+                        help='Exact engine image ID derived from the verified CI archive; loaded .Id must match.')
     actions = parser.add_mutually_exclusive_group()
     actions.add_argument('--plan', action='store_true')
     actions.add_argument('--activate', action='store_true')
