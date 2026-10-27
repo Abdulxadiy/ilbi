@@ -1,0 +1,19 @@
+Local backend-only activation verification — 2026-10-27
+
+Command (repository root):
+/mnt/storage/.cache/ilbi-push-tests/venv/bin/python -m pytest -q tests/deployment/test_mobile_backend_activation.py tests/deployment/test_operations.py tests/deployment/test_mobile_backend_candidate.py
+
+Result: 22 passed, 7 subtests passed in 0.25s; exit 0.
+17 activation safety tests, 4 immutable candidate boundary tests, 1 existing backup recovery test.
+
+Fatal Ruff:
+/mnt/storage/.cache/ilbi-push-tests/venv/bin/python -m ruff check --select E9,F63,F7,F82 ops/deploy_mobile_backend.py tests/deployment/test_mobile_backend_activation.py
+Result: All checks passed!; exit 0.
+
+Python compile and git diff whitespace checks passed.
+
+Coverage includes exact loaded image/config-ID/revision/user1000 checks; retained old image; cross-repository reviewed reference preservation; current-state drift, including a target retagged during backup before migration; real operations locking; failed/missing rehearsal rejection; private metadata/log output; bounded migrations; backend-only environment changes; originally stopped services; unchanged bot identity; backup/migration/health failure rollback; owned one-off cleanup; and additive schema retention.
+
+The first test attempt used /usr/bin/python, which has no pytest installed. It did not execute tests. The explicit isolated test virtual environment above then executed the actual passing suite. No test assertion or rollout guard was disabled.
+
+These are local safety tests with real temporary files/locks and a synthetic Docker model, not a live production activation, actual backup restoration, or financial mutation. Production execution is owned separately by the root agent.
