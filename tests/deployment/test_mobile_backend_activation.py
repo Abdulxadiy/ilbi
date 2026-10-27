@@ -36,11 +36,21 @@ class DockerModel:
         self.migration_running = False
         self.database_migrated = False
         self.retag_during_backup = False
+        self.health_failures = {}
+        self.health_probes = []
 
     def __call__(self, argv, label, timeout=90):
         self.calls.append((list(argv), label))
         if label == 'Bounded candidate migrations':
             self.migration_running = True
+        if label == 'Backend health verification':
+            image = self.states['ilbi']['reference']
+            self.health_probes.append((image, timeout))
+            failures = self.health_failures.get(image, 0)
+            if failures is None or failures > 0:
+                if failures is not None:
+                    self.health_failures[image] -= 1
+                raise MODULE.ActivationError('Synthetic strict readiness failure.')
         if label in self.failures:
             self.failures.remove(label)
             raise MODULE.ActivationError('Synthetic operational failure.')
@@ -82,6 +92,19 @@ class DockerModel:
         return ''
 
 
+class FakeClock:
+    def __init__(self):
+        self.now = 0
+        self.delays = []
+
+    def monotonic(self):
+        return self.now
+
+    def sleep(self, seconds):
+        self.delays.append(seconds)
+        self.now += seconds
+
+
 class MobileBackendActivationTests(unittest.TestCase):
     def setUp(self):
         self.folder = tempfile.TemporaryDirectory(prefix='ilbi-backend-activation-')
@@ -106,7 +129,9 @@ class MobileBackendActivationTests(unittest.TestCase):
                             'restored': True, 'migrations_verified': True}
         self.write_report()
         self.model = DockerModel(self.root, self.archive)
-        self.deployment = MODULE.Deployment(self.root, NEW, OLD, NEW_ID, self.model)
+        self.clock = FakeClock()
+        self.deployment = MODULE.Deployment(self.root, NEW, OLD, NEW_ID, self.model,
+                                           clock=self.clock.monotonic, sleep=self.clock.sleep)
         self.logs = self.base / 'private-logs'
 
     def tearDown(self):
@@ -141,7 +166,7 @@ class MobileBackendActivationTests(unittest.TestCase):
     def test_unlabelled_previous_image_remains_available_for_activation_and_rollback(self):
         self.model.images[OLD]['revision'] = None
         self.deployment.check()
-        self.model.failures.add('Backend health verification')
+        self.model.health_failures[NEW] = None
         with self.assertRaisesRegex(MODULE.ActivationError, 'previous backend image and running states restored'):
             self.deployment.activate(self.report, self.logs)
         self.assertEqual(self.environment.read_bytes(), self.original)
@@ -195,7 +220,10 @@ class MobileBackendActivationTests(unittest.TestCase):
         self.assertFalse(any(label == 'Resume unchanged bot' for _, label in self.model.calls))
 
     def assert_failure_rolls_back_images_only(self, failure):
-        self.model.failures.add(failure)
+        if failure == 'Backend health verification':
+            self.model.health_failures[NEW] = None
+        else:
+            self.model.failures.add(failure)
         with self.assertRaisesRegex(MODULE.ActivationError, 'previous backend image and running states restored'):
             self.deployment.activate(self.report, self.logs)
         self.assertEqual(self.environment.read_bytes(), self.original)
@@ -216,6 +244,34 @@ class MobileBackendActivationTests(unittest.TestCase):
     def test_failed_health_keeps_additive_schema_and_restores_previous_images(self):
         self.assert_failure_rolls_back_images_only('Backend health verification')
         self.assertTrue(self.model.database_migrated)
+        self.assertEqual(sum(image == NEW for image, _ in self.model.health_probes), 30)
+        self.assertLessEqual(self.clock.now, 60)
+
+    def test_transient_strict_readiness_recovers_without_image_rollback(self):
+        self.model.health_failures[NEW] = 2
+        result = self.deployment.activate(self.report, self.logs)
+        self.assertTrue(result['activated'])
+        self.assertEqual([image for image, _ in self.model.health_probes], [NEW, NEW, NEW])
+        self.assertEqual(self.clock.delays, [2, 2])
+        self.assertTrue(all(0 < timeout <= 10 for _, timeout in self.model.health_probes))
+        self.assertFalse(any(label == 'Restore previous backend' for _, label in self.model.calls))
+
+    def test_persistent_new_failure_allows_bounded_old_readiness_recovery(self):
+        self.model.health_failures.update({NEW: None, OLD: 2})
+        with self.assertRaisesRegex(MODULE.ActivationError, 'previous backend image and running states restored'):
+            self.deployment.activate(self.report, self.logs)
+        self.assertEqual(self.environment.read_bytes(), self.original)
+        self.assertEqual(sum(image == NEW for image, _ in self.model.health_probes), 30)
+        self.assertEqual(sum(image == OLD for image, _ in self.model.health_probes), 3)
+        self.assertEqual(self.clock.now, 64)
+        self.assertTrue(self.model.database_migrated)
+
+    def test_persistent_old_and_new_unreadiness_still_requires_manual_attention(self):
+        self.model.health_failures.update({NEW: None, OLD: None})
+        with self.assertRaisesRegex(MODULE.ActivationError, 'rollback needs manual attention'):
+            self.deployment.activate(self.report, self.logs)
+        self.assertEqual(self.environment.read_bytes(), self.original)
+        self.assertEqual(self.clock.now, 120)
 
     def test_target_retagged_during_backup_is_rejected_before_migration(self):
         self.model.retag_during_backup = True
@@ -228,7 +284,8 @@ class MobileBackendActivationTests(unittest.TestCase):
     def test_reviewed_repository_rename_keeps_exact_ci_reference(self):
         renamed = NEW.replace('/fixture/ilbi/', '/fixture/renamed-ilbi/')
         self.model.images[renamed] = self.model.images.pop(NEW)
-        self.deployment = MODULE.Deployment(self.root, renamed, OLD, NEW_ID, self.model)
+        self.deployment = MODULE.Deployment(self.root, renamed, OLD, NEW_ID, self.model,
+                                           clock=self.clock.monotonic, sleep=self.clock.sleep)
         self.report_data['image'] = renamed
         self.write_report()
         result = self.deployment.activate(self.report, self.logs)

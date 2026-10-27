@@ -15,6 +15,7 @@ import signal
 import stat
 import subprocess
 import tempfile
+import time
 import uuid
 from pathlib import Path
 
@@ -107,10 +108,12 @@ class Runner:
 
 
 class Deployment:
-    def __init__(self, root, image, expected_current_image, expected_image_id, runner=None):
+    def __init__(self, root, image, expected_current_image, expected_image_id, runner=None, *, clock=None, sleep=None):
         self.root = Path(root).resolve()
         self.image, self.previous, self.image_id = image, expected_current_image, expected_image_id
         self.run = runner or Runner(self.root)
+        self.clock = clock or time.monotonic
+        self.sleep = sleep or time.sleep
         self.environment = self.root / '.env.production'
         self.original = None
         self.states = None
@@ -199,6 +202,26 @@ class Deployment:
         for container in output.split():
             self.run(['docker', 'rm', '-f', container], 'Stop own migration container')
 
+    def wait_ready(self):
+        # Compose/Docker health can precede brief startup contention when the
+        # remaining writers resume. Retry the complete strict readiness probe;
+        # never replace its HTTP/dependency assertions with a weaker status check.
+        deadline = self.clock() + 60
+        while True:
+            remaining = deadline - self.clock()
+            if remaining <= 0:
+                break
+            try:
+                self.compose('exec', '-T', '--interactive=false', 'ilbi', 'python', '-B', 'healthcheck.py',
+                             label='Backend health verification', timeout=min(10, remaining))
+                return
+            except ActivationError:
+                remaining = deadline - self.clock()
+                if remaining <= 0:
+                    break
+                self.sleep(min(2, remaining))
+        raise ActivationError('Backend did not become ready within the bounded verification window.')
+
     def resume(self, image, *, rollback=False):
         expected_id = self.old_image_id if rollback else self.image_id
         if self.inspected_image(image)['id'] != expected_id:
@@ -220,8 +243,7 @@ class Deployment:
             elif before['running'] and (after['reference'] != image or after['image_id'] != (self.old_image_id if rollback else self.image_id)):
                 raise ActivationError('Backend image verification failed after start.')
         if self.states['ilbi']['running']:
-            self.compose('exec', '-T', '--interactive=false', 'ilbi', 'python', '-B', 'healthcheck.py',
-                         label='Backend health verification', timeout=90)
+            self.wait_ready()
 
     def activate(self, report_path, log_directory):
         # The plan is repeated under the same lock used by ordinary backup/deploy.
