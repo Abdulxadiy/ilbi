@@ -256,10 +256,12 @@ class SaleCreateInputSerializer(serializers.Serializer):
 
 
 class SaleVoidSerializer(serializers.Serializer):
+    idempotency_key = serializers.CharField(max_length=64, required=False, allow_blank=False)
     reason = serializers.CharField(required=True, allow_blank=False)
 
 
 class SaleItemVoidSerializer(serializers.Serializer):
+    idempotency_key = serializers.CharField(max_length=64, required=False, allow_blank=False)
     quantity = serializers.DecimalField(max_digits=14, decimal_places=3, min_value=Decimal("0.001"))
     reason = serializers.CharField(required=True, allow_blank=False)
 

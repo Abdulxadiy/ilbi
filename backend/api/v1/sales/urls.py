@@ -28,6 +28,7 @@ from api.v1.sales.views.import_views import (
 )
 from api.v1.sales.views.sale_views import (
     PublicReceiptDetailView,
+    SaleCapabilitiesView,
     SaleDetailView,
     SaleItemVoidView,
     SaleListCreateView,
@@ -42,6 +43,7 @@ urlpatterns = [
     path("counterparties/import/preview/", CounterpartyImportPreviewView.as_view(), name="counterparty-import-preview"),
     path("counterparties/import/<int:job_id>/commit/", CounterpartyImportCommitView.as_view(), name="counterparty-import-commit"),
     # Sales
+    path("capabilities/", SaleCapabilitiesView.as_view(), name="sales-capabilities"),
     path("", SaleListCreateView.as_view(), name="sale-list-create"),
     path("public/receipt/<str:token>/", PublicReceiptDetailView.as_view(), name="public-receipt-detail"),
     path("<int:pk>/", SaleDetailView.as_view(), name="sale-detail"),

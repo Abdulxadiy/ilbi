@@ -164,6 +164,15 @@ class SaleReceiptTokenRotateView(SalesAPIView):
         return Response({"public_token": token}, status=status.HTTP_200_OK)
 
 
+class SaleCapabilitiesView(SalesAPIView):
+    permission_classes = [HasEmployeePermission]
+    required_permission = 'sales.view_sale'
+
+    @extend_schema(request=None, responses={200: OpenApiTypes.OBJECT})
+    def get(self, request):
+        return Response({"sale_void_idempotency": 1, "partial_void_quantity_scale": 3})
+
+
 class SaleVoidView(SalesAPIView):
     permission_classes = [HasEmployeePermission]
     permission_map = {'POST': 'sales.void_sale'}
@@ -179,11 +188,15 @@ class SaleVoidView(SalesAPIView):
                 sale=sale,
                 user=request.user,
                 reason=serializer.validated_data['reason'],
+                idempotency_key=serializer.validated_data.get('idempotency_key'),
             )
         except VoidServiceError as exc:
             return Response({'detail': str(exc)}, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response(SaleOutputSerializer(voided_sale, context={"request": request}).data, status=status.HTTP_200_OK)
+        payload = dict(SaleOutputSerializer(voided_sale, context={"request": request}).data)
+        if hasattr(voided_sale, '_void_operation'):
+            payload['void_operation'] = voided_sale._void_operation
+        return Response(payload, status=status.HTTP_200_OK)
 
 
 class SaleItemVoidView(SalesAPIView):
@@ -202,11 +215,15 @@ class SaleItemVoidView(SalesAPIView):
                 user=request.user,
                 quantity=serializer.validated_data['quantity'],
                 reason=serializer.validated_data['reason'],
+                idempotency_key=serializer.validated_data.get('idempotency_key'),
             )
         except VoidServiceError as exc:
             return Response({'detail': str(exc)}, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response(SaleItemOutputSerializer(item, context={"request": request}).data, status=status.HTTP_200_OK)
+        payload = dict(SaleItemOutputSerializer(item, context={"request": request}).data)
+        if hasattr(item, '_void_operation'):
+            payload['void_operation'] = item._void_operation
+        return Response(payload, status=status.HTTP_200_OK)
 
 
 class PublicReceiptDetailView(APIView):

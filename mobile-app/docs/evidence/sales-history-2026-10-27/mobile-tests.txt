@@ -1,0 +1,8 @@
+npm notice run mobile-app@1.0.0 test
+npm notice run jest --runInBand --runTestsByPath tests/saleVoid.test.ts tests/salesHistory.test.tsx tests/syncScreen.test.tsx tests/reconcile.test.ts
+
+Test Suites: 4 passed, 4 total
+Tests:       28 passed, 28 total
+Snapshots:   0 total
+Time:        2.068 s
+Ran all test suites within paths "tests/saleVoid.test.ts", "tests/salesHistory.test.tsx", "tests/syncScreen.test.tsx", "tests/reconcile.test.ts".
