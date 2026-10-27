@@ -13,15 +13,15 @@ Status: **COMPLETE — source comparison and available checks; native/real-backe
 | --- | --- | --- |
 | [DMP-001](#dmp-001) | TESTED_CODE | Explicit consent checkbox and sessionEntry business gate tested; legal document routes fetch server content. Auth/gates: 17 tests pass; tsc/lint pass. |
 | [DMP-002](#dmp-002) | OPEN | Pending |
-| [DMP-003](#dmp-003) | OPEN | Pending |
+| [DMP-003](#dmp-003) | IN_PROGRESS | Real profile/password API, inline validation and logout/session isolation tested; avatar upload/delete remains. See CORE_API_READINESS_2026_10_27.md. |
 | [DMP-004](#dmp-004) | OPEN | Pending |
 | [DMP-005](#dmp-005) | TESTED_CODE | Profile failure shows retry/logout recovery; retry component and delayed profile-after-logout tests pass. |
 | [DMP-006](#dmp-006) | TESTED_CODE | Validated membership selection, explicit multi-store gate, saved account/server-scoped choice, Home switch entry and store-choice UI tested. |
 | [DMP-007](#dmp-007) | TESTED_CODE | 9 permission/checkout tests pass: active-membership grants, cross-store isolation, owner-only actions, admin separation and denied sale POST. Router guards and navigation/action checks added; tsc/lint pass. |
-| [DMP-008](#dmp-008) | OPEN | Pending |
-| [DMP-009](#dmp-009) | OPEN | Pending |
-| [DMP-010](#dmp-010) | OPEN | Pending |
-| [DMP-011](#dmp-011) | OPEN | Pending |
+| [DMP-008](#dmp-008) | IN_PROGRESS | Four real analytics periods, KPI/chart and scoped loading connected; custom-date/profitability/drill-down parity remains. |
+| [DMP-009](#dmp-009) | TESTED_CODE | Dedicated sales/customer/date/status/payment filters, pagination/detail:28 mobile and33 PostgreSQL cases; SALES_HISTORY_READINESS_2026_10_27.md. Native/deploy gate remains. |
+| [DMP-010](#dmp-010) | TESTED_CODE | Reasoned full returns use per-dialog IDs, actor/store-bound receipts and original-key concurrency/rollback coverage; native financial acceptance pending. |
+| [DMP-011](#dmp-011) | TESTED_CODE | Exact fractional item returns, remaining-quantity checks, actor-bound acknowledgements and retained completed keys tested;33 real sales backend cases. |
 | [DMP-012](#dmp-012) | TESTED_CODE | Cart wholesale toggle uses configured partner prices, preserves negotiated overrides, persists mode and sends is_partner_sale. Cart persistence/quote tests verify mode, prices and missing partner configuration; tsc/lint pass. |
 | [DMP-013](#dmp-013) | TESTED_CODE | Checkout re-reads selected live variants immediately before a new sale; stock reduction between opening checkout and confirming blocks POST. Quote/checkout suites: 21 tests pass; tsc/lint pass. |
 | [DMP-014](#dmp-014) | TESTED_CODE | Catalog retains USD label and disables retail add; cart domain rejects USD and live quote checks current currency. USD screen/domain/quote tests pass. |
@@ -37,48 +37,48 @@ Status: **COMPLETE — source comparison and available checks; native/real-backe
 | [DMP-024](#dmp-024) | OPEN | Pending |
 | [DMP-025](#dmp-025) | OPEN | Pending |
 | [DMP-026](#dmp-026) | OPEN | Pending |
-| [DMP-027](#dmp-027) | OPEN | Pending |
-| [DMP-028](#dmp-028) | OPEN | Pending |
-| [DMP-029](#dmp-029) | OPEN | Pending |
-| [DMP-030](#dmp-030) | OPEN | Pending |
-| [DMP-031](#dmp-031) | OPEN | Pending |
-| [DMP-032](#dmp-032) | OPEN | Pending |
-| [DMP-033](#dmp-033) | OPEN | Pending |
-| [DMP-034](#dmp-034) | OPEN | Pending |
+| [DMP-027](#dmp-027) | TESTED_CODE | Real stock/movements, scoped search/pages and reasoned adjustment/recovery:61 inventory ORM/API and48 mobile tests. See INVENTORY_READINESS_2026_10_27.md. |
+| [DMP-028](#dmp-028) | TESTED_CODE | Multi-line intake with actual supplier/invoice/cost/batch/expiry, persisted drafts and capability gate; once-only/rollback tested. Native acceptance pending. |
+| [DMP-029](#dmp-029) | TESTED_CODE | Actual customer/supplier returns and write-off, batch selection/reasons and durable keyed receipts;61 inventory/48 mobile checks passed. |
+| [DMP-030](#dmp-030) | TESTED_CODE | Real batch selection/expiry filters, exact quantities and protected supplier/cost visibility. Replays use current permissions; native acceptance pending. |
+| [DMP-031](#dmp-031) | TESTED_CODE | Dispatch, mapped partial receipt, physical return and owner discrepancy closure; real concurrency/rollback/permission checks passed. No physical-return bypass. |
+| [DMP-032](#dmp-032) | IN_PROGRESS | Real quantity sorting/expiry filters and notification-to-stock navigation work; dedicated deficit report/operational delivery remains. |
+| [DMP-033](#dmp-033) | TESTED_CODE | Real paged customer list/search/store-wide debt summaries and basic create/edit;29 core mobile and12 API/ORM cases passed. |
+| [DMP-034](#dmp-034) | IN_PROGRESS | Actual basic create/name/note editing connected; code/due-date/archive/delete lifecycle remains separate. |
 | [DMP-035](#dmp-035) | OPEN | Pending |
 | [DMP-036](#dmp-036) | OPEN | Pending |
-| [DMP-037](#dmp-037) | OPEN | Pending |
-| [DMP-038](#dmp-038) | OPEN | Pending |
+| [DMP-037](#dmp-037) | IN_PROGRESS | Actual debtor search/summary and guarded collection/recovery work; overdue/soon/future filters and installed restart acceptance remain. |
+| [DMP-038](#dmp-038) | TESTED_CODE | Exact UZS/USD cash/card/branch/note, authoritative quote, actor-bound ack and stale-balance/no-new-credit guard:83 backend,40 quote and16 UI checks plus journal tests. See DEBT_QUOTE_PROTOCOL_2026_10_27.md. |
 | [DMP-039](#dmp-039) | OPEN | Pending |
-| [DMP-040](#dmp-040) | OPEN | Pending |
-| [DMP-041](#dmp-041) | OPEN | Pending |
-| [DMP-042](#dmp-042) | OPEN | Pending |
-| [DMP-043](#dmp-043) | OPEN | Pending |
-| [DMP-044](#dmp-044) | OPEN | Pending |
-| [DMP-045](#dmp-045) | OPEN | Pending |
-| [DMP-046](#dmp-046) | OPEN | Pending |
+| [DMP-040](#dmp-040) | TESTED_CODE | Real current/open shift, UZS/USD cash, stale report protection and original-key receipt protocol; cashbox45 mobile /12 PostgreSQL tests passed. Deploy/native gate remains; see CASHBOX_READINESS_2026_10_27.md. |
+| [DMP-041](#dmp-041) | TESTED_CODE | Counted close/discrepancy/staff notes, reread changed totals, exact acknowledgement and atomic report/shift/inbox rollback tested; native acceptance pending. |
+| [DMP-042](#dmp-042) | TESTED_CODE | Real paged income/expense lists and keyed writes, editable dates, source/category reuse scoped to server/account/store; cashbox45/12 tests passed. More list filter controls remain. |
+| [DMP-043](#dmp-043) | IN_PROGRESS | Authoritative historical Z-report list/detail/PDF sharing connected and API/component tested. Full desktop layout variants, printer/native sharing acceptance remain; see CORE_API_READINESS_2026_10_27.md. |
+| [DMP-044](#dmp-044) | TESTED_CODE | Actual scoped B2B incoming/outgoing lists, detail and escaped PDF;33 PostgreSQL/23 mobile checks and host Chrome flow passed. See B2B_API_READINESS_2026_10_27.md. |
+| [DMP-045](#dmp-045) | TESTED_CODE | Permitted category/variant mapping, durable actor/payload receipts and exact1.250 acceptance verified by ORM and synthetic Chrome. |
+| [DMP-046](#dmp-046) | TESTED_CODE | Reject, physical-return receipt and owner-only discrepancy closure have once-only stock/debt tests. Dispatched goods cannot be generically cancelled. |
 | [DMP-047](#dmp-047) | OPEN | Pending |
 | [DMP-048](#dmp-048) | OPEN | Pending |
 | [DMP-049](#dmp-049) | OPEN | Pending |
 | [DMP-050](#dmp-050) | OPEN | Pending |
 | [DMP-051](#dmp-051) | OPEN | Pending |
 | [DMP-052](#dmp-052) | OPEN | Pending |
-| [DMP-053](#dmp-053) | OPEN | Pending |
-| [DMP-054](#dmp-054) | OPEN | Pending |
-| [DMP-055](#dmp-055) | OPEN | Pending |
-| [DMP-056](#dmp-056) | OPEN | Pending |
+| [DMP-053](#dmp-053) | TESTED_CODE | Actual manual/CBU settings and exact conversion, section-local PATCH/revision guard;40 settings/receipt mobile and73 backend checks. STORE_SETTINGS_READINESS_2026_10_27.md. |
+| [DMP-054](#dmp-054) | TESTED_CODE | Real receipt/tax configuration and immutable saved identity/layout/server totals;40 mobile/73 backend and host persistence/snapshot checks. Native/fiscal acceptance remains. |
+| [DMP-055](#dmp-055) | IN_PROGRESS | Actual Telegram/preferences form and explicit send/test confirmation connected; unknown outcomes guarded. No live Telegram acceptance send performed. |
+| [DMP-056](#dmp-056) | IN_PROGRESS | Validated schedules/targets and manual action UI connected; invalid weekday/day rejected. Actual scheduled/manual delivery acceptance remains. |
 | [DMP-057](#dmp-057) | TESTED_CODE | 222 mobile tests, strict lint/tsc, 19 PostgreSQL support tests, full host/Chrome regression and actual installed API 36 Android owner/guest sidebar flow passed; see SUPPORT_MOBILE_VALIDATION.md and support-* evidence. |
 | [DMP-058](#dmp-058) | OPEN | Pending |
 | [DMP-059](#dmp-059) | IN_PROGRESS | Operator inbox/claim/close/reopen/read-through and assignment-gated replies implemented; component checks reject replying to another operator’s conversation, and actual PostgreSQL support tests cover assignment. |
-| [DMP-060](#dmp-060) | OPEN | Native phone push/local notifications are not connected: no expo-notifications, device-token registry or FCM/APNs credentials. Home bell is disabled. Existing update strip is in-app; build/notification guide documents the distinction. |
+| [DMP-060](#dmp-060) | TESTED_CODE | Actual inbox/actions/deep links and recipient-safe direct FCM source, Firebase inputs validated;22 push plus57 activity backend checks. OS delivery/deploy external; NOTIFICATION_READINESS_2026_10_27.md. |
 | [DMP-061](#dmp-061) | OPEN | Pending |
 | [DMP-062](#dmp-062) | OPEN | Pending |
-| [DMP-063](#dmp-063) | OPEN | Pending |
-| [DMP-064](#dmp-064) | OPEN | Pending |
+| [DMP-063](#dmp-063) | IN_PROGRESS | Owner-scoped real timeline/categories/search/pages/details connected and API-tested; advanced actor/date filters and all snapshot/link cases remain. |
+| [DMP-064](#dmp-064) | IN_PROGRESS | Actual audit-backed history respects owner/store scope; standalone full audit filters remain. Credential presentation hardening in progress. |
 | [DMP-065](#dmp-065) | OPEN | Pending |
 | [DMP-066](#dmp-066) | OPEN | Pending |
 | [DMP-067](#dmp-067) | OPEN | Pending |
-| [DMP-068](#dmp-068) | OPEN | Pending |
+| [DMP-068](#dmp-068) | IN_PROGRESS | Saved identity/address/header/footer/legal data/display flags,58/80mm PDFs and server line totals implemented; native print/fiscal provider acceptance remains. |
 | [DMP-069](#dmp-069) | OPEN | Pending |
 | [DMP-070](#dmp-070) | OPEN | Pending |
 | [DMP-071](#dmp-071) | OPEN | Pending |
@@ -137,7 +137,7 @@ Status: **COMPLETE — source comparison and available checks; native/real-backe
 | [DMP-124](#dmp-124) | OPEN | Pending |
 | [DMP-125](#dmp-125) | OPEN | Pending |
 | [DMP-126](#dmp-126) | TESTED_CODE | Repository CI now runs mobile lint, tsc, Jest/real serializer contracts, Android+iOS Hermes exports, Docker phone interaction/Fast Refresh and evidence uploads. Matching local checks pass (176 tests, zero lint warnings, both exports, browser regression); YAML parses. |
-| [DMP-127](#dmp-127) | EXTERNAL_GATE | Live npm audit still reports 5 high entries / 2 advisories. Forge 1.4.0 has no published fix; Expo CLI requires Zod 3 while the patch is in v4. Exact versions, primary sources and resolution conditions recorded in docs/DEPENDENCY_SECURITY.md. |
+| [DMP-127](#dmp-127) | EXTERNAL_GATE | 2026-10-27 live npm audit reports 3 high entries / 1 Zod advisory after compatible Forge1.4.1 update. Expo CLI still requires Zod3 while the published patch is v4. Audit gate remains active; primary sources and resolution conditions in docs/DEPENDENCY_SECURITY.md. |
 | [DMP-128](#dmp-128) | TESTED_CODE | Unused prototype imports/state and generic transition adapter removed; unused direct navigation dependencies removed while Router requirements remain. 176 tests and tsc pass; ESLint across all sources/tests reports zero errors and zero warnings. |
 | [DMP-129](#dmp-129) | OPEN | Pending |
 | [DMP-130](#dmp-130) | OPEN | Pending |
