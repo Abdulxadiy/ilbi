@@ -3,6 +3,12 @@ on:
   push: { branches: [main] }
   pull_request:
   workflow_dispatch:
+    inputs:
+      publish_backend:
+        description: Publish only the reviewed mobile backend image after all checks
+        type: boolean
+        required: false
+        default: false
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
@@ -113,3 +119,118 @@ jobs:
       - run: npm run build
       - name: Check the bundled desktop guide without a cloud server
         run: npm run test:desktop-guide
+  mobile-backend-image:
+    needs: [automation, dependency-security, bot, production-edge, backend, frontend]
+    if: >-
+      github.event_name == 'workflow_dispatch' &&
+      inputs.publish_backend == true &&
+      github.repository == 'Abdulxadiy/ilbi' &&
+      github.ref == 'refs/heads/mobile/backend-api-readiness-20261027'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify the reviewed backend tree before publication
+        env:
+          EXPECTED_BACKEND_TREE: 8a499ff8d9d2a9ee741287c37621bb8e9006759e
+          RELEASE_SHA: ${{ github.sha }}
+        run: |
+          test "$(git rev-parse HEAD)" = "$RELEASE_SHA"
+          test "$(git rev-parse HEAD:ilbi)" = "$EXPECTED_BACKEND_TREE"
+          python3 - <<'PY'
+          import hashlib, json
+          from pathlib import Path
+          manifest = json.loads(Path('ops/mobile-backend-candidate.json').read_text())
+          assert manifest['backend_source'] == '38aa63dccce8831ecf32b296f3a7e913980ec7cd'
+          assert manifest['production_base'] == '2d799dd5596a92fb6a0e3be6cf51a2a018c88e2d'
+          for group in ('files', 'shared_contract_fixtures', 'additional_operations_files'):
+              for entry in manifest[group]:
+                  path = Path(entry['path'])
+                  assert not path.is_absolute() and '..' not in path.parts
+                  assert not path.is_symlink()
+                  assert hashlib.sha256(path.read_bytes()).hexdigest() == entry['sha256'], str(path)
+          PY
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Commit-pinned backend image reference
+        id: image
+        env:
+          REPOSITORY: ${{ github.repository }}
+          RELEASE_SHA: ${{ github.sha }}
+        run: echo "tag=ghcr.io/${REPOSITORY,,}/backend:sha-$RELEASE_SHA" >> "$GITHUB_OUTPUT"
+      - uses: docker/build-push-action@v6
+        id: build
+        with:
+          context: ./ilbi
+          target: production
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.image.outputs.tag }}
+          labels: |
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+          cache-from: type=gha,scope=mobile-backend
+          cache-to: type=gha,mode=max,scope=mobile-backend
+      - name: Export the published backend for authenticated artifact transfer
+        shell: bash
+        env:
+          IMAGE_TAG: ${{ steps.image.outputs.tag }}
+          IMAGE_DIGEST: ${{ steps.build.outputs.digest }}
+        run: |
+          docker pull "${IMAGE_TAG%:*}@$IMAGE_DIGEST"
+          docker tag "${IMAGE_TAG%:*}@$IMAGE_DIGEST" "$IMAGE_TAG"
+          docker save "$IMAGE_TAG" | gzip -1 > mobile-backend-image.tar.gz
+      - name: Record published image identity without deploying
+        env:
+          IMAGE_TAG: ${{ steps.image.outputs.tag }}
+          IMAGE_DIGEST: ${{ steps.build.outputs.digest }}
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, os, re, subprocess
+          from pathlib import Path
+          digest = os.environ['IMAGE_DIGEST']
+          assert re.fullmatch(r'sha256:[a-f0-9]{64}', digest)
+          image = os.environ['IMAGE_TAG']
+          inspected = json.loads(subprocess.check_output(['docker', 'image', 'inspect', image]))[0]
+          assert inspected['Config']['Labels']['org.opencontainers.image.revision'] == os.environ['GITHUB_SHA']
+          assert (inspected['Os'], inspected['Architecture']) == ('linux', 'amd64')
+          archive = Path('mobile-backend-image.tar.gz')
+          checksum = hashlib.sha256()
+          with archive.open('rb') as source:
+              for chunk in iter(lambda: source.read(1024 * 1024), b''):
+                  checksum.update(chunk)
+          record = {
+              'candidate_commit': os.environ['GITHUB_SHA'],
+              'backend_source': '38aa63dccce8831ecf32b296f3a7e913980ec7cd',
+              'image': image,
+              'digest': digest,
+              'digest_reference': image.split(':', 1)[0] + '@' + digest,
+              'docker_image_id': inspected['Id'],
+              'archive': archive.name,
+              'archive_sha256': checksum.hexdigest(),
+              'archive_bytes': archive.stat().st_size,
+              'run_url': f"{os.environ['GITHUB_SERVER_URL']}/{os.environ['GITHUB_REPOSITORY']}/actions/runs/{os.environ['GITHUB_RUN_ID']}",
+              'deployed': False,
+          }
+          Path('mobile-backend-image.json').write_text(json.dumps(record, indent=2) + '\n')
+          with Path(os.environ['GITHUB_STEP_SUMMARY']).open('a') as summary:
+              summary.write(f"Published backend only: `{image}`\n\nDigest: `{digest}`\n\nNo deployment performed.\n")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mobile-backend-image
+          path: |
+            mobile-backend-image.json
+            mobile-backend-image.tar.gz
+          retention-days: 3
+          if-no-files-found: error
