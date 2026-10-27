@@ -428,7 +428,7 @@ function TenantServices() {
                   Qo‘lda kiritilgan dollar kursi (so‘mda)
                 </label>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <PriceInput
+                  <PriceInput data-api-field="usd_rate"
                     aria-label="Qo‘lda kiritilgan dollar kursi"
                     value={formData.usd_rate}
                     disabled={formData.auto_usd_rate || saving}
@@ -599,7 +599,7 @@ function TenantServices() {
               <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 8 }}>
                 Telegram Guruh / Kanal ID (yoki @kanal_nomi)
               </label>
-              <input
+              <input data-api-field="telegram_group_id"
                 type="text"
                 placeholder="Masalan: -1001928374650 yoki @mening_dokonim"
                 value={formData.telegram_group_id}
@@ -1232,7 +1232,7 @@ function TenantServices() {
                   <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6 }}>
                     Haftaning Qaysi Kuni?
                   </label>
-                  <CustomSelect
+                  <CustomSelect data-api-field="low_stock_weekday"
                     value={formData.low_stock_weekday}
                     onChange={(val) => setFormData({ ...formData, low_stock_weekday: parseInt(val, 10) })}
                     options={[
@@ -1254,7 +1254,7 @@ function TenantServices() {
                   <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6 }}>
                     Oyning Qaysi Sanasida? (1 — 31)
                   </label>
-                  <CustomSelect
+                  <CustomSelect data-api-field="low_stock_day_of_month"
                     value={formData.low_stock_day_of_month}
                     onChange={(val) => setFormData({ ...formData, low_stock_day_of_month: parseInt(val, 10) })}
                     options={Array.from({ length: 31 }, (_, i) => ({

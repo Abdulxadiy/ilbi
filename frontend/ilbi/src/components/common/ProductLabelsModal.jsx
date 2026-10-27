@@ -108,7 +108,7 @@ export default function ProductLabelsModal({ variant: initialVariant, canGenerat
             <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6 }}>
               Qog‘oz formati
             </label>
-            <CustomSelect
+            <CustomSelect data-api-field="format"
               value={options.format}
               onChange={(val) => update('format', val)}
               options={[
@@ -124,7 +124,7 @@ export default function ProductLabelsModal({ variant: initialVariant, canGenerat
             <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6 }}>
               Eni (mm)
             </label>
-            <input
+            <input data-api-field="width"
               className="input-field"
               type="number"
               min="30"
@@ -139,7 +139,7 @@ export default function ProductLabelsModal({ variant: initialVariant, canGenerat
             <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6 }}>
               Bo‘yi (mm)
             </label>
-            <input
+            <input data-api-field="height"
               className="input-field"
               type="number"
               min="20"
@@ -154,7 +154,7 @@ export default function ProductLabelsModal({ variant: initialVariant, canGenerat
             <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6 }}>
               Nusxa soni
             </label>
-            <input
+            <input data-api-field="copies"
               className="input-field"
               type="number"
               min="1"

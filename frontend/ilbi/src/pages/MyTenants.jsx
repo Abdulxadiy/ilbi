@@ -809,7 +809,7 @@ export default function MyTenants() {
               >
                 Tashkiliy-huquqiy shakli <span style={{ color: 'var(--accent-rose)' }}>*</span>
               </label>
-              <CustomSelect
+              <CustomSelect data-api-field="legal_form"
                 value={profileForm.legal_form}
                 onChange={(val) => setProfileForm({ ...profileForm, legal_form: val })}
                 options={LEGAL_FORM_OPTIONS}
@@ -830,7 +830,7 @@ export default function MyTenants() {
               >
                 Rasmiy nomi <span style={{ color: 'var(--accent-rose)' }}>*</span>
               </label>
-              <input
+              <input data-api-field="official_name"
                 className="input-field"
                 required
                 maxLength={200}
@@ -854,7 +854,7 @@ export default function MyTenants() {
               >
                 STIR yoki tegishli identifikator <span style={{ color: 'var(--accent-rose)' }}>*</span>
               </label>
-              <input
+              <input data-api-field="tax_identifier"
                 className="input-field"
                 required={!editingProfileId}
                 maxLength={20}
@@ -878,7 +878,7 @@ export default function MyTenants() {
               >
                 Soliq rejimi (ixtiyoriy)
               </label>
-              <input
+              <input data-api-field="tax_regime"
                 className="input-field"
                 maxLength={100}
                 placeholder="Masalan: Aylanmadan olinadigan soliq (4%)"
@@ -901,7 +901,7 @@ export default function MyTenants() {
               >
                 Ruxsatli faoliyat turi (ixtiyoriy)
               </label>
-              <textarea
+              <textarea data-api-field="permitted_activity"
                 className="input-field"
                 rows={2}
                 placeholder="Masalan: Uyali aloqa vositalari va aksessuarlari savdosi..."
@@ -925,7 +925,7 @@ export default function MyTenants() {
               >
                 Fiskal provayder (ixtiyoriy)
               </label>
-              <input
+              <input data-api-field="fiscal_provider"
                 className="input-field"
                 maxLength={150}
                 placeholder="Masalan: Soliq servis / E-POS"

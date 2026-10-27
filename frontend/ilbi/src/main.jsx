@@ -3,6 +3,9 @@ import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './App.jsx';
 import { RetryButton } from './components/common/RecoveryNotice';
+import { installFormValidation } from './utils/formValidation.js';
+
+installFormValidation();
 
 class ErrorBoundary extends Component {
   constructor(props) {

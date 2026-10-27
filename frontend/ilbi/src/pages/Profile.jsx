@@ -22,6 +22,7 @@ import CustomDatePicker from '../components/common/CustomDatePicker';
 import Modal from '../components/common/Modal';
 import PhoneInput from '../components/common/PhoneInput';
 import { formatPhoneUz } from '../utils/phoneFormat';
+import { showFormErrors } from '../utils/formValidation.js';
 
 export default function Profile() {
   const { user, refreshProfile } = useAuth();
@@ -154,6 +155,7 @@ export default function Profile() {
       return;
     }
     if (passwordData.new_password !== passwordData.confirm_password) {
+      showFormErrors(e.currentTarget, { confirm_password: 'Yangi parollar bir-biriga mos kelmadi.' });
       toast.warning('Yangi parollar bir-biriga mos kelmadi');
       return;
     }
@@ -411,7 +413,7 @@ export default function Profile() {
             <label style={{ display: 'block', fontSize: 13, color: 'var(--text-secondary)', marginBottom: 6, fontWeight: 600 }}>
               Ism
             </label>
-            <input
+            <input data-api-field="first_name"
               id="first-name"
               name="given-name"
               autoComplete="given-name"
@@ -437,7 +439,7 @@ export default function Profile() {
             <label style={{ display: 'block', fontSize: 13, color: 'var(--text-secondary)', marginBottom: 6, fontWeight: 600 }}>
               Familiya
             </label>
-            <input
+            <input data-api-field="last_name"
               id="last-name"
               name="family-name"
               autoComplete="family-name"
@@ -465,7 +467,7 @@ export default function Profile() {
             <label style={{ display: 'block', fontSize: 13, color: 'var(--text-secondary)', marginBottom: 6, fontWeight: 600 }}>
               Email Manzil
             </label>
-            <input
+            <input data-api-field="email"
               id="email"
               name="email"
               type="email"
@@ -492,7 +494,7 @@ export default function Profile() {
             <label style={{ display: 'block', fontSize: 13, color: 'var(--text-secondary)', marginBottom: 6, fontWeight: 600 }}>
               Tug‘ilgan Sana
             </label>
-            <CustomDatePicker
+            <CustomDatePicker data-api-field="date_of_birth"
               id="bday"
               name="bday"
               value={formData.date_of_birth}
@@ -548,7 +550,7 @@ export default function Profile() {
                 color="var(--text-muted)"
                 style={{ position: 'absolute', left: 14, top: 14 }}
               />
-              <PhoneInput
+              <PhoneInput data-api-field="contact_phone"
                 id="contact-phone"
                 name="tel"
                 value={formData.contact_phone}
@@ -764,7 +766,7 @@ export default function Profile() {
                   Joriy Parol
                 </label>
                 <div style={{ position: 'relative' }}>
-                  <input
+                  <input data-api-field="old_password"
                     id="current-password"
                     name="current-password"
                     autoComplete="current-password"
@@ -811,7 +813,7 @@ export default function Profile() {
                   Yangi Parol (kamida 8 ta belgi)
                 </label>
                 <div style={{ position: 'relative' }}>
-                  <input
+                  <input data-api-field="new_password"
                     id="new-password"
                     name="new-password"
                     autoComplete="new-password"
@@ -858,7 +860,7 @@ export default function Profile() {
                 <label style={{ display: 'block', fontSize: 13, color: 'var(--text-secondary)', marginBottom: 6, fontWeight: 600 }}>
                   Yangi Parolni Tasdiqlang
                 </label>
-                <input
+                <input data-api-field="confirm_password"
                   id="confirm-password"
                   name="confirm-password"
                   autoComplete="new-password"

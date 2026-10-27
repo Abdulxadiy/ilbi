@@ -1,4 +1,5 @@
 import { localStore, sessionStore, markAuthenticationCurrent } from '../utils/brandStorage.js';
+import { captureRequestValidation, reportRequestValidation } from '../utils/formValidation.js';
 /**
  * ILBI API Client with JWT Interceptor & Automatic Refresh
  */
@@ -180,6 +181,7 @@ export function refreshAccessToken() {
 }
 
 export async function request(endpoint, options = {}) {
+  const validation = captureRequestValidation(options.method, options.body);
   const generation = getAuthenticationGeneration();
   const assertCurrentSession = () => {
     if (getAuthenticationGeneration() !== generation) throw new Error('Sessiya o‘zgargan. Amalni qayta boshlang.');
@@ -245,6 +247,8 @@ export async function request(endpoint, options = {}) {
     assertCurrentSession();
     return result;
   } catch (error) {
+    const currentTenant = tenantStorageKey ? sessionStore.getItem(tenantStorageKey) || localStore.getItem(tenantStorageKey) : null;
+    if (generation === getAuthenticationGeneration() && currentTenant === activeTenantId) reportRequestValidation(error, validation);
     throw error;
   }
 }

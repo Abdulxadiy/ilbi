@@ -1,0 +1,3 @@
+npm notice run ilbi-frontend@1.4.0 test:selections
+npm notice run node tests/selectionDialogs.browser.mjs
+PASS dropdown geometry: native/fallback, clipped and transformed containers, pinned search/pagination, long labels, pointer/keyboard/close behavior, mobile/landscape, rapid intake, four inventory operations, catalog/categories and B2B mapping.

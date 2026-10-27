@@ -5,7 +5,7 @@ export default function FiscalMetadataFields({ value, onChange, idPrefix }) {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 180px), 1fr))', gap: 12 }}>
         <label htmlFor={`${idPrefix}-mxik`} style={{ fontSize: 13, fontWeight: 600 }}>
           MXIK (IKPU)
-          <input
+          <input data-api-field="mxik"
             id={`${idPrefix}-mxik`}
             name="mxik"
             type="text"
@@ -21,7 +21,7 @@ export default function FiscalMetadataFields({ value, onChange, idPrefix }) {
         </label>
         <label htmlFor={`${idPrefix}-package-code`} style={{ fontSize: 13, fontWeight: 600 }}>
           Qadoq kodi
-          <input
+          <input data-api-field="package_code"
             id={`${idPrefix}-package-code`}
             name="package_code"
             type="text"

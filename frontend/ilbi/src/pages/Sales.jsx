@@ -430,7 +430,7 @@ export default function Sales() {
                 color: 'var(--text-muted)',
               }}
             />
-            <input
+            <input data-api-field="search"
               type="text"
               placeholder="Chek ID, mijoz yoki kassir bo‘yicha izlash..."
               value={salesFilters.search}
@@ -451,7 +451,7 @@ export default function Sales() {
           {/* Payment Method Selector */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             <span style={{ fontSize: 12, color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>To‘lov turi:</span>
-            <CustomSelect
+            <CustomSelect data-api-field="paymentMethod"
               value={salesFilters.paymentMethod}
               onChange={(val) => setSalesFilters({ ...salesFilters, paymentMethod: val })}
               options={[
@@ -468,7 +468,7 @@ export default function Sales() {
           {/* Status Selector */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             <span style={{ fontSize: 12, color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>Holati:</span>
-            <CustomSelect
+            <CustomSelect data-api-field="status"
               value={salesFilters.status}
               onChange={(val) => setSalesFilters({ ...salesFilters, status: val })}
               options={[

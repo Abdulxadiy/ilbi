@@ -1508,7 +1508,7 @@ export default function Catalog() {
             <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>
               Mahsulot Nomi <span style={{ color: 'var(--accent-rose)' }}>*</span>
             </label>
-            <input
+            <input data-api-field="name"
               type="text"
               placeholder="Masalan: Coca Cola 1.5L"
               value={productForm.name}
@@ -1523,7 +1523,7 @@ export default function Catalog() {
               <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>
                 Kategoriya <span style={{ color: 'var(--accent-rose)' }}>*</span>
               </label>
-              <CustomSelect
+              <CustomSelect data-api-field="category_id" required
                 value={productForm.category_id}
                 onChange={(val) => handleProductCategoryChange(val)}
                 placeholder="Tanlang..."
@@ -1539,7 +1539,7 @@ export default function Catalog() {
               <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>
                 O‘lchov Birligi
               </label>
-              <CustomSelect
+              <CustomSelect data-api-field="unit"
                 value={productForm.unit}
                 onChange={(val) => setProductForm({ ...productForm, unit: val })}
                 options={[
@@ -1581,7 +1581,7 @@ export default function Catalog() {
                 <span>Avto-kod</span>
               </button>
             </div>
-            <input
+            <input data-api-field="code"
               type="text"
               placeholder="Masalan: 01/02/11"
               value={productForm.code}
@@ -1622,7 +1622,7 @@ export default function Catalog() {
                 <span>Kameradan o‘qish</span>
               </button>
             </div>
-            <input
+            <input data-api-field="barcode"
               type="text"
               placeholder="Masalan: 4780001234567 (ixtiyoriy yoki kameradan o‘qing)"
               value={productForm.barcode || ''}
@@ -1645,7 +1645,7 @@ export default function Catalog() {
                     <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4 }}>
                       Hamkor Narxi ({cur}) <span style={{ color: 'var(--accent-rose)' }}>*</span>
                     </label>
-                    <PriceInput
+                    <PriceInput data-api-field="price_partner"
                       placeholder="10 000"
                       value={productForm.price_partner}
                       onChange={(e) => setProductForm({ ...productForm, price_partner: e.target.value })}
@@ -1661,7 +1661,7 @@ export default function Catalog() {
                     <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4 }}>
                       Minimal Narx ({cur}) <span style={{ color: 'var(--accent-rose)' }}>*</span>
                     </label>
-                    <PriceInput
+                    <PriceInput data-api-field="price_min"
                       placeholder="11 000"
                       value={productForm.price_min}
                       onChange={(e) => handleProductMinPriceChange(e.target.value)}
@@ -1677,7 +1677,7 @@ export default function Catalog() {
                     <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4 }}>
                       Sotuv Narxi ({cur}) <span style={{ color: 'var(--accent-rose)' }}>*</span>
                     </label>
-                    <PriceInput
+                    <PriceInput data-api-field="price_recommended"
                       placeholder="13 000"
                       value={productForm.price_recommended}
                       onChange={(e) => setProductForm({ ...productForm, price_recommended: e.target.value })}
@@ -1773,7 +1773,7 @@ export default function Catalog() {
                           <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4 }}>
                             Kirim Miqdori ({productForm.unit || 'dona'}) <span style={{ color: 'var(--accent-rose)' }}>*</span>
                           </label>
-                          <input
+                          <input data-api-field="intake_quantity initial_quantity"
                             type="number"
                             step={productForm.unit === 'dona' ? '1' : '0.001'}
                             min={productForm.unit === 'dona' ? '1' : '0.001'}
@@ -1789,7 +1789,7 @@ export default function Catalog() {
                           <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4 }}>
                             Asl Narx / Tan Narxi ({cur}) <span style={{ color: 'var(--accent-rose)' }}>*</span>
                           </label>
-                          <PriceInput
+                          <PriceInput data-api-field="intake_cost_price initial_cost_price"
                             placeholder={cur === 'USD' ? '10' : '45 000'}
                             value={productForm.intake_cost_price}
                             onChange={(e) => setProductForm((prev) => ({ ...prev, intake_cost_price: e.target.value }))}
@@ -1807,7 +1807,7 @@ export default function Catalog() {
                           <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4 }}>
                             Ta’minotchi (Yetkazib beruvchi)
                           </label>
-                          <input
+                          <input data-api-field="intake_supplier supplier"
                             type="text"
                             list="catalog-saved-suppliers-list"
                             placeholder="Masalan: Global Trade MCHJ yoki Baza"
@@ -1851,7 +1851,7 @@ export default function Catalog() {
                           <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4 }}>
                             Faktura raqami / Izoh
                           </label>
-                          <input
+                          <input data-api-field="intake_note"
                             type="text"
                             placeholder="Masalan: Faktura #1084"
                             value={productForm.intake_note}
@@ -1866,7 +1866,7 @@ export default function Catalog() {
                           <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4 }}>
                             Yaroqlilik Muddati (Sanasi)
                           </label>
-                          <CustomDatePicker
+                          <CustomDatePicker data-api-field="intake_expires_on expires_on"
                             value={productForm.intake_expires_on || ''}
                             onChange={(val) => setProductForm((prev) => ({ ...prev, intake_expires_on: val }))}
                             placeholder="Sanani tanlang..."
@@ -1882,7 +1882,7 @@ export default function Catalog() {
                           <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4 }}>
                             Partiya Raqami / Seriya
                           </label>
-                          <input
+                          <input data-api-field="intake_batch_code batch_code"
                             type="text"
                             placeholder="Masalan: B-2026/09"
                             maxLength={80}
@@ -2038,7 +2038,7 @@ export default function Catalog() {
             <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>
               Ota Kategoriya (Ixtiyoriy)
             </label>
-            <CustomSelect
+            <CustomSelect data-api-field="parent_id"
               value={categoryForm.parent_id}
               onChange={handleParentCategoryChange}
               placeholder="(Ota kategoriya yo‘q — Asosiy Kategoriya)"
@@ -2062,7 +2062,7 @@ export default function Catalog() {
             <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>
               Kategoriya Nomi <span style={{ color: 'var(--accent-rose)' }}>*</span>
             </label>
-            <input
+            <input data-api-field="name"
               type="text"
               placeholder="Masalan: Ichimliklar yoki Gazli suvlar..."
               value={categoryForm.name}
@@ -2077,7 +2077,7 @@ export default function Catalog() {
               <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>
                 Kategoriya Kodi (Ixtiyoriy)
               </label>
-              <input
+              <input data-api-field="kod"
                 type="text"
                 placeholder="Masalan: 01"
                 value={categoryForm.kod}
@@ -2094,7 +2094,7 @@ export default function Catalog() {
               <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>
                 Valyuta <span style={{ color: 'var(--accent-rose)' }}>*</span>
               </label>
-              <CustomSelect
+              <CustomSelect data-api-field="currency"
                 value={categoryForm.currency}
                 onChange={(val) => setCategoryForm({ ...categoryForm, currency: val })}
                 disabled={Boolean(categoryForm.parent_id)}
@@ -2166,7 +2166,7 @@ export default function Catalog() {
             <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>
               Tavsiya Etilgan Sotuv Narxi ({selectedVariant?.currency || 'UZS'}) <span style={{ color: 'var(--accent-rose)' }}>*</span>
             </label>
-            <PriceInput
+            <PriceInput data-api-field="price_recommended"
               value={priceForm.price_recommended}
               onChange={(e) => setPriceForm({ ...priceForm, price_recommended: e.target.value })}
               className="input-field"
@@ -2179,7 +2179,7 @@ export default function Catalog() {
               <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>
                 Hamkor Narxi (1-narx) ({selectedVariant?.currency || 'UZS'}) <span style={{ color: 'var(--accent-rose)' }}>*</span>
               </label>
-              <PriceInput
+              <PriceInput data-api-field="price_partner"
                 value={priceForm.price_partner}
                 onChange={(e) => setPriceForm({ ...priceForm, price_partner: e.target.value })}
                 className="input-field"
@@ -2190,7 +2190,7 @@ export default function Catalog() {
               <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>
                 Minimal Chegara Narxi ({selectedVariant?.currency || 'UZS'}) <span style={{ color: 'var(--accent-rose)' }}>*</span>
               </label>
-              <PriceInput
+              <PriceInput data-api-field="price_min"
                 value={priceForm.price_min}
                 onChange={(e) => setPriceForm({ ...priceForm, price_min: e.target.value })}
                 className="input-field"
@@ -2203,7 +2203,7 @@ export default function Catalog() {
             <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>
               Shtrix-Kod (Skaner uchun)
             </label>
-            <input
+            <input data-api-field="barcode"
               type="text"
               placeholder="Masalan: 4780001234567"
               value={priceForm.barcode}
@@ -2295,7 +2295,7 @@ export default function Catalog() {
                     <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4 }}>
                       Kategoriya Nomi <span style={{ color: 'var(--accent-rose)' }}>*</span>
                     </label>
-                    <input
+                    <input data-api-field="name"
                       type="text"
                       value={editCategoryForm.name}
                       onChange={(e) => setEditCategoryForm({ ...editCategoryForm, name: e.target.value })}
@@ -2308,7 +2308,7 @@ export default function Catalog() {
                     <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4 }}>
                       Kategoriya Kodi
                     </label>
-                    <input
+                    <input data-api-field="kod"
                       type="text"
                       value={editCategoryForm.kod}
                       onChange={(e) => setEditCategoryForm({ ...editCategoryForm, kod: e.target.value })}
@@ -2324,7 +2324,7 @@ export default function Catalog() {
                     <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4 }}>
                       Ota Kategoriya
                     </label>
-                    <CustomSelect
+                    <CustomSelect data-api-field="parent_id"
                       value={editCategoryForm.parent_id}
                       onChange={(val) => {
                         const pId = val;
@@ -2354,7 +2354,7 @@ export default function Catalog() {
                     <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4 }}>
                       Valyuta
                     </label>
-                    <CustomSelect
+                    <CustomSelect data-api-field="currency"
                       value={editCategoryForm.currency}
                       onChange={(val) => setEditCategoryForm({ ...editCategoryForm, currency: val })}
                       disabled={Boolean(editCategoryForm.parent_id)}
@@ -2590,7 +2590,7 @@ export default function Catalog() {
             <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>
               Mahsulot Nomi <span style={{ color: 'var(--accent-rose)' }}>*</span>
             </label>
-            <input
+            <input data-api-field="name"
               type="text"
               placeholder="Masalan: Coca Cola 1.5L"
               value={editProductForm.name}
@@ -2605,7 +2605,7 @@ export default function Catalog() {
               <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>
                 Kategoriya <span style={{ color: 'var(--accent-rose)' }}>*</span>
               </label>
-              <CustomSelect
+              <CustomSelect data-api-field="category_id" required
                 value={editProductForm.category_id}
                 onChange={(val) => handleEditProductCategoryChange(val)}
                 placeholder="Tanlang..."
@@ -2621,7 +2621,7 @@ export default function Catalog() {
               <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>
                 O‘lchov Birligi
               </label>
-              <CustomSelect
+              <CustomSelect data-api-field="unit"
                 value={editProductForm.unit}
                 onChange={(val) => setEditProductForm({ ...editProductForm, unit: val })}
                 options={[
@@ -2663,7 +2663,7 @@ export default function Catalog() {
                 <span>Avto-kod</span>
               </button>
             </div>
-            <input
+            <input data-api-field="code"
               type="text"
               placeholder="Masalan: 01/02/11"
               value={editProductForm.code}
@@ -2686,7 +2686,7 @@ export default function Catalog() {
                   <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4 }}>
                     Hamkor Narxi ({cur}) <span style={{ color: 'var(--accent-rose)' }}>*</span>
                   </label>
-                  <PriceInput
+                  <PriceInput data-api-field="price_partner"
                     value={editProductForm.price_partner}
                     onChange={(e) => setEditProductForm({ ...editProductForm, price_partner: e.target.value })}
                     className="input-field"
@@ -2701,7 +2701,7 @@ export default function Catalog() {
                   <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4 }}>
                     Minimal Narx ({cur}) <span style={{ color: 'var(--accent-rose)' }}>*</span>
                   </label>
-                  <PriceInput
+                  <PriceInput data-api-field="price_min"
                     value={editProductForm.price_min}
                     onChange={(e) => handleEditProductMinPriceChange(e.target.value)}
                     className="input-field"
@@ -2716,7 +2716,7 @@ export default function Catalog() {
                   <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4 }}>
                     Sotuv Narxi ({cur}) <span style={{ color: 'var(--accent-rose)' }}>*</span>
                   </label>
-                  <PriceInput
+                  <PriceInput data-api-field="price_recommended"
                     value={editProductForm.price_recommended}
                     onChange={(e) => setEditProductForm({ ...editProductForm, price_recommended: e.target.value })}
                     className="input-field"
@@ -2758,7 +2758,7 @@ export default function Catalog() {
                 <span>Kameradan o‘qish</span>
               </button>
             </div>
-            <input
+            <input data-api-field="barcode"
               type="text"
               placeholder="Masalan: 4780001234567"
               value={editProductForm.barcode}

@@ -214,7 +214,7 @@ export default function ProductToolsModal({ productId, onClose, onChanged }) {
                 <label style={{ display: 'block', fontSize: 12.5, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6 }}>
                   Variant Nomi <span style={{ color: 'var(--accent-rose)' }}>*</span>
                 </label>
-                <input
+                <input data-api-field="name"
                   className="input-field"
                   required
                   maxLength={150}
@@ -228,7 +228,7 @@ export default function ProductToolsModal({ productId, onClose, onChanged }) {
                 <label style={{ display: 'block', fontSize: 12.5, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6 }}>
                   O‘lchov Birligi
                 </label>
-                <CustomSelect
+                <CustomSelect data-api-field="unit"
                   value={variant.unit}
                   onChange={(val) => setVariant({ ...variant, unit: val })}
                   options={['dona', 'kg', 'litr', 'metr'].map((unit) => ({ value: unit, label: unit }))}
@@ -243,7 +243,7 @@ export default function ProductToolsModal({ productId, onClose, onChanged }) {
                 <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6 }}>
                   Hamkor narxi (1-narx)
                 </label>
-                <PriceInput
+                <PriceInput data-api-field="price_partner"
                   min={0}
                   value={variant.price_partner}
                   onChange={(event) => setVariant({ ...variant, price_partner: event.target.value })}
@@ -255,7 +255,7 @@ export default function ProductToolsModal({ productId, onClose, onChanged }) {
                 <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6 }}>
                   Minimal narx
                 </label>
-                <PriceInput
+                <PriceInput data-api-field="price_min"
                   min={0}
                   value={variant.price_min}
                   onChange={(event) => setVariant({ ...variant, price_min: event.target.value })}
@@ -267,7 +267,7 @@ export default function ProductToolsModal({ productId, onClose, onChanged }) {
                 <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6 }}>
                   Sotuv narxi <span style={{ color: 'var(--accent-rose)' }}>*</span>
                 </label>
-                <PriceInput
+                <PriceInput data-api-field="price_recommended"
                   min={0}
                   required
                   value={variant.price_recommended}

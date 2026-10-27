@@ -30,6 +30,7 @@ import { useConfirm } from '../context/ConfirmContext';
 import { useToast } from '../context/ToastContext';
 import { useTenant } from '../context/TenantContext';
 import { useTenantCurrency } from '../hooks/useTenantCurrency';
+import { showFormErrors } from '../utils/formValidation.js';
 
 export default function Debts() {
   const { activeTenant, tenants } = useTenant();
@@ -178,6 +179,7 @@ export default function Debts() {
   const handleConfirmDebtPayment = async (e) => {
     e.preventDefault();
     if (!paymentAmount || parseFloat(paymentAmount) <= 0) {
+      showFormErrors(e.currentTarget, { amount: 'To‘lov summasi noldan katta bo‘lishi kerak.' });
       toast.warning('To‘lov summasini kiriting');
       return;
     }
@@ -229,6 +231,7 @@ export default function Debts() {
     e.preventDefault();
     const amt = parseFloat(refundAmount);
     if (!amt || amt <= 0) {
+      showFormErrors(e.currentTarget, { amount: 'Qaytariladigan summa noldan katta bo‘lishi kerak.' });
       toast.warning('Qaytariladigan summani kiriting');
       return;
     }
@@ -847,7 +850,7 @@ export default function Debts() {
             <input
               type="text"
               placeholder="Masalan: Sardor aka yoki Smartfon Savdo MCHJ"
-              value={newCpName}
+              data-api-field="name" value={newCpName}
               onChange={(e) => setNewCpName(e.target.value)}
               required
               className="input-field"
@@ -865,7 +868,7 @@ export default function Debts() {
               <input
                 type="text"
                 className="input-field"
-                value={newCpCode}
+                data-api-field="target_tenant_code" value={newCpCode}
                 maxLength={12}
                 onChange={(event) => setNewCpCode(event.target.value.toUpperCase())}
                 placeholder="Hamkor bergan public kod (masalan: T-ABCD12)"
@@ -883,7 +886,7 @@ export default function Debts() {
             <PhoneInput
               placeholder="+998 90 123 45 67"
               disabled={Boolean(editingCp)}
-              value={newCpPhone}
+              data-api-field="phone_number" value={newCpPhone}
               onChange={(e) => setNewCpPhone(e.target.value)}
               className="input-field"
             />
@@ -896,7 +899,7 @@ export default function Debts() {
             <input
               type="text"
               placeholder="Masalan: Doimiy ulgurji hamkor, Abu Saxiy 3-qator"
-              value={newCpNote}
+              data-api-field="note" value={newCpNote}
               onChange={(e) => setNewCpNote(e.target.value)}
               className="input-field"
             />
@@ -998,7 +1001,7 @@ export default function Debts() {
               </label>
               <PriceInput
                 placeholder="Masalan: 500 000"
-                value={paymentAmount}
+                data-api-field="amount" value={paymentAmount}
                 onChange={(e) => setPaymentAmount(e.target.value)}
                 required
                 className="input-field"
@@ -1009,7 +1012,7 @@ export default function Debts() {
                 Valyuta <span style={{ color: 'var(--accent-rose)' }}>*</span>
               </label>
               <CustomSelect
-                value={paymentCurrency}
+                data-api-field="currency" value={paymentCurrency}
                 onChange={(val) => setPaymentCurrency(val)}
                 options={[
                   { value: 'UZS', label: 'UZS (So‘m)' },
@@ -1024,7 +1027,7 @@ export default function Debts() {
                 To‘lov Turi <span style={{ color: 'var(--accent-rose)' }}>*</span>
               </label>
               <CustomSelect
-                value={paymentType}
+                data-api-field="payment_type" value={paymentType}
                 onChange={setPaymentType}
                 options={[
                   { value: 'cash', label: 'Naqd pul' },
@@ -1039,7 +1042,7 @@ export default function Debts() {
                 Qaysi Filialga *
               </label>
               <CustomSelect
-                value={paymentBranchId}
+                data-api-field="branch_id" value={paymentBranchId}
                 onChange={(val) => setPaymentBranchId(val)}
                 options={branchOptions}
                 fullWidth
@@ -1085,7 +1088,7 @@ export default function Debts() {
               type="text"
               className="input-field"
               placeholder="Masalan: Kassa orqali naqd berildi"
-              value={paymentNote}
+              data-api-field="note" value={paymentNote}
               onChange={(e) => setPaymentNote(e.target.value)}
             />
           </div>
@@ -1149,7 +1152,7 @@ export default function Debts() {
                 Qaytariladigan Summa <span style={{ color: 'var(--accent-rose)' }}>*</span>
               </label>
               <PriceInput
-                value={refundAmount}
+                data-api-field="amount" value={refundAmount}
                 onChange={(e) => setRefundAmount(e.target.value)}
                 required
                 className="input-field"
@@ -1160,7 +1163,7 @@ export default function Debts() {
                 Valyuta <span style={{ color: 'var(--accent-rose)' }}>*</span>
               </label>
               <CustomSelect
-                value={refundCurrency}
+                data-api-field="currency" value={refundCurrency}
                 onChange={(val) => setRefundCurrency(val)}
                 options={[
                   { value: 'UZS', label: 'UZS (So‘m)' },
@@ -1175,7 +1178,7 @@ export default function Debts() {
                 Qaytarish Turi <span style={{ color: 'var(--accent-rose)' }}>*</span>
               </label>
               <CustomSelect
-                value={refundType}
+                data-api-field="payment_type" value={refundType}
                 onChange={setRefundType}
                 options={[
                   { value: 'cash', label: 'Naqd pul' },
@@ -1190,7 +1193,7 @@ export default function Debts() {
                 Qaysi Filialdan *
               </label>
               <CustomSelect
-                value={refundBranchId}
+                data-api-field="branch_id" value={refundBranchId}
                 onChange={(val) => setRefundBranchId(val)}
                 options={branchOptions}
                 fullWidth
@@ -1205,7 +1208,7 @@ export default function Debts() {
             <input
               type="text"
               placeholder="Masalan: Mijozga ortiqcha haq qaytarildi"
-              value={refundNote}
+              data-api-field="note" value={refundNote}
               onChange={(e) => setRefundNote(e.target.value)}
               required
               className="input-field"

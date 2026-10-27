@@ -3,7 +3,7 @@ import { inventoryApi } from '../../api/client';
 import { useToast } from '../../context/ToastContext';
 import CustomSelect from '../common/CustomSelect';
 
-export default function BatchSelector({ variantId, value, onChange, allowEmpty = false }) {
+export default function BatchSelector({ variantId, value, onChange, allowEmpty = false, 'data-api-field': apiField }) {
   const toast = useToast();
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -21,6 +21,7 @@ export default function BatchSelector({ variantId, value, onChange, allowEmpty =
     <div style={{ display: 'grid', gap: 5 }}>
       <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)' }}>Partiya (ixtiyoriy)</span>
       <CustomSelect
+        data-api-field={apiField}
         value={value}
         disabled={loading}
         onChange={val => onChange(val)}

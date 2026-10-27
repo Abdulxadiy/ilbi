@@ -399,22 +399,22 @@ export default function Employees() {
           </p>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
             <label style={{ fontSize: 13, fontWeight: 600 }}>Telefon raqami
-              <PhoneInput className="input-field" name="tel" required value={hireForm.phone_number} onChange={(event) => setHireForm({ ...hireForm, phone_number: event.target.value })} style={{ marginTop: 6, width: '100%' }} />
+              <PhoneInput data-api-field="phone_number" className="input-field" name="tel" required value={hireForm.phone_number} onChange={(event) => setHireForm({ ...hireForm, phone_number: event.target.value })} style={{ marginTop: 6, width: '100%' }} />
             </label>
             <label style={{ fontSize: 13, fontWeight: 600 }}>Email
-              <input className="input-field" type="email" name="email" autoComplete="email" placeholder="xodim@example.com" required value={hireForm.email} onChange={(event) => setHireForm({ ...hireForm, email: event.target.value })} style={{ marginTop: 6, width: '100%' }} />
+              <input data-api-field="email" className="input-field" type="email" name="email" autoComplete="email" placeholder="xodim@example.com" required value={hireForm.email} onChange={(event) => setHireForm({ ...hireForm, email: event.target.value })} style={{ marginTop: 6, width: '100%' }} />
             </label>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
             <label style={{ fontSize: 13, fontWeight: 600 }}>Ismi
-              <input className="input-field" type="text" name="given-name" autoComplete="given-name" value={hireForm.first_name} onChange={(event) => setHireForm({ ...hireForm, first_name: event.target.value })} style={{ marginTop: 6, width: '100%' }} />
+              <input data-api-field="first_name" className="input-field" type="text" name="given-name" autoComplete="given-name" value={hireForm.first_name} onChange={(event) => setHireForm({ ...hireForm, first_name: event.target.value })} style={{ marginTop: 6, width: '100%' }} />
             </label>
             <label style={{ fontSize: 13, fontWeight: 600 }}>Familiyasi
-              <input className="input-field" type="text" name="family-name" autoComplete="family-name" value={hireForm.last_name} onChange={(event) => setHireForm({ ...hireForm, last_name: event.target.value })} style={{ marginTop: 6, width: '100%' }} />
+              <input data-api-field="last_name" className="input-field" type="text" name="family-name" autoComplete="family-name" value={hireForm.last_name} onChange={(event) => setHireForm({ ...hireForm, last_name: event.target.value })} style={{ marginTop: 6, width: '100%' }} />
             </label>
           </div>
           <label style={{ fontSize: 13, fontWeight: 600 }}>Lavozimi
-            <input className="input-field" type="text" name="organization-title" autoComplete="organization-title" placeholder="Masalan: Kassir" required value={hireForm.position} onChange={(event) => setHireForm({ ...hireForm, position: event.target.value })} style={{ marginTop: 6, width: '100%' }} />
+            <input data-api-field="position" className="input-field" type="text" name="organization-title" autoComplete="organization-title" placeholder="Masalan: Kassir" required value={hireForm.position} onChange={(event) => setHireForm({ ...hireForm, position: event.target.value })} style={{ marginTop: 6, width: '100%' }} />
           </label>
 
           <div style={{ marginTop: 4 }}>
@@ -452,23 +452,23 @@ export default function Employees() {
           </p>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
             <label style={{ display: 'grid', gap: 6, fontSize: 13 }}>Ismi
-              <input className="input-field" maxLength={50} value={editForm.first_name} onChange={(event) => setEditForm({ ...editForm, first_name: event.target.value })} />
+              <input data-api-field="first_name" className="input-field" maxLength={50} value={editForm.first_name} onChange={(event) => setEditForm({ ...editForm, first_name: event.target.value })} />
             </label>
             <label style={{ display: 'grid', gap: 6, fontSize: 13 }}>Familiyasi
-              <input className="input-field" maxLength={50} value={editForm.last_name} onChange={(event) => setEditForm({ ...editForm, last_name: event.target.value })} />
+              <input data-api-field="last_name" className="input-field" maxLength={50} value={editForm.last_name} onChange={(event) => setEditForm({ ...editForm, last_name: event.target.value })} />
             </label>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
             <label style={{ display: 'grid', gap: 6, fontSize: 13 }}>Email
-              <input className="input-field" type="email" value={editForm.email} onChange={(event) => setEditForm({ ...editForm, email: event.target.value })} />
+              <input data-api-field="email" className="input-field" type="email" value={editForm.email} onChange={(event) => setEditForm({ ...editForm, email: event.target.value })} />
             </label>
             <label style={{ display: 'grid', gap: 6, fontSize: 13 }}>Aloqa telefon raqami
-              <PhoneInput className="input-field" value={editForm.contact_phone} onChange={(event) => setEditForm({ ...editForm, contact_phone: event.target.value })} />
+              <PhoneInput data-api-field="contact_phone" className="input-field" value={editForm.contact_phone} onChange={(event) => setEditForm({ ...editForm, contact_phone: event.target.value })} />
             </label>
           </div>
           <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: 12 }}>Email o‘zgarsa, oldingi faollashtirish/parol havolalari bekor qilinadi. Yangi manzilga havolani alohida yuboring.</p>
           <label style={{ display: 'grid', gap: 6, fontSize: 13 }}>Lavozimi
-            <input className="input-field" maxLength={100} value={editForm.position} onChange={(event) => setEditForm({ ...editForm, position: event.target.value })} />
+            <input data-api-field="position" className="input-field" maxLength={100} value={editForm.position} onChange={(event) => setEditForm({ ...editForm, position: event.target.value })} />
           </label>
 
           {!editTarget.employee.is_owner && (

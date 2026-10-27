@@ -1074,6 +1074,22 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
   color: var(--text-muted);
 }
 
+/* Shared by the browser and packaged desktop renderer; inline field styles
+   must not hide a rejected value or a native constraint failure. */
+input[aria-invalid="true"], select[aria-invalid="true"], textarea[aria-invalid="true"],
+[data-validation-invalid="true"] {
+  border-color: var(--accent-rose) !important;
+  box-shadow: 0 0 0 2px rgba(var(--danger-rgb), 0.16) !important;
+}
+
+.field-error {
+  color: var(--accent-rose);
+  font-size: 12px;
+  line-height: 1.45;
+  margin-top: 6px;
+  width: 100%;
+}
+
 /* Custom Select */
 select.input-field {
   appearance: none;

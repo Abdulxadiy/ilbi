@@ -285,7 +285,7 @@ export default function CustomerProfileModal({ conversationId, api, onClose, onC
                     <div className="customer-profile-item">
                       <span className="customer-profile-label">Ismi</span>
                       {editing ? (
-                        <input
+                        <input data-api-field="first_name"
                           type="text"
                           className="customer-profile-input"
                           value={form.first_name}
@@ -299,7 +299,7 @@ export default function CustomerProfileModal({ conversationId, api, onClose, onC
                     <div className="customer-profile-item">
                       <span className="customer-profile-label">Familiyasi</span>
                       {editing ? (
-                        <input
+                        <input data-api-field="last_name"
                           type="text"
                           className="customer-profile-input"
                           value={form.last_name}
@@ -320,7 +320,7 @@ export default function CustomerProfileModal({ conversationId, api, onClose, onC
                     <div className="customer-profile-item">
                       <span className="customer-profile-label">Qo‘shimcha aloqa</span>
                       {editing ? (
-                        <input
+                        <input data-api-field="contact_phone"
                           type="text"
                           className="customer-profile-input"
                           placeholder="+998..."
@@ -337,7 +337,7 @@ export default function CustomerProfileModal({ conversationId, api, onClose, onC
                     <div className="customer-profile-item full-width">
                       <span className="customer-profile-label">Email manzili</span>
                       {editing ? (
-                        <input
+                        <input data-api-field="email"
                           type="email"
                           className="customer-profile-input"
                           value={form.email}
@@ -351,7 +351,7 @@ export default function CustomerProfileModal({ conversationId, api, onClose, onC
                     <div className="customer-profile-item">
                       <span className="customer-profile-label">Tizimdagi roli</span>
                       {editing ? (
-                        <CustomSelect
+                        <CustomSelect data-api-field="role"
                           value={form.role}
                           onChange={(val) => setForm({ ...form, role: val })}
                           options={[
@@ -435,7 +435,7 @@ export default function CustomerProfileModal({ conversationId, api, onClose, onC
                     <div className="customer-profile-item">
                       <span className="customer-profile-label">Do‘kon nomi</span>
                       {editing ? (
-                        <input
+                        <input data-api-field="tenant_name"
                           type="text"
                           className="customer-profile-input"
                           value={form.tenant_name}
@@ -458,7 +458,7 @@ export default function CustomerProfileModal({ conversationId, api, onClose, onC
                     <div className="customer-profile-item full-width">
                       <span className="customer-profile-label">Manzil</span>
                       {editing ? (
-                        <input
+                        <input data-api-field="tenant_address"
                           type="text"
                           className="customer-profile-input"
                           value={form.tenant_address}

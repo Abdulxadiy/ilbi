@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-27",
+  "scope": "shared web/desktop renderer; native executable and production API acceptance are separate",
+  "unitTests": 78,
+  "unitFailed": 0,
+  "validationBrowser": "passed",
+  "authSessionBrowser": "passed",
+  "catalogFiscalBrowser": "passed",
+  "selectionDialogsBrowser": "passed",
+  "productionBuild": "passed",
+  "lint": "passed with existing warnings",
+  "emulatorActions": false,
+  "productionMutations": false,
+  "canonicalBusinessFieldErrors": "code/message, including nested codes, retained and browser-verified"
+}

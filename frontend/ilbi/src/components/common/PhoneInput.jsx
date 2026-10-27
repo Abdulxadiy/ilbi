@@ -1,5 +1,6 @@
 import React, { useRef, useLayoutEffect, useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { formatPhoneUz, cleanPhoneUz, extractNationalDigits, isValidPhoneUz } from '../../utils/phoneFormat';
+import { refreshFieldValidation } from '../../utils/formValidation.js';
 
 /**
  * PhoneInput Component for Uzbekistan (+998 XX XXX XX XX)
@@ -31,6 +32,11 @@ const PhoneInput = forwardRef(function PhoneInput({
   useEffect(() => {
     const formatted = formatPhoneUz(value);
     setDisplayValue(formatted);
+  }, [value]);
+
+  useEffect(() => {
+    inputRef.current?.setCustomValidity(value && !isValidPhoneUz(value) ? 'Telefon raqamini to‘liq kiriting: +998 va 9 ta raqam.' : '');
+    refreshFieldValidation(inputRef.current);
   }, [value]);
 
   // Restore cursor position after formatting state update

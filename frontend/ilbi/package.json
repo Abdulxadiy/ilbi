@@ -10,6 +10,7 @@
     "preview": "vite preview",
     "test": "node --test tests/*.test.js",
     "test:auth-session": "node tests/authSession.browser.mjs",
+    "test:validation": "node tests/validation.browser.mjs",
     "test:sync": "node tests/sync.browser.mjs",
     "test:downloads": "node tests/downloads.browser.mjs",
     "test:desktop-guide": "node tests/desktopGuide.browser.mjs",

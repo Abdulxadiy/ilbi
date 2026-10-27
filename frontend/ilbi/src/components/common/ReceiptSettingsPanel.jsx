@@ -169,7 +169,7 @@ export default function ReceiptSettingsPanel({ tenant, value, onChange, onSave, 
         {/* Tax Regime Selector */}
         <label style={labelStyle}>
           Soliq rejimi
-          <CustomSelect
+          <CustomSelect data-api-field="tax_regime"
             fullWidth
             value={value.tax_regime}
             options={TAX_REGIME_OPTIONS}
@@ -187,7 +187,7 @@ export default function ReceiptSettingsPanel({ tenant, value, onChange, onSave, 
         {value.tax_regime === 'other' && (
           <label style={labelStyle}>
             Soliq rejimi nomi
-            <input
+            <input data-api-field="tax_regime_name"
               style={fieldStyle}
               maxLength={150}
               placeholder="Rejim nomini kiriting..."
@@ -264,7 +264,7 @@ export default function ReceiptSettingsPanel({ tenant, value, onChange, onSave, 
         {/* Store Address */}
         <label style={labelStyle}>
           Do‘konning to‘liq manzili
-          <input
+          <input data-api-field="address"
             style={fieldStyle}
             maxLength={255}
             placeholder="Masalan: Toshkent sh., Chilonzor tumani, 9-mavze"
@@ -292,7 +292,7 @@ export default function ReceiptSettingsPanel({ tenant, value, onChange, onSave, 
         {/* Contact Phone */}
         <label style={labelStyle}>
           Aloqa telefoni
-          <input
+          <input data-api-field="receipt_phone"
             style={fieldStyle}
             maxLength={30}
             placeholder="+998 90 123 45 67"
@@ -304,7 +304,7 @@ export default function ReceiptSettingsPanel({ tenant, value, onChange, onSave, 
         {/* Paper Width Selector */}
         <label style={labelStyle}>
           Standart chek qog‘ozi
-          <CustomSelect
+          <CustomSelect data-api-field="receipt_paper_width"
             fullWidth
             value={value.receipt_paper_width}
             options={PAPER_WIDTH_OPTIONS}
