@@ -22,7 +22,7 @@ BACKENDS = ('ilbi', 'celery_worker', 'celery_beat')
 WRITERS = (*BACKENDS, 'bot')
 IMAGE = re.compile(r'ghcr\.io/[a-z0-9_/-]+/backend:sha-([a-f0-9]{40})\Z')
 IMAGE_ID = re.compile(r'sha256:[a-f0-9]{64}\Z')
-IMAGE_FORMAT = '{"id":{{json .Id}},"user":{{json .Config.User}},"revision":{{json (index .Config.Labels "org.opencontainers.image.revision")}}}'
+IMAGE_FORMAT = '{"id":{{json .Id}},"user":{{json .Config.User}},"revision":{{if .Config.Labels}}{{json (index .Config.Labels "org.opencontainers.image.revision")}}{{else}}null{{end}}}'
 CONTAINER_FORMAT = '{"id":{{json .Id}},"image_id":{{json .Image}},"reference":{{json .Config.Image}},"running":{{json .State.Running}},"service":{{json (index .Config.Labels "com.docker.compose.service")}}}'
 
 

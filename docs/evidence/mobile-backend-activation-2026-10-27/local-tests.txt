@@ -3,8 +3,8 @@ Local backend-only activation verification — 2026-10-27
 Command (repository root):
 /mnt/storage/.cache/ilbi-push-tests/venv/bin/python -m pytest -q tests/deployment/test_mobile_backend_activation.py tests/deployment/test_operations.py tests/deployment/test_mobile_backend_candidate.py
 
-Result: 22 passed, 7 subtests passed in 0.25s; exit 0.
-17 activation safety tests, 4 immutable candidate boundary tests, 1 existing backup recovery test.
+Final result: 23 passed, 8 subtests passed in 0.24s; exit 0.
+18 activation safety tests, 4 immutable candidate boundary tests, 1 existing backup recovery test.
 
 Fatal Ruff:
 /mnt/storage/.cache/ilbi-push-tests/venv/bin/python -m ruff check --select E9,F63,F7,F82 ops/deploy_mobile_backend.py tests/deployment/test_mobile_backend_activation.py
@@ -17,3 +17,5 @@ Coverage includes exact loaded image/verified-engine-ID/revision/user1000 checks
 The first test attempt used /usr/bin/python, which has no pytest installed. It did not execute tests. The explicit isolated test virtual environment above then executed the actual passing suite. No test assertion or rollout guard was disabled.
 
 These are local safety tests with real temporary files/locks and a synthetic Docker model, not a live production activation, actual backup restoration, or financial mutation. Production execution is owned separately by the root agent.
+
+Live read-only preflight follow-up: the previous cached production image has no OCI labels. Its Docker metadata template originally attempted to index a null labels map and failed before any mutation. The template now emits JSON null for missing labels. The target image still requires its exact OCI revision. A new local regression exercises activation failure and verified image-only rollback with an unlabelled retained image; the target missing-revision subtest still rejects it. The updated live preflight is owned by the root agent and is not claimed passed in this local record.

@@ -129,7 +129,7 @@ class MobileBackendActivationTests(unittest.TestCase):
         self.assertFalse((self.root / '.operations.lock').exists())
 
     def test_loaded_image_id_revision_and_user_must_match_reviewed_candidate(self):
-        for key, bad in [('id', 'sha256:' + 'f' * 64), ('revision', 'e' * 40), ('user', '0:0')]:
+        for key, bad in [('id', 'sha256:' + 'f' * 64), ('revision', 'e' * 40), ('revision', None), ('user', '0:0')]:
             with self.subTest(key=key):
                 before = copy.deepcopy(self.model.images[NEW])
                 self.model.images[NEW][key] = bad
@@ -137,6 +137,16 @@ class MobileBackendActivationTests(unittest.TestCase):
                     self.deployment.check()
                 self.model.images[NEW] = before
                 self.assert_no_mutation()
+
+    def test_unlabelled_previous_image_remains_available_for_activation_and_rollback(self):
+        self.model.images[OLD]['revision'] = None
+        self.deployment.check()
+        self.model.failures.add('Backend health verification')
+        with self.assertRaisesRegex(MODULE.ActivationError, 'previous backend image and running states restored'):
+            self.deployment.activate(self.report, self.logs)
+        self.assertEqual(self.environment.read_bytes(), self.original)
+        self.assertTrue(all(row['running'] for row in self.model.states.values()))
+        self.assertTrue(all(self.model.states[name]['image_id'] == OLD_ID for name in MODULE.BACKENDS))
 
     def test_missing_rollback_image_is_rejected_without_pulling(self):
         del self.model.images[OLD]
