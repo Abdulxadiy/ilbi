@@ -17,12 +17,13 @@ function canonical(value: any): string {
   if (value && typeof value === 'object') return '{' + Object.keys(value).sort().map(key => JSON.stringify(key) + ':' + canonical(value[key])).join(',') + '}';
   return JSON.stringify(value);
 }
-function family(operation: string): 'sale' | 'inventory' | 'void' | 'cashbox' | 'b2b' | null {
+function family(operation: string): 'sale' | 'inventory' | 'void' | 'cashbox' | 'b2b' | 'debt' | null {
   if (operation.startsWith('sale:')) return 'sale';
   if (operation.startsWith('inventory:')) return 'inventory';
   if (operation.startsWith('void-sale-') || operation.startsWith('void-item-')) return 'void';
   if (operation.startsWith('cashbox:')) return 'cashbox';
   if (operation.startsWith('b2b:')) return 'b2b';
+  if (operation.startsWith('debt:') || /^debt-\d+$/.test(operation)) return 'debt';
   return null;
 }
 export async function withFinancialIdentity(operation: string, payload: object, userId?: number, tenantId?: number) {
@@ -41,7 +42,7 @@ export async function withFinancialIdentity(operation: string, payload: object, 
   }
   const intent = await recordStore.transaction([storageKey, ...(lockKey ? [lockKey] : [])], records => {
     const record: FinancialIntent | null = records[storageKey];
-    const immutableDraft = operation.startsWith('sale:') || operation.startsWith('inventory:') || operation.startsWith('cashbox:') || operation.startsWith('b2b:')
+    const immutableDraft = operation.startsWith('sale:') || operation.startsWith('inventory:') || operation.startsWith('cashbox:') || operation.startsWith('b2b:') || operation.startsWith('debt:')
       || /^void-(?:sale-\d+|item-\d+-\d+):[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/.test(operation);
     if (record?.status === 'pending' || (record?.status === 'confirmed' && immutableDraft)) {
       if (record.fingerprint !== fingerprint) throw new PendingOperationError(record);

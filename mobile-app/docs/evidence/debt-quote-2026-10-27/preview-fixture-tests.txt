@@ -1,0 +1,5 @@
+(node:48020) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///mnt/storage/Codes/Projects/Backend/ilbi/mobile-app/src/dev/previewCore.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /mnt/storage/Codes/Projects/Backend/ilbi/mobile-app/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+PASS: explicit synthetic quote is read-only; exact UZS/USD allocation, original-key replay, changed-body/stale/credit rejection, branch binding and cents preserve balances.

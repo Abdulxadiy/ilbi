@@ -1,6 +1,42 @@
 /** Explicit synthetic backend-shaped responses; never a fallback for live failures. */
 export function createPreviewCore({ user, customers, sales, products }: { user: any; customers: any[]; sales: Map<number, any>; products: any[] }) {
-  const payments = new Map<string, any>();
+  const payments = new Map<string, { fingerprint: string; result: any }>();
+  const debtQuoteTokens = new Map<string, string>();
+  let nextPaymentId = 9000;
+  const copy = (value: any) => JSON.parse(JSON.stringify(value));
+  const debtFailure = (message: string): never => { throw Object.assign(Error(message), { status: 400 }); };
+  const minor = (value: unknown): bigint => {
+    const text = String(value ?? '');
+    if (!/^-?\d+(?:\.\d{1,2})?$/.test(text)) return debtFailure('Demo pul qiymati noto‘g‘ri.');
+    const negative = text.startsWith('-'), [whole, fraction = ''] = (negative ? text.slice(1) : text).split('.');
+    const amount = BigInt(whole) * 100n + BigInt(fraction.padEnd(2, '0'));
+    return negative ? -amount : amount;
+  };
+  const money = (value: bigint) => { const amount = value < 0n ? -value : value; return `${value < 0n ? '-' : ''}${amount / 100n}.${(amount % 100n).toString().padStart(2, '0')}`; };
+  const positiveBalance = (value: unknown) => { const result = minor(value); return result > 0n ? result : 0n; };
+  const debtQuote = (item: any, input: any) => {
+    const amount = minor(input.amount), branch = Number(input.branch_id ?? user.tenants[0].id);
+    if (amount <= 0n || !['UZS', 'USD'].includes(input.currency) || !['cash', 'card'].includes(input.payment_type) || !user.tenants.some((row: any) => row.id === branch)) return debtFailure('Demo to‘lov summasi, usuli yoki do‘koni noto‘g‘ri.');
+    const balanceUZS = minor(item.debt_balance_uzs ?? item.debt_amount ?? 0), balanceUSD = minor(item.debt_balance_usd ?? 0);
+    const appliedUSD = input.currency === 'USD' && balanceUSD > 0n ? (amount < balanceUSD ? amount : balanceUSD) : 0n;
+    // Deliberately fixed synthetic rate for this opt-in design fixture. It never
+    // reads a live rate and must not act as a fallback for real server failures.
+    const converting = input.currency === 'USD' && amount > appliedUSD;
+    const appliedUZS = input.currency === 'UZS' ? amount : (amount - appliedUSD) * 13000n;
+    const remainingUZS = balanceUZS - appliedUZS, remainingUSD = balanceUSD - appliedUSD;
+    const result = {
+      protocol: 'ilbi-debt-payment-quote-v1', actor_id: user.id, tenant_id: user.tenants[0].id,
+      counterparty_id: item.id, branch_id: branch, amount: money(amount), currency: input.currency, payment_type: input.payment_type,
+      balances: { UZS: money(balanceUZS), USD: money(balanceUSD) }, applied: { UZS: money(appliedUZS), USD: money(appliedUSD) },
+      remaining: { UZS: money(remainingUZS), USD: money(remainingUSD) }, exchange_rate: converting ? '13000.000000' : null,
+      exchange_rate_source: converting ? 'manual' : '', exchange_rate_date: null,
+      creates_credit: remainingUZS < (balanceUZS < 0n ? balanceUZS : 0n) || remainingUSD < (balanceUSD < 0n ? balanceUSD : 0n),
+    };
+    const fingerprint = JSON.stringify(result);
+    // Opaque fixture token, intentionally not a production signing primitive.
+    if (!debtQuoteTokens.has(fingerprint)) debtQuoteTokens.set(fingerprint, (debtQuoteTokens.size + 1).toString(16).padStart(64, '0'));
+    return { ...result, expected_quote: debtQuoteTokens.get(fingerprint)! };
+  };
   const voidRequests = new Map<string, { fingerprint: string; result: any }>();
   const cashReport = { id: 71, date: '2026-10-27', tenant_name: 'Demo do‘kon', closed_by_name: 'Demo', is_closed: true, actual_cash_uzs: '1800000.00', expected_cash_uzs: '1800000.00', discrepancy_uzs: '0.00', total_sale_cash_uzs: '1800000.00', total_sale_card_uzs: '490000.00', total_sale_debt_uzs: '160000.00', closed_at: '2026-10-27T12:00:00+05:00' };
   for (const field of ['opening_cash', 'total_sale_cash', 'total_sale_card', 'total_sale_debt', 'collected_debt_cash', 'refund_cash', 'total_extra_income', 'total_expenses', 'expected_cash', 'actual_cash', 'discrepancy']) for (const currency of ['uzs', 'usd']) { const key = field + '_' + currency; if (!(key in cashReport)) Object.assign(cashReport, { [key]: '0.00' }); }
@@ -45,8 +81,8 @@ export function createPreviewCore({ user, customers, sales, products }: { user: 
       let rows = customers.map(normalizeCustomer); const all = [...rows];
       const search = (url.searchParams.get('search') || '').toLowerCase();
       if (search) rows = rows.filter(row => (row.name + ' ' + row.phone_number).toLowerCase().includes(search));
-      if (url.searchParams.get('balance_status') === 'debtors') rows = rows.filter(row => Number(row.debt_balance_uzs) > 0 || Number(row.debt_balance_usd) > 0);
-      data = page(rows, url, { total_count: all.length, debtors_count: all.filter(row => Number(row.debt_balance_uzs) > 0 || Number(row.debt_balance_usd) > 0).length, total_debt_uzs: String(all.reduce((sum, row) => sum + Math.max(0, Number(row.debt_balance_uzs)), 0)), total_debt_usd: String(all.reduce((sum, row) => sum + Math.max(0, Number(row.debt_balance_usd)), 0)) });
+      if (url.searchParams.get('balance_status') === 'debtors') rows = rows.filter(row => minor(row.debt_balance_uzs) > 0n || minor(row.debt_balance_usd) > 0n);
+      data = page(rows, url, { total_count: all.length, debtors_count: all.filter(row => minor(row.debt_balance_uzs) > 0n || minor(row.debt_balance_usd) > 0n).length, total_debt_uzs: money(all.reduce((sum, row) => sum + positiveBalance(row.debt_balance_uzs), 0n)), total_debt_usd: money(all.reduce((sum, row) => sum + positiveBalance(row.debt_balance_usd), 0n)) });
     } else if (path === '/sales/counterparties/' && method === 'POST') {
       const item = normalizeCustomer({ id: 1000 + customers.length, ...body }); customers.push(item); data = item;
     } else if (/^\/sales\/counterparties\/\d+\/$/.test(path) && ['GET', 'PATCH'].includes(method)) {
@@ -54,14 +90,26 @@ export function createPreviewCore({ user, customers, sales, products }: { user: 
       if (!item) throw Error('Demo mijoz topilmadi.');
       if (method === 'PATCH') Object.assign(item, body);
       data = normalizeCustomer(item);
+    } else if (/^\/sales\/counterparties\/\d+\/payments\/quote\/$/.test(path) && method === 'GET') {
+      const item = customers.find(row => row.id === Number(path.split('/')[3]));
+      if (!item) return debtFailure('Demo mijoz topilmadi.');
+      data = { ...debtQuote(item, Object.fromEntries(url.searchParams)), _preview: true };
     } else if (/^\/sales\/counterparties\/\d+\/payments\/$/.test(path) && method === 'POST') {
       const id = Number(path.split('/')[3]), item = customers.find(row => row.id === id);
       if (!item) throw Error('Demo mijoz topilmadi.');
-      if (payments.has(body.idempotency_key)) data = payments.get(body.idempotency_key);
+      const branch = Number(body.branch_id ?? user.tenants[0].id), amount = money(minor(body.amount));
+      const fingerprint = JSON.stringify({ customer: id, actor: user.id, tenant: user.tenants[0].id, branch, amount, currency: body.currency, payment_type: body.payment_type, note: String(body.note || '').trim(), expected_quote: body.expected_quote ?? null });
+      const old = body.idempotency_key ? payments.get(body.idempotency_key) : null;
+      if (old) { if (old.fingerprint !== fingerprint) return debtFailure('Demo kalit boshqa to‘lov uchun ishlatilgan.'); data = copy(old.result); }
       else {
-        Object.assign(item, normalizeCustomer(item)); const field = body.currency === 'USD' ? 'debt_balance_usd' : 'debt_balance_uzs';
-        item[field] = String(Number(item[field]) - Number(body.amount));
-        data = { id: 9000 + payments.size, counterparty: id, ...body, _preview: true }; payments.set(body.idempotency_key, data);
+        const quote = debtQuote(item, body);
+        if (body.expected_quote != null && (!body.idempotency_key || !/^[a-f0-9]{64}$/.test(body.expected_quote) || quote.expected_quote !== body.expected_quote)) return debtFailure('Demo qarz qoldig‘i yoki kurs o‘zgardi. To‘lovni qayta hisoblang.');
+        if (body.expected_quote != null && quote.creates_credit) return debtFailure('Demo to‘lov avans hosil qiladi. Summani kamaytiring.');
+        const operation = body.expected_quote == null ? {} : { payment_operation: { protocol: quote.protocol, idempotency_key: body.idempotency_key, expected_quote: body.expected_quote, actor_id: user.id, tenant_id: user.tenants[0].id, counterparty_id: id, branch_id: branch } };
+        // Construct the bound acknowledgement before applying this synthetic mutation.
+        data = { ...body, id: nextPaymentId++, counterparty: id, recorded_by: user.id, branch_id: branch, branch, amount, is_correction: false, ...operation, _preview: true };
+        item.debt_balance_uzs = quote.remaining.UZS; item.debt_balance_usd = quote.remaining.USD;
+        if (body.idempotency_key) payments.set(body.idempotency_key, { fingerprint, result: copy(data) });
       }
     } else if (path === '/sales/' && method === 'GET') {
       const search = (url.searchParams.get('search') || '').toLowerCase(), payment = url.searchParams.get('payment_type'), status = url.searchParams.get('status'), currency = url.searchParams.get('currency'), from = url.searchParams.get('date_from'), to = url.searchParams.get('date_to'), customer = url.searchParams.get('counterparty_id');

@@ -110,7 +110,7 @@ describe('Durable financial retry identity', () => {
     await expect(withFinancialIdentity('inventory:write-off:two', { quantity: '1' }, 1, 2)).rejects.toThrow('Oldingi amal');
     await confirmFinancialIdentity('inventory:intake:one', 1, 2, inventory.idempotency_key, { id: 4 });
   });
-  test.each(['inventory:intake:draft-one', 'cashbox:close:draft-one', 'b2b:request:draft-one', 'void-sale-15:12345678-1234-1234-1234-123456789abc', 'void-item-15-41:12345678-1234-1234-1234-123456789abc'])('confirmed unique draft %s keeps its original key permanently', async operation => {
+  test.each(['inventory:intake:draft-one', 'cashbox:close:draft-one', 'b2b:request:draft-one', 'debt:15:12345678-1234-1234-1234-123456789abc', 'void-sale-15:12345678-1234-1234-1234-123456789abc', 'void-item-15-41:12345678-1234-1234-1234-123456789abc'])('confirmed unique draft %s keeps its original key permanently', async operation => {
     const first = await withFinancialIdentity(operation, { quantity: '1' }, 1, 2);
     await confirmFinancialIdentity(operation, 1, 2, first.idempotency_key, { id: 9 });
     expect((await withFinancialIdentity(operation, { quantity: '1' }, 1, 2)).idempotency_key).toBe(first.idempotency_key);
@@ -123,5 +123,12 @@ describe('Durable financial retry identity', () => {
     await expect(withFinancialIdentity('inventory:dispatch:one', {}, 1, 2)).resolves.toHaveProperty('idempotency_key');
     await confirmFinancialIdentity('b2b:request:one', 1, 2, first.idempotency_key, { id: 3 });
     await expect(withFinancialIdentity('b2b:accept:two', {}, 1, 2)).resolves.toHaveProperty('idempotency_key');
+  });
+  test('legacy pending debt payment blocks a new dialog until original-key reconciliation', async () => {
+    const legacy = await withFinancialIdentity('debt-15', { amount: '12.50' }, 1, 2);
+    const next = 'debt:15:12345678-1234-1234-1234-123456789abc';
+    await expect(withFinancialIdentity(next, { amount: '12.50' }, 1, 2)).rejects.toThrow('Oldingi amal');
+    await confirmFinancialIdentity('debt-15', 1, 2, legacy.idempotency_key, { id: 3 });
+    await expect(withFinancialIdentity(next, { amount: '12.50' }, 1, 2)).resolves.toHaveProperty('idempotency_key');
   });
 });
