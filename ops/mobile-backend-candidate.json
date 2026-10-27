@@ -1,6 +1,6 @@
 {
   "production_base": "2d799dd5596a92fb6a0e3be6cf51a2a018c88e2d",
-  "backend_source": "38aa63dccce8831ecf32b296f3a7e913980ec7cd",
+  "backend_source": "d35ea11043affab1671172f42e27d367033232a1",
   "layout": "Original ilbi/ backend; frontend, bot, desktop and platform version unchanged.",
   "activation": "FCM override remains inactive under ops/ until separately staged.",
   "files": [
@@ -90,11 +90,11 @@
     },
     {
       "path": "ilbi/api/v1/support/serializers.py",
-      "sha256": "d537b70a262e193a7993d6cebe27330e0f9cc165ef97219b8b403b5109cc7ccf"
+      "sha256": "dd9a2c0fdc51a0cabc59dc160a6978f822a8a2634d8bb361532d8671878b45e5"
     },
     {
       "path": "ilbi/api/v1/support/views.py",
-      "sha256": "c115cebdec069b100335c35a8e0bb7c1e928b2194209db9b88ea1bc342e34c10"
+      "sha256": "2b00d7b79b1e1ce3637c9d8a1e392b86b824db0bda0e1d7ea05f4794407ae418"
     },
     {
       "path": "ilbi/api/v1/tenants/serializers.py",
@@ -162,7 +162,7 @@
     },
     {
       "path": "ilbi/apps/core/tests/test_security_presentation.py",
-      "sha256": "776d5e849c8c73fdea3db9711391e4341d3e7f46139d0e2f5cbd0a49a143dda5"
+      "sha256": "9bace060074157e57e91fa0a38da0ec0ffe6185e3c6300e2b5184a73d650bdbe"
     },
     {
       "path": "ilbi/apps/inventory/migrations/0014_inventorymutationreceipt.py",

@@ -11,6 +11,7 @@ from django.db import models
 from django.db.models import F
 from rest_framework.test import APIClient
 
+from api.v1.support.serializers import CustomerProfileUpdateSerializer
 from apps.accounts.models import User
 from apps.catalog.services import ProductServiceError
 from apps.core.audit_privacy import REDACTED, safe_audit_data
@@ -110,6 +111,87 @@ def test_contact_save_cannot_restore_an_outdated_role_or_security_version(owner,
     assert response.status_code == 200
     target.refresh_from_db(); assert not target.is_active and target.token_version == previous_version + 1
     assert target.first_name == 'After'
+
+
+@pytest.mark.parametrize('email', ['original@synthetic.invalid', None, ''])
+def test_legacy_support_editor_contact_save_ignores_only_unchanged_identity_echoes(email, owner, tenant, platform_admin):
+    target = StaffFactory(first_name='Before', email=email)
+    EmployeeFactory(user=target, tenant=tenant)
+    conversation = support_thread(target, tenant)
+    before = (target.role, target.email, target.is_active, target.password, target.token_version)
+    payload = {'first_name': 'Legacy edited', 'last_name': 'Contact', 'contact_phone': '+998901234567',
+               'tenant_name': 'Legacy store', 'tenant_address': 'Legacy address',
+               'email': target.email or '', 'role': target.role}
+    response = api(platform_admin).patch(support_path(conversation), payload, format='json')
+    assert response.status_code == 200, response.data
+    target.refresh_from_db(); tenant.refresh_from_db()
+    assert target.first_name == 'Legacy edited' and tenant.name == 'Legacy store'
+    assert (target.role, target.email, target.is_active, target.password, target.token_version) == before
+    event = AuditLog.objects.get(target_model='User', target_id=str(target.pk))
+    assert event.changes['fields'] == ['contact_phone', 'first_name', 'last_name', 'tenant_address', 'tenant_name']
+    assert 'email' not in event.changes['fields'] and 'role' not in event.changes['fields']
+
+
+@pytest.mark.parametrize('attack', [
+    {'email': 'takeover@synthetic.invalid'}, {'role': 'platform_admin'},
+    {'email': 'takeover@synthetic.invalid', 'role': 'platform_admin'},
+    {'is_active': True}, {'tenant_is_active': True}, {'password': SYNTHETIC_PASSWORD},
+    {'unknown_field': 'synthetic'},
+])
+def test_legacy_identity_echoes_do_not_allow_mixed_protected_edits(attack, tenant, platform_admin):
+    target = StaffFactory(first_name='Before', email='original@synthetic.invalid')
+    EmployeeFactory(user=target, tenant=tenant)
+    conversation = support_thread(target, tenant)
+    before = (target.role, target.email, target.is_active, target.password, target.token_version, tenant.name)
+    payload = {'first_name': 'Must not apply', 'tenant_name': 'Must not apply',
+               'email': target.email, 'role': target.role, **attack}
+    response = api(platform_admin).patch(support_path(conversation), payload, format='json')
+    assert response.status_code == 400, response.data
+    assert set(attack).issubset(response.data['error']['details'])
+    target.refresh_from_db(); tenant.refresh_from_db()
+    assert target.first_name == 'Before'
+    assert (target.role, target.email, target.is_active, target.password, target.token_version, tenant.name) == before
+    assert not AuditLog.objects.filter(target_model='User', target_id=str(target.pk)).exists()
+
+
+def test_legacy_echo_allowance_requires_trusted_context_and_a_contact_field(owner):
+    echoes = {'email': owner.email or '', 'role': owner.role}
+    missing_context = CustomerProfileUpdateSerializer(data={'first_name': 'Must not apply', **echoes})
+    assert not missing_context.is_valid() and set(missing_context.errors) == {'email', 'role'}
+    no_contact = CustomerProfileUpdateSerializer(data=echoes, context={'profile_user': owner})
+    assert not no_contact.is_valid() and set(no_contact.errors) == {'email', 'role'}
+    valid = CustomerProfileUpdateSerializer(data={'first_name': 'After', **echoes}, context={'profile_user': owner})
+    assert valid.is_valid(), valid.errors
+    assert valid.validated_data == {'first_name': 'After'}
+
+
+def test_guest_cannot_use_legacy_identity_echo_allowance(platform_admin):
+    conversation = support_thread()
+    response = api(platform_admin).patch(support_path(conversation),
+        {'first_name': 'Must not apply', 'email': '', 'role': 'owner'}, format='json')
+    assert response.status_code == 400
+    assert set(response.data['error']['details']) == {'email', 'role'}
+
+
+def test_legacy_contact_save_preserves_concurrent_security_identity_and_version(tenant, platform_admin):
+    target = StaffFactory(first_name='Before', email='original@synthetic.invalid')
+    EmployeeFactory(user=target, tenant=tenant)
+    conversation = support_thread(target, tenant)
+    previous_version = target.token_version
+    original_save = User.save
+    def protected_change_before_contact_save(user, *args, **kwargs):
+        if user.pk == target.pk and 'first_name' in (kwargs.get('update_fields') or []):
+            User.objects.filter(pk=target.pk).update(role='owner', email='protected-new@synthetic.invalid',
+                is_active=False, token_version=F('token_version') + 1)
+        return original_save(user, *args, **kwargs)
+    with patch.object(User, 'save', protected_change_before_contact_save):
+        response = api(platform_admin).patch(support_path(conversation),
+            {'first_name': 'After', 'email': target.email, 'role': target.role}, format='json')
+    assert response.status_code == 200, response.data
+    target.refresh_from_db()
+    assert target.first_name == 'After' and target.role == 'owner'
+    assert target.email == 'protected-new@synthetic.invalid'
+    assert not target.is_active and target.token_version == previous_version + 1
 
 
 def test_profile_tenant_team_and_support_serializers_never_return_stored_password(owner, tenant, platform_admin):
