@@ -17,6 +17,14 @@ function canonical(value: any): string {
   if (value && typeof value === 'object') return '{' + Object.keys(value).sort().map(key => JSON.stringify(key) + ':' + canonical(value[key])).join(',') + '}';
   return JSON.stringify(value);
 }
+function family(operation: string): 'sale' | 'inventory' | 'void' | 'cashbox' | 'b2b' | null {
+  if (operation.startsWith('sale:')) return 'sale';
+  if (operation.startsWith('inventory:')) return 'inventory';
+  if (operation.startsWith('void-sale-') || operation.startsWith('void-item-')) return 'void';
+  if (operation.startsWith('cashbox:')) return 'cashbox';
+  if (operation.startsWith('b2b:')) return 'b2b';
+  return null;
+}
 export async function withFinancialIdentity(operation: string, payload: object, userId?: number, tenantId?: number) {
   const storageKey = scopedKey('intent:' + operation, userId, tenantId), server = getServerScope();
   const legacyKey = 'ilbi_financial_intent:' + userId + ':' + tenantId + ':' + operation;
@@ -24,15 +32,18 @@ export async function withFinancialIdentity(operation: string, payload: object, 
   if (genericSale && (await AsyncStorage.getItem(genericSale) || await recordStore.read<FinancialIntent>(scopedKey('intent:sale', userId, tenantId)).then(row => Boolean(row && (row.status === 'pending' || row.reviewRequired))))) throw new PendingOperationError(null);
   if (await AsyncStorage.getItem(legacyKey)) throw new PendingOperationError(null);
   const fingerprint = canonical(payload);
-  const lockKey = operation.startsWith('sale:') ? scopedKey('sale-lock', userId, tenantId) : null;
-  // Preserve pre-lock journals. They may represent an accepted sale with a lost response.
+  const group = family(operation);
+  const lockKey = group ? scopedKey(group + '-lock', userId, tenantId) : null;
+  // Preserve pre-lock journals: a domain operation may already be accepted.
   if (lockKey) {
-    const legacyPending = (await listFinancialIntents(userId!, tenantId!)).find(intent => intent.operation.startsWith('sale:') && intent.operation !== operation);
+    const legacyPending = (await listFinancialIntents(userId!, tenantId!)).find(intent => family(intent.operation) === group && intent.operation !== operation);
     if (legacyPending) throw new PendingOperationError(legacyPending);
   }
   const intent = await recordStore.transaction([storageKey, ...(lockKey ? [lockKey] : [])], records => {
     const record: FinancialIntent | null = records[storageKey];
-    if (record?.status === 'pending' || (record?.status === 'confirmed' && operation.startsWith('sale:'))) {
+    const immutableDraft = operation.startsWith('sale:') || operation.startsWith('inventory:') || operation.startsWith('cashbox:') || operation.startsWith('b2b:')
+      || /^void-(?:sale-\d+|item-\d+-\d+):[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/.test(operation);
+    if (record?.status === 'pending' || (record?.status === 'confirmed' && immutableDraft)) {
       if (record.fingerprint !== fingerprint) throw new PendingOperationError(record);
       return { updates: {}, result: record };
     }
@@ -47,13 +58,14 @@ export async function withFinancialIdentity(operation: string, payload: object, 
   return { ...payload, idempotency_key: intent!.key };
 }
 async function finishIdentity(operation: string, userId: number, tenantId: number, expectedKey: string | undefined, status: 'confirmed' | 'rejected', result?: any, reason?: string) {
-  const key = scopedKey('intent:' + operation, userId, tenantId), lock = scopedKey('sale-lock', userId, tenantId);
-  await recordStore.transaction([key, lock], records => {
+  const key = scopedKey('intent:' + operation, userId, tenantId), group = family(operation);
+  const lock = group ? scopedKey(group + '-lock', userId, tenantId) : null;
+  await recordStore.transaction([key, ...(lock ? [lock] : [])], records => {
     const record: FinancialIntent | null = records[key];
     if (!record) throw Error('Moliyaviy amal yozuvi topilmadi; savat saqlab qolindi.');
     if ((expectedKey && record.key !== expectedKey) || (status === 'rejected' && record.status === 'confirmed')) throw new PendingOperationError(record);
     const updates: Record<string, any> = { [key]: { ...record, status, ...(operation === 'sale' && status === 'confirmed' ? { reviewRequired: !record.reviewAcknowledgedAt } : {}), result: result ?? record.result, lastError: reason, updatedAt: new Date().toISOString() } };
-    if (records[lock]?.key === record.key) updates[lock] = null;
+    if (lock && records[lock]?.key === record.key) updates[lock] = null;
     return { updates, result: undefined };
   });
 }

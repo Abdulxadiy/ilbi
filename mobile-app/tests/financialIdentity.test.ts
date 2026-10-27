@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { recordStore } from '../src/storage/recordStore';
-import { withFinancialIdentity, confirmFinancialIdentity, acknowledgeLegacySale, listFinancialIntents } from '../src/api/financialIdentity';
+import { withFinancialIdentity, confirmFinancialIdentity, rejectFinancialIdentity, acknowledgeLegacySale, listFinancialIntents } from '../src/api/financialIdentity';
 import { setApiBaseUrl, getApiBaseUrl } from '../src/api/client';
 
 jest.mock('../src/storage/recordStore', () => { jest.requireActual('fake-indexeddb/auto'); return jest.requireActual('../src/storage/recordStore.web'); });
@@ -73,5 +73,55 @@ describe('Durable financial retry identity', () => {
     await withFinancialIdentity('sale', { amount: 160000 }, 1, 2);
     await expect(withFinancialIdentity('sale', { amount: 150000 }, 1, 2)).rejects.toThrow('Oldingi amal');
     await expect(withFinancialIdentity('sale', {}, undefined, 2)).rejects.toThrow();
+  });
+
+  test.each(['inventory:intake:one', 'void-item-41'])('pending family %s blocks another operation until local acknowledgement', async operation => {
+    const other = operation.startsWith('inventory:') ? 'inventory:write-off:two' : 'void-item-15-42';
+    const first = await withFinancialIdentity(operation, { quantity: '1' }, 1, 2);
+    expect((await withFinancialIdentity(operation, { quantity: '1' }, 1, 2)).idempotency_key).toBe(first.idempotency_key);
+    await expect(withFinancialIdentity(other, { quantity: '2' }, 1, 2)).rejects.toThrow('Oldingi amal');
+    await expect(confirmFinancialIdentity(operation, 1, 2, 'wrong-key', { id: 3 })).rejects.toThrow('Oldingi amal');
+    await expect(withFinancialIdentity(other, { quantity: '2' }, 1, 2)).rejects.toThrow('Oldingi amal');
+    await confirmFinancialIdentity(operation, 1, 2, first.idempotency_key, { id: 3 });
+    await expect(withFinancialIdentity(other, { quantity: '2' }, 1, 2)).resolves.toHaveProperty('idempotency_key');
+  });
+
+  test('void-sale and void-item share a pending lock; rejection frees only that family', async () => {
+    const stock = await withFinancialIdentity('inventory:intake:x', { quantity: '1' }, 1, 2);
+    const voided = await withFinancialIdentity('void-sale-15', { reason: 'Review' }, 1, 2);
+    await expect(withFinancialIdentity('void-item-15-41', { quantity: '1' }, 1, 2)).rejects.toThrow('Oldingi amal');
+    await rejectFinancialIdentity('void-sale-15', 1, 2, voided.idempotency_key, 'Rejected');
+    await expect(withFinancialIdentity('void-item-15-41', { quantity: '1' }, 1, 2)).resolves.toHaveProperty('idempotency_key');
+    await expect(withFinancialIdentity('inventory:write-off:y', { quantity: '1' }, 1, 2)).rejects.toThrow('Oldingi amal');
+    await confirmFinancialIdentity('inventory:intake:x', 1, 2, stock.idempotency_key, { id: 7 });
+  });
+
+  test('simultaneous inventory operations cannot create independent unresolved stock writes', async () => {
+    const attempts = await Promise.allSettled(['a', 'b'].map(id => withFinancialIdentity('inventory:intake:' + id, { quantity: '1' }, 1, 2)));
+    expect(attempts.filter(result => result.status === 'fulfilled')).toHaveLength(1);
+    expect(attempts.filter(result => result.status === 'rejected')).toHaveLength(1);
+  });
+  test('cashbox writes use a distinct pending family and local acknowledgement frees only that lock', async () => {
+    const payment = await withFinancialIdentity('cashbox:open:one', { amount: '1' }, 1, 2);
+    await expect(withFinancialIdentity('cashbox:close:one', { amount: '1' }, 1, 2)).rejects.toThrow('Oldingi amal');
+    const inventory = await withFinancialIdentity('inventory:intake:one', { quantity: '1' }, 1, 2);
+    await confirmFinancialIdentity('cashbox:open:one', 1, 2, payment.idempotency_key, { id: 3 });
+    await expect(withFinancialIdentity('cashbox:close:one', { amount: '1' }, 1, 2)).resolves.toHaveProperty('idempotency_key');
+    await expect(withFinancialIdentity('inventory:write-off:two', { quantity: '1' }, 1, 2)).rejects.toThrow('Oldingi amal');
+    await confirmFinancialIdentity('inventory:intake:one', 1, 2, inventory.idempotency_key, { id: 4 });
+  });
+  test.each(['inventory:intake:draft-one', 'cashbox:close:draft-one', 'b2b:request:draft-one', 'void-sale-15:12345678-1234-1234-1234-123456789abc', 'void-item-15-41:12345678-1234-1234-1234-123456789abc'])('confirmed unique draft %s keeps its original key permanently', async operation => {
+    const first = await withFinancialIdentity(operation, { quantity: '1' }, 1, 2);
+    await confirmFinancialIdentity(operation, 1, 2, first.idempotency_key, { id: 9 });
+    expect((await withFinancialIdentity(operation, { quantity: '1' }, 1, 2)).idempotency_key).toBe(first.idempotency_key);
+    await expect(withFinancialIdentity(operation, { quantity: '2' }, 1, 2)).rejects.toThrow('Oldingi amal');
+    await expect(withFinancialIdentity(operation + '-next', { quantity: '2' }, 1, 2)).resolves.toHaveProperty('idempotency_key');
+  });
+  test('B2B has its own unresolved-operation lock', async () => {
+    const first = await withFinancialIdentity('b2b:request:one', {}, 1, 2);
+    await expect(withFinancialIdentity('b2b:accept:two', {}, 1, 2)).rejects.toThrow('Oldingi amal');
+    await expect(withFinancialIdentity('inventory:dispatch:one', {}, 1, 2)).resolves.toHaveProperty('idempotency_key');
+    await confirmFinancialIdentity('b2b:request:one', 1, 2, first.idempotency_key, { id: 3 });
+    await expect(withFinancialIdentity('b2b:accept:two', {}, 1, 2)).resolves.toHaveProperty('idempotency_key');
   });
 });
