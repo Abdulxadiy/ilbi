@@ -1,7 +1,7 @@
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { usePermissions } from '../features/auth/usePermissions';
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { DrawerContentComponentProps } from 'expo-router/drawer';
 import { Archive, BarChart3, Bell, Clock, Download, FileText, Home, LifeBuoy, LogOut, Moon, Package, Search, Settings, ShoppingCart, Store, Sun, User as UserIcon, Users, Wallet, X } from 'lucide-react-native';
 import { useAppNavigation } from './useAppNavigation';
@@ -75,7 +75,11 @@ export const DrawerContent: React.FC<DrawerContentComponentProps> = ({ navigatio
         {/* User Card */}
         <TouchableOpacity accessibilityRole="button" accessibilityLabel="Profilni ochish" onPress={() => { navigation.closeDrawer(); appNavigation.navigate('Profile'); }} style={styles.userSection}>
           <View style={[styles.avatarCircle, { backgroundColor: colors.surfaceSecondary }]}>
-            <UserIcon size={20} color={colors.text} />
+            {user?.avatar_url ? (
+              <Image source={{ uri: user.avatar_url }} style={styles.avatarImg} accessibilityLabel="Profil rasmi" />
+            ) : (
+              <UserIcon size={20} color={colors.text} />
+            )}
           </View>
           <View style={styles.userInfo}>
             <Text style={[styles.userName, { color: colors.text }]} numberOfLines={1}>
@@ -227,6 +231,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: spacing.md,
+    overflow: 'hidden',
+  },
+  avatarImg: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
   },
   userInfo: {
     flex: 1,

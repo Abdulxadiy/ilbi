@@ -9,6 +9,7 @@ import { DocumentsScreen } from '../src/features/documents/DocumentsScreen';
 import { HistoryScreen } from '../src/features/history/HistoryScreen';
 import { request } from '../src/api/client';
 import { cashReportHtml, parseDashboard } from '../src/features/reports/model';
+import * as ImagePicker from 'expo-image-picker';
 let mockTenant = { id: 1, name: 'Store', is_owner: true, permissions: [] as string[] };
 const mockUser = { id: 1, role: 'owner', terms_accepted: true, tenants: [mockTenant, { ...mockTenant, id: 2, name: 'Second' }] };
 const mockNavigate = jest.fn();
@@ -62,6 +63,28 @@ describe('Real core API screen contracts', () => {
     await fireEvent.press(screen.getByText('Parolni yangilash'));
     expect(jest.mocked(request)).toHaveBeenCalledWith('/auth/change-password/', { method: 'POST', body: { old_password: 'old-password', new_password: 'new-password' } });
     expect(mockLogout).toHaveBeenCalledTimes(1);
+  });
+  test('profile avatar upload sends only the selected file and refreshes the account', async () => {
+    jest.mocked(request).mockResolvedValue(profile);
+    jest.mocked(ImagePicker.requestMediaLibraryPermissionsAsync).mockResolvedValue({ granted: true } as any);
+    const append = jest.spyOn(FormData.prototype, 'append');
+    jest.mocked(ImagePicker.launchImageLibraryAsync).mockResolvedValueOnce({ canceled: false, assets: [{ uri: 'file:///avatar.jpg', width: 64, height: 64, mimeType: 'image/jpeg' }] });
+    const screen = await render(<ThemeProvider><ProfileScreen /></ThemeProvider>);
+    await fireEvent.press(await screen.findByLabelText('Profil rasmini tanlash'));
+    const write = jest.mocked(request).mock.calls.find(([, options]) => options?.method === 'POST');
+    expect(write?.[0]).toBe('/auth/profile/avatar/');
+    expect(write?.[1]?.body).toBeInstanceOf(FormData);
+    expect(append).toHaveBeenCalledWith('avatar', expect.objectContaining({ uri: 'file:///avatar.jpg' }));
+    append.mockRestore();
+    expect(mockRefresh).toHaveBeenCalledTimes(1);
+  });
+  test('profile avatar deletion does not change contact or password fields', async () => {
+    jest.mocked(request).mockResolvedValue({ ...profile, avatar_url: 'https://ilbi.uz/media/avatar.jpg' });
+    const screen = await render(<ThemeProvider><ProfileScreen /></ThemeProvider>);
+    await fireEvent.press(await screen.findByLabelText('Rasmni o‘chirish'));
+    expect(request).toHaveBeenCalledWith('/auth/profile/avatar/', { method: 'DELETE' });
+    expect(mockRefresh).toHaveBeenCalledTimes(1);
+    expect(jest.mocked(request).mock.calls.some(([, options]) => options?.method === 'PATCH')).toBe(false);
   });
   test('history parses composite event ids and actual detail.fields envelope', async () => {
     const event = { id: 'stock:11', source: 'stock', object_id: 11, title: 'Ombor kirimi', subtitle: 'Sut', created_at: '2026-10-27T03:00:00Z', actor_name: 'Seller', amount: null, currency: '' };

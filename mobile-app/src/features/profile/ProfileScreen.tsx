@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Image, Text, View } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { ActivityIndicator, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Camera, Trash2 } from 'lucide-react-native';
 import { useAuth } from '../auth/AuthContext';
 import { useAppNavigation } from '../../navigation/useAppNavigation';
 import { useTheme } from '../../theme/ThemeContext';
@@ -9,7 +10,8 @@ import { Button } from '../../components/ui/Button';
 import { ListState } from '../../components/ui/ListState';
 import { useScopedQuery } from '../../hooks/useScopedQuery';
 import { useApiAction } from '../../hooks/useApiAction';
-import { request } from '../../api/client';
+import { assertAuthScope, captureAuthScope, request } from '../../api/client';
+import { pickImageUpload } from '../../api/imageUpload';
 import { formError } from '../../api/validation';
 import { getServerScope } from '../../api/environment';
 import { positiveId } from '../reports/model';
@@ -37,7 +39,60 @@ function ProfileForm({ profile, reload }: { profile: any; reload: () => Promise<
   const [phone, setPhone] = useState(String(profile.contact_phone || ''));
   const [oldPassword, setOldPassword] = useState(''), [newPassword, setNewPassword] = useState(''), [confirmPassword, setConfirmPassword] = useState('');
   const [saved, setSaved] = useState(false);
-  const busy = save.busy || password.busy;
+  const [avatarUploading, setAvatarUploading] = useState(false);
+  const [avatarError, setAvatarError] = useState<string | null>(null);
+  const avatarLock = useRef(false);
+  const busy = save.busy || password.busy || avatarUploading;
+
+  const initials = [profile.first_name, profile.last_name]
+    .filter(Boolean)
+    .map((s: string) => s[0]?.toUpperCase())
+    .join('') || (profile.username ? profile.username.slice(0, 2).toUpperCase() : 'U');
+
+  const pickAvatar = async () => {
+    if (busy || avatarLock.current) return;
+    avatarLock.current = true;
+    setAvatarUploading(true);
+    setAvatarError(null);
+    const scope = captureAuthScope(profile.id);
+    try {
+      assertAuthScope(scope);
+      const formData = await pickImageUpload('avatar', () => assertAuthScope(scope));
+      if (!formData) return;
+      assertAuthScope(scope);
+      await request('/auth/profile/avatar/', {
+        method: 'POST',
+        body: formData,
+      });
+      assertAuthScope(scope);
+      await refreshProfile();
+    } catch (err: any) {
+      setAvatarError(err?.message || 'Profil rasmini yuklashda xatolik yuz berdi.');
+    } finally {
+      avatarLock.current = false;
+      setAvatarUploading(false);
+    }
+  };
+
+  const deleteAvatar = async () => {
+    if (busy || avatarLock.current) return;
+    avatarLock.current = true;
+    setAvatarError(null);
+    const scope = captureAuthScope(profile.id);
+    try {
+      setAvatarUploading(true);
+      assertAuthScope(scope);
+      await request('/auth/profile/avatar/', { method: 'DELETE' });
+      assertAuthScope(scope);
+      await refreshProfile();
+    } catch (err: any) {
+      setAvatarError(err?.message || 'Rasmni o‘chirishda xatolik yuz berdi.');
+    } finally {
+      avatarLock.current = false;
+      setAvatarUploading(false);
+    }
+  };
+
   const saveProfile = async () => {
     setSaved(false);
     const result = await save.run(async () => {
@@ -76,12 +131,64 @@ function ProfileForm({ profile, reload }: { profile: any; reload: () => Promise<
   };
   const card = { backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, padding: 16, borderRadius: 16, gap: 10 };
   return <>
-    <View style={[card, { alignItems: 'center' }]}>
-      {profile.avatar_url ? <Image source={{ uri: profile.avatar_url }} accessibilityLabel="Profil rasmi" style={{ width: 80, height: 80, borderRadius: 40 }} /> : null}
-      <Text style={{ color: colors.text, fontSize: 20, fontWeight: '700' }}>{[profile.first_name, profile.last_name].filter(Boolean).join(' ') || profile.username || profile.phone_number}</Text>
+    <View style={[card, profileStyles.avatarCard]}>
+      <View style={profileStyles.avatarWrapper}>
+        <View style={[profileStyles.avatarCircle, { backgroundColor: colors.surfaceSecondary, borderColor: colors.border }]}>
+          {profile.avatar_url ? (
+            <Image
+              source={{ uri: profile.avatar_url }}
+              accessibilityLabel="Profil rasmi"
+              style={profileStyles.avatarImage}
+            />
+          ) : (
+            <Text style={[profileStyles.avatarInitials, { color: colors.text }]}>{initials}</Text>
+          )}
+          {avatarUploading && (
+            <View style={profileStyles.uploadingOverlay}>
+              <ActivityIndicator size="small" color="#ffffff" />
+            </View>
+          )}
+        </View>
+        <TouchableOpacity
+          accessibilityRole="button"
+          accessibilityLabel="Profil rasmini tanlash"
+          disabled={busy}
+          onPress={pickAvatar}
+          style={[profileStyles.cameraButton, { backgroundColor: colors.primaryActionBg, borderColor: colors.surface }]}
+        >
+          <Camera size={14} color={colors.primaryActionText} />
+        </TouchableOpacity>
+      </View>
+
+      {profile.avatar_url ? (
+        <TouchableOpacity
+          accessibilityRole="button"
+          accessibilityLabel="Rasmni o‘chirish"
+          disabled={busy}
+          onPress={deleteAvatar}
+          style={[profileStyles.removeAvatarBtn, { backgroundColor: colors.surfaceSecondary }]}
+        >
+          <Trash2 size={12} color={colors.danger} />
+          <Text style={[profileStyles.removeAvatarText, { color: colors.danger }]}>Rasmni olib tashlash</Text>
+        </TouchableOpacity>
+      ) : null}
+
+      {avatarError ? <Notice error>{avatarError}</Notice> : null}
+
+      <Text style={[profileStyles.profileName, { color: colors.text }]}>
+        {[profile.first_name, profile.last_name].filter(Boolean).join(' ') || profile.username || profile.phone_number}
+      </Text>
+
+      <View style={[profileStyles.roleBadge, { backgroundColor: colors.surfaceSecondary }]}>
+        <Text style={[profileStyles.roleBadgeText, { color: colors.textSecondary }]}>
+          {profile.role_display || profile.role}
+        </Text>
+      </View>
+
       <Notice>{profile.role_display || profile.role} · {profile.phone_number || '—'}</Notice>
       <Notice>Login: {profile.username || '—'}</Notice>
     </View>
+
     <View style={card}>
       <Text style={{ color: colors.text, fontSize: 17, fontWeight: '700' }}>Shaxsiy ma’lumotlar</Text>
       <Input label="Ism" value={firstName} maxLength={50} editable={!busy} error={save.fields.first_name} onChangeText={value => { setFirstName(value); save.clearField('first_name'); setSaved(false); }} />
@@ -91,9 +198,10 @@ function ProfileForm({ profile, reload }: { profile: any; reload: () => Promise<
       <Input label="Aloqa telefoni" value={phone} keyboardType="phone-pad" editable={!busy} error={save.fields.contact_phone} onChangeText={value => { setPhone(value); save.clearField('contact_phone'); setSaved(false); }} />
       {save.error ? <Notice error>{save.error}</Notice> : null}
       {saved ? <Notice>Profil saqlandi.</Notice> : null}
-      <Button title="Profilni saqlash" loading={save.busy} disabled={password.busy} onPress={saveProfile} />
+      <Button title="Profilni saqlash" loading={save.busy} disabled={password.busy || avatarUploading} onPress={saveProfile} />
       <Button title="Profilni qayta yuklash" variant="secondary" disabled={busy} onPress={reload} />
     </View>
+
     <View style={card}>
       <Text style={{ color: colors.text, fontSize: 17, fontWeight: '700' }}>Parolni o‘zgartirish</Text>
       <Notice>Parol yangilangach eski sessiyalar bekor qilinadi. Yangi parol bilan qayta kiring.</Notice>
@@ -101,7 +209,86 @@ function ProfileForm({ profile, reload }: { profile: any; reload: () => Promise<
       <Input label="Yangi parol" value={newPassword} secureTextEntry editable={!busy} error={password.fields.new_password} onChangeText={value => { setNewPassword(value); password.clearField('new_password'); }} />
       <Input label="Yangi parolni takrorlang" value={confirmPassword} secureTextEntry editable={!busy} error={password.fields.confirm_password} onChangeText={value => { setConfirmPassword(value); password.clearField('confirm_password'); }} />
       {password.error ? <Notice error>{password.error}</Notice> : null}
-      <Button title="Parolni yangilash" loading={password.busy} disabled={save.busy} onPress={changePassword} />
+      <Button title="Parolni yangilash" loading={password.busy} disabled={save.busy || avatarUploading} onPress={changePassword} />
     </View>
   </>;
 }
+
+const profileStyles = StyleSheet.create({
+  avatarCard: {
+    alignItems: 'center',
+    paddingVertical: 20,
+  },
+  avatarWrapper: {
+    position: 'relative',
+    marginBottom: 6,
+  },
+  avatarCircle: {
+    width: 88,
+    height: 88,
+    borderRadius: 44,
+    borderWidth: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  avatarImage: {
+    width: '100%',
+    height: '100%',
+  },
+  avatarInitials: {
+    fontSize: 28,
+    fontWeight: '700',
+    letterSpacing: 1,
+  },
+  uploadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.45)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cameraButton: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    borderWidth: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  removeAvatarBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 8,
+    marginTop: 2,
+  },
+  removeAvatarText: {
+    fontSize: 12,
+    fontWeight: '500',
+  },
+  profileName: {
+    fontSize: 20,
+    fontWeight: '700',
+    marginTop: 4,
+    textAlign: 'center',
+  },
+  roleBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+    marginTop: 2,
+  },
+  roleBadgeText: {
+    fontSize: 12,
+    fontWeight: '600',
+  },
+});

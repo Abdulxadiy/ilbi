@@ -37,6 +37,14 @@
       "expo-asset",
       "expo-notifications",
       [
+        "expo-image-picker",
+        {
+          "photosPermission": "ILBI profil va mahsulot rasmini tanlash uchun galereyadan foydalanadi.",
+          "microphonePermission": false,
+          "cameraPermission": false
+        }
+      ],
+      [
         "expo-camera",
         {
           "cameraPermission": "ILBI tovar shtrix-kodini skanerlash uchun kameradan foydalanadi.",

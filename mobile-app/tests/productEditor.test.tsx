@@ -4,6 +4,7 @@ import { ProductScreen } from '../src/features/catalog/ProductScreen';
 import { ThemeProvider } from '../src/theme/ThemeContext';
 import { request } from '../src/api/client';
 import wire from './contracts/backend.json';
+import * as ImagePicker from 'expo-image-picker';
 let mockCanWrite = true, mockTenant = 1;
 const mockBack = jest.fn();
 jest.mock('../src/api/client', () => ({ request: jest.fn(), captureAuthScope: () => ({}), assertAuthScope: jest.fn() }));
@@ -58,6 +59,24 @@ describe('Product and variant management', () => {
     expect(screen.queryByText('Mahsulotni saqlash')).toBeNull();
     expect(screen.queryByText('Yangi variant')).toBeNull();
     expect(screen.queryByText('Mahsulotni arxivlash')).toBeNull();
+    await fireEvent.press(screen.getByText('Mahsulot rasmini yuklash'));
+    expect(ImagePicker.launchImageLibraryAsync).not.toHaveBeenCalled();
+  });
+  test('replacing the main image uses multipart product PATCH, leaving prices and the gallery untouched', async () => {
+    jest.mocked(request).mockResolvedValue(product);
+    jest.mocked(ImagePicker.requestMediaLibraryPermissionsAsync).mockResolvedValue({ granted: true } as any);
+    const append = jest.spyOn(FormData.prototype, 'append');
+    jest.mocked(ImagePicker.launchImageLibraryAsync).mockResolvedValueOnce({ canceled: false, assets: [{ uri: 'file:///product.jpg', width: 64, height: 64, mimeType: 'image/jpeg' }] });
+    const screen = await show(product.id);
+    await fireEvent.press(await screen.findByText('Mahsulot rasmini yuklash'));
+    const writes = jest.mocked(request).mock.calls.filter(([, options]) => options?.method === 'PATCH');
+    expect(writes).toHaveLength(1);
+    expect(writes[0][0]).toBe(`/catalog/products/${product.id}/`);
+    expect(writes[0][1]!.body).toBeInstanceOf(FormData);
+    expect(append).toHaveBeenCalledWith('image', expect.objectContaining({ uri: 'file:///product.jpg' }));
+    append.mockRestore();
+    expect(await screen.findByText('Rasm yuklandi.')).toBeTruthy();
+    expect(jest.mocked(request).mock.calls.some(([path]) => path.endsWith('/images/'))).toBe(false);
   });
   test('a failed guarded deletion preserves the product and displays the server reason', async () => {
     jest.mocked(request).mockImplementation(async (_path, options) => { if (options?.method === 'DELETE') throw Error('Harakat tarixi bor.'); return product; });
