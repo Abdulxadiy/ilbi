@@ -7,6 +7,7 @@ from django.db.models import CharField, F, Q, Value
 
 from apps.cashbox.models import CashExpense, CashIncome, CashShift, DailyCashReport
 from apps.core.models import AuditAction, AuditLog
+from apps.core.audit_privacy import safe_audit_data, safe_audit_text
 from apps.inventory.models import StockMovement
 from apps.sales.models import DebtPayment, Sale
 
@@ -258,7 +259,7 @@ def history_event(source, obj, spec):
             title = title.replace("Tovar", "Kategoriya")
         data.update(
             title=title,
-            subtitle=obj.description,
+            subtitle=safe_audit_text(obj.description),
             category=_audit_category(obj),
             reference=f"#{obj.target_id}" if obj.target_id else f"#{obj.pk}",
             action=obj.action,
@@ -315,7 +316,7 @@ def history_details(source, obj):
             field("Birlik tannarxi", obj.cost_price)
             field("Jami tannarx", obj.cost_price * obj.quantity)
     elif source == "audit":
-        changes = obj.changes or {}
+        changes = safe_audit_data(obj.changes or {})
         snapshot = changes.get("snapshot", {})
         changes = {key: value for key, value in changes.items() if key != "snapshot"}
         field(

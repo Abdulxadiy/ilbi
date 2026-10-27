@@ -1,0 +1,22 @@
+Backend security independent source review — 2026-10-27
+
+Source reviewed: the ten backend security files listed in BACKEND_SECURITY_BOUNDARIES_2026_10_27.md. Review identified metadata-style historical change rows. Marker-aware credential value redaction and three ORM/API regressions were added to audit_privacy.py and test_security_presentation.py.
+
+Actual PostgreSQL test command (backend working directory):
+PYTHONPATH=/mnt/storage/.cache/ilbi-push-tests:. DJANGO_SETTINGS_MODULE=security_completion_settings /mnt/storage/.cache/ilbi-push-tests/venv/bin/python -m pytest -q --disable-warnings apps/core/tests/test_security_presentation.py apps/support/tests/test_support.py apps/core/tests/test_audit.py apps/core/tests/test_audit_api.py apps/core/tests/test_audit_regressions.py apps/core/tests/test_history_api.py apps/accounts/tests/test_platform_admin_workspace.py apps/accounts/tests/test_terms_and_docs_views.py
+
+Exit code: 0
+Final result after metadata-row boundary fix: 145 passed, 8 warnings in 5.27s
+Earlier expanded review before this additional fix: 142 passed, 8 warnings in 5.00s
+The eight warnings are existing Django mail-settings deprecations.
+
+Infrastructure: pre-existing isolated PostgreSQL at 127.0.0.1:55443; dedicated test DB test_ilbi_security_completion. An independent temporary Redis instance bound only to 127.0.0.1:56445 supplied existing protected account workflows and was stopped after the test. No production services, live accounts, credentials or emulator state were modified.
+
+Fatal Ruff command (backend working directory):
+/mnt/storage/.cache/ilbi-push-tests/venv/bin/python -m ruff check --select E9,F63,F7,F82 api/v1/accounts/views/docs_views.py api/v1/audit/serializers.py api/v1/catalog/views/product_views.py api/v1/support/serializers.py api/v1/support/views.py apps/core/audit_privacy.py apps/core/models.py apps/core/services/history_service.py apps/core/tests/test_security_presentation.py apps/support/tests/test_support.py
+Exit code: 0
+Result: All checks passed!
+
+Git diff whitespace check: passed. Earlier original 106-test and migration-drift evidence is preserved alongside this file.
+
+Migration drift recheck after final source edits: manage.py makemigrations --check --dry-run (same isolated settings), exit0, No changes detected.

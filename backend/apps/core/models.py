@@ -69,6 +69,15 @@ class AuditAction(models.TextChoices):
 
 
 class ImmutableAuditLogQuerySet(models.QuerySet):
+    def bulk_create(self, objs, *args, **kwargs):
+        if kwargs.get('update_conflicts') or len(args) > 2 and args[2]:
+            from django.core.exceptions import ValidationError
+            raise ValidationError('AuditLog entries are immutable and cannot be updated.')
+        rows = list(objs)
+        for row in rows:
+            row.redact_credentials()
+        return super().bulk_create(rows, *args, **kwargs)
+
     def delete(self):
         from django.core.exceptions import ValidationError
         raise ValidationError("AuditLog entries cannot be deleted.")
@@ -119,10 +128,17 @@ class AuditLog(models.Model):
             models.Index(fields=['tenant', 'action', '-created_at']),
         ]
 
+    def redact_credentials(self):
+        from .audit_privacy import safe_audit_data, safe_audit_text
+        self.changes = safe_audit_data(self.changes)
+        self.description = safe_audit_text(self.description)
+        self.user_agent = safe_audit_text(self.user_agent)
+
     def save(self, *args, **kwargs):
         if self.pk:
             from django.core.exceptions import ValidationError
             raise ValidationError("AuditLog entries are immutable and cannot be updated.")
+        self.redact_credentials()
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):

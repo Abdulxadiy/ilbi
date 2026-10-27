@@ -1,5 +1,6 @@
 from decimal import Decimal
 from functools import wraps
+import logging
 
 from django.db import IntegrityError, transaction
 from django.db.models import Prefetch, Q
@@ -29,6 +30,8 @@ from apps.catalog.services import ProductService, ProductServiceError
 from apps.inventory.services import StockServiceError
 
 from ._base import CatalogAPIView
+
+logger = logging.getLogger(__name__)
 
 
 def catalog_integrity_response(method):
@@ -426,9 +429,15 @@ class ProductImageUploadView(CatalogAPIView):
                 ProductImageSerializer(prod_image, context={"request": request}).data,
                 status=status.HTTP_201_CREATED,
             )
-        except Exception as exc:
+        except ProductServiceError as exc:
             return Response(
                 {"error": {"code": "image_error", "message": str(exc)}},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as exc:
+            logger.error('Product image upload failed: product_id=%s error=%s', product.pk, type(exc).__name__)
+            return Response(
+                {"error": {"code": "image_error", "message": "Rasmni yuklab bo‘lmadi. Rasm faylini tekshirib, qayta urinib ko‘ring."}},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 

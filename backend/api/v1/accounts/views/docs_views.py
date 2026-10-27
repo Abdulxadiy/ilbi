@@ -1,4 +1,5 @@
 from pathlib import Path
+import logging
 
 from django.conf import settings
 from drf_spectacular.types import OpenApiTypes
@@ -9,6 +10,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from api.schema import DocumentUpdateInputSerializer
+
+logger = logging.getLogger(__name__)
 
 DOCS_MAP = {
     "yordam_uz": {
@@ -154,9 +157,10 @@ class DocumentationView(APIView):
 
         try:
             content = file_path.read_text(encoding="utf-8")
-        except Exception as e:
+        except Exception as exc:
+            logger.error('Document read failed: document=%s error=%s', doc_key, type(exc).__name__)
             return Response(
-                {"error": f"Faylni o'qishda xatolik: {str(e)}"},
+                {"error": "Hujjatni hozir ochib bo‘lmadi. Keyinroq qayta urinib ko‘ring."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
@@ -202,9 +206,10 @@ class DocumentationView(APIView):
         try:
             file_path.parent.mkdir(parents=True, exist_ok=True)
             file_path.write_text(content, encoding="utf-8")
-        except Exception as e:
+        except Exception as exc:
+            logger.error('Document write failed: document=%s error=%s', doc_key, type(exc).__name__)
             return Response(
-                {"error": f"Faylni saqlashda xatolik yuz berdi: {str(e)}"},
+                {"error": "Hujjatni hozir saqlab bo‘lmadi. Keyinroq qayta urinib ko‘ring."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
