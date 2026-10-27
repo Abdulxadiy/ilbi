@@ -1,0 +1,13 @@
+{
+  "image_picker_native_implementation_packaged": true,
+  "native_verification_method": "Exact release R8 class mapping to final DEX descriptor and ExponentImagePicker registration name",
+  "mapped_image_picker_class": "w92",
+  "camera_scanner_permission_preserved": true,
+  "notification_permission_preserved": true,
+  "microphone_permission_absent": true,
+  "private_credential_filename_scan_clean": true,
+  "source_modified": false,
+  "source_commit": "4ec8f4647fc5f9ed5bc789b7a60bb0f625c0b84c",
+  "native_device_execution": false,
+  "emulator_accessed": false
+}

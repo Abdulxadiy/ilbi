@@ -1,0 +1,11 @@
+{
+  "source_commit": "4ec8f4647fc5f9ed5bc789b7a60bb0f625c0b84c",
+  "fresh_cng_generation": true,
+  "generated_camera_permission_present": true,
+  "microphone_permission_blocked": true,
+  "unpublished_rejected_artifact_retained_outside_repository": true,
+  "resumed_builder_sha256": "81cfd7c62bbb3b6df1bf831a0f9ff252efc8be5c6fc4339045ceab4188fe9e21",
+  "original_build_verification_and_signing_pipeline_retained": true,
+  "native_device_executed": false,
+  "emulator_accessed": false
+}

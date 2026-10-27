@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "windows": {
+    "version": "1.4.0",
+    "buildTimestamp": 1792824277000,
+    "url": "/downloads/2d799dd5596a92fb6a0e3be6cf51a2a018c88e2d/ILBI-Setup-1.4.0-x64.exe",
+    "sourceCommit": "2d799dd5596a92fb6a0e3be6cf51a2a018c88e2d",
+    "bytes": 206772414,
+    "sha256": "f1485f982b8bdd0ab92dccb21f5e9f3130e1e9cec82dc4d0214dff4d542ea94a",
+    "channel": "preview"
+  },
+  "mobile": {
+    "applicationId": "uz.ilbi.mobile",
+    "version": "1.0.0",
+    "buildNumber": "5",
+    "signerSha256": "09fc04394dfd3d8e63abe97a0b71f066ced06a90cd7e94773705f1efae2cd756",
+    "sourceCommit": "4ec8f4647fc5f9ed5bc789b7a60bb0f625c0b84c",
+    "url": "/downloads/mobile/4ec8f4647fc5f9ed5bc789b7a60bb0f625c0b84c/ILBI-1.0.0-android-5.apk",
+    "bytes": 77749484,
+    "sha256": "0380da45c7da22a9b90f5ddc4a75a1380e4215bf1eb352090116cee98a40b175",
+    "channel": "preview",
+    "android": {
+      "applicationId": "uz.ilbi.mobile",
+      "version": "1.0.0",
+      "buildNumber": "5",
+      "signerSha256": "09fc04394dfd3d8e63abe97a0b71f066ced06a90cd7e94773705f1efae2cd756",
+      "sourceCommit": "4ec8f4647fc5f9ed5bc789b7a60bb0f625c0b84c",
+      "url": "/downloads/mobile/4ec8f4647fc5f9ed5bc789b7a60bb0f625c0b84c/ILBI-1.0.0-android-5.apk",
+      "bytes": 77749484,
+      "sha256": "0380da45c7da22a9b90f5ddc4a75a1380e4215bf1eb352090116cee98a40b175",
+      "channel": "preview"
+    }
+  },
+  "linux": {
+    "version": "1.4.0",
+    "sourceCommit": "2d799dd5596a92fb6a0e3be6cf51a2a018c88e2d",
+    "url": "/downloads/2d799dd5596a92fb6a0e3be6cf51a2a018c88e2d/ILBI-1.4.0-linux-x64.tar.gz",
+    "bytes": 224504865,
+    "sha256": "3e68b8a7a340c3e13836e3b41a2d8ab54374edbf1f0d32383a6fcb199e1e20b5",
+    "channel": "preview",
+    "buildTimestamp": 1792824277000
+  }
+}

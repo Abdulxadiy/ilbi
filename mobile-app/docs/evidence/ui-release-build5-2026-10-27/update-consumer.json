@@ -1,0 +1,40 @@
+{
+  "status": "verified",
+  "source": "Actual public HTTPS feed and unchanged source consumer; installed identities are fixtures, not a device query",
+  "offered": [
+    {
+      "installedBuild": "1",
+      "offeredBuild": "5"
+    },
+    {
+      "installedBuild": "2",
+      "offeredBuild": "5"
+    },
+    {
+      "installedBuild": "3",
+      "offeredBuild": "5"
+    },
+    {
+      "installedBuild": "4",
+      "offeredBuild": "5"
+    },
+    {
+      "installedBuild": "5",
+      "offeredBuild": null
+    }
+  ],
+  "earlierConsumers": [
+    {
+      "build": "3",
+      "sourceCommit": "471c8be131ad6304025bf5b8f012f04a1556d522",
+      "exactReleaseConsumerMatches": true
+    },
+    {
+      "build": "4",
+      "sourceCommit": "364017038bedcbe20b0974a86fa75aeec29cd5ea",
+      "exactReleaseConsumerMatches": true
+    }
+  ],
+  "nativeInstallationExecuted": false,
+  "emulatorAccessed": false
+}

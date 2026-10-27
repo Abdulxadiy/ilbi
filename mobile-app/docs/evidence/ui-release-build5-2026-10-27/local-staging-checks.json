@@ -1,0 +1,8 @@
+{
+  "actual_exporter_passed": true,
+  "actual_local_activation_passed": true,
+  "non_mobile_entries_preserved": true,
+  "ios_preserved": true,
+  "native_build": "5",
+  "source_commit": "4ec8f4647fc5f9ed5bc789b7a60bb0f625c0b84c"
+}
