@@ -1,5 +1,6 @@
 // Shared browser/Electron renderer validation. Never infer a bad field from a
 // general server/network error, and never attach an old response to edited data.
+import { safeDisplayText } from './safePresentation.js';
 const messages = new WeakMap();
 const revisions = new WeakMap();
 const touched = new WeakSet();
@@ -9,6 +10,7 @@ let activeSubmission = null;
 const controls = 'input,select,textarea';
 const nonFieldKeys = new Set(['non_field_errors', '__all__']);
 const envelopeKeys = new Set(['detail', 'message', 'code', 'error']);
+const privateMetadata = /^(?:guest_hash|password_hash|request_fingerprint|access|refresh|token|access_token|refresh_token|login_ticket|api_key|private_key|secret|authorization|cookie)$/i;
 const normalize = value => String(value || '').replace(/\[(\d+)\]/g, '.$1').replace(/-/g, '_');
 
 export function validationFields(data) {
@@ -17,14 +19,14 @@ export function validationFields(data) {
   const root = canonical ? explicitFields : data;
   const result = {};
   const visit = (value, path) => {
-    if (typeof value === 'string' && path) { result[path] = value; return; }
+    if (typeof value === 'string' && path) { result[path] = safeDisplayText(value, 'Maydonni tekshiring.'); return; }
     if (Array.isArray(value) && value.every(item => typeof item === 'string')) {
-      if (path && value.length) result[path] = value.join(' ');
+      if (path && value.length) result[path] = safeDisplayText(value.join(' '), 'Maydonni tekshiring.');
       return;
     }
     if (!value || typeof value !== 'object') return;
     for (const [key, child] of Object.entries(value)) {
-      if (nonFieldKeys.has(key)) continue;
+      if (nonFieldKeys.has(key) || privateMetadata.test(key)) continue;
       // Envelope metadata is only metadata at the response root. Business
       // fields named code/message (including nested variant codes) are valid.
       if (!canonical && !path && envelopeKeys.has(key) && !Array.isArray(child)) continue;
@@ -66,7 +68,10 @@ export function markFieldError(field, message) {
   if (!message || !target.isConnected) return;
   const node = target.ownerDocument.createElement('div');
   const id = `ilbi-field-error-${++sequence}`;
-  node.id = id; node.className = 'field-error'; node.setAttribute('role', 'alert'); node.textContent = String(message);
+  let text = String(message);
+  // Even a malformed validation response must not echo the entered password.
+  if ((field.type === 'password' || keys(field).some(key => key.includes('password'))) && field.value) text = text.split(field.value).join('[yashirilgan]');
+  node.id = id; node.className = 'field-error'; node.setAttribute('role', 'alert'); node.textContent = safeDisplayText(text, 'Maydonni tekshiring.');
   const parent = target.parentElement;
   // Keep currency suffixes/password-eye icons inside their original control.
   const anchor = target.closest('[data-validation-container]') || (parent?.style.position === 'relative' && parent.querySelectorAll(controls).length === 1 ? parent : target);

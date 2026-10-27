@@ -56,6 +56,8 @@ try {
   await wait(form, 'document.querySelectorAll("[data-validation-invalid]").length===3');
   assert.equal(await form.evaluate('document.querySelector("#email").getAttribute("aria-invalid")'), 'true');
   assert.equal(await form.evaluate('document.querySelector("[aria-label=Category]").getAttribute("aria-invalid")'), 'true');
+  // The error attribute appears before the border's CSS transition paints.
+  await wait(form, 'getComputedStyle(document.querySelector("#email")).borderColor===getComputedStyle(document.querySelector("#email").nextElementSibling).color');
   assert.equal(await form.evaluate('getComputedStyle(document.querySelector("#email")).borderColor===getComputedStyle(document.documentElement).getPropertyValue("--border-card").trim()'), false);
   assert.ok(await form.evaluate('document.body.innerText.includes("Email band.")&&document.body.innerText.includes("Sanani tekshiring.")'));
   console.log('PASS shared forms: native required/email/price/phone validation, custom select focus/red target, backend email/category/date inline errors.');
@@ -66,6 +68,16 @@ try {
   await fill(form, '#code', 'ITEM-2');
   assert.equal(await form.evaluate('document.querySelector("#code").hasAttribute("aria-invalid")'), false);
   console.log('PASS canonical catalogue code rejection is mapped to the real field, not discarded as envelope metadata.');
+
+  await fill(form, '#qa-password', 'PlainSecret!23');
+  await form.evaluate('validationQA.message="Rejected ‹PlainSecret!23›";validationQA.errors={new_password:["Server echo: PlainSecret!23"]};document.querySelector("#core-form").requestSubmit()');
+  await wait(form, 'document.querySelector("#qa-password").getAttribute("aria-invalid")==="true"');
+  assert.equal(await form.evaluate('document.body.innerText.includes("PlainSecret!23")'), false);
+  assert.equal(await form.evaluate('document.querySelector("#qa-password").nextElementSibling.textContent'), 'Server echo: [yashirilgan]');
+  assert.equal(await form.evaluate('[validationQA.lastFailure.message,validationQA.lastFailure.stack,JSON.stringify(validationQA.lastFailure.data)].some(value=>value.includes("PlainSecret!23"))'), false);
+  await fill(form, '#qa-password', '');
+  await form.evaluate('validationQA.message=""');
+  console.log('PASS password field remains highlighted without echoing its entered secret in validation text.');
 
   await fill(form, '#email', 'changed@example.com');
   await form.evaluate('validationQA.errors={email:["<img src=x onerror=alert(1)>"]};document.querySelector("#core-form").requestSubmit()');

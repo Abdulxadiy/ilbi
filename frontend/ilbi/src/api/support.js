@@ -1,5 +1,6 @@
 import { localStore, sessionStore } from '../utils/brandStorage.js';
 import { request } from './client';
+import { redactRequestError, safeApiErrorMessage } from '../utils/safePresentation.js';
 
 const newGuestKey = () => Array.from(crypto.getRandomValues(new Uint8Array(32)), byte => byte.toString(16).padStart(2, '0')).join('');
 let loginGuestKey = sessionStore.getItem('ilbi_login_support_guest');
@@ -28,8 +29,8 @@ export async function publicSupportRequest(path, options = {}) {
     body: options.body && !isForm ? JSON.stringify(options.body) : options.body,
   });
   if (!response.ok) {
-    const data = await response.json().catch(() => ({}));
-    const error = new Error(data.detail || data.error?.message || `HTTP ${response.status}`);
+    const data = redactRequestError(await response.json().catch(() => ({})), options.body);
+    const error = new Error(safeApiErrorMessage(data, response.status));
     error.status = response.status;
     error.data = data;
     error.retryAfterMs = Number(response.headers.get('Retry-After') || 0) * 1000;

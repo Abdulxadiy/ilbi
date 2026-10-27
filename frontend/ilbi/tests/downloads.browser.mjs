@@ -60,6 +60,8 @@ try {
   assert.equal(await browser.evaluate('document.querySelector(".downloads-linux-install").lastElementChild.matches("a.downloads-linux-guide")'), true);
   assert.equal(await browser.evaluate('document.querySelector(".downloads-linux-guide").getAttribute("href")'), '/desktop-guide#7-linux-uchun-batafsil-qollanma');
   await writeFile(join(artifacts, 'downloads-desktop.png'), Buffer.from((await browser.call('Page.captureScreenshot', { format: 'png' })).data, 'base64'));
+  assert.equal(await browser.evaluate('Boolean(document.querySelector(".downloads-checksum"))'), false);
+  assert.equal(await browser.evaluate('document.body.innerText.includes("a".repeat(64)) || document.body.innerText.includes("b".repeat(64))'), false);
   await browser.resize(390, 844);
   assert.equal(await browser.evaluate('document.documentElement.scrollWidth<=innerWidth'), true);
   await writeFile(join(artifacts, 'downloads-mobile.png'), Buffer.from((await browser.call('Page.captureScreenshot', { format: 'png' })).data, 'base64'));

@@ -433,7 +433,6 @@ export default function Downloads() {
               {windowsURL ? <a className="btn btn-primary downloads-button" href={windowsURL} target="_blank" rel="noopener noreferrer"><Download size={18} />Windows uchun yuklab olish</a>
                 : <button type="button" className="btn btn-primary downloads-button" disabled>{state.loading ? 'Tekshirilmoqda…' : 'Yuklab olish hali ochilmagan'}</button>}
               {windowsURL && windows?.channel === 'preview' && <small>Sinov nusxasi. Ishlab chiqarishdagi POS savdosi fiskal integratsiya tayyor bo‘lgach ochiladi.</small>}
-              {windows?.sha256 && <details className="downloads-checksum"><summary>Faylning SHA-256 qiymati</summary><code>{windows.sha256}</code></details>}
             </article>
             <article className="downloads-card" data-platform="linux"><div className="downloads-platform-icon"><img src="/brand/ilbi-desktop.svg" width="52" height="52" alt="ILBI Linux ilovasi belgisi" /></div>
               <div className="downloads-card-heading"><h2>Linux uchun ILBI</h2><span>v{linux?.version || version}</span></div>
@@ -443,7 +442,6 @@ export default function Downloads() {
                 : <button type="button" className="btn btn-primary downloads-button" disabled>{state.loading ? 'Tekshirilmoqda…' : 'Linux yuklamasi hali ochilmagan'}</button>}
               <small>Arxiv va oddiy o‘rnatuvchi. <a href="#linux-install">Linux’da o‘rnatish — 4 qadam</a></small>
               {linuxURL && linux?.channel === 'preview' && <small>Sinov nusxasi. POS savdosiga mavjud fiskal integratsiya cheklovi amal qiladi.</small>}
-              {linux?.sha256 && <details className="downloads-checksum"><summary>Faylning SHA-256 qiymati</summary><code>{linux.sha256}</code></details>}
             </article>
             <article className="downloads-card" data-platform="android"><div className="downloads-platform-icon"><img src="/brand/ilbi-icon-512.png" width="52" height="52" alt="ILBI mobil ilovasi belgisi" /></div>
               <div className="downloads-card-heading"><h2>Android uchun ILBI</h2><span>{androidURL ? `v${android.version}` : 'Hozircha mavjud emas'}</span></div>
@@ -452,7 +450,6 @@ export default function Downloads() {
               {androidURL ? <a className="btn btn-primary downloads-button" href={androidURL} target="_blank" rel="noopener noreferrer"><Download size={18} />Android uchun yuklab olish</a>
                 : <button type="button" className="btn btn-primary downloads-button" disabled>Android yuklamasi hali joylanmagan</button>}
               {androidURL && <small>APK’ni yuklab, qurilmada oching yoki Google Play’dan yangilang. Mavjud ILBI’ni o‘chirish shart emas.</small>}
-              {android?.sha256 && <details className="downloads-checksum"><summary>Faylning SHA-256 qiymati</summary><code>{android.sha256}</code></details>}
             </article>
             <article className="downloads-card" data-platform="ios"><div className="downloads-platform-icon"><img src="/brand/ilbi-icon-512.png" width="52" height="52" alt="ILBI iPhone ilovasi belgisi" /></div>
               <div className="downloads-card-heading"><h2>iPhone va iPad uchun ILBI</h2><span>{iosURL ? `v${ios.version}` : 'Hozircha mavjud emas'}</span></div>

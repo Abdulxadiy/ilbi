@@ -55,6 +55,9 @@ export default function Profile() {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [changingPassword, setChangingPassword] = useState(false);
   const [sendingReset, setSendingReset] = useState(false);
+  const resetPasswordDraft = () => { setPasswordData({ old_password: '', new_password: '', confirm_password: '' }); setShowOldPassword(false); setShowNewPassword(false); };
+  const openPasswordModal = () => { resetPasswordDraft(); setShowPasswordModal(true); };
+  const closePasswordModal = () => { if (!changingPassword) { resetPasswordDraft(); setShowPasswordModal(false); } };
 
   useEffect(() => {
     if (user) {
@@ -165,7 +168,7 @@ export default function Profile() {
       await authApi.changePassword(passwordData.old_password, passwordData.new_password);
       toast.success('Parolingiz muvaffaqiyatli o‘zgartirildi!');
       setShowPasswordModal(false);
-      setPasswordData({ old_password: '', new_password: '', confirm_password: '' });
+      resetPasswordDraft();
     } catch (err) {
       toast.error(err.message || 'Parolni o‘zgartirishda xatolik yuz berdi');
     } finally {
@@ -679,7 +682,7 @@ export default function Profile() {
 
             <button
               type="button"
-              onClick={() => setShowPasswordModal(true)}
+              onClick={openPasswordModal}
               className="btn btn-primary"
               style={{
                 padding: '9px 18px',
@@ -755,7 +758,7 @@ export default function Profile() {
       {/* Change Password Modal */}
       <Modal
         isOpen={showPasswordModal}
-        onClose={() => setShowPasswordModal(false)}
+        onClose={closePasswordModal}
         title="Parolni O‘zgartirish"
         maxWidth={440}
       >
@@ -886,7 +889,7 @@ export default function Profile() {
               <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 10 }}>
                 <button
                   type="button"
-                  onClick={() => setShowPasswordModal(false)}
+                  onClick={closePasswordModal}
                   style={{
                     padding: '10px 18px',
                     borderRadius: 'var(--radius-sm)',

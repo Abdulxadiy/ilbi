@@ -23,6 +23,20 @@ test('general network, permission and non-field errors do not invent rejected in
   for (const input of [null, 'Offline', { detail: 'Forbidden' }, { error: { code: 'business_logic_error', message: 'Not enough stock', details: null } }, { non_field_errors: ['Denied'] }]) assert.deepEqual(validationFields(input), {});
 });
 
+test('nested field presentation hides credential metadata and hash strings while preserving password guidance and business fields', () => {
+  const result = validationFields({ error: { code: 'validation_error', message: 'Invalid', details: {
+    new_password: ['Yangi parol kamida 8 belgidan iborat bo‘lsin.'], old_password: ['pbkdf2_sha256$1000000$salt$synthetic'],
+    guest_hash: ['a'.repeat(64)], profile: { access_token: ['private-token'] },
+    variants: [{ code: ['Artikul takrorlangan.'], password_hash: ['b'.repeat(64)] }], message: ['Qiymatni tekshiring.'],
+  } } });
+  assert.equal(result.new_password, 'Yangi parol kamida 8 belgidan iborat bo‘lsin.');
+  assert.equal(result.old_password, '[yashirilgan]');
+  assert.equal(result['variants.0.code'], 'Artikul takrorlangan.');
+  assert.equal(result.message, 'Qiymatni tekshiring.');
+  assert(!JSON.stringify(result).includes('private-token')); assert(!JSON.stringify(result).includes('synthetic'));
+  assert(!Object.keys(result).some(key => /guest_hash|password_hash|access_token/.test(key)));
+});
+
 test('alternate field error payloads are supported without interpreting HTML', () => {
   assert.deepEqual(validationFields({ field_errors: { name: ['<img src=x onerror=alert(1)>'] } }), { name: '<img src=x onerror=alert(1)>' });
   assert.deepEqual(validationFields({ errors: { phone_number: ['Incomplete.'] } }), { phone_number: 'Incomplete.' });

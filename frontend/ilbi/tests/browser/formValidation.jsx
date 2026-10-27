@@ -17,20 +17,21 @@ window.fetch = async (input, options = {}) => {
   const errors = structuredClone(validationQA.errors), status = validationQA.status;
   validationQA.requests.push(body);
   if (validationQA.hold) await new Promise(resolve => validationQA.pending.push(resolve));
-  return new Response(JSON.stringify({ error: { code: 'validation_error', message: 'Synthetic rejection', details: errors } }), { status, headers: { 'Content-Type': 'application/json' } });
+  return new Response(JSON.stringify({ error: { code: 'validation_error', message: validationQA.message || 'Synthetic rejection', details: errors } }), { status, headers: { 'Content-Type': 'application/json' } });
 };
 
 export default function Example() {
-  const [form, setForm] = useState({ code: 'ITEM-1', email: '', price: '0', phone_number: '', category_id: '', date_of_birth: '2020-01-02' });
+  const [form, setForm] = useState({ code: 'ITEM-1', email: '', price: '0', phone_number: '', category_id: '', date_of_birth: '2020-01-02', new_password: '' });
   const [error, setError] = useState('');
   const set = (key, value) => setForm(current => ({ ...current, [key]: value }));
   const submit = async event => {
     event.preventDefault(); setError('');
     try { await request('/validation-fixture/', { method: 'POST', body: form }); }
-    catch (failure) { setError(failure.message); }
+    catch (failure) { validationQA.lastFailure = failure; setError(failure.message); }
   };
   return <main style={{ padding: 40, maxWidth: 600 }}><form id="core-form" onSubmit={submit} style={{ display: 'grid', gap: 12 }}>
     <label>Code<input id="code" data-api-field="code" className="input-field" value={form.code} onChange={event => set('code', event.target.value)} /></label>
+    <label>Password<input id="qa-password" type="password" data-api-field="new_password" className="input-field" value={form.new_password} onChange={event => set('new_password', event.target.value)} /></label>
     <label>Email<input id="email" name="email" type="email" className="input-field" required value={form.email} onChange={event => set('email', event.target.value)} /></label>
     <label>Amount<PriceInput id="price" data-api-field="price" min={1} required value={form.price} onChange={event => set('price', event.target.value)} /></label>
     <label>Phone<PhoneInput id="phone" data-api-field="phone_number" value={form.phone_number} onChange={event => set('phone_number', event.target.value)} /></label>

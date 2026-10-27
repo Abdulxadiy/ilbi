@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useCallback, useMemo, useRef } from 'react';
 import { CheckCircle2, AlertTriangle, XCircle, Info, X } from 'lucide-react';
+import { safeDisplayText } from '../utils/safePresentation.js';
 
 const ToastContext = createContext(null);
 
@@ -9,6 +10,7 @@ export function ToastProvider({ children }) {
 
   const addToast = useCallback((message, type = 'info', duration = 4000) => {
     if (!message || typeof message !== 'string') return;
+    message = safeDisplayText(message);
 
     // Deduplicate identical message within 2.5 seconds to prevent spam
     const now = Date.now();

@@ -140,6 +140,32 @@ test('public login requests omit expired authorization', async () => {
   assert.deepEqual(await request('/auth/admin-login/', { method: 'POST', body: {} }), { login_ticket: 'ticket' });
 });
 
+test('failed requests cannot retain echoed credentials in Error message, stack or nested data', async () => {
+  const password = 'Synthetic entered password!42';
+  globalThis.fetch = async (_url, options) => {
+    assert.equal(JSON.parse(options.body).password, password);
+    return json({ error: { code: 'validation_error', message: `Rejected ‹${password}›`, details: { password: [`Rejected ${password}`], amount: ['12345.67'] } }, token: 'private-response-token' }, 400);
+  };
+  await assert.rejects(request('/auth/admin-login/', { method: 'POST', body: { username: 'owner', password } }), error => {
+    for (const text of [error.message, error.stack, JSON.stringify(error.data)]) {
+      assert(!text.includes(password)); assert(!text.includes('private-response-token'));
+    }
+    assert.equal(error.data.error.details.amount[0], '12345.67');
+    return true;
+  });
+});
+
+test('request presentation protection leaves successful credentials and payload bytes untouched', async () => {
+  const body = { username: 'owner', password: 'Synthetic entered password!42' };
+  const response = { access: 'synthetic-access', refresh: 'synthetic-refresh', login_ticket: 'synthetic-ticket' };
+  globalThis.fetch = async (_url, options) => {
+    assert.deepEqual(JSON.parse(options.body), body);
+    return json(response);
+  };
+  assert.deepEqual(await request('/auth/admin-login/', { method: 'POST', body }), response);
+  assert.equal(body.password, 'Synthetic entered password!42');
+});
+
 test('a private response arriving after logout is discarded', async () => {
   setTokens(token(), token());
   let finish;
