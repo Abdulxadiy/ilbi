@@ -1,4 +1,6 @@
+import { createPreviewCore } from './previewCore';
 import { createPreviewSupport } from './previewSupport';
+import { createPreviewNotifications } from './previewNotifications';
 /** Explicit, development-only design data. Never a fallback for a failed API call. */
 import { createPreviewCatalog, type PreviewVariant } from './previewCatalog';
 import { isDesignPreview } from '../api/environment';
@@ -22,10 +24,13 @@ const products: PreviewVariant[] = [
   quantity: Number(quantity),
 }));
 const supportRequest = createPreviewSupport();
+const notificationRequest = createPreviewNotifications();
 const catalogRequest = createPreviewCatalog(products, categories);
 const customers = [
   { id: 1, name: 'Ali Valiyev', phone_number: '', debt_amount: 230000, sales_count: 1 },
   { id: 2, name: 'Dilnoza Karimova', phone_number: '', debt_amount: 320000, sales_count: 1 },
+  { id: 3, name: 'Aziz Rahimov', phone_number: '', debt_amount: 180000, sales_count: 1 },
+  { id: 4, name: 'Malika Sobirova', phone_number: '', debt_amount: 130000, sales_count: 1 },
 ];
 const sales = new Map<number, any>();
 const intents = new Map<string, any>();
@@ -34,16 +39,21 @@ function makeSale(payload: any, id: number) {
     const product = products.find(p => p.id === Number(line.product_variant_id));
     return { ...line, product_name: product?.product_name || 'Demo tovar', unit: 'dona', total_price: Number(line.quantity) * Number(line.unit_price) };
   });
-  return { id, receipt_number: 'DEMO-' + id, items, total_amount: items.reduce((sum: number, line: any) => sum + line.total_price, 0),
+  return { id, receipt_number: 'DEMO-' + id, currency: 'UZS', status: 'completed', items, total_amount: items.reduce((sum: number, line: any) => sum + line.total_price, 0),
     counterparty_name: 'Ali Valiyev', payment_type: payload.payment_type || 'cash', created_at: new Date().toISOString(), _preview: true };
 }
 sales.set(1043, makeSale({}, 1043));
+const coreRequest = createPreviewCore({ user: previewUser, customers, sales, products });
 
 export async function previewRequest(endpoint: string, options: { method?: string; body?: any; headers?: HeadersInit }): Promise<any> {
   if (!isDesignPreview) throw Error('Design preview is disabled');
   const url = new URL(endpoint, 'http://design.invalid'), path = url.pathname;
   const method = (options.method || 'GET').toUpperCase();
   const body = typeof options.body === 'string' ? JSON.parse(options.body) : options.body || {};
+  const coreResult = coreRequest(url, method, body);
+  if (coreResult.handled) return coreResult.data;
+  const notificationResult = notificationRequest(url, method);
+  if (notificationResult.handled) return notificationResult.data;
   const supportResult = supportRequest(url, method, body, options.headers);
   if (supportResult.handled) return supportResult.data;
   const catalogResult = catalogRequest(url, method, body);

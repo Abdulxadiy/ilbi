@@ -29,6 +29,19 @@ describe('Receipt identity and payment display', () => {
     expect(await screen.findByText(method === 'card' ? 'Karta:' : 'Nasiya:')).toBeTruthy();
     expect(screen.queryByText('Naqd:')).toBeNull(); expect(screen.queryByText('Qaytim:')).toBeNull();
   });
+  test('USD historical receipts retain currency and returned/tax status in screen and PDF', async () => {
+    jest.mocked(request).mockResolvedValueOnce({ ...sale(1, 'card'), currency: 'USD', status: 'partially_voided', tax_amount: '10.00', refunded_amount: '20.00', net_amount: '80.00' });
+    const screen = await render(<ThemeProvider><ReceiptScreen /></ThemeProvider>);
+    expect(await screen.findByText('Qisman qaytarilgan')).toBeTruthy();
+    expect(screen.getByText('QQS:')).toBeTruthy();
+    expect(screen.getByText('Qaytarilgan:')).toBeTruthy();
+    expect(screen.getByText('Qolgan summa:')).toBeTruthy();
+    expect(screen.getAllByText('100 USD').length).toBeGreaterThan(0);
+    await fireEvent.press(screen.getByText('Ulashish'));
+    await fireEvent.press(screen.getByText('PDF yuklab olish'));
+    const html = jest.mocked(Print.printToFileAsync).mock.calls[0][0]?.html || '';
+    expect(html).toContain('USD'); expect(html).not.toContain("so'm"); expect(html).toContain('Qisman qaytarilgan'); expect(html).toContain('Qaytarilgan:');
+  });
   test('changing sale ID resets PDF state and ignores old in-flight receipt data', async () => {
     jest.mocked(request).mockResolvedValueOnce(sale(1));
     const screen = await render(<ThemeProvider><ReceiptScreen /></ThemeProvider>);

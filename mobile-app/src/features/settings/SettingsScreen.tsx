@@ -2,7 +2,7 @@ import { useFeedback } from '../../hooks/useFeedback';
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useAppNavigation as useNavigation } from '../../navigation/useAppNavigation';
-import { Database, Info, LogOut, Moon, Store, Sun, Trash2 } from 'lucide-react-native';
+import { Info, LogOut, Moon, Store, Sun, Trash2 } from 'lucide-react-native';
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
@@ -11,6 +11,10 @@ import { useTheme } from '../../theme/ThemeContext';
 import { radius, spacing, typography } from '../../theme/tokens';
 import { useAuth } from '../auth/AuthContext';
 import { getApiBaseUrl, setApiBaseUrl } from '../../api/client';
+import { normalizeApiBaseUrl } from '../../api/environment';
+import { useFormErrors } from '../../hooks/useFormErrors';
+import { installedApp } from '../updates/installed';
+import appConfig from '../../../app.json';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const SettingsScreen: React.FC = () => {
@@ -18,25 +22,28 @@ export const SettingsScreen: React.FC = () => {
   const { colors, mode, setMode } = useTheme();
   const { user, activeTenant, logout } = useAuth();
 
+  const validation = useFormErrors();
+  const installed = installedApp();
   const [apiUrl, setApiUrl] = useState(getApiBaseUrl());
   const { message: toastMessage, type: toastType, show: setToastMessage } = useFeedback();
   const [testingConnection, setTestingConnection] = useState(false);
 
   const handleSaveApiUrl = async () => {
     try {
-      const parsed = new URL(apiUrl);
-      if (!['http:', 'https:'].includes(parsed.protocol) || parsed.username || parsed.password || parsed.search || parsed.hash) throw Error('To‘liq http/https API manzilini kiriting');
-      if (apiUrl.replace(/\/+$/, '') === getApiBaseUrl()) return;
+      const normalized = normalizeApiBaseUrl(apiUrl);
+      if (normalized === getApiBaseUrl()) return;
       await logout();
-      await setApiBaseUrl(apiUrl);
+      await setApiBaseUrl(normalized);
       setToastMessage('Server ushbu sessiya uchun o‘zgardi. Qayta kiring.');
-    } catch (error: any) { setToastMessage(error.message || 'Server manzili o‘zgarmadi'); }
+    } catch (error: any) { validation.setErrors({ api_url: error.message || 'Server manzilini tekshiring.' }); setToastMessage(error.message || 'Server manzili o‘zgarmadi', 'error'); }
   };
 
   const handleTestConnection = async () => {
     setTestingConnection(true);
     try {
-      const res = await fetch(`${apiUrl}/auth/token/refresh/`, {
+      const normalized = normalizeApiBaseUrl(apiUrl);
+      validation.clear('api_url');
+      const res = await fetch(`${normalized}/auth/token/refresh/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ refresh: 'test' }),
@@ -47,8 +54,9 @@ export const SettingsScreen: React.FC = () => {
       } else {
         setToastMessage(`Server javobi: ${res.status}`);
       }
-    } catch {
-      setToastMessage('Serverga ulanib bo‘lmadi');
+    } catch (failure: any) {
+      validation.setErrors({ api_url: failure.message || 'Serverga ulanib bo‘lmadi' });
+      setToastMessage('Serverga ulanib bo‘lmadi', 'error');
     } finally {
       setTestingConnection(false);
     }
@@ -91,15 +99,7 @@ export const SettingsScreen: React.FC = () => {
             </View>
           </View>
 
-          <View style={styles.infoRow}>
-            <Database size={18} color={colors.textSecondary} />
-            <View style={styles.infoCol}>
-              <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>Tenant ID</Text>
-              <Text style={[styles.infoValue, { color: colors.text }]}>
-                {activeTenant?.id || 'standart'}
-              </Text>
-            </View>
-          </View>
+
 
           <View style={styles.infoRow}>
             <Info size={18} color={colors.textSecondary} />
@@ -111,6 +111,8 @@ export const SettingsScreen: React.FC = () => {
             </View>
           </View>
         </View>
+
+        <Button title="Profilni ochish" variant="secondary" onPress={() => navigation.navigate('Profile')} />
 
         {/* Theme Settings (Kunduz / Tun) */}
         <View style={[styles.sectionCard, { backgroundColor: colors.surface, borderColor: colors.borderSubtle }]}>
@@ -146,13 +148,14 @@ export const SettingsScreen: React.FC = () => {
           </View>
         </View>
 
-        {/* Server Endpoint Settings */}
-        <View style={[styles.sectionCard, { backgroundColor: colors.surface, borderColor: colors.borderSubtle }]}>
+        {/* Server Endpoint Settings: development builds only */}
+        {__DEV__ && <View style={[styles.sectionCard, { backgroundColor: colors.surface, borderColor: colors.borderSubtle }]}>
           <Text style={[styles.sectionTitle, { color: colors.text }]}>Server sozlamalari</Text>
           <Input
             label="API Base URL"
             value={apiUrl}
-            onChangeText={setApiUrl}
+            onChangeText={value => { setApiUrl(value); validation.clear('api_url'); }}
+            error={validation.errors.api_url}
             placeholder="http://192.168.1.100:8000/api/v1"
           />
 
@@ -171,7 +174,7 @@ export const SettingsScreen: React.FC = () => {
               style={{ flex: 1 }}
             />
           </View>
-        </View>
+        </View>}
 
         {/* Cache & Diagnostics */}
         <View style={[styles.sectionCard, { backgroundColor: colors.surface, borderColor: colors.borderSubtle }]}>
@@ -189,11 +192,11 @@ export const SettingsScreen: React.FC = () => {
           <Text style={[styles.sectionTitle, { color: colors.text }]}>Ilova haqida</Text>
           <View style={styles.appInfoRow}>
             <Text style={[styles.appInfoLabel, { color: colors.textSecondary }]}>Talqin (Version)</Text>
-            <Text style={[styles.appInfoValue, { color: colors.text }]}>1.0.0 (Expo SDK 58)</Text>
+            <Text style={[styles.appInfoValue, { color: colors.text }]}>{installed ? installed.version + ' (' + installed.buildNumber + ')' : appConfig.expo.version}</Text>
           </View>
           <View style={styles.appInfoRow}>
-            <Text style={[styles.appInfoLabel, { color: colors.textSecondary }]}>Platforma</Text>
-            <Text style={[styles.appInfoValue, { color: colors.text }]}>React Native 0.88</Text>
+            <Text style={[styles.appInfoLabel, { color: colors.textSecondary }]}>Yuklamalar</Text>
+            <Button title="Yangilanishlarni tekshirish" size="sm" variant="secondary" onPress={() => navigation.navigate('Downloads')} />
           </View>
 
           <Button title="Amallar va sinxronlash" variant="secondary" onPress={() => navigation.navigate('Sync')} />

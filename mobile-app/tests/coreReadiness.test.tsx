@@ -1,0 +1,109 @@
+import React from 'react';
+import { act, fireEvent, render, waitFor } from '@testing-library/react-native';
+import { ThemeProvider } from '../src/theme/ThemeContext';
+import { ReportsScreen } from '../src/features/reports/ReportsScreen';
+import { ProfileScreen } from '../src/features/profile/ProfileScreen';
+import { CustomersScreen } from '../src/features/customers/CustomersScreen';
+import { InventoryScreen } from '../src/features/inventory/InventoryScreen';
+import { DocumentsScreen } from '../src/features/documents/DocumentsScreen';
+import { HistoryScreen } from '../src/features/history/HistoryScreen';
+import { request } from '../src/api/client';
+import { cashReportHtml, parseDashboard } from '../src/features/reports/model';
+let mockTenant = { id: 1, name: 'Store', is_owner: true, permissions: [] as string[] };
+const mockUser = { id: 1, role: 'owner', terms_accepted: true, tenants: [mockTenant, { ...mockTenant, id: 2, name: 'Second' }] };
+const mockNavigate = jest.fn();
+jest.mock('../src/navigation/useAppNavigation', () => ({ useAppNavigation: () => ({ navigate: mockNavigate, goBack: jest.fn(), openDrawer: jest.fn() }) }));
+const mockRefresh = jest.fn(async () => {}), mockLogout = jest.fn(async () => {});
+jest.mock('../src/features/auth/AuthContext', () => ({ useAuth: () => ({ user: mockUser, activeTenant: mockTenant, refreshProfile: mockRefresh, logout: mockLogout }) }));
+jest.mock('../src/api/client', () => ({ request: jest.fn(), captureAuthScope: jest.fn(() => ({})), assertAuthScope: jest.fn() }));
+jest.mock('expo-print', () => ({ printToFileAsync: jest.fn(async () => ({ uri: 'file:///test-report.pdf' })) }));
+jest.mock('expo-sharing', () => ({ isAvailableAsync: jest.fn(async () => true), shareAsync: jest.fn(async () => {}) }));
+const dashboard = (amount = '1000.25') => ({ kpi: { total_sales_uzs: amount, total_sales_usd: '2.00', cash_revenue_uzs: '800.00', card_revenue_uzs: '100.25', debt_sales_uzs: '100.00', average_check_uzs: '500.12', total_debt_uzs: '230.00', sales_count: 2 }, sales_chart: [{ date: '2026-10-27', total_sales_uzs: amount, total_sales_usd: '2', sales_count: 2 }] });
+const profile = { id: 1, first_name: 'Seller', last_name: 'Owner', email: '', contact_phone: '', date_of_birth: null, username: 'seller', phone_number: '+998901234567', role: 'owner' };
+describe('Real core API screen contracts', () => {
+  beforeEach(() => { jest.clearAllMocks(); mockTenant = mockUser.tenants[0]; });
+  test('analytics uses real KPI fields and accepted backend week period', async () => {
+    jest.mocked(request).mockImplementation(async path => path.startsWith('/analytics') ? dashboard() : { results: [], next: null, count: 0 });
+    const screen = await render(<ThemeProvider><ReportsScreen /></ThemeProvider>);
+    expect(await screen.findByText('1 000,25 UZS')).toBeTruthy();
+    await fireEvent.press(screen.getByLabelText('Davr: Haftalik'));
+    await waitFor(() => expect(jest.mocked(request).mock.calls.some(([path]) => path === '/analytics/dashboard/?period=this_week')).toBe(true));
+    expect(screen.queryByText('API integratsiyasi kutilmoqda')).toBeNull();
+  });
+  test('malformed analytics cannot silently become zero sales or an invented Z-report', () => {
+    expect(() => parseDashboard({})).toThrow();
+    expect(() => parseDashboard({ kpi: { sales_count: 'bad' } })).toThrow();
+    expect(() => cashReportHtml({ id: 3, date: '2026-10-27', is_closed: false })).toThrow(/yopilgan/);
+    const fields = Object.fromEntries(['opening_cash', 'total_sale_cash', 'total_sale_card', 'total_sale_debt', 'collected_debt_cash', 'refund_cash', 'total_extra_income', 'total_expenses', 'expected_cash', 'actual_cash', 'discrepancy'].flatMap(key => ['uzs', 'usd'].map(currency => [key + '_' + currency, '0.00'])));
+    expect(() => cashReportHtml({ id: 3, date: '2026-10-27', is_closed: true })).toThrow();
+    const html = cashReportHtml({ ...fields, id: 3, date: '2026-10-27', is_closed: true, tenant_name: '<script>alert(1)</script>', actual_cash_uzs: '50.25' });
+    expect(html).toContain('&lt;script&gt;'); expect(html).not.toContain('<script>'); expect(html).toContain('50,25');
+  });
+  test('profile sends editable fields only and marks invalid email inline', async () => {
+    jest.mocked(request).mockResolvedValue(profile);
+    const screen = await render(<ThemeProvider><ProfileScreen /></ThemeProvider>);
+    await screen.findByText('Shaxsiy ma’lumotlar');
+    await fireEvent.changeText(screen.getByLabelText('Email'), 'invalid');
+    await fireEvent.press(screen.getByText('Profilni saqlash'));
+    expect(screen.getByText('Email manzilini to‘g‘ri kiriting.')).toBeTruthy();
+    expect(jest.mocked(request).mock.calls.filter(([, options]) => options?.method === 'PATCH')).toHaveLength(0);
+    await fireEvent.changeText(screen.getByLabelText('Email'), 'seller@example.com');
+    await fireEvent.press(screen.getByText('Profilni saqlash'));
+    expect(jest.mocked(request).mock.calls.find(([, options]) => options?.method === 'PATCH')).toEqual(['/auth/profile/', { method: 'PATCH', body: { first_name: 'Seller', last_name: 'Owner', email: 'seller@example.com', date_of_birth: null, contact_phone: null } }]);
+    expect(mockRefresh).toHaveBeenCalledTimes(1);
+  });
+  test('a successful profile password change clears the revoked session', async () => {
+    jest.mocked(request).mockImplementation(async path => path === '/auth/profile/' ? profile : { message: 'Parol yangilandi.' });
+    const screen = await render(<ThemeProvider><ProfileScreen /></ThemeProvider>);
+    await screen.findByText('Shaxsiy ma’lumotlar');
+    await fireEvent.changeText(screen.getByLabelText('Joriy parol'), 'old-password');
+    await fireEvent.changeText(screen.getByLabelText('Yangi parol'), 'new-password');
+    await fireEvent.changeText(screen.getByLabelText('Yangi parolni takrorlang'), 'new-password');
+    await fireEvent.press(screen.getByText('Parolni yangilash'));
+    expect(jest.mocked(request)).toHaveBeenCalledWith('/auth/change-password/', { method: 'POST', body: { old_password: 'old-password', new_password: 'new-password' } });
+    expect(mockLogout).toHaveBeenCalledTimes(1);
+  });
+  test('history parses composite event ids and actual detail.fields envelope', async () => {
+    const event = { id: 'stock:11', source: 'stock', object_id: 11, title: 'Ombor kirimi', subtitle: 'Sut', created_at: '2026-10-27T03:00:00Z', actor_name: 'Seller', amount: null, currency: '' };
+    jest.mocked(request).mockImplementation(async path => path.startsWith('/audit/history/stock/') ? { event, details: { fields: [{ label: 'Miqdor', value: '2.000 dona' }], changes: {}, note: 'Arrival' }, sale: null } : { results: [event], count: 1, next: null });
+    const screen = await render(<ThemeProvider><HistoryScreen /></ThemeProvider>);
+    await fireEvent.press(await screen.findByLabelText('Ombor kirimi: tafsilotlar'));
+    expect(await screen.findByText('2.000 dona')).toBeTruthy();
+    expect(request).toHaveBeenCalledWith('/audit/history/stock/11/', expect.anything());
+  });
+  test('customers load server pages and use store-wide summary totals', async () => {
+    const customer = { id: 1, name: 'Real customer', phone_number: '+998901234567', debt_balance_uzs: '15.25', debt_balance_usd: '2.00' };
+    jest.mocked(request).mockResolvedValueOnce({ results: [customer], count: 2, next: '?page=2', summary: { total_count: 200, total_debt_uzs: '123456.75', total_debt_usd: '700.25' } }).mockResolvedValueOnce({ results: [{ ...customer, id: 2, name: 'Second page customer' }], count: 2, next: null });
+    const screen = await render(<ThemeProvider><CustomersScreen /></ThemeProvider>);
+    expect(await screen.findByText('Real customer')).toBeTruthy();
+    expect(screen.getByText(/Jami mijozlar: 200/)).toBeTruthy();
+    await fireEvent.press(screen.getByText('Yana mijozlar'));
+    expect(await screen.findByText('Second page customer')).toBeTruthy();
+    expect(jest.mocked(request).mock.calls[1][0]).toContain('page=2&page_size=50');
+  });
+  test('inventory uses actual quantity and does not invent a hidden cost price', async () => {
+    jest.mocked(request).mockResolvedValue({ results: [{ id: 7, product_variant: 11, product_name: 'Live rice', variant_name: 'Fine', quantity: '2.750', unit: 'kg', currency: 'UZS' }], count: 1, next: null });
+    const screen = await render(<ThemeProvider><InventoryScreen /></ThemeProvider>);
+    expect(await screen.findByText('Live rice')).toBeTruthy();
+    expect(screen.getByText('2,75 kg')).toBeTruthy();
+    expect(screen.queryByText(/Tannarx:/)).toBeNull();
+  });
+  test('documents preserve USD currency and route the real saved sale to sharing', async () => {
+    const sale = { id: 9, receipt_number: 'R9', total_amount: '99.25', currency: 'USD', payment_type: 'card', items: [] };
+    jest.mocked(request).mockResolvedValue({ results: [sale], count: 1, next: null });
+    const screen = await render(<ThemeProvider><DocumentsScreen /></ThemeProvider>);
+    expect(await screen.findByText('99,25 USD')).toBeTruthy();
+    await fireEvent.press(screen.getByText('Ulashish'));
+    expect(mockNavigate).toHaveBeenCalledWith('ShareSheet', { sale: expect.objectContaining({ id: 9, currency: 'USD' }) });
+  });
+  test('an old analytics result cannot appear after changing store', async () => {
+    let finish!: (value: any) => void;
+    const pending = new Promise(resolve => { finish = resolve; });
+    jest.mocked(request).mockImplementation(async path => path.startsWith('/analytics') ? (mockTenant.id === 1 ? pending : dashboard('200.00')) : { results: [], next: null, count: 0 });
+    const screen = await render(<ThemeProvider><ReportsScreen /></ThemeProvider>);
+    mockTenant = mockUser.tenants[1]; await screen.rerender(<ThemeProvider><ReportsScreen /></ThemeProvider>);
+    await act(async () => { finish(dashboard('999.00')); });
+    expect(screen.queryByText('999 UZS')).toBeNull();
+    expect(await screen.findByText('200 UZS')).toBeTruthy();
+  });
+});

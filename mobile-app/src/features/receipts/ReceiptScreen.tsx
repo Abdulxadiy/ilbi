@@ -55,6 +55,8 @@ const ReceiptBody: React.FC<{ params: { saleId?: string; mode?: string } }> = ({
   const receiptItems: { productName: string; quantity: number; unitPrice: number }[] = (sale.items || []).map((item: any) => ({
     productName: item.product_name || '', quantity: Number(item.quantity), unitPrice: Number(item.unit_price),
   }));
+  const currencyLabel = sale.currency === 'USD' ? 'USD' : sale.currency === 'UZS' || !sale.currency ? 'so‘m' : String(sale.currency);
+  const statusLabel = ({ completed: 'Yakunlangan', voided: 'Bekor qilingan', partially_voided: 'Qisman qaytarilgan', b2b_pending: 'B2B: qabul kutilmoqda', b2b_rejected: 'B2B: rad etilgan', b2b_accepted: 'B2B: qabul qilingan', b2b_partially_accepted: 'B2B: qisman qabul qilingan', b2b_cancelled: 'B2B: bekor qilingan', b2b_return_pending: 'B2B: qaytarish kutilmoqda' } as Record<string, string>)[sale.status] || sale.status || '';
   const paymentLabel = ({ cash: 'Naqd', card: 'Karta', debt: 'Nasiya' } as Record<string, string>)[sale.payment_type] || 'To‘lov';
   const paymentAmount = sale.payment_type === 'cash' ? sale.cash_received : sale.total_amount;
   const publicToken = typeof sale.public_token === 'string' && /^[A-Za-z0-9_-]{40,64}$/.test(sale.public_token) ? sale.public_token : null;
@@ -84,6 +86,7 @@ const ReceiptBody: React.FC<{ params: { saleId?: string; mode?: string } }> = ({
         <div class="center">${escapeHtml(sale.created_at || '')}</div>
         <div class="divider"></div>
         <div class="bold">Chek #${escapeHtml(sale.receipt_number || sale.id || '—')}</div>
+        ${statusLabel ? `<div>Holat: ${escapeHtml(statusLabel)}</div>` : ''}
         <div>Mijoz: ${escapeHtml(sale.counterparty_name || 'Umumiy mijoz')}</div>
         <div class="divider"></div>
         ${receiptItems.map(
@@ -98,15 +101,18 @@ const ReceiptBody: React.FC<{ params: { saleId?: string; mode?: string } }> = ({
         <div class="divider"></div>
         <div class="row bold" style="font-size: 15px;">
           <span>Jami:</span>
-          <span>${Number(sale.total_amount).toLocaleString('ru-RU')} so'm</span>
+          <span>${Number(sale.total_amount).toLocaleString('ru-RU')} ${escapeHtml(currencyLabel)}</span>
         </div>
+        ${Number(sale.tax_amount) > 0 ? `<div class="row"><span>QQS:</span><span>${Number(sale.tax_amount).toLocaleString('ru-RU')} ${escapeHtml(currencyLabel)}</span></div>` : ''}
+        ${Number(sale.refunded_amount) > 0 ? `<div class="row"><span>Qaytarilgan:</span><span>${Number(sale.refunded_amount).toLocaleString('ru-RU')} ${escapeHtml(currencyLabel)}</span></div>` : ''}
+        ${Number(sale.refunded_amount) > 0 && sale.net_amount != null ? `<div class="row"><span>Qolgan summa:</span><span>${Number(sale.net_amount).toLocaleString('ru-RU')} ${escapeHtml(currencyLabel)}</span></div>` : ''}
         <div class="row">
           <span>${paymentLabel}:</span>
-          <span>${paymentAmount == null ? '—' : Number(paymentAmount).toLocaleString('ru-RU')} so'm</span>
+          <span>${paymentAmount == null ? '—' : Number(paymentAmount).toLocaleString('ru-RU')} ${escapeHtml(currencyLabel)}</span>
         </div>
         ${sale.payment_type === 'cash' ? `<div class="row">
           <span>Qaytim:</span>
-          <span>${sale.change == null ? '—' : Number(sale.change).toLocaleString('ru-RU')} so'm</span>
+          <span>${sale.change == null ? '—' : Number(sale.change).toLocaleString('ru-RU')} ${escapeHtml(currencyLabel)}</span>
         </div>` : ''}
         <div class="divider"></div>
         <div class="center" style="font-size: 10px; margin-top: 10px;">
@@ -220,7 +226,7 @@ const ReceiptBody: React.FC<{ params: { saleId?: string; mode?: string } }> = ({
                 {receiptItems.map((item, index) => <Text key={index} style={styles.miniItemRow}>{item.productName}  {(item.quantity * item.unitPrice).toLocaleString('ru-RU')}</Text>)}
               </View>
               <View style={styles.miniDivider} />
-              <Text style={styles.miniTotal}>Jami: {Number(sale.total_amount).toLocaleString('ru-RU')} so&#39;m</Text>
+              <Text style={styles.miniTotal}>Jami: {Number(sale.total_amount).toLocaleString('ru-RU')} {currencyLabel}</Text>
             </View>
 
             {/* Action Buttons (Board 26C) */}
@@ -287,21 +293,25 @@ const ReceiptBody: React.FC<{ params: { saleId?: string; mode?: string } }> = ({
               <View style={styles.receiptTotalRow}>
                 <Text style={styles.receiptTotalLabel}>Jami:</Text>
                 <Text style={styles.receiptTotalValue}>
-                  {Number(sale.total_amount ?? 0).toLocaleString('ru-RU')} so&#39;m
+                  {Number(sale.total_amount ?? 0).toLocaleString('ru-RU')} {currencyLabel}
                 </Text>
               </View>
 
+              {statusLabel ? <View style={styles.receiptSubRow}><Text style={styles.receiptSubLabel}>Holat:</Text><Text style={styles.receiptSubValue}>{statusLabel}</Text></View> : null}
+              {Number(sale.tax_amount) > 0 ? <View style={styles.receiptSubRow}><Text style={styles.receiptSubLabel}>QQS:</Text><Text style={styles.receiptSubValue}>{Number(sale.tax_amount).toLocaleString('ru-RU')} {currencyLabel}</Text></View> : null}
+              {Number(sale.refunded_amount) > 0 ? <View style={styles.receiptSubRow}><Text style={styles.receiptSubLabel}>Qaytarilgan:</Text><Text style={styles.receiptSubValue}>{Number(sale.refunded_amount).toLocaleString('ru-RU')} {currencyLabel}</Text></View> : null}
+              {Number(sale.refunded_amount) > 0 && sale.net_amount != null ? <View style={styles.receiptSubRow}><Text style={styles.receiptSubLabel}>Qolgan summa:</Text><Text style={styles.receiptSubValue}>{Number(sale.net_amount).toLocaleString('ru-RU')} {currencyLabel}</Text></View> : null}
               <View style={styles.receiptSubRow}>
                 <Text style={styles.receiptSubLabel}>{paymentLabel}:</Text>
                 <Text style={styles.receiptSubValue}>
-                  {paymentAmount == null ? '—' : Number(paymentAmount).toLocaleString('ru-RU')} so&#39;m
+                  {paymentAmount == null ? '—' : Number(paymentAmount).toLocaleString('ru-RU')} {currencyLabel}
                 </Text>
               </View>
 
               {sale.payment_type === 'cash' && <View style={styles.receiptSubRow}>
                 <Text style={styles.receiptSubLabel}>Qaytim:</Text>
                 <Text style={styles.receiptSubValue}>
-                  {sale.change == null ? '—' : Number(sale.change).toLocaleString('ru-RU')} so&#39;m
+                  {sale.change == null ? '—' : Number(sale.change).toLocaleString('ru-RU')} {currencyLabel}
                 </Text>
               </View>}
 
@@ -314,7 +324,7 @@ const ReceiptBody: React.FC<{ params: { saleId?: string; mode?: string } }> = ({
                 </View>
                 <View style={styles.qrTextCol}>
                   <Text style={styles.qrTitle}>Elektron chek</Text>
-                  <Text style={styles.qrSub}>{sale._preview ? 'Demo chek · haqiqiy savdo emas' : 'QR-kod integratsiyasi hali tayyor emas.'}</Text>
+                  <Text style={styles.qrSub}>{sale._preview ? 'Demo chek · haqiqiy savdo emas' : 'Chek havolasini ulashish bo‘limidan oching.'}</Text>
                 </View>
               </View>
             </View>
@@ -347,7 +357,7 @@ const ReceiptBody: React.FC<{ params: { saleId?: string; mode?: string } }> = ({
       >
         <View style={styles.shareSheetContent}>
           <Text style={[styles.shareHeaderMeta, { color: colors.textSecondary }]}>
-            Chek #{sale.receipt_number || sale.id || '—'} • {Number(sale.total_amount ?? 0).toLocaleString('ru-RU')} so&#39;m
+            Chek #{sale.receipt_number || sale.id || '—'} • {Number(sale.total_amount ?? 0).toLocaleString('ru-RU')} {currencyLabel}
           </Text>
 
           {/* Option 1: PDF yuklab olish */}

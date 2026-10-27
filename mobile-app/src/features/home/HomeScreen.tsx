@@ -1,15 +1,18 @@
 import { hasPermission } from '../auth/permissions';
 import { usePermissions } from '../auth/usePermissions';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useAppNavigation as useNavigation } from '../../navigation/useAppNavigation';
-import { Bell, Clock, FileText, Package, Plus, Receipt } from 'lucide-react-native';
+import { Clock, FileText, Package, Plus, Receipt } from 'lucide-react-native';
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
 import { Button } from '../../components/ui/Button';
 import { useAuth } from '../auth/AuthContext';
 import { useTheme } from '../../theme/ThemeContext';
 import { radius, spacing, typography } from '../../theme/tokens';
 import { request } from '../../api/client';
+import { useScopedQuery } from '../../hooks/useScopedQuery';
+import { formatAmount, positiveId, requiredDecimal } from '../reports/model';
+import { NotificationBell } from '../notifications/NotificationBell';
 
 export const HomeScreen: React.FC = () => {
   const navigation = useNavigation();
@@ -19,48 +22,14 @@ export const HomeScreen: React.FC = () => {
   const canDashboard = hasPermission(user, activeTenant, 'analytics.view_dashboard');
   const canSales = hasPermission(user, activeTenant, 'sales.view_sale');
 
-  const [refreshing, setRefreshing] = useState(false);
-  const [metricData, setMetrics] = useState({ todaySales: '—', salesCount: '—', debtSum: '—' });
-  const [salesData, setRecentSales] = useState<any[]>([]);
-  const [dataScope, setDataScope] = useState<number | undefined>();
-  const metrics = dataScope === activeTenant?.id ? metricData : { todaySales: '—', salesCount: '—', debtSum: '—' };
-  const recentSales = dataScope === activeTenant?.id ? salesData : [];
-  const [loadError, setLoadError] = useState('');
-  const loadSequence = useRef(0), pendingRequest = useRef<AbortController | null>(null);
-  const loadData = useCallback(async () => {
-    const current = ++loadSequence.current;
-    pendingRequest.current?.abort();
-    const abort = new AbortController(); pendingRequest.current = abort;
-    try {
-      const [dashboard, salesRes] = await Promise.all([
-        canDashboard ? request('/analytics/dashboard/?period=today', { signal: abort.signal }) : Promise.resolve({}), canSales ? request('/sales/?page=1&page_size=5', { signal: abort.signal }) : Promise.resolve([]),
-      ]);
-      if (current !== loadSequence.current || abort.signal.aborted) return;
-      const kpi = dashboard.kpi || dashboard;
-      setMetrics({
-        todaySales: Number(kpi.total_sales_uzs ?? kpi.today_sales_sum ?? 0).toLocaleString('ru-RU'),
-        salesCount: String(kpi.sales_count ?? 0),
-        debtSum: Number(kpi.total_debt_uzs ?? kpi.debt_sum ?? 0).toLocaleString('ru-RU'),
-      });
-      const rows = Array.isArray(salesRes) ? salesRes : salesRes.results || [];
-      setRecentSales(rows.map((s: any) => ({
-        id: s.id, receiptNumber: '#' + (s.receipt_number || s.id), customerName: s.counterparty_name || 'Umumiy mijoz',
-        time: s.created_at ? new Date(s.created_at).toLocaleString('uz-UZ') : '',
-        itemsCount: s.items?.length ?? '—', amount: Number(s.total_amount).toLocaleString('ru-RU'),
-      })));
-      setLoadError(''); setDataScope(activeTenant?.id);
-    } catch (error: any) { if (current !== loadSequence.current || abort.signal.aborted) return; setLoadError(error.message || 'Ma’lumotlar yuklanmadi'); }
-  }, [activeTenant, canDashboard, canSales]);
-
-  const cancel = useCallback(() => { loadSequence.current++; pendingRequest.current?.abort(); }, []);
-  useEffect(() => {
-    void Promise.resolve().then(loadData);
-    return cancel;
-  }, [loadData, activeTenant?.id, cancel]);
-
+  const [refreshing, setRefreshing] = useState(false), [loadError, setLoadError] = useState('');
+  const dashboard = useScopedQuery(canDashboard ? '/analytics/dashboard/?period=today' : null, homeDashboard);
+  const sales = useScopedQuery(canSales ? '/sales/?page=1&page_size=5' : null, homeSales);
+  const metrics = dashboard.data || { todaySales: '—', salesCount: '—', debtSum: '—' };
+  const recentSales = sales.data || [];
   const onRefresh = async () => {
-    setRefreshing(true);
-    await loadData();
+    setRefreshing(true); setLoadError('');
+    await Promise.all([dashboard.reload(), sales.reload()]);
     setRefreshing(false);
   };
 
@@ -68,6 +37,7 @@ export const HomeScreen: React.FC = () => {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
+    timeZone: 'Asia/Tashkent',
   });
 
   return (
@@ -81,10 +51,7 @@ export const HomeScreen: React.FC = () => {
                 {activeTenant?.name ? activeTenant.name.slice(0, 8) : 'Markaziy'} ∨
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity accessibilityRole="button" accessibilityLabel="Bildirishnomalar" disabled accessibilityState={{ disabled: true }} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={styles.bellBtn}>
-              <Bell size={20} color={colors.text} />
-              <View style={[styles.bellDot, { backgroundColor: colors.danger }]} />
-            </TouchableOpacity>
+            <NotificationBell />
           </View>
         }
       />
@@ -93,7 +60,7 @@ export const HomeScreen: React.FC = () => {
         contentContainerStyle={styles.scrollContent}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
-        {loadError ? <Text style={{ color: colors.danger }}>{loadError}</Text> : null}
+        {(loadError || dashboard.error || sales.error) ? <View style={{ padding: 16, gap: 8 }}><Text accessibilityRole="alert" style={{ color: colors.danger }}>{loadError || dashboard.error?.message || sales.error?.message}</Text><Button title="Ma’lumotlarni qayta yuklash" variant="secondary" onPress={onRefresh} /></View> : null}
         {/* Title row */}
         <View style={styles.titleRow}>
           <Text style={[styles.pageTitle, { color: colors.text }]}>Bugungi holat</Text>
@@ -107,9 +74,9 @@ export const HomeScreen: React.FC = () => {
             <TouchableOpacity
               activeOpacity={0.8}
               accessibilityRole="button"
-              disabled={!canOpen('Savdo')}
-              accessibilityState={{ disabled: !canOpen('Savdo') }}
-              onPress={() => navigation.navigate('Savdo')}
+              disabled={!canOpen('Reports')}
+              accessibilityState={{ disabled: !canOpen('Reports') }}
+              onPress={() => navigation.navigate('Reports')}
               style={[
                 styles.kpiCard,
                 {
@@ -136,9 +103,9 @@ export const HomeScreen: React.FC = () => {
             <TouchableOpacity
               activeOpacity={0.8}
               accessibilityRole="button"
-              disabled={!canOpen('Savdo')}
-              accessibilityState={{ disabled: !canOpen('Savdo') }}
-              onPress={() => navigation.navigate('Savdo')}
+              disabled={!canOpen('Documents')}
+              accessibilityState={{ disabled: !canOpen('Documents') }}
+              onPress={() => navigation.navigate('Documents')}
               style={[
                 styles.kpiCard,
                 {
@@ -265,7 +232,7 @@ export const HomeScreen: React.FC = () => {
         {/* Recent Sales Section */}
         {canSales && <><View style={styles.recentSectionHeader}>
           <Text style={[styles.sectionTitle, { color: colors.text }]}>So&#39;nggi savdolar</Text>
-          <TouchableOpacity accessibilityRole="button" onPress={() => navigation.navigate('Savdo')}>
+          <TouchableOpacity accessibilityRole="button" onPress={() => navigation.navigate('Documents')}>
             <Text style={[styles.viewAllText, { color: colors.textSecondary }]}>Barchasi ›</Text>
           </TouchableOpacity>
         </View>
@@ -299,7 +266,7 @@ export const HomeScreen: React.FC = () => {
               </View>
 
               <View style={styles.saleAmountWrapper}>
-                <Text style={[styles.saleAmount, { color: colors.text }]}>{sale.amount} so&#39;m</Text>
+                <Text style={[styles.saleAmount, { color: colors.text }]}>{sale.amount} {sale.currency}</Text>
                 <Text style={[styles.saleChevron, { color: colors.textMuted }]}>›</Text>
               </View>
             </TouchableOpacity>
@@ -310,6 +277,16 @@ export const HomeScreen: React.FC = () => {
   );
 };
 
+function homeDashboard(value: any) {
+  const kpi = value?.kpi || value;
+  if (!kpi || (kpi.total_sales_uzs == null && kpi.today_sales_sum == null)) throw Error('Server bosh sahifa statistikasini tasdiqlamadi.');
+  return { todaySales: formatAmount(kpi.total_sales_uzs ?? kpi.today_sales_sum), salesCount: kpi.sales_count == null ? '—' : String(kpi.sales_count), debtSum: kpi.total_debt_uzs == null && kpi.debt_sum == null ? '—' : formatAmount(kpi.total_debt_uzs ?? kpi.debt_sum) };
+}
+function homeSales(value: any) {
+  const rows = Array.isArray(value) ? value : value?.results;
+  if (!Array.isArray(rows)) throw Error('Server so‘nggi savdolarni tasdiqlamadi.');
+  return rows.map((sale: any) => ({ id: positiveId(sale.id), receiptNumber: '#' + (sale.receipt_number || sale.id), customerName: sale.counterparty_name || 'Umumiy mijoz', time: sale.created_at ? new Date(sale.created_at).toLocaleString('uz-UZ') : '', itemsCount: sale.items?.length ?? '—', amount: formatAmount(requiredDecimal(sale.total_amount)), currency: sale.currency || 'UZS' }));
+}
 const styles = StyleSheet.create({
   container: {
     flex: 1,

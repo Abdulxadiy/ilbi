@@ -1,372 +1,57 @@
-import { isDesignPreview } from '../../dev/preview';
 import React, { useState } from 'react';
-import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { useAppNavigation as useNavigation } from '../../navigation/useAppNavigation';
-import { AlertTriangle, Archive, Search, X } from 'lucide-react-native';
-import { ScreenHeader } from '../../components/ui/ScreenHeader';
-import { Badge } from '../../components/ui/Badge';
-import { BottomSheet } from '../../components/ui/BottomSheet';
-import { Button } from '../../components/ui/Button';
+import { FlatList, Text, TouchableOpacity, View } from 'react-native';
+import { useAppNavigation } from '../../navigation/useAppNavigation';
 import { useTheme } from '../../theme/ThemeContext';
-import { radius, spacing, typography } from '../../theme/tokens';
-import { CANONICAL_CART_ITEMS } from '../cart/CartContext';
+import { usePermissions } from '../auth/usePermissions';
+import { Page, Notice } from '../../components/ui/Page';
+import { Input } from '../../components/ui/Input';
+import { Button } from '../../components/ui/Button';
+import { BottomSheet } from '../../components/ui/BottomSheet';
+import { ListState } from '../../components/ui/ListState';
+import { usePagedResource, useDebounced } from '../../hooks/usePagedResource';
+import { requiredDecimal, formatAmount, positiveId } from '../reports/model';
 
-interface InventoryItem {
-  id: number;
-  name: string;
-  sku: string;
-  barcode: string;
-  currentStock: number;
-  minStock: number;
-  unit: string;
-  costPrice: number;
-  salePrice: number;
+type Stock = { id: number; product_variant: number; product_name: string; variant_name: string; quantity: string; unit: string; currency: string; last_cost_price?: string; supplier?: string; barcode?: string; sku?: string };
+function stockRow(value: any): Stock {
+  if (!value || typeof value.product_name !== 'string') throw Error('Ombor qatori tasdiqlanmadi.');
+  return { ...value, id: positiveId(value.id), product_variant: positiveId(value.product_variant), quantity: requiredDecimal(value.quantity), unit: String(value.unit || ''), currency: String(value.currency || '') };
 }
-
-const INITIAL_INVENTORY: InventoryItem[] = CANONICAL_CART_ITEMS.map((item, index) => ({
-  id: item.variantId,
-  name: item.productName,
-  sku: `SKU-${1000 + item.variantId}`,
-  barcode: `478000000000${item.variantId}`,
-  currentStock: [45, 12, 4, 30, 8, 15, 60, 3, 20, 10][index] || 15,
-  minStock: 10,
-  unit: item.unit,
-  costPrice: Math.round(item.unitPrice * 0.8),
-  salePrice: item.unitPrice,
-}));
-
+const detailRow = (value: any) => ({ ...value, id: positiveId(value?.id), quantity: requiredDecimal(value.quantity) });
 export const InventoryScreen: React.FC = () => {
-  const navigation = useNavigation();
-  const { colors } = useTheme();
-
-  const [inventory, setInventory] = useState<InventoryItem[]>(INITIAL_INVENTORY);
-  const [search, setSearch] = useState('');
-  const [filterLowStock, setFilterLowStock] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
-  const [stockAdjustment, setStockAdjustment] = useState('');
-
-  const filteredItems = inventory.filter((item) => {
-    const matchesSearch =
-      item.name.toLowerCase().includes(search.toLowerCase()) ||
-      item.barcode.includes(search) ||
-      item.sku.toLowerCase().includes(search.toLowerCase());
-    const matchesFilter = filterLowStock ? item.currentStock <= item.minStock : true;
-    return matchesSearch && matchesFilter;
-  });
-
-  const lowStockCount = inventory.filter((i) => i.currentStock <= i.minStock).length;
-
-  const handleAdjustStock = () => {
-    if (!selectedItem) return;
-    const qty = parseInt(stockAdjustment, 10);
-    if (isNaN(qty)) return;
-
-    setInventory((prev) =>
-      prev.map((i) =>
-        i.id === selectedItem.id
-          ? { ...i, currentStock: Math.max(0, i.currentStock + qty) }
-          : i
-      )
-    );
-    setSelectedItem(null);
-    setStockAdjustment('');
-  };
-
-  if (!isDesignPreview) return <View style={{ flex: 1, padding: 24, backgroundColor: colors.background }}>
-    <ScreenHeader title="API integratsiyasi kutilmoqda" onOpenDrawer={() => navigation.openDrawer()} />
-    <Text style={{ color: colors.text }}>Bu bo‘lim hozircha dizayn prototipi. Haqiqiy ma’lumotlar va amallar hali tekshirilmagan.</Text>
-  </View>;
-
-  return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <ScreenHeader
-        title="Ombor"
-        leftAction={{
-          icon: 'menu',
-          onPress: () => navigation.openDrawer(),
-          accessibilityLabel: 'Menyu',
-        }}
-      />
-
-      {/* Top Search & Filter Bar */}
-      <View style={[styles.filterBar, { borderBottomColor: colors.borderSubtle }]}>
-        <View style={[styles.searchInputWrapper, { backgroundColor: colors.surfaceSecondary }]}>
-          <Search size={16} color={colors.textSecondary} style={{ marginRight: spacing.xs }} />
-          <TextInput accessibilityLabel="Mahsulot yoki shtrix-kod qidirish..."
-            value={search}
-            onChangeText={setSearch}
-            placeholder="Mahsulot yoki shtrix-kod qidirish..."
-            placeholderTextColor={colors.textTertiary}
-            style={[styles.searchInput, { color: colors.text }]}
-          />
-          {search ? (
-            <TouchableOpacity accessibilityRole="button" accessibilityLabel="Qidiruvni tozalash" onPress={() => setSearch('')}>
-              <X size={16} color={colors.textSecondary} />
-            </TouchableOpacity>
-          ) : null}
-        </View>
-
-        <TouchableOpacity accessibilityRole="button"
-          onPress={() => setFilterLowStock(!filterLowStock)}
-          style={[
-            styles.filterPill,
-            {
-              backgroundColor: filterLowStock ? colors.primaryActionBg : colors.surfaceSecondary,
-              borderColor: colors.borderSubtle,
-            },
-          ]}
-        >
-          <AlertTriangle
-            size={14}
-            color={filterLowStock ? colors.primaryActionText : colors.textSecondary}
-          />
-          <Text
-            style={[
-              styles.filterPillText,
-              { color: filterLowStock ? colors.primaryActionText : colors.text },
-            ]}
-          >
-            Kam qolgan ({lowStockCount})
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Items List */}
-      <FlatList
-        data={filteredItems}
-        keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={styles.listContent}
-        renderItem={({ item }) => {
-          const isLow = item.currentStock <= item.minStock;
-
-          return (
-            <TouchableOpacity accessibilityRole="button"
-              onPress={() => {
-                setSelectedItem(item);
-                setStockAdjustment('');
-              }}
-              style={[
-                styles.itemCard,
-                { backgroundColor: colors.surface, borderColor: colors.borderSubtle },
-              ]}
-            >
-              <View style={styles.itemHeader}>
-                <View style={{ flex: 1 }}>
-                  <Text style={[styles.itemName, { color: colors.text }]} numberOfLines={1}>
-                    {item.name}
-                  </Text>
-                  <Text style={[styles.itemSub, { color: colors.textSecondary }]}>
-                    {item.sku} • {item.barcode}
-                  </Text>
-                </View>
-                <Badge
-                  variant={isLow ? 'danger' : 'neutral'}
-                  label={`${item.currentStock} ${item.unit}`}
-                  dot={isLow}
-                />
-              </View>
-
-              <View style={[styles.itemFooter, { borderTopColor: colors.borderSubtle }]}>
-                <View>
-                  <Text style={[styles.footerLabel, { color: colors.textTertiary }]}>Tannarxi</Text>
-                  <Text style={[styles.footerVal, { color: colors.textSecondary }]}>
-                    {item.costPrice.toLocaleString('uz-UZ')} so&#39;m
-                  </Text>
-                </View>
-                <View style={{ alignItems: 'flex-end' }}>
-                  <Text style={[styles.footerLabel, { color: colors.textTertiary }]}>Sotuv narxi</Text>
-                  <Text style={[styles.footerVal, { color: colors.text }]}>
-                    {item.salePrice.toLocaleString('uz-UZ')} so&#39;m
-                  </Text>
-                </View>
-              </View>
-            </TouchableOpacity>
-          );
-        }}
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Archive size={48} color={colors.textTertiary} />
-            <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
-              Omborda tovar topilmadi
-            </Text>
-          </View>
-        }
-      />
-
-      {/* Stock Adjustment Bottom Sheet */}
-      <BottomSheet
-        visible={!!selectedItem}
-        onClose={() => setSelectedItem(null)}
-        title="Qoldiqni to'g'rilash"
-      >
-        {selectedItem && (
-          <View style={styles.sheetBody}>
-            <Text style={[styles.sheetItemTitle, { color: colors.text }]}>{selectedItem.name}</Text>
-            <Text style={[styles.sheetItemSub, { color: colors.textSecondary }]}>
-              Hozirgi qoldiq: {selectedItem.currentStock} {selectedItem.unit}
-            </Text>
-
-            <View style={styles.sheetInputGroup}>
-              <Text style={[styles.inputLabel, { color: colors.text }]}>
-                Kiritish / Chiqarish miqdori (+ yoki -)
-              </Text>
-              <TextInput accessibilityLabel="Masalan: +5 yoki -2"
-                value={stockAdjustment}
-                onChangeText={setStockAdjustment}
-                keyboardType="numeric"
-                placeholder="Masalan: +5 yoki -2"
-                placeholderTextColor={colors.textTertiary}
-                style={[
-                  styles.sheetInput,
-                  {
-                    backgroundColor: colors.surfaceSecondary,
-                    color: colors.text,
-                    borderColor: colors.borderSubtle,
-                  },
-                ]}
-              />
-            </View>
-
-            <View style={styles.sheetActionRow}>
-              <Button
-                title="Bekor qilish"
-                variant="secondary"
-                onPress={() => setSelectedItem(null)}
-                style={{ flex: 1 }}
-              />
-              <Button
-                title="Saqlash"
-                variant="primary"
-                onPress={handleAdjustStock}
-                style={{ flex: 1 }}
-              />
-            </View>
-          </View>
-        )}
-      </BottomSheet>
+  const navigation = useAppNavigation(), { colors } = useTheme(), { can } = usePermissions();
+  const allowed = can('inventory.view_stock');
+  const [search, setSearch] = useState(''), [sort, setSort] = useState('name_asc'), query = useDebounced(search.trim());
+  const stock = usePagedResource(allowed ? '/inventory/stock/?' + new URLSearchParams({ search: query, sort }).toString() : null, stockRow);
+  const [selected, setSelected] = useState<Stock | null>(null), [tab, setTab] = useState<'movements' | 'batches'>('movements');
+  const details = usePagedResource(allowed && selected ? '/inventory/' + tab + '/?product_variant_id=' + selected.product_variant : null, detailRow);
+  return <Page title="Ombor" onMenu={navigation.openDrawer} insetBottom={false} scroll={false}>
+    <View style={{ padding: 16, gap: 12 }}>
+      <Input label="Ombordan qidirish" value={search} onChangeText={setSearch} placeholder="Tovar, shtrix-kod yoki artikul" />
+      <Button title={sort === 'qty_asc' ? 'Qoldiq: kamidan ko‘piga' : 'Qoldiq bo‘yicha saralash'} variant="secondary" onPress={() => setSort(value => value === 'name_asc' ? 'qty_asc' : 'name_asc')} />
+      <Notice>Serverdagi qoldiq yozuvlari: {stock.count}. Har bir tovar uchun harakatlar va partiyalarni oching.</Notice>
+      {!allowed && <Notice error>Ombor uchun vakolat berilmagan.</Notice>}
     </View>
-  );
+    <FlatList data={stock.rows} keyExtractor={item => String(item.id)} contentContainerStyle={{ padding: 16, gap: 12 }} refreshing={stock.loading} onRefresh={stock.reload}
+      ListEmptyComponent={<ListState loading={stock.loading} error={stock.error} empty onRetry={stock.retry} emptyLabel="Ombor yozuvlari topilmadi." />}
+      ListFooterComponent={<>{stock.rows.length > 0 && stock.error && <ListState error={stock.error} onRetry={stock.retry} />}{stock.hasMore && <Button title="Yana ombor qoldiqlari" variant="secondary" loading={stock.loadingMore} onPress={stock.loadMore} />}</>}
+      renderItem={({ item }) => <TouchableOpacity accessibilityRole="button" accessibilityLabel={item.product_name + ': ombor tafsilotlari'} onPress={() => { setSelected(item); setTab('movements'); }} style={{ padding: 16, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surface, borderRadius: 14, gap: 7 }}>
+        <Text style={{ color: colors.text, fontWeight: '700' }}>{item.product_name}</Text>
+        <Notice>{item.variant_name} · {item.sku || item.barcode || '—'}</Notice>
+        <Text style={{ color: Number(item.quantity) <= 0 ? colors.danger : colors.text, fontSize: 18, fontWeight: '600' }}>{formatAmount(item.quantity, 3)} {item.unit}</Text>
+        {can('catalog.view_cost_price') && item.last_cost_price != null && <Notice>Tannarx: {formatAmount(item.last_cost_price)} {item.currency}</Notice>}
+        {can('inventory.view_supplier') && item.supplier ? <Notice>{item.supplier}</Notice> : null}
+      </TouchableOpacity>} />
+    <BottomSheet visible={selected !== null} title={selected?.product_name || 'Ombor tafsilotlari'} onClose={() => setSelected(null)}>
+      <View style={{ gap: 12, maxHeight: 430 }}>
+        <View style={{ flexDirection: 'row', gap: 8 }}><Button title="Harakatlar" variant={tab === 'movements' ? 'primary' : 'secondary'} onPress={() => setTab('movements')} /><Button title="Partiyalar" variant={tab === 'batches' ? 'primary' : 'secondary'} onPress={() => setTab('batches')} /></View>
+        <FlatList data={details.rows} keyExtractor={item => String(item.id)} contentContainerStyle={{ gap: 14 }} ListEmptyComponent={<ListState loading={details.loading} error={details.error} empty onRetry={details.retry} emptyLabel="Yozuvlar yo‘q." />} ListFooterComponent={details.hasMore ? <Button title="Yana ombor tafsilotlari" loading={details.loadingMore} onPress={details.loadMore} /> : undefined} renderItem={({ item }) => <View style={{ gap: 5, paddingVertical: 8, borderBottomWidth: 1, borderColor: colors.border }}>
+          <Text style={{ color: colors.text }}>{formatAmount(item.quantity, 3)} {item.unit || selected?.unit} · {tab === 'movements' ? item.type : item.batch_code || '#' + item.id}</Text>
+          <Notice>{tab === 'movements' ? item.created_at : item.received_on}</Notice>
+          {tab === 'batches' && <Notice error={item.expiry_status === 'expired'}>Yaroqlilik: {item.expires_on || 'Ko‘rsatilmagan'}{item.expiry_status === 'expired' ? ' · Muddati o‘tgan' : ''}</Notice>}
+          {can('catalog.view_cost_price') && item.cost_price != null && <Notice>Tannarx: {formatAmount(item.cost_price)} {item.currency || selected?.currency}</Notice>}
+          {can('inventory.view_supplier') && item.supplier ? <Notice>{item.supplier}</Notice> : null}
+        </View>} />
+      </View>
+    </BottomSheet>
+  </Page>;
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  filterBar: {
-    padding: spacing.md,
-    gap: spacing.sm,
-    borderBottomWidth: 1,
-  },
-  searchInputWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    height: 42,
-    borderRadius: radius.sm,
-    paddingHorizontal: spacing.sm,
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: typography.body.fontSize,
-    fontFamily: typography.body.fontFamily,
-    paddingVertical: 0,
-  },
-  filterPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'flex-start',
-    gap: 6,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 6,
-    borderRadius: radius.full,
-    borderWidth: 1,
-  },
-  filterPillText: {
-    fontSize: typography.caption.fontSize,
-    fontFamily: typography.caption.fontFamily,
-    fontWeight: '500',
-  },
-  listContent: {
-    padding: spacing.md,
-    gap: spacing.sm,
-  },
-  itemCard: {
-    borderRadius: radius.md,
-    borderWidth: 1,
-    padding: spacing.md,
-  },
-  itemHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: spacing.sm,
-  },
-  itemName: {
-    fontSize: typography.body.fontSize,
-    fontFamily: typography.body.fontFamily,
-    fontWeight: '600',
-  },
-  itemSub: {
-    fontSize: typography.caption.fontSize,
-    fontFamily: typography.caption.fontFamily,
-    marginTop: 2,
-  },
-  itemFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingTop: spacing.xs,
-    borderTopWidth: 1,
-  },
-  footerLabel: {
-    fontSize: typography.micro.fontSize,
-    fontFamily: typography.micro.fontFamily,
-  },
-  footerVal: {
-    fontSize: typography.caption.fontSize,
-    fontFamily: typography.caption.fontFamily,
-    fontWeight: '500',
-    marginTop: 1,
-  },
-  emptyContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: spacing.xl * 2,
-    gap: spacing.sm,
-  },
-  emptyText: {
-    fontSize: typography.body.fontSize,
-    fontFamily: typography.body.fontFamily,
-  },
-  sheetBody: {
-    padding: spacing.md,
-    gap: spacing.md,
-  },
-  sheetItemTitle: {
-    fontSize: typography.subheading.fontSize,
-    fontFamily: typography.subheading.fontFamily,
-    fontWeight: '600',
-  },
-  sheetItemSub: {
-    fontSize: typography.body.fontSize,
-    fontFamily: typography.body.fontFamily,
-  },
-  sheetInputGroup: {
-    gap: spacing.xs,
-  },
-  inputLabel: {
-    fontSize: typography.caption.fontSize,
-    fontFamily: typography.caption.fontFamily,
-    fontWeight: '500',
-  },
-  sheetInput: {
-    height: 48,
-    borderRadius: radius.sm,
-    borderWidth: 1,
-    paddingHorizontal: spacing.md,
-    fontSize: typography.body.fontSize,
-  },
-  sheetActionRow: {
-    flexDirection: 'row',
-    gap: spacing.sm,
-    marginTop: spacing.sm,
-  },
-});

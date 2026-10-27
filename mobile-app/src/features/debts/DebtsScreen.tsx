@@ -1,484 +1,111 @@
-import { useFeedback } from '../../hooks/useFeedback';
-import { usePermissions } from '../auth/usePermissions';
-import { tryMoney } from '../../domain/money';
-import { isDesignPreview } from '../../dev/preview';
 import React, { useRef, useState } from 'react';
-import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { useAppNavigation as useNavigation } from '../../navigation/useAppNavigation';
-import { Search } from 'lucide-react-native';
-import { ScreenHeader } from '../../components/ui/ScreenHeader';
-import { Button } from '../../components/ui/Button';
-import { BottomSheet } from '../../components/ui/BottomSheet';
-import { Toast } from '../../components/ui/Toast';
-import { useTheme } from '../../theme/ThemeContext';
-import { radius, spacing, typography } from '../../theme/tokens';
-import { request } from '../../api/client';
+import { FlatList, Text, View } from 'react-native';
+import { useAppNavigation } from '../../navigation/useAppNavigation';
 import { useAuth } from '../auth/AuthContext';
-import { withFinancialIdentity, confirmFinancialIdentity } from '../../api/financialIdentity';
+import { usePermissions } from '../auth/usePermissions';
+import { useTheme } from '../../theme/ThemeContext';
+import { Page, Notice } from '../../components/ui/Page';
+import { Button } from '../../components/ui/Button';
+import { Input } from '../../components/ui/Input';
+import { BottomSheet } from '../../components/ui/BottomSheet';
+import { ListState } from '../../components/ui/ListState';
+import { usePagedResource, useDebounced } from '../../hooks/usePagedResource';
+import { useFormErrors } from '../../hooks/useFormErrors';
+import { captureAuthScope, assertAuthScope, request } from '../../api/client';
+import { getServerScope } from '../../api/environment';
+import { withFinancialIdentity, confirmFinancialIdentity, rejectFinancialIdentity } from '../../api/financialIdentity';
+import { parseMoneyMinor } from '../../domain/money';
+import { formatAmount, positiveId } from '../reports/model';
+import { parseCustomer, type Customer } from '../customers/model';
 
-export interface DebtItem {
-  id: number;
-  customerName: string;
-  phoneNumber: string;
-  amount: number;
-  dueDate: string;
-  status: 'future' | 'soon' | 'overdue';
-}
-
-export const CANONICAL_DEBTS: DebtItem[] = [
-  { id: 1, customerName: 'Ali Valiyev', phoneNumber: '+998 90 123 45 67', amount: 230000, dueDate: '30.10.2026', status: 'future' },
-  { id: 2, customerName: 'Dilnoza Karimova', phoneNumber: '+998 91 234 56 78', amount: 320000, dueDate: '25.10.2026', status: 'soon' },
-  { id: 3, customerName: 'Aziz Rahimov', phoneNumber: '+998 93 345 67 89', amount: 180000, dueDate: '23.10.2026', status: 'overdue' },
-  { id: 4, customerName: 'Malika Sobirova', phoneNumber: '+998 94 456 78 90', amount: 130000, dueDate: '02.11.2026', status: 'future' },
-];
-
+type Accepted = { key: string; operation: string; userId: number; tenantId: number; result: any; scope: ReturnType<typeof captureAuthScope> };
 export const DebtsScreen: React.FC = () => {
-  const navigation = useNavigation();
   const { user, activeTenant } = useAuth();
-  const submitting = useRef(false);
-  const { can, requirePermission } = usePermissions();
-  const { colors } = useTheme();
-
-  const [debts, setDebts] = useState<DebtItem[]>(CANONICAL_DEBTS);
-  const [filter, setFilter] = useState<'all' | 'soon' | 'overdue'>('all');
-  const [search, setSearch] = useState('');
-
-  const [selectedDebt, setSelectedDebt] = useState<DebtItem | null>(null);
-  const [payAmountStr, setPayAmountStr] = useState('');
-  const [paying, setPaying] = useState(false);
-  const { message: toastMessage, type: toastType, show: setToastMessage } = useFeedback();
-
-  const totalDebt = debts.reduce((sum, d) => sum + d.amount, 0);
-
-  const soonCount = debts.filter((d) => d.status === 'soon').length;
-  const overdueCount = debts.filter((d) => d.status === 'overdue').length;
-
-  const filteredDebts = debts.filter((d) => {
-    if (filter === 'soon' && d.status !== 'soon') return false;
-    if (filter === 'overdue' && d.status !== 'overdue') return false;
-    if (search) {
-      return (
-        d.customerName.toLowerCase().includes(search.toLowerCase()) ||
-        d.phoneNumber.includes(search)
-      );
-    }
-    return true;
-  });
-
-  const handleOpenPaySheet = (debt: DebtItem) => {
-    if (!can('sales.record_debt_payment')) { setToastMessage('To‘lov kiritish uchun vakolat berilmagan.'); return; }
-    setSelectedDebt(debt);
-    setPayAmountStr(String(debt.amount));
+  return <DebtsBody key={[getServerScope(), user?.id, activeTenant?.id].join(':')} />;
+};
+function DebtsBody() {
+  const { user, activeTenant } = useAuth(), { can, requirePermission } = usePermissions(), { colors } = useTheme(), navigation = useAppNavigation();
+  const allowed = can('sales.manage_counterparty') || can('sales.record_debt_payment');
+  const [search, setSearch] = useState(''), query = useDebounced(search.trim());
+  const debts = usePagedResource(allowed ? '/sales/counterparties/?' + new URLSearchParams({ balance_status: 'debtors', search: query }).toString() : null, parseCustomer);
+  const [selected, setSelected] = useState<Customer | null>(null), [amount, setAmount] = useState(''), [currency, setCurrency] = useState<'UZS' | 'USD'>('UZS'), [method, setMethod] = useState<'cash' | 'card'>('cash');
+  const [paying, setPaying] = useState(false), [error, setError] = useState(''), [message, setMessage] = useState(''), [accepted, setAccepted] = useState<Accepted | null>(null);
+  const submitting = useRef(false), fields = useFormErrors();
+  const open = (item: Customer) => { fields.clear(); setError(''); setMessage(''); setAccepted(null); setSelected(item); const next = Number(item.debt_balance_uzs) > 0 ? 'UZS' : 'USD'; setCurrency(next); setAmount(next === 'UZS' ? item.debt_balance_uzs : item.debt_balance_usd); setMethod('cash'); };
+  const settleLocally = async (record: Accepted) => {
+    assertAuthScope(record.scope);
+    await confirmFinancialIdentity(record.operation, record.userId, record.tenantId, record.key, record.result);
+    assertAuthScope(record.scope);
+    setSelected(null); setAccepted(null); setMessage('To‘lov serverda tasdiqlandi. Qoldiq serverdan yangilandi.');
+    await debts.reload();
   };
-
-  const handleConfirmPayment = async () => {
-    if (!selectedDebt || submitting.current) return;
-    const payAmount = tryMoney(payAmountStr);
-    if (payAmount === null || payAmount <= 0 || payAmount > selectedDebt.amount) { setToastMessage("To‘lov miqdorini tekshiring"); return; }
-    submitting.current = true;
-
-    setPaying(true);
-
+  const pay = async () => {
+    if (!selected || submitting.current || !user || !activeTenant) return;
+    fields.clear(); setError('');
+    let minor: number;
+    try { minor = parseMoneyMinor(amount); if (minor <= 0) throw Error(); }
+    catch { fields.setErrors({ amount: 'To‘lov summasini to‘g‘ri kiriting.' }); return; }
+    submitting.current = true; setPaying(true);
+    const scope = captureAuthScope(), operation = 'debt-' + selected.id, userId = user.id, tenantId = activeTenant.id;
+    let key: string | null = null;
     try {
       requirePermission('sales.record_debt_payment');
-      await request(`/sales/counterparties/${selectedDebt.id}/payments/`, {
-        method: 'POST',
-        body: await withFinancialIdentity('debt-' + selectedDebt.id, {
-          amount: payAmount,
-          currency: 'UZS',
-        }, user?.id, activeTenant?.id),
-      });
-      await confirmFinancialIdentity('debt-' + selectedDebt.id, user?.id, activeTenant?.id);
-
-      setDebts((prev) =>
-        prev
-          .map((d) =>
-            d.id === selectedDebt.id ? { ...d, amount: Math.max(0, d.amount - payAmount) } : d
-          )
-          .filter((d) => d.amount > 0)
-      );
-
-      setToastMessage("To'lov muvaffaqiyatli qabul qilindi");
-      setSelectedDebt(null);
-    } catch (error: any) {
-      setToastMessage(error.message || 'To‘lov qabul qilinmadi', 'error');
-    } finally {
-      submitting.current = false;
-      setPaying(false);
-    }
+      if (accepted) { await settleLocally(accepted); return; }
+      const live = parseCustomer(await request('/sales/counterparties/' + selected.id + '/'));
+      assertAuthScope(scope);
+      if (live.id !== selected.id) throw Error('Server tanlangan mijozni tasdiqlamadi.');
+      const balance = currency === 'UZS' ? live.debt_balance_uzs : live.debt_balance_usd;
+      if (minor > parseMoneyMinor(balance, true)) { fields.setErrors({ amount: 'To‘lov joriy qarzdan oshmasin: ' + formatAmount(balance) + ' ' + currency }); return; }
+      const cents = BigInt(minor), decimalAmount = `${cents / 100n}.${(cents % 100n).toString().padStart(2, '0')}`;
+      const payload = await withFinancialIdentity(operation, { amount: decimalAmount, currency, payment_type: method }, userId, tenantId);
+      key = payload.idempotency_key;
+      assertAuthScope(scope);
+      const result = await request('/sales/counterparties/' + selected.id + '/payments/', { method: 'POST', body: payload });
+      assertAuthScope(scope);
+      positiveId(result?.id);
+      if (Number(result.counterparty) !== selected.id || result.currency !== currency || parseMoneyMinor(result.amount) !== minor) throw Error('Server to‘lov natijasini to‘liq tasdiqlamadi. Amallar jurnalidan tekshiring.');
+      const record: Accepted = { key, operation, userId, tenantId, result, scope };
+      setAccepted(record);
+      // A failed local acknowledgement must only retry this local write, never another payment POST.
+      await settleLocally(record);
+    } catch (failure: any) {
+      fields.capture(failure);
+      let detail = failure.message || 'To‘lov tasdiqlanmadi.';
+      if (key && [400, 403, 404, 422].includes(failure.status)) {
+        try { assertAuthScope(scope); await rejectFinancialIdentity(operation, userId, tenantId, key, detail); }
+        catch { detail += ' Mahalliy jurnalni tekshiring; eski amal saqlanadi.'; }
+      }
+      setError(detail);
+    } finally { submitting.current = false; setPaying(false); }
   };
-
-  const getStatusDotColor = (status: DebtItem['status']) => {
-    if (status === 'overdue') return colors.danger;
-    if (status === 'soon') return colors.warning;
-    return colors.success;
-  };
-
-  if (!isDesignPreview) return <View style={{ flex: 1, padding: 24, backgroundColor: colors.background }}>
-    <ScreenHeader title="API integratsiyasi kutilmoqda" onOpenDrawer={() => navigation.openDrawer()} />
-    <Text style={{ color: colors.text }}>Bu bo‘lim hozircha dizayn prototipi. Haqiqiy ma’lumotlar va amallar hali tekshirilmagan.</Text>
-  </View>;
-
-  return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <ScreenHeader onOpenDrawer={() => navigation.openDrawer()} />
-
-      <Toast
-        type={toastType}
-        visible={Boolean(toastMessage)}
-        message={toastMessage || ''}
-        onDismiss={() => setToastMessage(null)}
-      />
-
-      <View style={styles.headerInfo}>
-        <Text style={[styles.title, { color: colors.text }]}>Qarzlar</Text>
-        <Text style={[styles.totalLabel, { color: colors.textSecondary }]}>Jami qarz</Text>
-        <Text style={[styles.totalAmount, { color: colors.text }]}>
-          {totalDebt.toLocaleString('ru-RU')} so&#39;m
-        </Text>
-      </View>
-
-      {/* Search Box */}
-      <View style={styles.searchSection}>
-        <View style={[styles.searchBox, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-          <Search size={18} color={colors.textMuted} />
-          <TextInput accessibilityLabel="Mijoz qidirish (ism, telefon, STIR)"
-            placeholder="Mijoz qidirish (ism, telefon, STIR)"
-            placeholderTextColor={colors.textMuted}
-            value={search}
-            onChangeText={setSearch}
-            style={[styles.searchInput, { color: colors.text }]}
-          />
-        </View>
-      </View>
-
-      {/* Filter Tabs (Board 27A) */}
-      <View style={styles.tabsRow}>
-        <TouchableOpacity accessibilityRole="button"
-          onPress={() => setFilter('all')}
-          style={[
-            styles.tabBtn,
-            {
-              backgroundColor: filter === 'all' ? colors.primaryAction : colors.surface,
-              borderColor: colors.border,
-            },
-          ]}
-        >
-          <Text
-            style={[
-              styles.tabText,
-              { color: filter === 'all' ? colors.primaryActionText : colors.text },
-            ]}
-          >
-            Barchasi ({debts.length})
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity accessibilityRole="button"
-          onPress={() => setFilter('soon')}
-          style={[
-            styles.tabBtn,
-            {
-              backgroundColor: filter === 'soon' ? colors.primaryAction : colors.surface,
-              borderColor: colors.border,
-            },
-          ]}
-        >
-          <Text
-            style={[
-              styles.tabText,
-              { color: filter === 'soon' ? colors.primaryActionText : colors.text },
-            ]}
-          >
-            Muddati yaqin ({soonCount})
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity accessibilityRole="button"
-          onPress={() => setFilter('overdue')}
-          style={[
-            styles.tabBtn,
-            {
-              backgroundColor: filter === 'overdue' ? colors.primaryAction : colors.surface,
-              borderColor: colors.border,
-            },
-          ]}
-        >
-          <Text
-            style={[
-              styles.tabText,
-              { color: filter === 'overdue' ? colors.primaryActionText : colors.text },
-            ]}
-          >
-            Kechikkan ({overdueCount})
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Debt Rows */}
-      <FlatList
-        data={filteredDebts}
-        keyExtractor={(item) => String(item.id)}
-        contentContainerStyle={styles.listContent}
-        renderItem={({ item }) => (
-          <View
-            style={[
-              styles.debtCard,
-              {
-                backgroundColor: colors.surface,
-                borderColor: colors.border,
-              },
-            ]}
-          >
-            <View style={[styles.avatarCircle, { backgroundColor: colors.surfaceSecondary }]}>
-              <Text style={[styles.avatarInitials, { color: colors.text }]}>
-                {item.customerName.slice(0, 2).toUpperCase()}
-              </Text>
-            </View>
-
-            <View style={styles.debtInfoCol}>
-              <View style={styles.nameRow}>
-                <Text style={[styles.customerName, { color: colors.text }]}>
-                  {item.customerName}
-                </Text>
-                <Text style={[styles.debtAmount, { color: colors.text }]}>
-                  {item.amount.toLocaleString('ru-RU')} so&#39;m
-                </Text>
-              </View>
-
-              <Text style={[styles.customerPhone, { color: colors.textSecondary }]}>
-                {item.phoneNumber}
-              </Text>
-
-              <View style={styles.dueDateRow}>
-                <View
-                  style={[
-                    styles.statusDot,
-                    { backgroundColor: getStatusDotColor(item.status) },
-                  ]}
-                />
-                <Text style={[styles.dueDateText, { color: colors.textSecondary }]}>
-                  Muddati: {item.dueDate}
-                </Text>
-              </View>
-            </View>
-
-            <TouchableOpacity accessibilityRole="button"
-              onPress={() => handleOpenPaySheet(item)}
-              style={[
-                styles.payBtn,
-                { backgroundColor: colors.surfaceSecondary, borderColor: colors.border },
-              ]}
-            >
-              <Text style={[styles.payBtnText, { color: colors.text }]}>To&#39;lov olish</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      />
-
-      {/* Payment Bottom Sheet */}
-      <BottomSheet
-        visible={Boolean(selectedDebt)}
-        onClose={() => setSelectedDebt(null)}
-        title="Qarz to'lovini qabul qilish"
-      >
-        {selectedDebt ? (
-          <View style={styles.paySheetContent}>
-            <Text style={[styles.paySheetCustName, { color: colors.text }]}>
-              {selectedDebt.customerName}
-            </Text>
-            <Text style={[styles.paySheetDebtDue, { color: colors.textSecondary }]}>
-              Qarz summasi: {selectedDebt.amount.toLocaleString('ru-RU')} so&#39;m
-            </Text>
-
-            <Text style={[styles.payInputLabel, { color: colors.textSecondary }]}>
-              To&#39;lanayotgan summa
-            </Text>
-            <View
-              style={[
-                styles.payInputContainer,
-                { backgroundColor: colors.surfaceSecondary, borderColor: colors.border },
-              ]}
-            >
-              <TextInput accessibilityLabel="To‘lov summasi"
-                value={payAmountStr}
-                onChangeText={setPayAmountStr}
-                keyboardType="decimal-pad"
-                style={[styles.payInputField, { color: colors.text }]}
-              />
-              <Text style={[styles.payInputSuffix, { color: colors.textSecondary }]}>so&#39;m</Text>
-            </View>
-
-            <Button
-              title="To'lovni tasdiqlash"
-              size="lg"
-              fullWidth
-              loading={paying}
-              onPress={handleConfirmPayment}
-              style={{ marginTop: spacing.lg }}
-            />
-          </View>
-        ) : null}
-      </BottomSheet>
+  return <Page title="Qarzlar" onMenu={navigation.openDrawer} scroll={false} insetBottom={false}>
+    <View style={{ padding: 16, gap: 12 }}>
+      <Input label="Mijoz qidirish (ism, telefon, STIR)" value={search} onChangeText={setSearch} placeholder="Ism yoki telefon" />
+      {debts.summary && <><Text style={{ color: colors.text, fontSize: 22, fontWeight: '700' }}>{formatAmount(debts.summary.total_debt_uzs)} UZS</Text><Notice>{formatAmount(debts.summary.total_debt_usd)} USD · Qarzdorlar: {debts.summary.debtors_count ?? '—'}</Notice></>}
+      {message ? <Notice>{message}</Notice> : null}
+      {!allowed && <Notice error>Qarzlarni ko‘rish uchun vakolat berilmagan.</Notice>}
     </View>
-  );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  headerInfo: {
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.sm,
-  },
-  title: {
-    fontSize: typography.size.xl,
-    fontWeight: typography.weight.bold,
-  },
-  totalLabel: {
-    fontSize: typography.size.xs,
-    marginTop: spacing.xs,
-  },
-  totalAmount: {
-    fontSize: typography.size.display,
-    fontWeight: typography.weight.bold,
-    marginBottom: spacing.sm,
-  },
-  searchSection: {
-    paddingHorizontal: spacing.lg,
-    marginBottom: spacing.md,
-  },
-  searchBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: spacing.md,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    height: 42,
-  },
-  searchInput: {
-    flex: 1,
-    marginLeft: spacing.sm,
-    fontSize: typography.size.sm,
-  },
-  tabsRow: {
-    flexDirection: 'row',
-    paddingHorizontal: spacing.lg,
-    marginBottom: spacing.md,
-  },
-  tabBtn: {
-    paddingVertical: spacing.xs + 2,
-    paddingHorizontal: spacing.md,
-    borderRadius: radius.full,
-    borderWidth: 1,
-    marginRight: spacing.sm,
-  },
-  tabText: {
-    fontSize: typography.size.xs,
-    fontWeight: typography.weight.semibold,
-  },
-  listContent: {
-    paddingHorizontal: spacing.lg,
-    paddingBottom: 80,
-  },
-  debtCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: spacing.md,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    marginBottom: spacing.sm,
-  },
-  avatarCircle: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: spacing.md,
-  },
-  avatarInitials: {
-    fontSize: typography.size.xs,
-    fontWeight: typography.weight.bold,
-  },
-  debtInfoCol: {
-    flex: 1,
-  },
-  nameRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  customerName: {
-    fontSize: typography.size.sm,
-    fontWeight: typography.weight.bold,
-  },
-  debtAmount: {
-    fontSize: typography.size.sm,
-    fontWeight: typography.weight.bold,
-  },
-  customerPhone: {
-    fontSize: typography.size.xs,
-    marginTop: 2,
-  },
-  dueDateRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 4,
-  },
-  statusDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    marginRight: 5,
-  },
-  dueDateText: {
-    fontSize: 11,
-  },
-  payBtn: {
-    paddingVertical: spacing.xs + 2,
-    paddingHorizontal: spacing.md,
-    borderRadius: radius.sm,
-    borderWidth: 1,
-    marginLeft: spacing.md,
-  },
-  payBtnText: {
-    fontSize: typography.size.xs,
-    fontWeight: typography.weight.semibold,
-  },
-  paySheetContent: {
-    paddingVertical: spacing.sm,
-  },
-  paySheetCustName: {
-    fontSize: typography.size.lg,
-    fontWeight: typography.weight.bold,
-  },
-  paySheetDebtDue: {
-    fontSize: typography.size.sm,
-    marginTop: 4,
-    marginBottom: spacing.lg,
-  },
-  payInputLabel: {
-    fontSize: typography.size.xs,
-    fontWeight: typography.weight.medium,
-    marginBottom: spacing.xs,
-  },
-  payInputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: radius.md,
-    borderWidth: 1,
-    paddingHorizontal: spacing.md,
-    height: 48,
-  },
-  payInputField: {
-    flex: 1,
-    fontSize: typography.size.xl,
-    fontWeight: typography.weight.bold,
-  },
-  payInputSuffix: {
-    fontSize: typography.size.sm,
-    fontWeight: typography.weight.medium,
-  },
-});
+    <FlatList data={debts.rows} keyExtractor={item => String(item.id)} contentContainerStyle={{ padding: 16, gap: 12 }} refreshing={debts.loading} onRefresh={debts.reload}
+      ListEmptyComponent={<ListState loading={debts.loading} error={debts.error} empty onRetry={debts.retry} emptyLabel="Qarzdorlar topilmadi." />}
+      ListFooterComponent={<>{debts.rows.length > 0 && debts.error && <ListState error={debts.error} onRetry={debts.retry} />}{debts.hasMore && <Button title="Yana qarzdorlar" variant="secondary" loading={debts.loadingMore} onPress={debts.loadMore} />}</>}
+      renderItem={({ item }) => <View style={{ padding: 16, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surface, borderRadius: 14, gap: 8 }}>
+        <Text style={{ color: colors.text, fontSize: 16, fontWeight: '700' }}>{item.name}</Text>
+        <Notice>{item.phone_number || 'Telefon ko‘rsatilmagan'}</Notice>
+        <Text style={{ color: colors.danger }}>{formatAmount(item.debt_balance_uzs)} UZS / {formatAmount(item.debt_balance_usd)} USD</Text>
+        {item.debt_due_date ? <Notice>Qarz muddati: {item.debt_due_date}</Notice> : null}
+        {can('sales.record_debt_payment') && <Button title="To‘lov qabul qilish" variant="secondary" onPress={() => open(item)} />}
+      </View>} />
+    <BottomSheet visible={selected !== null} title={selected?.name || 'Qarz to‘lovi'} scrollable onClose={() => { if (!paying) setSelected(null); }}>
+      <View style={{ gap: 12 }}>
+        {accepted ? <Notice>Server to‘lovni qabul qildi. Mahalliy tasdiq saqlanishi kutilmoqda; yangi to‘lov yuborilmaydi.</Notice> : <>
+          <View style={{ flexDirection: 'row', gap: 8 }}>{(['UZS', 'USD'] as const).map(value => <Button key={value} title={value} variant={currency === value ? 'primary' : 'secondary'} disabled={paying} onPress={() => { setCurrency(value); setAmount(value === 'UZS' ? selected?.debt_balance_uzs || '' : selected?.debt_balance_usd || ''); fields.clear('amount'); }} />)}</View>
+          <Input label="To‘lov summasi" value={amount} onChangeText={value => { setAmount(value); fields.clear('amount'); }} error={fields.errors.amount} keyboardType="decimal-pad" editable={!paying} />
+          <View style={{ flexDirection: 'row', gap: 8 }}><Button title="Naqd" variant={method === 'cash' ? 'primary' : 'secondary'} disabled={paying} onPress={() => setMethod('cash')} /><Button title="Karta" variant={method === 'card' ? 'primary' : 'secondary'} disabled={paying} onPress={() => setMethod('card')} /></View>
+        </>}
+        {error ? <Notice error>{error}</Notice> : null}
+        <Button title={accepted ? 'Mahalliy tasdiqni saqlash' : 'To‘lovni tasdiqlash'} loading={paying} onPress={pay} />
+        {error ? <Button title="Amallar jurnalini ochish" variant="secondary" disabled={paying} onPress={() => navigation.navigate('Sync')} /> : null}
+      </View>
+    </BottomSheet>
+  </Page>;
+}

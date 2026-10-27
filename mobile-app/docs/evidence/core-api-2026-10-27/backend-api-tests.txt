@@ -1,0 +1,28 @@
+............                                                             [100%]
+=============================== warnings summary ===============================
+../../Sales-Platform/inventra/.venv/lib/python3.12/site-packages/pytest_django/plugin.py:394
+  /mnt/storage/Codes/Projects/Backend/Sales-Platform/inventra/.venv/lib/python3.12/site-packages/pytest_django/plugin.py:394: RemovedInDjango2028Warning: The EMAIL_HOST_USER setting is deprecated. Migrate to MAILERS before Django 2028.
+
+../../Sales-Platform/inventra/.venv/lib/python3.12/site-packages/pytest_django/plugin.py:394
+  /mnt/storage/Codes/Projects/Backend/Sales-Platform/inventra/.venv/lib/python3.12/site-packages/pytest_django/plugin.py:394: RemovedInDjango2028Warning: The EMAIL_HOST_PASSWORD setting is deprecated. Migrate to MAILERS before Django 2028.
+
+../../Sales-Platform/inventra/.venv/lib/python3.12/site-packages/pytest_django/plugin.py:394
+  /mnt/storage/Codes/Projects/Backend/Sales-Platform/inventra/.venv/lib/python3.12/site-packages/pytest_django/plugin.py:394: RemovedInDjango2028Warning: The EMAIL_USE_SSL setting is deprecated. Migrate to MAILERS before Django 2028.
+
+../../Sales-Platform/inventra/.venv/lib/python3.12/site-packages/pytest_django/plugin.py:394
+  /mnt/storage/Codes/Projects/Backend/Sales-Platform/inventra/.venv/lib/python3.12/site-packages/pytest_django/plugin.py:394: RemovedInDjango2028Warning: The EMAIL_TIMEOUT setting is deprecated. Migrate to MAILERS before Django 2028.
+
+../../Sales-Platform/inventra/.venv/lib/python3.12/site-packages/pytest_django/plugin.py:394
+  /mnt/storage/Codes/Projects/Backend/Sales-Platform/inventra/.venv/lib/python3.12/site-packages/pytest_django/plugin.py:394: RemovedInDjango2028Warning: The EMAIL_USE_TLS setting is deprecated. Migrate to MAILERS before Django 2028.
+
+../../Sales-Platform/inventra/.venv/lib/python3.12/site-packages/pytest_django/plugin.py:394
+  /mnt/storage/Codes/Projects/Backend/Sales-Platform/inventra/.venv/lib/python3.12/site-packages/pytest_django/plugin.py:394: RemovedInDjango2028Warning: The EMAIL_BACKEND setting is deprecated. Migrate to MAILERS before Django 2028.
+
+../../Sales-Platform/inventra/.venv/lib/python3.12/site-packages/pytest_django/plugin.py:394
+  /mnt/storage/Codes/Projects/Backend/Sales-Platform/inventra/.venv/lib/python3.12/site-packages/pytest_django/plugin.py:394: RemovedInDjango2028Warning: The EMAIL_HOST setting is deprecated. Migrate to MAILERS before Django 2028.
+
+../../Sales-Platform/inventra/.venv/lib/python3.12/site-packages/pytest_django/plugin.py:394
+  /mnt/storage/Codes/Projects/Backend/Sales-Platform/inventra/.venv/lib/python3.12/site-packages/pytest_django/plugin.py:394: RemovedInDjango2028Warning: The EMAIL_PORT setting is deprecated. Migrate to MAILERS before Django 2028.
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+12 passed, 8 warnings in 15.29s

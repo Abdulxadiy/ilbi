@@ -1,80 +1,74 @@
 import React from 'react';
-import { render } from '@testing-library/react-native';
-import { CANONICAL_DEBTS, DebtsScreen } from '../src/features/debts/DebtsScreen';
+import { fireEvent, render } from '@testing-library/react-native';
+import { DebtsScreen } from '../src/features/debts/DebtsScreen';
 import { ThemeProvider } from '../src/theme/ThemeContext';
-
-jest.mock('../src/dev/preview', () => ({ isDesignPreview: true }));
-
-describe('Debts Domain & Canonical Financial Rules (Board 27A & Master Spec)', () => {
-  test('Canonical 4 debts sum to exactly 860 000 UZS', () => {
-    expect(CANONICAL_DEBTS).toHaveLength(4);
-    const total = CANONICAL_DEBTS.reduce((sum, item) => sum + item.amount, 0);
-    expect(total).toBe(860000);
+import { request, assertAuthScope } from '../src/api/client';
+import { confirmFinancialIdentity, withFinancialIdentity } from '../src/api/financialIdentity';
+const mockTenant = { id: 1, name: 'Store', is_owner: true, permissions: [] };
+const mockUser = { id: 1, role: 'owner', terms_accepted: true, tenants: [mockTenant] };
+jest.mock('../src/features/auth/AuthContext', () => ({ useAuth: () => ({ user: mockUser, activeTenant: mockTenant }) }));
+jest.mock('../src/api/client', () => ({ request: jest.fn(), captureAuthScope: jest.fn(() => ({})), assertAuthScope: jest.fn() }));
+jest.mock('../src/api/financialIdentity', () => ({ withFinancialIdentity: jest.fn(async (_operation, payload) => ({ ...payload, idempotency_key: 'same-intent-key' })), confirmFinancialIdentity: jest.fn(async () => {}), rejectFinancialIdentity: jest.fn(async () => {}) }));
+const customer = { id: 1, name: 'Ali', phone_number: '+998901234567', debt_balance_uzs: '100.25', debt_balance_usd: '2.50', note: '', debt_due_date: '2026-10-28', is_active: true };
+const list = { results: [customer], count: 1, next: null, summary: { debtors_count: 25, total_debt_uzs: '860000.75', total_debt_usd: '40.25' } };
+describe('Real debt screen and durable payment boundaries', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    jest.mocked(assertAuthScope).mockReset();
+    jest.mocked(confirmFinancialIdentity).mockReset().mockResolvedValue(undefined);
+    jest.mocked(request).mockImplementation(async (path, options) => path.endsWith('/payments/') ? { id: 8, counterparty: 1, ...options?.body } : path === '/sales/counterparties/1/' ? customer : list);
   });
-
-  test('Status filtering correctly identifies overdue and due-soon counterparties', () => {
-    const overdueDebts = CANONICAL_DEBTS.filter((d) => d.status === 'overdue');
-    const soonDebts = CANONICAL_DEBTS.filter((d) => d.status === 'soon');
-    const futureDebts = CANONICAL_DEBTS.filter((d) => d.status === 'future');
-
-    expect(overdueDebts).toHaveLength(1);
-    expect(overdueDebts[0].customerName).toBe('Aziz Rahimov');
-    expect(overdueDebts[0].amount).toBe(180000);
-
-    expect(soonDebts).toHaveLength(1);
-    expect(soonDebts[0].customerName).toBe('Dilnoza Karimova');
-    expect(soonDebts[0].amount).toBe(320000);
-
-    expect(futureDebts).toHaveLength(2);
+  const open = async () => {
+    const screen = await render(<ThemeProvider><DebtsScreen /></ThemeProvider>);
+    await screen.findByText('Ali');
+    await fireEvent.press(screen.getByText('To‘lov qabul qilish'));
+    return screen;
+  };
+  test('loads actual paged debtors and store summary rather than a local fixture total', async () => {
+    const screen = await render(<ThemeProvider><DebtsScreen /></ThemeProvider>);
+    expect(await screen.findByText('Ali')).toBeTruthy();
+    expect(screen.getByText('860 000,75 UZS')).toBeTruthy();
+    expect(jest.mocked(request).mock.calls[0][0]).toContain('balance_status=debtors');
+    expect(jest.mocked(request).mock.calls[0][0]).toContain('page=1&page_size=50');
   });
-
-  test('Partial payment reduces balance without removing debtor', () => {
-    const originalDebts = CANONICAL_DEBTS.map((d) => ({ ...d }));
-    const target = originalDebts.find((d) => d.id === 1)!;
-    expect(target.amount).toBe(230000);
-
-    const payAmount = 100000;
-    const updatedDebts = originalDebts
-      .map((d) => (d.id === target.id ? { ...d, amount: d.amount - payAmount } : d))
-      .filter((d) => d.amount > 0);
-
-    const updatedTarget = updatedDebts.find((d) => d.id === 1)!;
-    expect(updatedTarget.amount).toBe(130000);
-    expect(updatedDebts).toHaveLength(4);
-
-    const newTotal = updatedDebts.reduce((sum, d) => sum + d.amount, 0);
-    expect(newTotal).toBe(760000); // 860 000 - 100 000
+  test('invalid amounts turn the amount field red and never create an intent/payment', async () => {
+    const screen = await open();
+    await fireEvent.changeText(screen.getByLabelText('To‘lov summasi'), '-1');
+    await fireEvent.press(screen.getByText('To‘lovni tasdiqlash'));
+    expect(screen.getByText('To‘lov summasini to‘g‘ri kiriting.')).toBeTruthy();
+    expect(withFinancialIdentity).not.toHaveBeenCalled();
+    expect(jest.mocked(request).mock.calls.some(([, options]) => options?.method === 'POST')).toBe(false);
   });
-
-  test('Full payment reduces debt to 0 and clears debtor from active list', () => {
-    const originalDebts = CANONICAL_DEBTS.map((d) => ({ ...d }));
-    const target = originalDebts.find((d) => d.id === 1)!;
-
-    const payAmount = 230000; // Full payment
-    const updatedDebts = originalDebts
-      .map((d) => (d.id === target.id ? { ...d, amount: d.amount - payAmount } : d))
-      .filter((d) => d.amount > 0);
-
-    expect(updatedDebts.find((d) => d.id === 1)).toBeUndefined();
-    expect(updatedDebts).toHaveLength(3);
-
-    const newTotal = updatedDebts.reduce((sum, d) => sum + d.amount, 0);
-    expect(newTotal).toBe(630000); // 860 000 - 230 000
+  test('re-reads the live balance before payment and blocks an amount above it', async () => {
+    const screen = await open();
+    jest.mocked(request).mockResolvedValueOnce({ ...customer, debt_balance_uzs: '5.00' });
+    await fireEvent.changeText(screen.getByLabelText('To‘lov summasi'), '10');
+    await fireEvent.press(screen.getByText('To‘lovni tasdiqlash'));
+    expect(screen.getByText('To‘lov joriy qarzdan oshmasin: 5 UZS')).toBeTruthy();
+    expect(withFinancialIdentity).not.toHaveBeenCalled();
   });
-
-  test('DebtsScreen renders canonical total and debtor names', async () => {
-    const screen = await render(
-      <ThemeProvider>
-        <DebtsScreen />
-      </ThemeProvider>
-    );
-
-    // Canonical total 860 000 displayed
-    expect(screen.getByText(/860\s?000/)).toBeTruthy();
-    // Names displayed
-    expect(screen.getByText('Ali Valiyev')).toBeTruthy();
-    expect(screen.getByText('Dilnoza Karimova')).toBeTruthy();
-    expect(screen.getByText('Aziz Rahimov')).toBeTruthy();
-    expect(screen.getByText('Malika Sobirova')).toBeTruthy();
+  test('successful USD/card payment sends exact decimal currency/method and stores accepted result', async () => {
+    const screen = await open();
+    await fireEvent.press(screen.getByText('USD'));
+    await fireEvent.press(screen.getByText('Karta'));
+    await fireEvent.press(screen.getByText('To‘lovni tasdiqlash'));
+    expect(withFinancialIdentity).toHaveBeenCalledWith('debt-1', { amount: '2.50', currency: 'USD', payment_type: 'card' }, 1, 1);
+    expect(confirmFinancialIdentity).toHaveBeenCalledWith('debt-1', 1, 1, 'same-intent-key', expect.objectContaining({ id: 8, counterparty: 1, amount: '2.50' }));
+  });
+  test('local acknowledgment failure retries only the journal write, never another payment POST', async () => {
+    jest.mocked(confirmFinancialIdentity).mockRejectedValueOnce(Error('Local disk unavailable')).mockResolvedValueOnce(undefined);
+    const screen = await open();
+    await fireEvent.press(screen.getByText('To‘lovni tasdiqlash'));
+    expect(await screen.findByText('Mahalliy tasdiqni saqlash')).toBeTruthy();
+    await fireEvent.press(screen.getByText('Mahalliy tasdiqni saqlash'));
+    expect(jest.mocked(request).mock.calls.filter(([, options]) => options?.method === 'POST')).toHaveLength(1);
+    expect(confirmFinancialIdentity).toHaveBeenCalledTimes(2);
+  });
+  test('scope changes cannot submit a payment for the previous account/store', async () => {
+    const screen = await open();
+    jest.mocked(assertAuthScope).mockImplementationOnce(() => { throw Error('Sessiya o‘zgargan.'); });
+    await fireEvent.press(screen.getByText('To‘lovni tasdiqlash'));
+    expect(screen.getByText('Sessiya o‘zgargan.')).toBeTruthy();
+    expect(withFinancialIdentity).not.toHaveBeenCalled();
   });
 });
