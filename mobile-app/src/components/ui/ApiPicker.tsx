@@ -8,12 +8,13 @@ import { Input } from './Input';
 import { ListState } from './ListState';
 export interface PickValue { id: number; name: string; currency?: string; [key: string]: any; }
 function parsePick(value: any): PickValue { if (!value || typeof value.name !== 'string') throw Error('Tanlov ma’lumotlari tasdiqlanmadi.'); return value; }
-export function ApiPicker({ label, endpoint, value, onChange, optional = false, disabled = false }: { label: string; endpoint: string; value: PickValue | null; onChange: (value: PickValue | null) => void; optional?: boolean; disabled?: boolean }) {
+export function ApiPicker({ label, endpoint, value, onChange, optional = false, disabled = false, error }: { label: string; endpoint: string; value: PickValue | null; onChange: (value: PickValue | null) => void; optional?: boolean; disabled?: boolean; error?: string }) {
   const [open, setOpen] = useState(false), [search, setSearch] = useState('');
   const { colors } = useTheme(), query = useDebounced(search.trim());
   const resource = usePagedResource<PickValue>(open ? endpoint + (endpoint.includes('?') ? '&' : '?') + 'search=' + encodeURIComponent(query) : null, parsePick);
   return <>
-    <Button title={label + ': ' + (value?.name || 'Tanlang')} variant="secondary" disabled={disabled} onPress={() => setOpen(true)} />
+    <Button title={label + ': ' + (value?.name || 'Tanlang')} variant="secondary" disabled={disabled} aria-invalid={Boolean(error)} accessibilityHint={error} style={error ? { borderColor: colors.danger, backgroundColor: colors.dangerSurface } : undefined} onPress={() => setOpen(true)} />
+    {error ? <Text accessibilityRole="alert" style={{ color: colors.danger, marginVertical: 4 }}>{error}</Text> : null}
     <BottomSheet visible={open} title={label} onClose={() => setOpen(false)}>
       <Input label={label + ' qidirish'} value={search} onChangeText={setSearch} />
       {optional && <Button title="Tanlovsiz davom etish" variant="ghost" onPress={() => { onChange(null); setOpen(false); }} />}

@@ -43,5 +43,8 @@ describe('Negotiated price entry', () => {
     expect(mockUpdatePrice).not.toHaveBeenCalled();
     expect(screen.getByText('Dona narxini 0 dan katta summa sifatida kiriting.')).toBeTruthy();
     expect(screen.getByLabelText('Yangi sotuv narxi')).toBeTruthy();
+    expect(screen.getByLabelText('Yangi sotuv narxi').props['aria-invalid']).toBe(true);
+    await fireEvent.changeText(screen.getByLabelText('Yangi sotuv narxi'), '10000');
+    expect(screen.getByLabelText('Yangi sotuv narxi').props['aria-invalid']).toBe(false);
   });
 });

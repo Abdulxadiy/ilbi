@@ -36,7 +36,9 @@ describe('Product and variant management', () => {
     await fireEvent.press(await screen.findByText('Food'));
     await fireEvent.changeText(screen.getByLabelText('Tavsiya sotuv narxi'), '-2');
     await fireEvent.press(screen.getByText('Mahsulotni saqlash'));
-    expect(screen.getByText(/Summani to‘g‘ri kiriting/)).toBeTruthy();
+    expect(screen.getAllByText(/Summani to‘g‘ri kiriting/).length).toBeGreaterThan(0);
+    expect(screen.getByLabelText('Tavsiya sotuv narxi').props['aria-invalid']).toBe(true);
+    expect(screen.getByLabelText('Mahsulot nomi').props['aria-invalid']).toBe(false);
     expect(jest.mocked(request).mock.calls.some(([, o]) => o?.method === 'POST')).toBe(false);
   });
   test('edits a selected variant without changing product IDs or another variant', async () => {

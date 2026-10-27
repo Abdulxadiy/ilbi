@@ -17,5 +17,7 @@ describe('API field validation', () => {
   test('local validation and plain DRF field dictionaries use the same contract', () => {
     expect(fieldErrors(formError({ name: 'Nomni kiriting.' }))).toEqual({ name: 'Nomni kiriting.' });
     expect(fieldErrors({ phone_number: ['Telefon noto‘g‘ri.'] })).toEqual({ phone_number: 'Telefon noto‘g‘ri.' });
+    expect(fieldErrors(formError({ code: 'Kod uzun.', message: 'Matn uzun.' }))).toEqual({ code: 'Kod uzun.', message: 'Matn uzun.' });
+    expect(fieldErrors({ code: ['Kod uzun.'] })).toEqual({ code: 'Kod uzun.' });
   });
 });

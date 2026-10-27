@@ -16,8 +16,8 @@ const evidence = new URL('../docs/evidence/', import.meta.url);
 const marker = 'Bugungi holat · LIVE QA';
 let changed = false;
 const doc = "document.querySelector('#app')?.contentDocument";
-const waitFor = async (expression, label) => {
-  for (let i = 0; i < 140; i++) {
+const waitFor = async (expression, label, attempts = 140) => {
+  for (let i = 0; i < attempts; i++) {
     if (await browser.evaluate(`Boolean(${doc}?.body && (${expression}))`)) return;
     await pause(150);
   }
@@ -58,7 +58,8 @@ async function fill(label, value) {
 }
 try {
   await browser.call('Page.navigate', { url: base + '/preview' });
-  await waitFor(`${doc}?.body?.innerText.includes('Bugungi holat')`, 'home screen');
+  // A cold isolated Metro compile can exceed 21s; subsequent UI actions keep their short budget.
+  await waitFor(`${doc}?.body?.innerText.includes('Bugungi holat')`, 'home screen', 600);
   assert.ok(await browser.evaluate(`${doc}.body.innerText.includes('DIZAYN PREVIEW')`));
   await mkdir(evidence, { recursive: true });
   const shot = await browser.call('Page.captureScreenshot', { format: 'png' });

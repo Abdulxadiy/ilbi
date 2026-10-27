@@ -19,6 +19,8 @@ import { useAuth } from '../auth/AuthContext';
 import { Conversation, parseConversation, parseMessage, SupportLanguage, SupportMessage } from './model';
 import { createSupportSession, GuestIdentity, loadGuestIdentity, SupportSession } from './session';
 import { uncertainSupportWrite, useSupportActivity, useSupportFeed, useSupportWrite } from './useSupport';
+import { formError, fieldErrors } from '../../api/validation';
+import { useFormErrors } from '../../hooks/useFormErrors';
 
 const statusLabel = { waiting: 'Javob kutilmoqda', active: 'Operator bilan', closed: 'Yopilgan' };
 const eventLabel: Record<string, string> = { claim: 'Operator murojaatni qabul qildi', close: 'Suhbat yopildi', reopen: 'Suhbat qayta ochildi' };
@@ -30,24 +32,26 @@ function NewConversation({ session, visible, onClose, onCreated }: { session: Su
   const [name, setName] = useState(user ? `${user.first_name} ${user.last_name}`.trim() || user.username : '');
   const [subject, setSubject] = useState(''), [text, setText] = useState(''), [language, setLanguage] = useState<SupportLanguage>('uz'), [consent, setConsent] = useState(false);
   const [pending, setPending] = useState<any>(null), action = useSupportWrite();
+  const validation = useFormErrors();
   const frozen = action.busy || Boolean(pending);
   const submit = async () => {
     const result = await action.run(async () => {
-      if (!name.trim() || !subject.trim() || !text.trim()) throw Error('Ism, mavzu va xabarni kiriting.');
-      if (!consent) throw Error('Yordam uchun ma’lumotlarni yuborishga rozilik kerak.');
+      const fields = { ...(!name.trim() ? { name: 'Ismingizni kiriting.' } : {}), ...(!subject.trim() ? { subject: 'Murojaat mavzusini kiriting.' } : {}), ...(!text.trim() ? { text: 'Xabarni kiriting.' } : {}), ...(!consent ? { consent: 'Yordam uchun ma’lumotlarni yuborishga rozilik kerak.' } : {}) };
+      if (Object.keys(fields).length) throw formError(fields);
       const payload = pending || { name: name.trim(), subject: subject.trim(), text: text.trim(), language, consent: true, client_id: Crypto.randomUUID() };
       setPending(payload);
       return parseConversation(await session.call('', { method: 'POST', body: payload, ...(session.userId && session.tenantId ? { headers: { 'X-Tenant-ID': String(session.tenantId) } } : {}) }));
     });
-    if (result.ok) { setPending(null); setSubject(''); setText(''); setConsent(false); onCreated(result.value); }
-    else if (result.error && !uncertainSupportWrite(result.error)) setPending(null);
+    if (result.ok) { validation.clear(); setPending(null); setSubject(''); setText(''); setConsent(false); onCreated(result.value); }
+    else if (result.error) { validation.capture(result.error); if (!uncertainSupportWrite(result.error)) setPending(null); }
   };
   return <BottomSheet visible={visible} title="Yangi murojaat" onClose={() => { if (!action.busy) onClose(); }} scrollable>
-    <Input label="Ismingiz" value={name} onChangeText={setName} maxLength={100} editable={!frozen} />
-    <Input label="Murojaat mavzusi" value={subject} onChangeText={setSubject} maxLength={160} editable={!frozen} />
+    <Input label="Ismingiz" value={name} error={validation.errors.name} onChangeText={value => { setName(value); validation.clear('name'); }} maxLength={100} editable={!frozen} />
+    <Input label="Murojaat mavzusi" value={subject} error={validation.errors.subject} onChangeText={value => { setSubject(value); validation.clear('subject'); }} maxLength={160} editable={!frozen} />
     <ChoiceField label="Javob tili" value={language} onChange={setLanguage} disabled={frozen} options={[{ value: 'uz', label: 'O‘zbekcha' }, { value: 'ru', label: 'Русский' }, { value: 'en', label: 'English' }]} />
-    <Input label="Birinchi xabar" value={text} onChangeText={setText} maxLength={4000} multiline numberOfLines={4} editable={!frozen} />
-    <TouchableOpacity accessibilityRole="checkbox" accessibilityLabel="Yordam uchun ma’lumotlarni yuborishga roziman" accessibilityState={{ checked: consent, disabled: frozen }} disabled={frozen} onPress={() => setConsent(value => !value)} style={{ paddingVertical: 14 }}><Text style={{ color: colors.text }}>{consent ? '☑' : '☐'} Yordam uchun ismim va xabarimni yuborishga roziman.</Text></TouchableOpacity>
+    <Input label="Birinchi xabar" value={text} error={validation.errors.text} onChangeText={value => { setText(value); validation.clear('text'); }} maxLength={4000} multiline numberOfLines={4} editable={!frozen} />
+    <TouchableOpacity accessibilityRole="checkbox" accessibilityLabel="Yordam uchun ma’lumotlarni yuborishga roziman" accessibilityState={{ checked: consent, disabled: frozen }} aria-invalid={Boolean(validation.errors.consent)} disabled={frozen} onPress={() => { setConsent(value => !value); validation.clear('consent'); }} style={{ paddingVertical: 14, borderWidth: validation.errors.consent ? 1 : 0, borderColor: colors.danger, borderRadius: 8 }}><Text style={{ color: colors.text }}>{consent ? '☑' : '☐'} Yordam uchun ismim va xabarimni yuborishga roziman.</Text></TouchableOpacity>
+    {validation.errors.consent ? <Text accessibilityRole="alert" style={{ color: colors.danger }}>{validation.errors.consent}</Text> : null}
     <Button title="Maxfiylik siyosati" variant="ghost" disabled={action.busy} onPress={() => { onClose(); router.push({ pathname: '/legal', params: { doc: 'maxfiylik_siyosati' } }); }} />
     <WriteError error={action.error} uncertain={Boolean(pending)} />
     <Button title={pending && action.error ? 'Murojaatni qayta yuborish' : 'Murojaat yuborish'} loading={action.busy} disabled={action.blocked} onPress={() => { void submit(); }} />
@@ -90,7 +94,7 @@ function ConversationThread({ session, id, active, onBack, tabbed }: { session: 
   };
   return <Page title="Yozishmalar" onBack={onBack} insetBottom={!tabbed} scroll={false} actionsStyle={{ padding: 8, gap: 6 }} actions={detail.data ? <>
     <WriteError error={acknowledged ? null : action.error} uncertain={Boolean(shownPending)} />
-    {canReply ? <View style={{ flexDirection: 'row', gap: 8, alignItems: 'flex-end' }}><Input accessibilityLabel="Yordamga xabar" placeholder="Xabaringiz…" value={shownDraft} onChangeText={value => { if (acknowledged) setPending(null); action.clearError(); setDraft(value); }} maxLength={4000} multiline numberOfLines={1} containerStyle={{ flex: 1, marginBottom: 0 }} style={{ maxHeight: 80 }} editable={!action.busy && !shownPending} /><Button title={shownPending && action.error ? 'Qayta' : 'Yuborish'} accessibilityLabel={shownPending && action.error ? 'Xabarni qayta yuborish' : 'Xabar yuborish'} loading={action.busy} disabled={action.blocked || !(shownPending?.text || shownDraft.trim())} style={{ paddingHorizontal: 12 }} onPress={() => { void send(); }} /></View> : <Notice>{detail.data.status === 'closed' ? 'Davom etish uchun suhbatni qayta oching.' : assignedElsewhere ? 'Bu murojaat boshqa operatorga biriktirilgan.' : 'Javob berishdan oldin murojaatni qabul qiling.'}</Notice>}
+    {canReply ? <View style={{ flexDirection: 'row', gap: 8, alignItems: 'flex-end' }}><Input accessibilityLabel="Yordamga xabar" placeholder="Xabaringiz…" error={fieldErrors(action.error).text} value={shownDraft} onChangeText={value => { if (acknowledged) setPending(null); action.clearError(); setDraft(value); }} maxLength={4000} multiline numberOfLines={1} containerStyle={{ flex: 1, marginBottom: 0 }} style={{ maxHeight: 80 }} editable={!action.busy && !shownPending} /><Button title={shownPending && action.error ? 'Qayta' : 'Yuborish'} accessibilityLabel={shownPending && action.error ? 'Xabarni qayta yuborish' : 'Xabar yuborish'} loading={action.busy} disabled={action.blocked || !(shownPending?.text || shownDraft.trim())} style={{ paddingHorizontal: 12 }} onPress={() => { void send(); }} /></View> : <Notice>{detail.data.status === 'closed' ? 'Davom etish uchun suhbatni qayta oching.' : assignedElsewhere ? 'Bu murojaat boshqa operatorga biriktirilgan.' : 'Javob berishdan oldin murojaatni qabul qiling.'}</Notice>}
   </> : undefined}>
     <View style={{ paddingHorizontal: 16, paddingVertical: 6, flexDirection: 'row', alignItems: 'center', gap: 8 }}>
       {detail.data ? <>

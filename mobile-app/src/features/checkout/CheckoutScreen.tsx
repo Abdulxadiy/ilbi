@@ -17,6 +17,9 @@ import { radius, spacing, typography } from '../../theme/tokens';
 import { request, captureAuthScope, assertAuthScope } from '../../api/client';
 import { useAuth } from '../auth/AuthContext';
 import { withFinancialIdentity, confirmFinancialIdentity, rejectFinancialIdentity, getFinancialIntent } from '../../api/financialIdentity';
+import { useFormErrors } from '../../hooks/useFormErrors';
+import { formError } from '../../api/validation';
+import { Input } from '../../components/ui/Input';
 
 export type PaymentMethod = 'cash' | 'card' | 'debt';
 
@@ -40,9 +43,10 @@ const CheckoutBody: React.FC = () => {
   const quoteState = useRetailQuote(items, partner);
   const payableTotal = quoteState.quote?.totalAmount ?? totalAmount;
   const [expiryConsent, setExpiryConsent] = useState('');
+  const validation = useFormErrors();
   const paymentMethod = payment.method, cashReceivedStr = payment.cashReceived;
-  const setPaymentMethod = (method: PaymentMethod) => setPayment({ method });
-  const setCashReceivedStr = (value: string) => setPayment({ cashReceived: value });
+  const setPaymentMethod = (method: PaymentMethod) => { setPayment({ method }); validation.clear(); };
+  const setCashReceivedStr = (value: string) => { setPayment({ cashReceived: value }); validation.clear('cash_received'); };
   const [loading, setLoading] = useState(false);
   const [confirmedSale, setConfirmedSale] = useState<any | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -63,11 +67,12 @@ const CheckoutBody: React.FC = () => {
   };
   const handleCompleteSale = async () => {
     if (submitting.current) return;
+    validation.clear();
     if (!ready || !cartId) { setError('Savat qoralamasi tayyor emas.'); return; }
     if (!items.length) { setError('Savat bo‘sh'); return; }
     if (paymentMethod === 'debt' && !customer) { setError('Nasiya savdo uchun mijoz tanlanishi shart'); return; }
-    if (paymentMethod === 'debt' && payment.dueDate && !isIsoDate(payment.dueDate)) { setError('Qaytarish sanasini YYYY-MM-DD ko‘rinishida kiriting.'); return; }
-    if (paymentMethod === 'cash' && parsedCash === null) { setError('Berilgan summani to‘g‘ri kiriting'); return; }
+    if (paymentMethod === 'debt' && payment.dueDate && !isIsoDate(payment.dueDate)) { validation.setErrors({ debt_due_date: 'Qaytarish sanasini YYYY-MM-DD ko‘rinishida kiriting.' }); return; }
+    if (paymentMethod === 'cash' && parsedCash === null) { validation.setErrors({ cash_received: 'Berilgan summani to‘g‘ri kiriting' }); return; }
     submitting.current = true; setError(null); setLoading(true);
     const operation = 'sale:' + cartId;
     const authScope = captureAuthScope();
@@ -84,7 +89,7 @@ const CheckoutBody: React.FC = () => {
       const saved = user && activeTenant ? await getFinancialIntent(operation, user.id, activeTenant.id) : null;
       const replay = saved && (saved.status === 'pending' || saved.status === 'confirmed');
       const fresh = replay ? null : await quoteState.reload();
-      if (fresh && paymentMethod === 'cash' && cashReceived < fresh.totalAmount) throw Error('To‘lov summasi yetarli emas. Yangilangan yakuniy summani tekshiring.');
+      if (fresh && paymentMethod === 'cash' && cashReceived < fresh.totalAmount) throw formError({ cash_received: 'To‘lov summasi yetarli emas. Yangilangan yakuniy summani tekshiring.' });
       if (fresh?.warnings.length && expiryConsent !== fresh.warningKey) throw Error('Muddati o‘tgan partiyalar ogohlantirishini o‘qib, tasdiqlang.');
       const tax = (replay ? (saved.payload as any)?.expected_tax_settings : fresh?.settings) || quoteState.quote?.settings;
       if (!tax) throw Error('Soliq sozlamalari tasdiqlanmadi. Qayta tekshiring.');
@@ -103,6 +108,7 @@ const CheckoutBody: React.FC = () => {
       setConfirmedSale(accepted); setConfirmationIntent({ operation, key: identity });
       await persistConfirmation(accepted, operation, identity);
     } catch (err: any) {
+      validation.capture(err);
       let storageFailure = '';
       if (identity && user && activeTenant && err.status >= 400 && err.status < 500 && ![408, 409, 425, 429].includes(err.status)) {
         try { await rejectFinancialIdentity(operation, user.id, activeTenant.id, identity, err.message); }
@@ -350,7 +356,7 @@ const CheckoutBody: React.FC = () => {
           </TouchableOpacity>
         </View>
 
-        {paymentMethod === 'debt' && <View style={{ gap: 6, marginBottom: 18 }}><Text style={{ color: colors.text }}>Qarzni qaytarish sanasi (ixtiyoriy)</Text><TextInput accessibilityLabel="Qarzni qaytarish sanasi" placeholder="YYYY-MM-DD" placeholderTextColor={colors.textMuted} value={payment.dueDate} onChangeText={dueDate => setPayment({ dueDate })} maxLength={10} style={{ color: colors.text, padding: 14, borderWidth: 1, borderColor: colors.border, borderRadius: 10 }} /></View>}
+        {paymentMethod === 'debt' && <Input label="Qarzni qaytarish sanasi (ixtiyoriy)" accessibilityLabel="Qarzni qaytarish sanasi" placeholder="YYYY-MM-DD" value={payment.dueDate} error={validation.errors.debt_due_date} onChangeText={dueDate => { setPayment({ dueDate }); validation.clear('debt_due_date'); }} maxLength={10} />}
         {/* Cash Received Input & Change (For Cash) */}
         {paymentMethod === 'cash' ? (
           <View style={styles.cashSection}>
@@ -359,8 +365,8 @@ const CheckoutBody: React.FC = () => {
               style={[
                 styles.cashInputBox,
                 {
-                  backgroundColor: colors.surface,
-                  borderColor: colors.border,
+                  backgroundColor: validation.errors.cash_received ? colors.dangerSurface : colors.surface,
+                  borderColor: validation.errors.cash_received ? colors.danger : colors.border,
                 },
               ]}
             >
@@ -369,6 +375,7 @@ const CheckoutBody: React.FC = () => {
                 value={cashReceivedStr}
                 onChangeText={setCashReceivedStr}
                 keyboardType="decimal-pad"
+                aria-invalid={Boolean(validation.errors.cash_received)}
                 style={[styles.cashInputField, { color: colors.text }]}
               />
               {cashReceivedStr ? (
@@ -377,6 +384,8 @@ const CheckoutBody: React.FC = () => {
                 </TouchableOpacity>
               ) : null}
             </View>
+
+            {validation.errors.cash_received ? <Text accessibilityRole="alert" style={{ color: colors.danger }}>{validation.errors.cash_received}</Text> : null}
 
             <View style={styles.changeRow}>
               <Text style={[styles.changeLabel, { color: colors.textSecondary }]}>Qaytim</Text>

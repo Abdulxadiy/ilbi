@@ -28,10 +28,10 @@ function CategoryFields({ category, initialParent, onClose }: { category: Catego
     if (saved !== undefined) onClose();
   };
   return <BottomSheet visible title={category ? 'Kategoriyani tahrirlash' : 'Yangi kategoriya'} onClose={() => { if (!action.busy && !remove.busy) onClose(); }} scrollable>
-    <Input label="Kategoriya nomi" value={name} onChangeText={setName} maxLength={150} editable={!action.busy} />
-    <Input label="Kategoriya kodi (ixtiyoriy)" value={kod} onChangeText={setKod} maxLength={20} editable={!action.busy} />
-    <ApiPicker label="Ota kategoriya" endpoint="/catalog/categories/?parent=null" value={parent} optional disabled={action.busy} onChange={value => { const selected = value ? parseCategory(value) : null; setParent(selected); if (selected) setCurrency(selected.currency); }} />
-    <ChoiceField label="Valyuta" value={parent?.currency || currency} onChange={setCurrency} disabled={Boolean(parent) || action.busy} options={[{ value: 'UZS', label: 'UZS' }, { value: 'USD', label: 'USD' }]} />
+    <Input label="Kategoriya nomi" value={name} error={action.fields.name} onChangeText={value => { setName(value); action.clearField('name'); }} maxLength={150} editable={!action.busy} />
+    <Input label="Kategoriya kodi (ixtiyoriy)" value={kod} error={action.fields.kod} onChangeText={value => { setKod(value); action.clearField('kod'); }} maxLength={20} editable={!action.busy} />
+    <ApiPicker label="Ota kategoriya" endpoint="/catalog/categories/?parent=null" value={parent} error={action.fields.parent_id || action.fields.parent} optional disabled={action.busy} onChange={value => { action.clearField('parent_id'); action.clearField('parent'); const selected = value ? parseCategory(value) : null; setParent(selected); if (selected) setCurrency(selected.currency); }} />
+    <ChoiceField label="Valyuta" value={parent?.currency || currency} error={action.fields.currency} onChange={value => { setCurrency(value); action.clearField('currency'); }} disabled={Boolean(parent) || action.busy} options={[{ value: 'UZS', label: 'UZS' }, { value: 'USD', label: 'USD' }]} />
     <Notice>Ichki kategoriya ota kategoriya valyutasidan foydalanadi. Eng ko‘pi bilan 2 bosqich.</Notice>
     {action.error ? <Notice error>{action.error}</Notice> : null}
     <Button title="Kategoriyani saqlash" loading={action.busy} disabled={remove.busy} onPress={() => { void save(); }} />

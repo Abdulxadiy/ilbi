@@ -1,12 +1,12 @@
-import { useEffect } from 'react';
-import { AccessibilityInfo, Animated, Easing, Image, Platform, StyleSheet, Text, View, useAnimatedValue } from 'react-native';
+import { useEffect, useState } from 'react';
+import { AccessibilityInfo, Animated, Easing, Image, Platform, StyleSheet, Text, View } from 'react-native';
 import { useTheme } from '../../theme/ThemeContext';
 
 /** The approved 3D artwork has alpha: no rectangular image background on either theme. */
 export function LoginHero({ compact = false }: { compact?: boolean }) {
   const { colors } = useTheme();
-  const artwork = useAnimatedValue(0);
-  const copy = useAnimatedValue(0);
+  const [artwork] = useState(() => new Animated.Value(0));
+  const [copy] = useState(() => new Animated.Value(0));
   useEffect(() => {
     let active = true;
     let animation: Animated.CompositeAnimation | undefined;

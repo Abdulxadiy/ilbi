@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Image, Text, View } from 'react-native';
 import { request } from '../../api/client';
+import { formError, type FieldErrors } from '../../api/validation';
 import { getServerScope } from '../../api/environment';
 import { ApiPicker, PickValue } from '../../components/ui/ApiPicker';
 import { BottomSheet } from '../../components/ui/BottomSheet';
@@ -17,11 +18,11 @@ import { usePermissions } from '../auth/usePermissions';
 import { CatalogProduct, parseProduct, VariantDraft, variantDraft, variantPayload } from './editorModel';
 import { CatalogVariant } from './model';
 
-function VariantFields({ value, onChange, disabled = false }: { value: VariantDraft; onChange: (value: VariantDraft) => void; disabled?: boolean }) {
-  const input = (key: keyof VariantDraft, label: string, numeric = false, limit = 64) => <Input key={key} label={label} value={value[key]} editable={!disabled} onChangeText={text => onChange({ ...value, [key]: text })} keyboardType={numeric ? 'decimal-pad' : 'default'} maxLength={limit} autoCapitalize="none" />;
+function VariantFields({ value, onChange, disabled = false, errors = {}, clearField }: { value: VariantDraft; onChange: (value: VariantDraft) => void; disabled?: boolean; errors?: FieldErrors; clearField?: (key: string) => void }) {
+  const input = (key: keyof VariantDraft, label: string, numeric = false, limit = 64) => <Input key={key} label={label} value={value[key]} editable={!disabled} error={errors[key]} onChangeText={text => { clearField?.(key); onChange({ ...value, [key]: text }); }} keyboardType={numeric ? 'decimal-pad' : 'default'} maxLength={limit} autoCapitalize="none" />;
   return <>
     {input('name', 'Variant nomi', false, 150)}
-    <ChoiceField label="O‘lchov birligi" value={value.unit} options={[{ value: 'dona', label: 'Dona' }, { value: 'kg', label: 'Kg' }, { value: 'litr', label: 'Litr' }, { value: 'metr', label: 'Metr' }]} onChange={unit => onChange({ ...value, unit })} disabled={disabled} />
+    <ChoiceField label="O‘lchov birligi" value={value.unit} options={[{ value: 'dona', label: 'Dona' }, { value: 'kg', label: 'Kg' }, { value: 'litr', label: 'Litr' }, { value: 'metr', label: 'Metr' }]} error={errors.unit} onChange={unit => { clearField?.('unit'); onChange({ ...value, unit }); }} disabled={disabled} />
     {input('price_recommended', 'Tavsiya sotuv narxi', true)}
     {input('price_partner', 'Ulgurji sotuv narxi', true)}
     {input('price_min', 'Minimal narx (tavsiya)', true)}
@@ -40,7 +41,7 @@ function VariantEditor({ product, variant, onClose }: { product: CatalogProduct;
   };
   return <BottomSheet visible title={variant ? 'Variantni tahrirlash' : 'Yangi variant'} onClose={() => { if (!action.busy) onClose(); }} scrollable>
     {variant?.sku ? <Notice>SKU: {variant.sku}</Notice> : null}
-    <VariantFields value={draft} onChange={setDraft} disabled={action.busy} />
+    <VariantFields value={draft} onChange={setDraft} disabled={action.busy} errors={action.fields} clearField={action.clearField} />
     {action.error ? <Notice error>{action.error}</Notice> : null}
     <Button title="Variantni saqlash" loading={action.busy} onPress={() => { void save(); }} />
   </BottomSheet>;
@@ -58,10 +59,18 @@ function ProductEditor({ product, onSaved, onDeleted }: { product: CatalogProduc
   const save = async () => {
     setSaved('');
     const result = await action.run(() => {
-      if (!name.trim() || name.trim().length > 200) throw Error('Mahsulot nomi 1–200 belgidan iborat bo‘lsin.');
-      if (!category) throw Error('Kategoriyani tanlang.');
+      if (!name.trim() || name.trim().length > 200) throw formError({ name: 'Mahsulot nomi 1–200 belgidan iborat bo‘lsin.' });
+      if (!category) throw formError({ category_id: 'Kategoriyani tanlang.' });
       const fields: any = { name: name.trim(), category_id: category.id };
-      if (!product) { const { name: variantName, ...variant } = variantPayload(draft); Object.assign(fields, variant, { variant_name: variantName }); }
+      if (!product) {
+        let payload;
+        try { payload = variantPayload(draft); } catch (failure: any) {
+          const detail = failure.data?.error?.details;
+          if (detail?.name) { detail.variant_name = detail.name; delete detail.name; }
+          throw failure;
+        }
+        const { name: variantName, ...variant } = payload; Object.assign(fields, variant, { variant_name: variantName });
+      }
       return request(product ? `/catalog/products/${product.id}/` : '/catalog/products/', { method: product ? 'PATCH' : 'POST', body: JSON.stringify(fields) });
     });
     if (result !== undefined) { setSaved('Mahsulot saqlandi.'); onSaved(); }
@@ -75,10 +84,10 @@ function ProductEditor({ product, onSaved, onDeleted }: { product: CatalogProduc
   return <>
     {product?.image ? <Image source={{ uri: product.image }} style={{ width: 80, height: 80, borderRadius: 10 }} accessibilityLabel={product.name + ' rasmi'} /> : null}
     {product && !product.is_active ? <Notice>Mahsulot arxivlangan.</Notice> : null}
-    <Input label="Mahsulot nomi" value={name} onChangeText={setName} maxLength={200} editable={editable && !action.busy} />
-    <ApiPicker label="Mahsulot kategoriyasi" endpoint="/catalog/categories/" value={category} onChange={setCategory} disabled={!editable || action.busy || !can('catalog.view_category')} />
+    <Input label="Mahsulot nomi" value={name} error={action.fields.name} onChangeText={value => { setName(value); action.clearField('name'); }} maxLength={200} editable={editable && !action.busy} />
+    <ApiPicker label="Mahsulot kategoriyasi" endpoint="/catalog/categories/" value={category} error={action.fields.category_id || action.fields.category} onChange={value => { setCategory(value); action.clearField('category_id'); action.clearField('category'); }} disabled={!editable || action.busy || !can('catalog.view_category')} />
     {category?.currency ? <Notice>Valyuta: {category.currency}</Notice> : null}
-    {!product ? <VariantFields value={draft} onChange={setDraft} disabled={!editable || action.busy} /> : null}
+    {!product ? <VariantFields value={draft} onChange={setDraft} disabled={!editable || action.busy} errors={{ ...action.fields, name: action.fields.variant_name }} clearField={key => action.clearField(key === 'name' ? 'variant_name' : key)} /> : null}
     {action.error ? <Notice error>{action.error}</Notice> : null}
     {saved ? <Notice>{saved}</Notice> : null}
     {editable ? <Button title="Mahsulotni saqlash" loading={action.busy} disabled={lifecycle.busy} onPress={() => { void save(); }} /> : null}

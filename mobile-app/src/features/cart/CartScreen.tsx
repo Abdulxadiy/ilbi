@@ -88,7 +88,7 @@ export const CartScreen: React.FC = () => {
       </BottomSheet>
       <BottomSheet scrollable visible={Boolean(quantityItem)} onClose={() => setQuantityItem(null)} title="Miqdorni o‘zgartirish">
         <Text style={{ color: colors.text, marginBottom: 10 }}>{quantityItem?.productName} · {quantityItem?.unit}</Text>
-        <TextInput accessibilityLabel="Yangi miqdor" value={quantityText} onChangeText={setQuantityText} keyboardType="decimal-pad" style={{ color: colors.text, borderColor: colors.border, borderWidth: 1, borderRadius: 10, padding: 14, fontSize: 20 }} />
+        <TextInput accessibilityLabel="Yangi miqdor" value={quantityText} aria-invalid={Boolean(quantityError)} onChangeText={value => { setQuantityText(value); setQuantityError(''); }} keyboardType="decimal-pad" style={{ color: colors.text, backgroundColor: quantityError ? colors.dangerSurface : colors.surface, borderColor: quantityError ? colors.danger : colors.border, borderWidth: 1, borderRadius: 10, padding: 14, fontSize: 20 }} />
         {quantityError ? <Text accessibilityRole="alert" style={{ color: colors.danger }}>{quantityError}</Text> : null}
         <Text style={{ color: colors.textSecondary, marginVertical: 10 }}>Masalan: 0,125 kg. Ko‘pi bilan 3 kasr xonasi.</Text>
         <Button title="Miqdorni qo‘llash" onPress={() => { try { if (quantityItem) updateQuantity(quantityItem.variantId, parseQuantity(quantityText)); setQuantityItem(null); } catch (error: any) { setQuantityError(error.message); } }} />
@@ -404,15 +404,16 @@ export const CartScreen: React.FC = () => {
               style={[
                 styles.sheetInputContainer,
                 {
-                  backgroundColor: colors.surfaceSecondary,
-                  borderColor: colors.border,
+                  backgroundColor: priceError ? colors.dangerSurface : colors.surfaceSecondary,
+                  borderColor: priceError ? colors.danger : colors.border,
                 },
               ]}
             >
               <TextInput
                 accessibilityLabel="Yangi sotuv narxi"
                 value={editedPriceStr}
-                onChangeText={setEditedPriceStr}
+                onChangeText={value => { setEditedPriceStr(value); setPriceError(''); }}
+                aria-invalid={Boolean(priceError)}
                 keyboardType="decimal-pad"
                 style={[styles.sheetInputField, { color: colors.text }]}
                 autoFocus

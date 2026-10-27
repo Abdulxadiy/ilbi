@@ -776,6 +776,7 @@ const styles = StyleSheet.create({
   },
   footerLinksRow: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: spacing.lg,
