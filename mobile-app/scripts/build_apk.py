@@ -98,7 +98,7 @@ def build(args):
     print('Generating native project outside the repository:', work, flush=True)
     subprocess.run(['node', 'node_modules/expo/bin/cli', 'prebuild', '--platform', 'android', '--no-install'], cwd=project, env=environment, check=True)
     subprocess.run(['./gradlew', ':app:assembleRelease', '--no-daemon', '--max-workers=1', '-PreactNativeArchitectures=' + args.architectures,
-                    '-Dorg.gradle.jvmargs=-Xmx1536m -XX:MaxMetaspaceSize=384m -XX:+UseSerialGC -XX:ActiveProcessorCount=2', '-Pkotlin.compiler.execution.strategy=in-process'], cwd=project / 'android', env=environment, check=True)
+                    '-Dorg.gradle.jvmargs=-Xmx1536m -XX:MaxMetaspaceSize=768m -XX:+UseSerialGC -XX:ActiveProcessorCount=2', '-Pkotlin.compiler.execution.strategy=in-process'], cwd=project / 'android', env=environment, check=True)
     apk = project / 'android/app/build/outputs/apk/release/app-release.apk'
     if not apk.is_file():
         raise ValueError('Gradle did not produce the expected standalone APK')

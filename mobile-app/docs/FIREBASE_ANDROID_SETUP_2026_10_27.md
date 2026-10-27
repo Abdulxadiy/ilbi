@@ -1,5 +1,7 @@
 # Firebase Android provisioning — 2026-10-27
 
+Native build follow-up: the first SDK58/Firebase candidate reached release lint, then the old384MiB JVM class-metadata limit exhausted Metaspace. The isolated failed build was stopped; no APK was installed or published. The builder now allows768MiB Metaspace while retaining its1536MiB heap, single Gradle worker and in-process Kotlin compiler. The generated SDK58 default itself uses512MiB Metaspace; this larger bounded allowance provides headroom for the extra native dependencies. Release lint remains enabled. Final signed build/verification is recorded separately; this failed attempt is not a pass.
+
 The owner created Firebase project `ilbi-80eb1`, registered Android application `uz.ilbi.mobile`, and supplied the client and server JSON files locally. Only project/package metadata was printed during validation; credential contents, private keys and OAuth tokens were not printed.
 
 The Android **client** configuration is `mobile-app/google-services.json`, referenced by `expo.android.googleServicesFile`. It contains Firebase's public-facing client identifiers and enters CNG as an explicit validated input. The SDK-compatible `expo-notifications` dependency/plugin is installed. Android code advances from the already published 3 to **4** for the next package; mobile marketing version stays `1.0.0`, platform `1.4.0`, iOS build `1`. This prepares a candidate; it is not a claim that build 4 has been assembled or deployed.
