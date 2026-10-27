@@ -104,7 +104,8 @@
     "auto_usd_rate": false,
     "manual_usd_rate": "12800.00",
     "usd_rate_source": "manual",
-    "cbu_rates": {}
+    "cbu_rates": {},
+    "settings_revision": "808d5200487d22757a676a6d3617d645d81ca457fb8b3ccf52906fd33177c27c"
   },
   "profile": {
     "id": 38085,
