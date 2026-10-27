@@ -16,7 +16,7 @@ from build_apk import APP, TOOLS, select_build_tools, validate_signer
 from export_downloads import inspect_apk
 from bundle_sources import verify_source_record
 
-RUNTIME_PATHS = ['src', 'assets', 'plugins', 'App.tsx', 'index.js', 'index.ts', 'app.json', 'app.config.js', 'app.config.ts',
+RUNTIME_PATHS = ['src', 'assets', 'plugins', 'google-services.json', 'App.tsx', 'index.js', 'index.ts', 'app.json', 'app.config.js', 'app.config.ts',
                  'package.json', 'package-lock.json', 'babel.config.js', 'babel.config.cjs', 'metro.config.js', 'metro.config.cjs', 'tsconfig.json', 'eas.json']
 HOST_ONLY_SCRIPTS = {'test', 'typecheck', 'lint', 'test:preview', 'build:apk:check', 'verify:apk:local', 'prepare:signing'}
 

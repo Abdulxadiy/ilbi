@@ -51,12 +51,59 @@ class MobileBuildSetupTests(unittest.TestCase):
         (source / 'src/entry.ts').write_text('export const fixture = true;')
         for name in ['App.tsx', 'app.json', 'package.json', 'credentials.json', '.env']:
             (source / name).write_text(name)
+        (source / 'app.json').write_text(json.dumps({'expo': {}}))
         target = self.folder / 'build/mobile-app'
         build_apk.copy_project(source, target)
         self.assertTrue((target / 'src/entry.ts').exists())
         self.assertTrue((target / 'node_modules').is_symlink())
         for name in ['credentials.json', '.env', 'android']:
             self.assertFalse((target / name).exists())
+
+    def firebase_source(self, config=None):
+        source = self.folder / 'firebase-source'
+        source.mkdir()
+        (source / 'node_modules').mkdir()
+        app = {'expo': {'android': {'package': 'uz.ilbi.mobile', 'googleServicesFile': './google-services.json'}}}
+        (source / 'app.json').write_text(json.dumps(config or app))
+        client = {'project_info': {'project_id': 'ilbi-fixture'}, 'client': [{'client_info': {'android_client_info': {'package_name': 'uz.ilbi.mobile'}}}]}
+        (source / 'google-services.json').write_text(json.dumps(client))
+        return source
+
+    def test_only_declared_public_firebase_client_enters_cng(self):
+        source = self.firebase_source()
+        (source / 'service-account.json').write_text('{"private_key":"fixture-only"}')
+        target = self.folder / 'firebase-build'
+        build_apk.copy_project(source, target)
+        self.assertEqual((source / 'google-services.json').read_bytes(), (target / 'google-services.json').read_bytes())
+        self.assertFalse((target / 'service-account.json').exists())
+
+    def test_firebase_service_account_cannot_be_renamed_as_client_config(self):
+        source = self.firebase_source()
+        (source / 'google-services.json').write_text(json.dumps({'type': 'service_account', 'private_key': 'fixture-only'}))
+        with self.assertRaisesRegex(ValueError, 'private Firebase service account'):
+            build_apk.copy_project(source, self.folder / 'bad-private-build')
+
+    def test_firebase_package_must_match_ilbi(self):
+        source = self.firebase_source()
+        client = json.loads((source / 'google-services.json').read_text())
+        client['client'][0]['client_info']['android_client_info']['package_name'] = 'another.app'
+        (source / 'google-services.json').write_text(json.dumps(client))
+        with self.assertRaisesRegex(ValueError, 'does not match'):
+            build_apk.copy_project(source, self.folder / 'bad-package-build')
+
+    def test_external_firebase_path_and_symlink_are_rejected(self):
+        source = self.firebase_source()
+        config = json.loads((source / 'app.json').read_text())
+        config['expo']['android']['googleServicesFile'] = '../private.json'
+        (source / 'app.json').write_text(json.dumps(config))
+        with self.assertRaisesRegex(ValueError, 'app-local'):
+            build_apk.copy_project(source, self.folder / 'bad-external-build')
+        config['expo']['android']['googleServicesFile'] = './google-services.json'
+        (source / 'app.json').write_text(json.dumps(config))
+        (source / 'google-services.json').rename(source / 'original.json')
+        (source / 'google-services.json').symlink_to(source / 'original.json')
+        with self.assertRaisesRegex(ValueError, 'bounded regular'):
+            build_apk.copy_project(source, self.folder / 'bad-symlink-build')
 
     def test_signer_pin_rejects_accidental_replacement_before_build(self):
         public = {'schema': 1, 'applicationId': 'uz.ilbi.mobile', 'signerSha256': 'a' * 64}

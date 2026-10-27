@@ -266,3 +266,9 @@ ilbi-data-*.tar.gpg
 .ilbi-data-*.partial
 data-backup.config.json
 data-backup.passphrase
+
+# Local Firebase provisioning inputs; service-account keys never belong in Git.
+/firebase-keys/
+/google-services.json
+**/*firebase-adminsdk*.json
+**/*service-account*.json

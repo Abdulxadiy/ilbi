@@ -20,7 +20,8 @@
       },
       "predictiveBackGestureEnabled": false,
       "package": "uz.ilbi.mobile",
-      "versionCode": 3,
+      "googleServicesFile": "./google-services.json",
+      "versionCode": 4,
       "blockedPermissions": [
         "android.permission.RECORD_AUDIO"
       ]
@@ -34,6 +35,7 @@
       "expo-router",
       "expo-sqlite",
       "expo-asset",
+      "expo-notifications",
       [
         "expo-camera",
         {

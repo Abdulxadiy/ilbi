@@ -39,6 +39,24 @@ def copy_project(source, destination):
     for name in ['App.tsx', 'index.js', 'index.ts', 'app.json', 'app.config.js', 'app.config.ts', 'package.json', 'package-lock.json', 'babel.config.js', 'babel.config.cjs', 'metro.config.js', 'metro.config.cjs', 'tsconfig.json']:
         if (source / name).is_file():
             shutil.copyfile(source / name, destination / name)
+    # Only the declared Android CLIENT configuration can enter CNG. Service-account
+    # JSON, arbitrary root files and files outside the app never become APK inputs.
+    config = json.loads((source / 'app.json').read_text()) if (source / 'app.json').is_file() else {}
+    firebase = config.get('expo', {}).get('android', {}).get('googleServicesFile')
+    if firebase:
+        if firebase not in {'google-services.json', './google-services.json'}:
+            raise ValueError('Use the app-local google-services.json client configuration; external or arbitrary JSON paths are not allowed')
+        client_file = source / 'google-services.json'
+        if client_file.is_symlink() or not client_file.is_file() or not 0 < client_file.stat().st_size < 1024 * 1024:
+            raise ValueError('A bounded regular Firebase Android client configuration is required')
+        client = json.loads(client_file.read_text())
+        if client.get('type') == 'service_account' or 'private_key' in client or 'private_key_id' in client:
+            raise ValueError('A private Firebase service account must never enter the native app')
+        package = config['expo']['android'].get('package')
+        packages = [item.get('client_info', {}).get('android_client_info', {}).get('package_name') for item in client.get('client', [])]
+        if not client.get('project_info', {}).get('project_id') or package != 'uz.ilbi.mobile' or package not in packages:
+            raise ValueError('Firebase client configuration does not match the ILBI Android application')
+        shutil.copyfile(client_file, destination / 'google-services.json')
     (destination / 'node_modules').symlink_to((source / 'node_modules').resolve(), target_is_directory=True)
 
 

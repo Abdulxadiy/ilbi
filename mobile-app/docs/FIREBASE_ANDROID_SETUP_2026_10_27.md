@@ -1,0 +1,17 @@
+# Firebase Android provisioning — 2026-10-27
+
+The owner created Firebase project `ilbi-80eb1`, registered Android application `uz.ilbi.mobile`, and supplied the client and server JSON files locally. Only project/package metadata was printed during validation; credential contents, private keys and OAuth tokens were not printed.
+
+The Android **client** configuration is `mobile-app/google-services.json`, referenced by `expo.android.googleServicesFile`. It contains Firebase's public-facing client identifiers and enters CNG as an explicit validated input. The SDK-compatible `expo-notifications` dependency/plugin is installed. Android code advances from the already published 3 to **4** for the next package; mobile marketing version stays `1.0.0`, platform `1.4.0`, iOS build `1`. This prepares a candidate; it is not a claim that build 4 has been assembled or deployed.
+
+The server **service-account key** is protected outside Git at `/home/abdulxadiy/.local/share/ilbi-push/firebase-service-account.json`, parent mode `0700`, file mode `0600`. The owner's original `firebase-keys/` provisioning folder is also private and Git-ignored. No service-account file enters the app, build project, APK, screenshots or repository. Server settings use `FCM_PROJECT_ID=ilbi-80eb1` and `FCM_SERVICE_ACCOUNT_FILE` pointing to a protected mounted file; the private JSON itself is not an environment variable.
+
+Actual validation confirmed matching Firebase project IDs, package `uz.ilbi.mobile`, expected Google OAuth endpoint and service-account structure. A genuine OAuth exchange succeeded through the notification implementation without outputting its token and without sending any notification. OAuth acceptance is not a phone delivery test or proof that an installed application received a message.
+
+The native copier permits only app-local `google-services.json`, rejects symlinks/external paths, validates package/project metadata and rejects renamed private service-account JSON. Artifact freshness now includes the client configuration. **24 mobile Python build/source/publication tests passed**, including the new client allowlist, wrong-package, secret-file and external-path cases. Local signing/SDK preflight and final native build/verification follow the completed source commits separately.
+
+The targeted compatible `node-forge` patch to 1.4.1 resolves the upstream signature-verification advisory under Expo CLI's declared version range. The latest observed audit still has **three high entries** in the unresolved Zod toolchain chain; no forced Zod-major override, Expo downgrade or suppressed CI gate was used.
+
+Primary setup references: [Firebase Android](https://firebase.google.com/docs/android/setup), [Firebase Admin](https://firebase.google.com/docs/admin/setup), [Expo FCM credentials](https://docs.expo.dev/push-notifications/fcm-credentials/), [Expo SDK 58 notifications](https://docs.expo.dev/versions/v58.0.0/sdk/notifications/), [node-forge 1.4.1 changelog](https://raw.githubusercontent.com/digitalbazaar/forge/v1.4.1/CHANGELOG.md).
+
+Production activation still requires the additive backend migration/API, protected server credentials, worker/beat deployment and tested native permission/registration/delivery. Keep mobile push disabled during infrastructure staging. Do not turn a credential check or mocked transport into a successful physical-device/APNs claim.
