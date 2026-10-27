@@ -5,6 +5,7 @@ import { clearTokens, getAccessToken, getAuthGeneration, getRefreshToken, initia
 import { getServerScope } from '../../api/environment';
 import { ApiError } from '../../api/errors';
 import { chooseTenant, validateProfile } from './profile';
+import { revokePushInstallation } from '../notifications/pushRegistration';
 
 export interface UserTenant { id: number; name: string; is_owner: boolean; permissions: string[]; }
 export interface UserProfile {
@@ -172,7 +173,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     await setActiveTenantId(String(id));
     if (current === sequence.current) setActiveTenant(selected);
   };
-  const logout = async () => { resetSession(); await clearTokens(); };
+  const logout = async () => {
+    try { await revokePushInstallation(); }
+    finally { resetSession(); await clearTokens(); }
+  };
   const acceptTerms = async () => { await request('/auth/accept-terms/', { method: 'POST', body: {} }); await refreshProfile(); };
   return <AuthContext.Provider value={{ user, activeTenant, isAuthenticated: Boolean(user), isLoading, sessionError, loginStep, loginTicket, phoneHint, otpResendAt, login, sendOtp, checkTelegram, resetLogin, verifyOtp, selectTenant, logout, refreshProfile, acceptTerms }}>{children}</AuthContext.Provider>;
 };

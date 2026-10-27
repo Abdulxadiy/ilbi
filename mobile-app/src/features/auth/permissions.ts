@@ -12,9 +12,12 @@ export const modulePermissions: Record<string, string | string[]> = {
   Product: 'catalog.view_product', NewProduct: 'catalog.add_product', Categories: 'catalog.view_category', Tovar: 'catalog.view_product', Savdo: 'sales.add_sale', Checkout: 'sales.add_sale',
   Qarz: ['sales.manage_counterparty', 'sales.record_debt_payment'], Customers: ['sales.manage_counterparty', 'sales.record_debt_payment'],
   Documents: 'sales.view_sale', ReceiptView: 'sales.view_sale', ShareSheet: 'sales.view_sale', PdfExport: 'sales.view_sale',
-  Inventory: 'inventory.view_stock', Reports: 'analytics.view_dashboard',
+  SalesHistory: 'sales.view_sale',
+  Inventory: 'inventory.view_stock', Reports: ['analytics.view_dashboard', 'cashbox.view_cashbox'],
 };
 export function canOpenModule(user: UserProfile | null, tenant: UserTenant | null, module: string) {
+  if (['Profile', 'Notifications'].includes(module)) return Boolean(user?.terms_accepted && (user.role === 'platform_admin' || tenant && user.tenants.some(row => row.id === tenant.id)));
+  if (module === 'History') return Boolean(user?.terms_accepted && user.role === 'owner' && tenant && user.tenants.some(row => row.id === tenant.id && row.is_owner));
   if (module === 'Admin') return user?.role === 'platform_admin';
   if (user?.role === 'platform_admin') return ['Settings', 'Stores', 'Support', 'Downloads'].includes(module);
   const required = modulePermissions[module];

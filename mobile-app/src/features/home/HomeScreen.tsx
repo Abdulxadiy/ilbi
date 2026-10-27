@@ -103,9 +103,9 @@ export const HomeScreen: React.FC = () => {
             <TouchableOpacity
               activeOpacity={0.8}
               accessibilityRole="button"
-              disabled={!canOpen('Documents')}
-              accessibilityState={{ disabled: !canOpen('Documents') }}
-              onPress={() => navigation.navigate('Documents')}
+              disabled={!canOpen('SalesHistory')}
+              accessibilityState={{ disabled: !canOpen('SalesHistory') }}
+              onPress={() => navigation.navigate('SalesHistory')}
               style={[
                 styles.kpiCard,
                 {
@@ -232,7 +232,7 @@ export const HomeScreen: React.FC = () => {
         {/* Recent Sales Section */}
         {canSales && <><View style={styles.recentSectionHeader}>
           <Text style={[styles.sectionTitle, { color: colors.text }]}>So&#39;nggi savdolar</Text>
-          <TouchableOpacity accessibilityRole="button" onPress={() => navigation.navigate('Documents')}>
+          <TouchableOpacity accessibilityRole="button" onPress={() => navigation.navigate('SalesHistory')}>
             <Text style={[styles.viewAllText, { color: colors.textSecondary }]}>Barchasi ›</Text>
           </TouchableOpacity>
         </View>

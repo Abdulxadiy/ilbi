@@ -1,6 +1,6 @@
 import { createPreviewCore } from './previewCore';
 import { createPreviewSupport } from './previewSupport';
-import { createPreviewNotifications } from './previewNotifications';
+import { createPreviewNotifications, previewNotificationSettings } from './previewNotifications';
 /** Explicit, development-only design data. Never a fallback for a failed API call. */
 import { createPreviewCatalog, type PreviewVariant } from './previewCatalog';
 import { isDesignPreview } from '../api/environment';
@@ -35,12 +35,13 @@ const customers = [
 const sales = new Map<number, any>();
 const intents = new Map<string, any>();
 function makeSale(payload: any, id: number) {
-  const items = (payload.items || products.map(p => ({ product_variant_id: p.id, quantity: p.quantity, unit_price: p.id === 1 ? 11500 : p.price_recommended }))).map((line: any) => {
+  const items = (payload.items || products.map(p => ({ product_variant_id: p.id, quantity: p.quantity, unit_price: p.id === 1 ? 11500 : p.price_recommended }))).map((line: any, index: number) => {
     const product = products.find(p => p.id === Number(line.product_variant_id));
-    return { ...line, product_name: product?.product_name || 'Demo tovar', unit: 'dona', total_price: Number(line.quantity) * Number(line.unit_price) };
+    return { ...line, id: id * 1000 + index + 1, product_variant: Number(line.product_variant_id), product_name: product?.product_name || 'Demo tovar', product_variant_name: product?.name || 'Standart', voided_quantity: '0.000', status: 'active', unit: product?.unit || 'dona', total_price: Number(line.quantity) * Number(line.unit_price) };
   });
-  return { id, receipt_number: 'DEMO-' + id, currency: 'UZS', status: 'completed', items, total_amount: items.reduce((sum: number, line: any) => sum + line.total_price, 0),
-    counterparty_name: 'Ali Valiyev', payment_type: payload.payment_type || 'cash', created_at: new Date().toISOString(), _preview: true };
+  const total = items.reduce((sum: number, line: any) => sum + line.total_price, 0);
+  return { id, receipt_number: 'DEMO-' + id, currency: 'UZS', status: 'completed', b2b_target_tenant: null, items, total_amount: total, refunded_amount: '0.00', net_amount: total,
+    counterparty: payload.counterparty_id || 1, counterparty_name: 'Ali Valiyev', payment_type: payload.payment_type || 'cash', created_at: new Date().toISOString(), _preview: true };
 }
 sales.set(1043, makeSale({}, 1043));
 const coreRequest = createPreviewCore({ user: previewUser, customers, sales, products });
@@ -52,14 +53,14 @@ export async function previewRequest(endpoint: string, options: { method?: strin
   const body = typeof options.body === 'string' ? JSON.parse(options.body) : options.body || {};
   const coreResult = coreRequest(url, method, body);
   if (coreResult.handled) return coreResult.data;
-  const notificationResult = notificationRequest(url, method);
+  const notificationResult = notificationRequest(url, method, body);
   if (notificationResult.handled) return notificationResult.data;
   const supportResult = supportRequest(url, method, body, options.headers);
   if (supportResult.handled) return supportResult.data;
   const catalogResult = catalogRequest(url, method, body);
   if (catalogResult.handled) return catalogResult.data;
   if (method === 'GET') {
-    if (path === '/tenants/current/') return { id: previewUser.tenants[0].id, name: 'Demo do‘kon', usd_rate: '12000.00', receipt_settings: { is_vat_payer: false, vat_rate: '12.00', price_includes_vat: true } };
+    if (path === '/tenants/current/') return { id: previewUser.tenants[0].id, name: 'Demo do‘kon', usd_rate: '12000.00', ...previewNotificationSettings, receipt_settings: { is_vat_payer: false, vat_rate: '12.00', price_includes_vat: true } };
     if (path === '/auth/me/') return previewUser;
     if (path === '/tenants/my/') return previewUser.tenants;
     if (path === '/analytics/dashboard/') return { today_sales_sum: 2450000, sales_count: 24, debt_sum: 860000 };

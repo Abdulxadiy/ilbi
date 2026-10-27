@@ -3,7 +3,7 @@ import { usePermissions } from '../features/auth/usePermissions';
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { DrawerContentComponentProps } from 'expo-router/drawer';
-import { Archive, BarChart3, Clock, Download, FileText, Home, LifeBuoy, LogOut, Moon, Package, Search, Settings, ShoppingCart, Store, Sun, User as UserIcon, Users, X } from 'lucide-react-native';
+import { Archive, BarChart3, Bell, Clock, Download, FileText, Home, LifeBuoy, LogOut, Moon, Package, Search, Settings, ShoppingCart, Store, Sun, User as UserIcon, Users, X } from 'lucide-react-native';
 import { useAppNavigation } from './useAppNavigation';
 import { IlbiLogo } from '../components/brand/IlbiLogo';
 import { useAuth } from '../features/auth/AuthContext';
@@ -30,6 +30,10 @@ export const DrawerContent: React.FC<DrawerContentComponentProps> = ({ navigatio
     { id: 'qarzlar', label: 'Qarzlar', icon: Clock, route: 'Qarz' },
     { id: 'hujjatlar', label: 'Hujjatlar', icon: FileText, drawerRoute: 'Documents' },
     { id: 'hisobotlar', label: 'Hisobotlar', icon: BarChart3, drawerRoute: 'Reports' },
+    { id: 'tarix', label: 'Tarix', icon: Clock, route: 'History' },
+    { id: 'savdolar-tarixi', label: 'Savdolar tarixi', icon: Clock, route: 'SalesHistory' },
+    { id: 'bildirishnomalar', label: 'Bildirishnomalar', icon: Bell, route: 'Notifications' },
+    { id: 'profil', label: 'Profil', icon: UserIcon, route: 'Profile' },
     { id: 'sync', label: 'Amallar va sinxronlash', icon: Archive, route: 'Sync' },
     { id: 'sozlamalar', label: 'Sozlamalar', icon: Settings, drawerRoute: 'Settings' },
   ];
@@ -67,7 +71,7 @@ export const DrawerContent: React.FC<DrawerContentComponentProps> = ({ navigatio
 
       <ScrollView contentContainerStyle={styles.scrollBody} keyboardShouldPersistTaps="handled">
         {/* User Card */}
-        <View style={styles.userSection}>
+        <TouchableOpacity accessibilityRole="button" accessibilityLabel="Profilni ochish" onPress={() => { navigation.closeDrawer(); appNavigation.navigate('Profile'); }} style={styles.userSection}>
           <View style={[styles.avatarCircle, { backgroundColor: colors.surfaceSecondary }]}>
             <UserIcon size={20} color={colors.text} />
           </View>
@@ -77,7 +81,7 @@ export const DrawerContent: React.FC<DrawerContentComponentProps> = ({ navigatio
             </Text>
             <Text style={[styles.userRole, { color: colors.textSecondary }]}>{roleName}</Text>
           </View>
-        </View>
+        </TouchableOpacity>
 
         {/* Store Selector Button */}
         <TouchableOpacity accessibilityRole="button"

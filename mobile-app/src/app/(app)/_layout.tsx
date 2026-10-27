@@ -8,5 +8,6 @@ export default function AppDrawer() {
   return <Drawer drawerContent={props => <DrawerContent {...props} />} screenOptions={{ headerShown: false, drawerStyle: { width: '84%', backgroundColor: colors.surface } }}>
     <Drawer.Protected guard={!admin && Boolean(activeTenant)}><Drawer.Screen name="(tabs)" /></Drawer.Protected>
     <Drawer.Protected guard={admin}><Drawer.Screen name="admin" /></Drawer.Protected>
+    <Drawer.Protected guard={admin}><Drawer.Screen name="profile" /><Drawer.Screen name="notifications" /></Drawer.Protected>
   </Drawer>;
 }

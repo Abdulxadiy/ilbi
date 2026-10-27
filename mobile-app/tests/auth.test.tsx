@@ -6,6 +6,7 @@ import { request, setTokens } from '../src/api/client';
 import { ApiError } from '../src/api/errors';
 let mockGeneration = 0, mockAccess: string | null = null, mockTenant: string | null = null;
 let mockCleared: (() => void) | undefined;
+jest.mock('../src/features/notifications/pushRegistration', () => ({ revokePushInstallation: jest.fn(async () => {}) }));
 jest.mock('../src/api/client', () => ({
   request: jest.fn(), getAuthGeneration: () => mockGeneration,
   getAccessToken: () => mockAccess, getRefreshToken: () => null, parseJwt: () => null,

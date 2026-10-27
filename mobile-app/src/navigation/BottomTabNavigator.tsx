@@ -28,5 +28,9 @@ export function BottomTabNavigator() {
     <Tabs.Screen name="downloads" options={{ tabBarButton: () => null, tabBarItemStyle: { display: 'none' } }} />
     <Tabs.Screen name="sync" options={{ tabBarButton: () => null, tabBarItemStyle: { display: 'none' } }} />
     <Tabs.Screen name="settings" options={{ tabBarButton: () => null, tabBarItemStyle: { display: 'none' } }} />
+    <Tabs.Protected guard={canOpen('Notifications')}><Tabs.Screen name="notifications" options={{ tabBarButton: () => null, tabBarItemStyle: { display: 'none' } }} /></Tabs.Protected>
+    <Tabs.Protected guard={canOpen('Profile')}><Tabs.Screen name="profile" options={{ tabBarButton: () => null, tabBarItemStyle: { display: 'none' } }} /></Tabs.Protected>
+    <Tabs.Protected guard={canOpen('History')}><Tabs.Screen name="history" options={{ tabBarButton: () => null, tabBarItemStyle: { display: 'none' } }} /></Tabs.Protected>
+    <Tabs.Protected guard={canOpen('SalesHistory')}><Tabs.Screen name="sales-history" options={{ tabBarButton: () => null, tabBarItemStyle: { display: 'none' } }} /></Tabs.Protected>
   </Tabs>;
 }

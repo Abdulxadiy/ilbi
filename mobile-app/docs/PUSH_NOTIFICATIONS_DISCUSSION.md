@@ -1,6 +1,6 @@
 # ILBI phone notifications — discussion, 2026-10-25
 
-**Status: proposed, not implemented or approved to start.** The owner wants a notification system for the whole ILBI platform. Z reports, chat and B2B were examples, not the scope boundary. Android first; IPA/APNs later. This document does not claim the existing APK supports phone push.
+**Status update, 2026-10-27: implementation authorized and started.** See [the live readiness record](NOTIFICATION_READINESS_2026_10_27.md) for completed slices and actual acceptance gates. The catalogue below remains the planning inventory. The owner wants a notification system for the whole ILBI platform. Z reports, chat and B2B were examples, not the scope boundary. Android first; IPA/APNs later. This document does not claim the existing APK supports phone push.
 
 ## Permission and delivery
 

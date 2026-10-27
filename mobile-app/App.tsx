@@ -11,6 +11,8 @@ import { RootNavigator } from './src/navigation/RootNavigator';
 import { isDesignPreview } from './src/dev/preview';
 import { UpdatesProvider } from './src/features/updates/UpdatesProvider';
 import { UpdateNotice } from './src/features/updates/UpdateNotice';
+import { NotificationsProvider } from './src/features/notifications/NotificationsContext';
+import { PushProvider } from './src/features/notifications/PushProvider';
 
 const ThemedApp: React.FC = () => {
   const { isDark, colors } = useTheme();
@@ -34,11 +36,15 @@ export default function App() {
       <SafeAreaProvider>
         <ThemeProvider>
           <AuthProvider>
+            <NotificationsProvider>
+            <PushProvider>
             <CartProvider>
               <UpdatesProvider>
               <ThemedApp />
               </UpdatesProvider>
             </CartProvider>
+            </PushProvider>
+            </NotificationsProvider>
           </AuthProvider>
         </ThemeProvider>
       </SafeAreaProvider>

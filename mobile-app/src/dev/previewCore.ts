@@ -1,6 +1,7 @@
 /** Explicit synthetic backend-shaped responses; never a fallback for live failures. */
 export function createPreviewCore({ user, customers, sales, products }: { user: any; customers: any[]; sales: Map<number, any>; products: any[] }) {
   const payments = new Map<string, any>();
+  const voidRequests = new Map<string, { fingerprint: string; result: any }>();
   const cashReport = { id: 71, date: '2026-10-27', tenant_name: 'Demo do‘kon', closed_by_name: 'Demo', is_closed: true, actual_cash_uzs: '1800000.00', expected_cash_uzs: '1800000.00', discrepancy_uzs: '0.00', total_sale_cash_uzs: '1800000.00', total_sale_card_uzs: '490000.00', total_sale_debt_uzs: '160000.00', closed_at: '2026-10-27T12:00:00+05:00' };
   for (const field of ['opening_cash', 'total_sale_cash', 'total_sale_card', 'total_sale_debt', 'collected_debt_cash', 'refund_cash', 'total_extra_income', 'total_expenses', 'expected_cash', 'actual_cash', 'discrepancy']) for (const currency of ['uzs', 'usd']) { const key = field + '_' + currency; if (!(key in cashReport)) Object.assign(cashReport, { [key]: '0.00' }); }
   const normalizeCustomer = (value: any) => ({ ...value, debt_balance_uzs: String(value.debt_balance_uzs ?? value.debt_amount ?? 0), debt_balance_usd: String(value.debt_balance_usd ?? 0), is_active: true, debt_due_date: value.debt_due_date || null, note: value.note || '' });
@@ -14,6 +15,29 @@ export function createPreviewCore({ user, customers, sales, products }: { user: 
     if (path === '/auth/profile/' && method === 'GET') data = { ...user, email: user.email || '', contact_phone: user.contact_phone || '', date_of_birth: user.date_of_birth || null };
     else if (path === '/auth/profile/' && method === 'PATCH') { Object.assign(user, body); data = { ...user }; }
     else if (path === '/auth/change-password/' && method === 'POST') data = { message: 'Demo parol yangilandi; haqiqiy hisob o‘zgarmadi.' };
+    else if (path === '/sales/capabilities/' && method === 'GET') data = { sale_void_idempotency: 1, partial_void_quantity_scale: 3 };
+    else if (/^\/sales\/(?:items\/)?\d+\/void\/$/.test(path) && method === 'POST') {
+      if (!body.idempotency_key) throw Error('Demo qaytarish kaliti kerak.');
+      const fingerprint = JSON.stringify({ path, reason: body.reason, quantity: body.quantity });
+      const previous = voidRequests.get(body.idempotency_key);
+      if (previous) { if (previous.fingerprint !== fingerprint) throw Error('Demo kalit boshqa amal uchun ishlatilgan.'); data = previous.result; }
+      else {
+        const partial = path.includes('/items/'), target = Number(path.split('/')[partial ? 3 : 2]);
+        const sale = partial ? [...sales.values()].find(row => row.items.some((item: any) => item.id === target)) : sales.get(target);
+        if (!sale || sale.status === 'voided') throw Error('Demo savdo qaytarish uchun ochiq emas.');
+        const line = partial ? sale.items.find((item: any) => item.id === target) : null;
+        const quantity = partial ? Number(body.quantity) : null;
+        if (partial && (!quantity || quantity <= 0 || quantity > Number(line.quantity) - Number(line.voided_quantity))) throw Error('Demo qaytarish miqdorini tekshiring.');
+        const refund = partial ? Number(quantity) * Number(line.unit_price) : Number(sale.net_amount);
+        if (partial) { line.voided_quantity = String(Number(line.voided_quantity) + Number(quantity)); line.status = Number(line.voided_quantity) === Number(line.quantity) ? 'voided' : 'partially_voided'; }
+        else for (const item of sale.items) { item.voided_quantity = String(item.quantity); item.status = 'voided'; }
+        sale.refunded_amount = Number(sale.refunded_amount) + refund; sale.net_amount = Number(sale.total_amount) - Number(sale.refunded_amount);
+        sale.status = sale.items.every((item: any) => Number(item.voided_quantity) === Number(item.quantity)) ? 'voided' : 'partially_voided';
+        const receipt = { actor_id: user.id, tenant_id: user.tenants[0].id, idempotency_key: body.idempotency_key, kind: partial ? 'item' : 'sale', sale_id: sale.id, sale_item_id: line?.id || null, reason: String(body.reason || '').trim(), quantity: partial ? String(quantity) : null, result: { currency: sale.currency, sale_status: sale.status, refunded_amount: String(refund), sale_net_amount: String(sale.net_amount) } };
+        data = { ...(line || sale), void_operation: receipt, _preview: true };
+        voidRequests.set(body.idempotency_key, { fingerprint, result: JSON.parse(JSON.stringify(data)) });
+      }
+    }
     else if (path === '/analytics/dashboard/' && method === 'GET') {
       const kpi = { total_sales_uzs: '2450000.00', total_sales_usd: '0.00', sales_count: 24, average_check_uzs: '102083.33', cash_revenue_uzs: '1800000.00', card_revenue_uzs: '490000.00', debt_sales_uzs: '160000.00', total_debt_uzs: '860000.00' };
       data = { period: url.searchParams.get('period') || 'today', kpi, sales_chart: [{ date: '2026-10-27', total_sales_uzs: kpi.total_sales_uzs, total_sales_usd: '0', sales_count: 24 }] };
@@ -40,8 +64,8 @@ export function createPreviewCore({ user, customers, sales, products }: { user: 
         data = { id: 9000 + payments.size, counterparty: id, ...body, _preview: true }; payments.set(body.idempotency_key, data);
       }
     } else if (path === '/sales/' && method === 'GET') {
-      const search = (url.searchParams.get('search') || '').toLowerCase(), payment = url.searchParams.get('payment_type');
-      data = page([...sales.values()].filter(row => (!payment || row.payment_type === payment) && (!search || [row.receipt_number, row.counterparty_name].join(' ').toLowerCase().includes(search))), url);
+      const search = (url.searchParams.get('search') || '').toLowerCase(), payment = url.searchParams.get('payment_type'), status = url.searchParams.get('status'), currency = url.searchParams.get('currency'), from = url.searchParams.get('date_from'), to = url.searchParams.get('date_to'), customer = url.searchParams.get('counterparty_id');
+      data = page([...sales.values()].filter(row => (!payment || row.payment_type === payment) && (!status || row.status === status) && (!currency || row.currency === currency) && (!customer || String(row.counterparty) === customer) && (!from || row.created_at.slice(0, 10) >= from) && (!to || row.created_at.slice(0, 10) <= to) && (!search || [row.receipt_number, row.counterparty_name].join(' ').toLowerCase().includes(search))), url);
     } else if (path === '/cashbox/reports/' && method === 'GET') data = page([{ ...cashReport }], url);
     else if (path === '/cashbox/reports/71/' && method === 'GET') data = { ...cashReport };
     else if (path === '/inventory/stock/' && method === 'GET') {

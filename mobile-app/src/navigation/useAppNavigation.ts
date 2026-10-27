@@ -8,6 +8,8 @@ const paths: Record<string, string> = {
   Qarz: '/(app)/(tabs)/debts', Documents: '/(app)/(tabs)/documents', Inventory: '/(app)/(tabs)/inventory',
   Customers: '/(app)/(tabs)/customers', Reports: '/(app)/(tabs)/reports', Settings: '/(app)/(tabs)/settings',
   Checkout: '/checkout', Support: '/support', Downloads: '/downloads',
+  Notifications: '/(app)/(tabs)/notifications', Profile: '/(app)/(tabs)/profile', History: '/(app)/(tabs)/history',
+  SalesHistory: '/(app)/(tabs)/sales-history',
   Sync: '/(app)/(tabs)/sync', Categories: '/(app)/(tabs)/categories',
   Product: '/(app)/(tabs)/product', NewProduct: '/(app)/(tabs)/product', Stores: '/stores', Admin: '/(app)/admin',
 };
@@ -42,7 +44,8 @@ export function useAppNavigation() {
       }
       if (name === 'Menyu') { openDrawer(); return; }
       const tabbedUtility = ['Support', 'Downloads'].includes(name) && user?.role !== 'platform_admin' && user?.terms_accepted && activeTenant;
-      const path = tabbedUtility ? '/(app)/(tabs)/' + name.toLowerCase() : paths[name];
+      const adminUtility = user?.role === 'platform_admin' && ['Notifications', 'Profile'].includes(name);
+      const path = adminUtility ? '/(app)/' + name.toLowerCase() : tabbedUtility ? '/(app)/(tabs)/' + name.toLowerCase() : paths[name];
       if (!path) throw Error('Unknown app route: ' + name);
       router.navigate({ pathname: path, params: name === 'NewProduct' ? { id: 'new' } : params || {} } as any);
     },
