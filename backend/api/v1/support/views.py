@@ -584,7 +584,7 @@ class CustomerProfileView(SupportView):
     @transaction.atomic
     def patch(self, request, pk):
         conversation = self._get_conversation(pk)
-        serializer = CustomerProfileUpdateSerializer(data=request.data)
+        serializer = CustomerProfileUpdateSerializer(data=request.data, context={'profile_user': conversation.user})
         serializer.is_valid(raise_exception=True)
         validated = serializer.validated_data
         changed_fields = []

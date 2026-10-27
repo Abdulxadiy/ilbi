@@ -188,8 +188,22 @@ class CustomerProfileUpdateSerializer(serializers.Serializer):
         from collections.abc import Mapping
         if isinstance(data, Mapping):
             unexpected = set(data) - set(self.fields)
+            # The deployed legacy editor echoes read-only identity fields on
+            # every contact save. Only the view supplies this trusted user;
+            # request payloads must never supply or override this context.
+            user = self.context.get('profile_user')
+            ignored_echoes = set()
+            if user is not None and set(data).intersection(self.fields):
+                displayed_identity = {'email': user.email or '', 'role': user.role}
+                ignored_echoes = {
+                    key for key in unexpected.intersection(displayed_identity)
+                    if isinstance(data[key], str) and data[key] == displayed_identity[key]
+                }
+                unexpected -= ignored_echoes
             if unexpected:
                 raise serializers.ValidationError({key: 'Bu ma’lumotni yordam oynasidan o‘zgartirish mumkin emas. Himoyalangan hisob boshqaruvidan foydalaning.' for key in sorted(unexpected)})
+            if ignored_echoes:
+                data = {key: value for key, value in data.items() if key not in ignored_echoes}
         return super().to_internal_value(data)
 
 

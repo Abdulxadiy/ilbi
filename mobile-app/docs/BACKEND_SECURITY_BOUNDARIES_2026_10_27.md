@@ -22,3 +22,13 @@ An independent review first ran an expanded actual PostgreSQL suite (142 passed)
 Backend CI fatal-error Ruff rules passed. Django migration drift check returned `No changes detected`; this slice requires no schema migration. Evidence is in [backend-security-2026-10-27](evidence/backend-security-2026-10-27/).
 
 All secret strings in the regression fixtures are synthetic. No production credentials/configuration values, historical production audit contents, live account changes or native/emulator state were inspected or changed by this slice. The historical read-boundary regression deliberately inserts a synthetic pre-fix record; it is not evidence that a real historical record contained those secrets.
+
+## Deployed legacy editor compatibility follow-up
+
+Source inspection of the deployed base commit `2d799dd5596a92fb6a0e3be6cf51a2a018c88e2d` showed that its support contact editor always sends `email` and `role` alongside contact values. Rejecting even unchanged echoes blocked legitimate contact edits when only the backend was updated.
+
+The backend now ignores only those two read-only echoes when they exactly equal the trusted conversation user's current public-profile identity and the payload contains at least one allowed contact field. An unset email is compared with the API's existing empty-string representation, matching the deployed editor. This is exact comparison without case folding, trimming or accepting changed identity. The view supplies the user context; missing context and guest profiles do not receive the allowance. Echoes are stripped before serializer validation and never appear in writable validated data.
+
+Changed email/role, any status/password/unknown field, and identity-only payloads still receive field-specific HTTP400 before contact changes. Contact-only `update_fields` continues to preserve concurrent protected identity, block and session-version changes. The secured account workflows remain the only path to identity/status changes. No frontend or desktop deployment is required for this compatibility fix.
+
+**158 actual PostgreSQL tests passed in 5.08s**, including 13 new compatibility regressions and the previous security/support/audit/history/protected-account/document suites. Fatal Ruff passed and migration drift returned `No changes detected`. The new cases cover nonempty/null/blank email echoes, mixed attacks, missing context/contact, guests and concurrent identity/security changes. Evidence: `evidence/backend-security-2026-10-27/legacy-support-compatibility.txt`. This subsection records local tested source; publication/deployment evidence belongs to the separate root rollout record.

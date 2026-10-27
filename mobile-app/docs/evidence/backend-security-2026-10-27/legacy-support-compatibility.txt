@@ -1,0 +1,15 @@
+Legacy support editor compatibility — 2026-10-27
+
+Source boundary: deployed frontend commit 2d799dd always includes email/role in CustomerProfileModal.handleSave, even when only contact values changed. Only the backend serializer and its trusted conversation-user context were changed, plus regression tests. No protected identity/status assignment was restored.
+
+Executed test command from backend/:
+PYTHONPATH=/mnt/storage/.cache/ilbi-push-tests:. DJANGO_SETTINGS_MODULE=security_completion_settings /mnt/storage/.cache/ilbi-push-tests/venv/bin/python -m pytest -q --disable-warnings apps/core/tests/test_security_presentation.py apps/support/tests/test_support.py apps/core/tests/test_audit.py apps/core/tests/test_audit_api.py apps/core/tests/test_audit_regressions.py apps/core/tests/test_history_api.py apps/accounts/tests/test_platform_admin_workspace.py apps/accounts/tests/test_terms_and_docs_views.py
+
+Exit 0; 158 passed, 8 warnings in 5.08s. Warnings are existing Django mail-settings deprecations.
+13 new regressions cover exact unchanged identity echoes with nonempty/null/blank email; changed email/role and mixed status/password/unknown-key attacks rejected before contact writes; mandatory trusted context and contact presence; guest rejection; audit contact-only columns; concurrent role/email/block/token-version preservation.
+
+Fatal Ruff on serializer/view/security test: All checks passed! Exit 0.
+Django makemigrations --check --dry-run with the same isolated settings: No changes detected. Exit 0.
+Git whitespace check: passed.
+
+Actual PostgreSQL uses the existing isolated host 55443/database test_ilbi_security_completion. Redis 56445 was started exclusively for these existing protected workflow tests and stopped afterwards. No production data writes, live account changes, frontend/desktop publication, emulator operations or git mutations were performed by this slice. All fixture identities and secrets are synthetic.
