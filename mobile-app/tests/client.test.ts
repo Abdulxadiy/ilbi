@@ -1,9 +1,19 @@
-import { clearTokens, getAccessToken, getAuthGeneration, request, setTokens, setApiBaseUrl, getApiBaseUrl, onSessionCleared, setActiveTenantId, refreshAccessToken } from '../src/api/client';
+import { assertAuthScope, captureAuthScope, clearTokens, getAccessToken, getAuthGeneration, request, setTokens, setApiBaseUrl, getApiBaseUrl, onSessionCleared, setActiveTenantId, refreshAccessToken } from '../src/api/client';
 jest.mock('../src/api/storage', () => ({ secureStorage: { setItem: jest.fn(async () => {}), removeItem: jest.fn(async () => {}), getItem: jest.fn(async () => null) } }));
 const reply = (data: unknown, status = 200) => ({ status, ok: status < 400, headers: { get: () => 'application/json' }, json: async () => data }) as unknown as Response;
 const refresh = 'header.' + btoa(JSON.stringify({ exp: 9999999999 })) + '.signature';
 describe('Session refresh and stale responses', () => {
   afterEach(async () => { jest.restoreAllMocks(); await clearTokens(); });
+  test('a queued financial callback cannot adopt a new account with the same store id', async () => {
+    const token = (user: number) => 'header.' + btoa(JSON.stringify({ user_id: user, exp: 9999999999 })) + '.signature';
+    await setTokens(token(1), refresh); await setActiveTenantId('7');
+    const original = captureAuthScope(1, 7); expect(() => assertAuthScope(original)).not.toThrow();
+    await setTokens(token(2), refresh); await setActiveTenantId('7');
+    expect(() => assertAuthScope(original)).toThrow('Sessiya yoki do‘kon');
+    expect(() => assertAuthScope(captureAuthScope(1, 7))).toThrow('Sessiya yoki do‘kon');
+    expect(() => assertAuthScope(captureAuthScope(2, 8))).toThrow('Sessiya yoki do‘kon');
+    expect(() => assertAuthScope(captureAuthScope(2, 7))).not.toThrow();
+  });
   test('public support metadata and guest requests exclude an existing account and tenant', async () => {
     await setTokens('existing-private-access', refresh); await setActiveTenantId('7');
     const fetchSpy = jest.spyOn(globalThis, 'fetch').mockResolvedValue(reply({ results: [] }));

@@ -151,7 +151,7 @@ async function send(command: InventoryCommand, operation: string, key: string, u
 }
 
 export async function executeInventory(command: InventoryCommand, draftId: string, user: UserProfile, tenant: UserTenant): Promise<InventoryResult> {
-  const scope = captureAuthScope();
+  const scope = captureAuthScope(user.id, tenant.id);
   const normalized = inventoryCommand(command.kind, command.body, command.targetId);
   const operation = `inventory:${normalized.kind}:${normalized.targetId || 'new'}:${draftId}`;
   await inventoryCapability(normalized, user, tenant); assertAuthScope(scope);
@@ -172,7 +172,7 @@ export async function executeInventory(command: InventoryCommand, draftId: strin
 }
 
 export async function reconcileInventoryIntent(intent: FinancialIntent, user: UserProfile, tenant: UserTenant): Promise<InventoryResult> {
-  const scope = captureAuthScope();
+  const scope = captureAuthScope(user.id, tenant.id);
   if (intent.userId !== user.id || intent.tenantId !== tenant.id || intent.server !== scope.server) throw Error('Ombor amali boshqa hisob, server yoki do‘konga tegishli.');
   const raw = intent.payload as InventoryCommand;
   if (raw.version !== 1) throw Error('Ombor jurnali talqini tasdiqlanmadi.');

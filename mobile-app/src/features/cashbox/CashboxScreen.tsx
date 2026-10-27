@@ -95,8 +95,9 @@ function CashboxForm({ draft, onDismiss, onComplete }: { draft: { id: string; ki
   const submit = async () => {
     if (submitting.current || done.current || !user || !activeTenant) return;
     submitting.current = true; setBusy(true); setError(''); fields.clear();
-    const scope = captureAuthScope();
+    const scope = captureAuthScope(user.id, activeTenant.id);
     try {
+      assertAuthScope(scope);
       if (accepted) {
         await confirmFinancialIdentity(operation, user.id, activeTenant.id, accepted.key, accepted.result);
         assertAuthScope(scope); done.current = true; onComplete(); return;

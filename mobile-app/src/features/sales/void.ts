@@ -22,7 +22,7 @@ export async function acknowledgeVoid(record: AcceptedVoid) {
 }
 export async function submitVoid(draft: VoidDraft, user: UserProfile, tenant: UserTenant, onAccepted?: (record: AcceptedVoid) => void, onRecorded?: (pending: boolean) => void) {
   if (!hasPermission(user, tenant, 'sales.view_sale') || !hasPermission(user, tenant, 'sales.void_sale')) throw Error('Savdoni qaytarish uchun vakolat berilmagan.');
-  const command = voidCommand(draft), scope = captureAuthScope();
+  const command = voidCommand(draft), scope = captureAuthScope(user.id, tenant.id);
   await requireVoidCapability(); assertAuthScope(scope);
   const previous = await getFinancialIntent(command.operation, user.id, tenant.id); assertAuthScope(scope);
   // A pending original intent may already have changed stock; replay its exact key without treating its effects as a new request.
@@ -64,7 +64,7 @@ export async function reconcileVoidIntent(intent: FinancialIntent, user: UserPro
   if (!hasPermission(user, tenant, 'sales.view_sale') || !hasPermission(user, tenant, 'sales.void_sale')) throw Error('Bekor qilishni tekshirish uchun vakolat berilmagan.');
   const command = commandFromIntent(intent.operation, intent.payload);
   if (!command) throw Error('Bekor qilishning asl ma’lumotlari tasdiqlanmadi. Jurnal saqlandi.');
-  const scope = captureAuthScope();
+  const scope = captureAuthScope(user.id, tenant.id);
   const current = await getFinancialIntent(intent.operation, user.id, tenant.id); assertAuthScope(scope);
   if (!current || current.key !== intent.key || current.fingerprint !== intent.fingerprint) throw Error('Jurnaldagi amal o‘zgardi. Ro‘yxatni yangilang.');
   if (current.status === 'rejected') throw Error('Asl amal rad etilgan. Qayta yuborilmadi.');

@@ -24,9 +24,16 @@ export const onSessionCleared = (listener: () => void) => { listeners.add(listen
 export const getAccessToken = () => accessToken;
 export const getRefreshToken = () => refreshToken;
 export const getActiveTenantId = () => activeTenantId;
-export const captureAuthScope = () => ({ generation: authGeneration, server: getServerScope(), tenantId: activeTenantId });
+type AuthScope = { generation: number; server: string; tenantId: string | null; expectedUserId?: number; expectedTenantId?: number };
+// Identity comparison blocks stale UI callbacks; server authentication/permissions remain authoritative.
+export const captureAuthScope = (userId?: number, tenantId?: number): AuthScope => ({
+  generation: authGeneration, server: getServerScope(), tenantId: activeTenantId,
+  ...(userId !== undefined ? { expectedUserId: userId } : {}), ...(tenantId !== undefined ? { expectedTenantId: tenantId } : {}),
+});
 export function assertAuthScope(scope: ReturnType<typeof captureAuthScope>) {
-  if (scope.generation !== authGeneration || scope.server !== getServerScope() || scope.tenantId !== activeTenantId) throw new ApiError('Sessiya yoki do‘kon o‘zgardi. Amalni qayta boshlang.', 0, null, 0, 'SESSION_CHANGED');
+  const wrongActor = scope.expectedUserId !== undefined && (!Number.isSafeInteger(scope.expectedUserId) || scope.expectedUserId < 1 || !isDesignPreview && String(parseJwt(accessToken)?.user_id) !== String(scope.expectedUserId));
+  const wrongStore = scope.expectedTenantId !== undefined && String(scope.expectedTenantId) !== activeTenantId;
+  if (wrongActor || wrongStore || scope.generation !== authGeneration || scope.server !== getServerScope() || scope.tenantId !== activeTenantId) throw new ApiError('Sessiya yoki do‘kon o‘zgardi. Amalni qayta boshlang.', 0, null, 0, 'SESSION_CHANGED');
 }
 
 export async function clearTokens() {

@@ -75,7 +75,7 @@ const CheckoutBody: React.FC = () => {
     if (paymentMethod === 'cash' && parsedCash === null) { validation.setErrors({ cash_received: 'Berilgan summani to‘g‘ri kiriting' }); return; }
     submitting.current = true; setError(null); setLoading(true);
     const operation = 'sale:' + cartId;
-    const authScope = captureAuthScope();
+    const authScope = captureAuthScope(user?.id, activeTenant?.id);
     let identity: string | null = null;
     const payload = {
       is_partner_sale: partner, payment_type: paymentMethod, counterparty_id: customer?.id || null,

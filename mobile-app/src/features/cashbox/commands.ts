@@ -20,7 +20,7 @@ export async function cashboxAvailable() {
   } catch (failure: any) { if ([404, 405].includes(failure.status)) return false; throw failure; }
 }
 export async function submitCashbox(operation: string, payload: object, user: UserProfile, tenant: UserTenant) {
-  const kind = cashboxKind(operation), scope = captureAuthScope();
+  const kind = cashboxKind(operation), scope = captureAuthScope(user.id, tenant.id);
   if (!hasPermission(user, tenant, cashboxPermission(kind))) throw Error('Bu kassa amali uchun vakolat berilmagan.');
   if (!await cashboxAvailable()) throw Error('Server kassa amallarining xavfsiz yangilanishini hali qo‘llamaydi. Ma’lumotlar saqlandi.');
   assertAuthScope(scope);
@@ -48,7 +48,7 @@ export async function reconcileCashboxIntent(intent: FinancialIntent, user: User
   const kind = cashboxKind(intent.operation);
   if (intent.server !== getServerScope() || intent.userId !== user.id || intent.tenantId !== tenant.id) throw Error('Kassa amali boshqa server, hisob yoki do‘konga tegishli.');
   if (!hasPermission(user, tenant, cashboxPermission(kind))) throw Error('Kassa amalini tekshirish uchun vakolat berilmagan.');
-  const scope = captureAuthScope(), current = await getFinancialIntent(intent.operation, user.id, tenant.id);
+  const scope = captureAuthScope(user.id, tenant.id), current = await getFinancialIntent(intent.operation, user.id, tenant.id);
   assertAuthScope(scope);
   if (!current || current.key !== intent.key || current.fingerprint !== intent.fingerprint || current.status === 'rejected') throw Error('Kassa jurnali o‘zgargan yoki amal rad etilgan.');
   if (current.status === 'confirmed') return parseCashboxResult(current.result, kind, current.key, user.id, tenant.id, current.payload);

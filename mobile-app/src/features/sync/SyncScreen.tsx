@@ -51,7 +51,7 @@ function SyncBody() {
   const acknowledge = async (intent: FinancialIntent) => {
     if (!user || !activeTenant || processing.current || !cart.ready) return;
     processing.current = true; setBusy(intent.key);
-    const authScope = captureAuthScope();
+    const authScope = captureAuthScope(user.id, activeTenant.id);
     try {
       await cart.flushDraft(); assertAuthScope(authScope);
       await AsyncStorage.setItem(cartDraftKey(user.id, activeTenant.id) + ':history:' + cartId, JSON.stringify(newDraft(user.id, activeTenant.id, cart.items, cart.customer, { id: cartId, payment: cart.payment, partner: cart.partner })));

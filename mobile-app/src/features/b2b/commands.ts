@@ -22,7 +22,7 @@ export async function acknowledgeB2B(record: AcceptedB2B) {
   return record.result;
 }
 export async function submitB2B(draft: B2BDraft, user: UserProfile, tenant: UserTenant, onAccepted?: (record: AcceptedB2B) => void, onRecorded?: (pending: boolean) => void) {
-  const command = b2bCommand(draft), scope = captureAuthScope();
+  const command = b2bCommand(draft), scope = captureAuthScope(user.id, tenant.id);
   permission(user, tenant, command.payload.kind);
   await requireB2BCapability(); assertAuthScope(scope);
   const previous = await getFinancialIntent(command.operation, user.id, tenant.id); assertAuthScope(scope);
@@ -47,7 +47,7 @@ export async function submitB2B(draft: B2BDraft, user: UserProfile, tenant: User
 }
 export async function reconcileB2BIntent(intent: FinancialIntent, user: UserProfile, tenant: UserTenant) {
   if (intent.server !== getServerScope() || intent.userId !== user.id || intent.tenantId !== tenant.id) throw Error('B2B amali boshqa server, hisob yoki do‘konga tegishli.');
-  const command = commandFromB2BIntent(intent.operation, intent.payload), scope = captureAuthScope();
+  const command = commandFromB2BIntent(intent.operation, intent.payload), scope = captureAuthScope(user.id, tenant.id);
   permission(user, tenant, command.payload.kind);
   const current = await getFinancialIntent(intent.operation, user.id, tenant.id); assertAuthScope(scope);
   if (!current || current.key !== intent.key || current.fingerprint !== intent.fingerprint || current.status === 'rejected') throw Error('Asl B2B jurnali tasdiqlanmadi. Yangi amal yuborilmadi.');
