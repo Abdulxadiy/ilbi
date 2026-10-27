@@ -41,7 +41,9 @@ class NotificationListView(TenantContextMixin, APIView):
             rows = paginator.paginate_queryset(qs, request)
             response = paginator.get_paginated_response(NotificationOutputSerializer(rows, many=True).data)
             response.data['unread_count'] = unread_count
-            response.data['next_before_id'] = min((row.pk for row in rows), default=None) if response.data['next'] and not after else None
+            response.data['next_before_id'] = (
+                min((row.pk for row in rows), default=None) if response.data['next'] and not after else None
+            )
             return response
         return Response(NotificationOutputSerializer(qs, many=True).data)
 
@@ -59,6 +61,13 @@ class NotificationListView(TenantContextMixin, APIView):
 
 class NotificationDetailView(TenantContextMixin, APIView):
     permission_classes = [IsAuthenticated]
+
+    @extend_schema(request=None, responses={200: NotificationOutputSerializer})
+    def get(self, request, pk):
+        qs = Notification.objects.filter(recipient=request.user)
+        if request.user.role != 'platform_admin':
+            qs = qs.filter(tenant=self.tenant) if self.tenant else qs.none()
+        return Response(NotificationOutputSerializer(get_object_or_404(qs, pk=pk)).data)
 
     @extend_schema(request=None, responses={204: None})
     def delete(self, request, pk):

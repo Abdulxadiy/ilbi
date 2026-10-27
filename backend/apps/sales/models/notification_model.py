@@ -1,4 +1,5 @@
-from django.db import models
+from django.db import models, transaction
+
 from apps.core.models import BaseModel
 
 
@@ -39,3 +40,9 @@ class Notification(BaseModel):
 
     def __str__(self):
         return f"{self.recipient} | {self.title}"
+
+    @transaction.atomic
+    def save(self, *args, **kwargs):
+        # Scheduled producers may run outside a domain transaction. Keep their
+        # inbox row and the push outbox receiver in the same database commit.
+        return super().save(*args, **kwargs)
