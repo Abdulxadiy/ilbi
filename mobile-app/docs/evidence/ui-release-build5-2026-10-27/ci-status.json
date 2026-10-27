@@ -1,0 +1,70 @@
+{
+  "status": "completed",
+  "conclusion": "failure",
+  "url": "https://github.com/Abdulxadiy/ilbi/actions/runs/40555318679",
+  "runtime_source_commit": "24a6ddb41f43ea5a0c91e0554a96f1e97766ad7b",
+  "jobs": [
+    {
+      "name": "bot",
+      "status": "completed",
+      "conclusion": "success",
+      "failed_steps": []
+    },
+    {
+      "name": "production-edge",
+      "status": "completed",
+      "conclusion": "success",
+      "failed_steps": []
+    },
+    {
+      "name": "backend",
+      "status": "completed",
+      "conclusion": "success",
+      "failed_steps": []
+    },
+    {
+      "name": "frontend",
+      "status": "completed",
+      "conclusion": "success",
+      "failed_steps": []
+    },
+    {
+      "name": "dependency-security",
+      "status": "completed",
+      "conclusion": "success",
+      "failed_steps": []
+    },
+    {
+      "name": "mobile-dependency-security",
+      "status": "completed",
+      "conclusion": "failure",
+      "failed_steps": [
+        "Report unresolved dependency vulnerabilities without suppressing failures"
+      ]
+    },
+    {
+      "name": "automation",
+      "status": "completed",
+      "conclusion": "success",
+      "failed_steps": []
+    },
+    {
+      "name": "mobile",
+      "status": "completed",
+      "conclusion": "success",
+      "failed_steps": []
+    },
+    {
+      "name": "desktop-linux",
+      "status": "completed",
+      "conclusion": "skipped",
+      "failed_steps": []
+    },
+    {
+      "name": "desktop",
+      "status": "completed",
+      "conclusion": "skipped",
+      "failed_steps": []
+    }
+  ]
+}

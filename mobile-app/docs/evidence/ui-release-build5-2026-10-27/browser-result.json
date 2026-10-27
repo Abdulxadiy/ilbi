@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "runner": "Actual headless Chrome and isolated host Metro/proxy; not Docker or an emulator",
+  "suite": "tests/preview.browser.mjs",
+  "ui_source_files_match_current": true,
+  "home_source_restored": true,
+  "native_installation_executed": false,
+  "emulator_accessed": false,
+  "coverage": [
+    "sidebar and persistent five tabs",
+    "parent/child category CRUD",
+    "product and variant management",
+    "archive/restore/delete confirmations",
+    "catalog prices isolated from negotiated cart price",
+    "dark mode",
+    "320px viewport",
+    "source Fast Refresh in isolated copy",
+    "support guest/account isolation",
+    "synthetic checkout and receipt"
+  ]
+}

@@ -89,6 +89,26 @@ class MobileDownloadsTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "signature"):
                 exporter.inspect_apk(self.apk, "aapt", "signer", "c" * 64, config)
 
+    def test_native_camera_and_notification_permissions_are_required_when_configured(self):
+        config = {"expo": {"version": "1.0.0", "android": {"versionCode": 1}, "plugins": [["expo-camera", {"barcodeScannerEnabled": True}], "expo-notifications"]}}
+        badging = "package: name='uz.ilbi.mobile' versionCode='1' versionName='1.0.0'\n"
+        certificate = "Signer #1 certificate SHA-256 digest: " + "b" * 64
+        for missing in ['android.permission.CAMERA', 'android.permission.POST_NOTIFICATIONS']:
+            permissions = ''.join("uses-permission: name='" + p + "'\n" for p in ['android.permission.CAMERA', 'android.permission.POST_NOTIFICATIONS'] if p != missing)
+            with self.subTest(missing=missing), patch.object(exporter.subprocess, 'run', return_value=subprocess.CompletedProcess([], 0, badging + permissions, '')):
+                with self.assertRaisesRegex(ValueError, 'permission required'):
+                    exporter.inspect_apk(self.apk, 'aapt', 'signer', 'b' * 64, config)
+        permissions = "uses-permission: name='android.permission.CAMERA'\nuses-permission: name='android.permission.POST_NOTIFICATIONS'\n"
+        with patch.object(exporter.subprocess, 'run', side_effect=[subprocess.CompletedProcess([], 0, badging + permissions, ''), subprocess.CompletedProcess([], 0, certificate, '')]):
+            self.assertEqual(exporter.inspect_apk(self.apk, 'aapt', 'signer', 'b' * 64, config)['buildNumber'], '1')
+
+    def test_blocked_microphone_permission_cannot_be_published(self):
+        config = {"expo": {"version": "1.0.0", "android": {"versionCode": 1, "blockedPermissions": ['android.permission.RECORD_AUDIO']}}}
+        badging = "package: name='uz.ilbi.mobile' versionCode='1' versionName='1.0.0'\nuses-permission: name='android.permission.RECORD_AUDIO'\n"
+        with patch.object(exporter.subprocess, 'run', return_value=subprocess.CompletedProcess([], 0, badging, '')):
+            with self.assertRaisesRegex(ValueError, 'blocked'):
+                exporter.inspect_apk(self.apk, 'aapt', 'signer', 'b' * 64, config)
+
     def test_desktop_activation_and_retention_keep_mobile_artifacts_and_feed(self):
         release, staged = self.stage()
         activator.activate(self.output, staged, self.commit)

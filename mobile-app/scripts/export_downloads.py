@@ -28,6 +28,15 @@ def inspect_apk(apk, aapt, apksigner, expected_signer, config, environment=None)
         raise ValueError("APK version/build does not match the mobile app config")
     if not re.fullmatch(r"\d+\.\d+\.\d+", package[3]) or not 0 < int(package[2]) <= 2100000000:
         raise ValueError("Invalid Android version/build")
+    plugins = {item[0] if isinstance(item, list) else item for item in expo.get("plugins", [])}
+    permissions = set(re.findall(r"uses-permission(?:-sdk-\d+)?: name='([^']+)'", badging))
+    required = {"expo-camera": "android.permission.CAMERA", "expo-notifications": "android.permission.POST_NOTIFICATIONS"}
+    for plugin, permission in required.items():
+        if plugin in plugins and permission not in permissions:
+            raise ValueError(f"APK is missing the permission required by {plugin}: {permission}")
+    blocked = {value if '.' in value else 'android.permission.' + value for value in expo["android"].get("blockedPermissions", [])}
+    if blocked & permissions:
+        raise ValueError("APK includes a permission blocked by the app config")
     certificates = subprocess.run([str(apksigner), "verify", "--print-certs", str(apk)], check=True, capture_output=True, text=True, env=environment).stdout
     digests = re.findall(r"certificate SHA-256 digest: ([a-fA-F0-9]{64})", certificates)
     if expected_signer not in [digest.lower() for digest in digests] or re.search(r"certificate DN:.*CN=Android Debug", certificates, re.I):

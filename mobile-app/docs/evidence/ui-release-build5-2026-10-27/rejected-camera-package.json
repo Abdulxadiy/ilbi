@@ -1,0 +1,6 @@
+{
+  "unpublished_package_rejected": true,
+  "reason": "APK is missing the permission required by expo-camera: android.permission.CAMERA",
+  "old_apk_sha256": "d4a72d8f73ae217020dfe5e58a04201c8bb6e07c1e3a7784e71182a547c5f3af",
+  "never_published": true
+}
