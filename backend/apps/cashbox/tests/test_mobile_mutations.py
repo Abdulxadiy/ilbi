@@ -67,6 +67,8 @@ def test_open_and_close_replay_bind_report_and_counted_cash(tenant, owner):
         "shift_id": status["shift_id"],
         "actual_cash_uzs": str(status["expected_cash_uzs"]),
         "actual_cash_usd": str(status["expected_cash_usd"]),
+        "expected_cash_uzs": str(status["expected_cash_uzs"]),
+        "expected_cash_usd": str(status["expected_cash_usd"]),
         "staff_notes": "Synthetic close",
     }
     first = client.post("/api/v1/cashbox/shift/close/", close, format="json")
@@ -126,6 +128,39 @@ def test_stale_shift_and_stale_opening_are_rejected_before_writing(tenant, owner
     assert not CashShift.objects.filter(tenant=tenant, closed_at__isnull=True).exists()
 
 
+def test_cash_change_after_client_reread_requires_reconfirmation_under_tenant_lock(tenant, owner):
+    client = client_for(owner, tenant)
+    snapshot = CashboxService.get_current_shift_status(tenant)
+    CashboxService.record_income(tenant=tenant, user=owner, amount=Decimal("9.00"), source="Concurrent cash arrival")
+    body = {
+        "idempotency_key": str(uuid.uuid4()),
+        "shift_id": snapshot["shift_id"],
+        "expected_cash_uzs": str(snapshot["expected_cash_uzs"]),
+        "expected_cash_usd": str(snapshot["expected_cash_usd"]),
+        "actual_cash_uzs": str(snapshot["expected_cash_uzs"]),
+        "actual_cash_usd": "0.00",
+    }
+    rejected = client.post("/api/v1/cashbox/shift/close/", body, format="json")
+    assert rejected.status_code == 400
+    assert current_shift(tenant).pk == snapshot["shift_id"]
+    assert not DailyCashReport.objects.filter(tenant=tenant).exists()
+    assert not CashboxMutationReceipt.objects.filter(tenant=tenant).exists()
+    assert CashIncome.objects.filter(tenant=tenant).count() == 1
+    confirmed_body = {**body, "expected_cash_uzs": "9.00", "actual_cash_uzs": "9.00"}
+    confirmed = client.post("/api/v1/cashbox/shift/close/", confirmed_body, format="json")
+    assert confirmed.status_code == 201
+    assert DailyCashReport.objects.filter(tenant=tenant).count() == 1
+    replay = client.post("/api/v1/cashbox/shift/close/", confirmed_body, format="json")
+    assert replay.status_code == 201 and replay.data == confirmed.data
+    stale_new = client.post(
+        "/api/v1/cashbox/shift/close/",
+        {**confirmed_body, "idempotency_key": str(uuid.uuid4()), "expected_cash_uzs": "0.00"},
+        format="json",
+    )
+    assert stale_new.status_code == 400
+    assert CashboxMutationReceipt.objects.filter(tenant=tenant).count() == 1
+
+
 def test_receipt_failure_rolls_back_the_cash_entry(tenant, owner):
     client = client_for(owner, tenant)
     body = {
@@ -158,6 +193,8 @@ def test_close_receipt_failure_rolls_back_report_shift_links_and_notifications(t
         "shift_id": shift.pk,
         "actual_cash_uzs": "9.00",
         "actual_cash_usd": "0.00",
+        "expected_cash_uzs": "9.00",
+        "expected_cash_usd": "0.00",
     }
     with patch(
         "apps.cashbox.services.mutations.CashboxMutationReceipt.objects.create",

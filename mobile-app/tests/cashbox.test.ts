@@ -27,6 +27,11 @@ describe('Cashbook original-key protocol', () => {
     expect(await getFinancialIntent(operation, user.id, tenant.id)).toBeNull();
     expect(jest.mocked(request).mock.calls.filter(([, options]) => options?.method === 'POST')).toHaveLength(0);
   });
+  test('a malformed capability string cannot enable writes', async () => {
+    jest.mocked(request).mockResolvedValueOnce({ cashbox_mutations: 1, idempotent_operations: 'open,close,income,expense' });
+    await expect(submitCashbox(operation, payload, user, tenant)).rejects.toThrow(/Server kassa/);
+    expect(await getFinancialIntent(operation, user.id, tenant.id)).toBeNull();
+  });
   test('a completed unique dialog keeps its original key and exact cents', async () => {
     await submitCashbox(operation, payload, user, tenant);
     const saved = await getFinancialIntent(operation, user.id, tenant.id);

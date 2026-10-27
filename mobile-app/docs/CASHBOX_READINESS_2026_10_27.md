@@ -16,3 +16,9 @@ Actual checks:
 - Exact transcripts: [cashbox evidence](evidence/cashbox-2026-10-27/).
 
 Apply cashbox migration0006 and deploy the capability/API before enabling writes. Verify counted close, receipts/sharing, permissions and interrupted-network/restart recovery on the rebuilt signed Android/iOS app against that server. These source/database checks do not assert those native or production checks passed. Full desktop report layouts/printer adapters and additional register-list filter controls remain separate parity work.
+
+## Follow-up: close snapshot under the financial lock
+
+Independent review caught a race between the client's last status GET and the closing POST: another device could change cash during that interval. Keyed closes now include `expected_cash_uzs/usd`, and the server compares both amounts and the still-open shift under the same tenant lock before creating the report. Stale values require explicit reconfirmation; the original successful key still replays after closure. Legacy unkeyed callers retain their contract. A malformed string cannot pass as the capability operation array.
+
+Actual follow-up: **13 PostgreSQL tests passed**, including income arriving after the client's snapshot, no close/receipt on rejection, reconfirmed close, original-key replay and rejection of a new stale close. **66 mobile tests across six financial suites passed**, including the exact snapshot payload and malformed capability gate. Whole TypeScript and strict owned lint passed before this follow-up; assembled final validation is recorded separately. [Locked snapshot transcript](evidence/cashbox-2026-10-27/backend-locked-snapshot-tests.txt).

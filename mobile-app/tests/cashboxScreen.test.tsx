@@ -85,5 +85,6 @@ describe('Cashbox screen actual API flow', () => {
     await act(async () => { await onPress(); });
     await act(async () => { await onPress(); });
     expect(submitCashbox).toHaveBeenCalledTimes(1);
+    expect(jest.mocked(submitCashbox).mock.calls[0][1]).toMatchObject({ shift_id: 19, expected_cash_uzs: '100.25', expected_cash_usd: '0.00', actual_cash_uzs: '100.25', actual_cash_usd: '0.00' });
   });
 });

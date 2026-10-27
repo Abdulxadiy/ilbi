@@ -62,6 +62,8 @@ class CashIncomeSerializer(serializers.ModelSerializer):
 class ShiftCloseSerializer(serializers.Serializer):
     idempotency_key = serializers.UUIDField(required=False, write_only=True)
     shift_id = serializers.IntegerField(required=False, min_value=1)
+    expected_cash_uzs = serializers.DecimalField(max_digits=14, decimal_places=2, required=False, write_only=True)
+    expected_cash_usd = serializers.DecimalField(max_digits=14, decimal_places=2, required=False, write_only=True)
     actual_cash_uzs = serializers.DecimalField(max_digits=14, decimal_places=2, min_value=Decimal('0.00'))
     actual_cash_usd = serializers.DecimalField(max_digits=14, decimal_places=2, min_value=Decimal('0.00'))
     discrepancy_reason = serializers.CharField(required=False, allow_blank=True, default='')

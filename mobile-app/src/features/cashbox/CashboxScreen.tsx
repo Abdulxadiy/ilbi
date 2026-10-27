@@ -30,7 +30,7 @@ const money = (value: string) => {
   const minor = BigInt(parseMoneyMinor(value));
   return `${minor / 100n}.${(minor % 100n).toString().padStart(2, '0')}`;
 };
-const parseCapability = (value: any) => value?.cashbox_mutations === 1 && ['open', 'close', 'income', 'expense'].every(kind => value.idempotent_operations?.includes(kind));
+const parseCapability = (value: any) => value?.cashbox_mutations === 1 && Array.isArray(value.idempotent_operations) && ['open', 'close', 'income', 'expense'].every(kind => value.idempotent_operations.includes(kind));
 function parseEntry(value: any) {
   if (!['UZS', 'USD'].includes(value?.currency) || typeof value?.date !== 'string') throw Error('Kassa yozuvi tasdiqlanmadi.');
   return { ...value, id: positiveId(value.id), amount: amount(value.amount) };
@@ -119,7 +119,7 @@ function CashboxForm({ draft, onDismiss, onComplete }: { draft: { id: string; ki
           setLive(current); throw Error('Kassa yig‘indisi o‘zgardi. Yangilangan kutilgan naqdni solishtirib, yana tasdiqlang.');
         }
         payload = draft.kind === 'open' ? { opening_cash_uzs: money(uzs), opening_cash_usd: money(usd), expected_report_id: live.lastReportId }
-          : draft.kind === 'close' ? { shift_id: live.id, actual_cash_uzs: money(uzs), actual_cash_usd: money(usd), discrepancy_reason: reason.trim(), staff_notes: note.trim() }
+          : draft.kind === 'close' ? { shift_id: live.id, expected_cash_uzs: live.values.expected_cash_uzs, expected_cash_usd: live.values.expected_cash_usd, actual_cash_uzs: money(uzs), actual_cash_usd: money(usd), discrepancy_reason: reason.trim(), staff_notes: note.trim() }
           : { amount: money(sum), currency, [draft.kind === 'income' ? 'source' : 'category']: reason.trim(), date, note: note.trim(), expected_shift_id: live.id };
         frozen.current = payload; setLocked(true);
       }
@@ -143,6 +143,7 @@ function CashboxForm({ draft, onDismiss, onComplete }: { draft: { id: string; ki
     {accepted ? <Notice>Amal serverda saqlandi. Quyidagi tugma faqat qurilmadagi tasdiqni saqlaydi.</Notice> : <>
       {(draft.kind === 'open' || draft.kind === 'close') ? <>
         {draft.kind === 'close' && <Notice>Kutilgan naqd: {formatAmount(live.values.expected_cash_uzs)} UZS / {formatAmount(live.values.expected_cash_usd)} USD. Kassadagi pulni sanab kiriting.</Notice>}
+        {(fields.errors.expected_cash_uzs || fields.errors.expected_cash_usd) && <Notice error>{fields.errors.expected_cash_uzs || fields.errors.expected_cash_usd}</Notice>}
         <Input label={draft.kind === 'open' ? 'Boshlang‘ich naqd UZS' : 'Sanalgan naqd UZS'} value={uzs} keyboardType="decimal-pad" editable={!disabled} error={fields.errors.actual_cash_uzs || fields.errors.opening_cash_uzs} onChangeText={value => { setUzs(value); fields.clear('actual_cash_uzs'); fields.clear('opening_cash_uzs'); }} />
         <Input label={draft.kind === 'open' ? 'Boshlang‘ich naqd USD' : 'Sanalgan naqd USD'} value={usd} keyboardType="decimal-pad" editable={!disabled} error={fields.errors.actual_cash_usd || fields.errors.opening_cash_usd} onChangeText={value => { setUsd(value); fields.clear('actual_cash_usd'); fields.clear('opening_cash_usd'); }} />
       </> : <>

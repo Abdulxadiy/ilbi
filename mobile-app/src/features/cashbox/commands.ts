@@ -16,7 +16,7 @@ export function cashboxKind(operation: string): CashboxKind {
 export async function cashboxAvailable() {
   try {
     const value = await request('/cashbox/capabilities/');
-    return value?.cashbox_mutations === 1 && ['open', 'close', 'income', 'expense'].every(kind => value.idempotent_operations?.includes(kind));
+    return value?.cashbox_mutations === 1 && Array.isArray(value.idempotent_operations) && ['open', 'close', 'income', 'expense'].every(kind => value.idempotent_operations.includes(kind));
   } catch (failure: any) { if ([404, 405].includes(failure.status)) return false; throw failure; }
 }
 export async function submitCashbox(operation: string, payload: object, user: UserProfile, tenant: UserTenant) {

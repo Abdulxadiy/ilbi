@@ -8,6 +8,7 @@ from django.db import transaction
 from rest_framework.exceptions import ValidationError
 
 from apps.cashbox.models import CashboxMutationReceipt, CashShift, DailyCashReport
+from apps.cashbox.services.cashbox_service import CashboxService
 from apps.tenants.models import Tenant
 
 
@@ -39,6 +40,16 @@ def perform_cashbox_mutation(*, tenant, actor, key, kind, payload, action):
         elif kind == "close":
             if not payload.get("shift_id"):
                 raise ValidationError({"shift_id": "Yopiladigan smenani tanlang."})
+            snapshot = CashboxService.get_current_shift_status(tenant, include_entries=False)
+            if not snapshot["is_open"] or snapshot["shift_id"] != payload["shift_id"]:
+                raise ValidationError({"shift_id": "Smena o‘zgargan yoki yopilgan. Kassa holatini yangilang."})
+            mismatches = {
+                field: "Kassa yig‘indisi o‘zgardi. Holatni yangilab, sanalgan pulni qayta tasdiqlang."
+                for field in ("expected_cash_uzs", "expected_cash_usd")
+                if field not in payload or payload[field] != snapshot[field]
+            }
+            if mismatches:
+                raise ValidationError(mismatches)
         else:
             raise ValidationError("Kassa amali qo‘llab-quvvatlanmaydi.")
         # A serialization/storage failure must roll back the financial action too.
