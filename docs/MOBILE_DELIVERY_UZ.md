@@ -13,7 +13,7 @@ Amaldagi GitHub production workflow Windows/Linux paketlari va web/backend/bot i
 ## Yangi APK chiqarish ketma-ketligi
 
 1. Ilova o‘zgarishlarini tekshiring, mazmunli commitlarga ajrating va push qiling.
-2. Android `versionCode`ni oldingi tarqatilgan build’dan oshiring. Oddiy yangilanish uchun mobil marketing versiyasi yoki butun platforma versiyasini oshirish shart emas. Hozirgi nomzod: mobil `1.0.0`, Android build `2`; platforma `1.4.0`, iOS build `1`.
+2. Android `versionCode`ni oldingi tarqatilgan build’dan oshiring. Oddiy yangilanish uchun mobil marketing versiyasi yoki butun platforma versiyasini oshirish shart emas. 2026-10-27 nomzodi: mobil `1.0.0`, Android build `3`; platforma `1.4.0`, iOS build `1`.
 3. `mobile-app/` ichida preflight, TypeScript, qat’iy lint va tegishli testlarni bajaring. `npm run build:apk:local` bilan mavjud doimiy kalitda mustaqil APK yig‘ing. `npm run verify:apk:local` bilan haqiqiy paket va uning manbasini tekshiring.
 4. `mobile-app/scripts/export_downloads.py` orqali tasdiqlangan APK’ni o‘zgarmas `/downloads/mobile/<source-commit>/...apk` yo‘liga stage qiling. Manifestdagi haqiqiy source commit’dan foydalaning; keyingi hujjat commitini binarning manbasi deb ko‘rsatmang.
 5. Oldingi rasmiy feed bilan alohida katalogda activation sinovini bajaring. Windows/Linux/iOS metama’lumotlari saqlanishini tekshiring.

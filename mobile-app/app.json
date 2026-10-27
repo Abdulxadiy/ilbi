@@ -20,7 +20,7 @@
       },
       "predictiveBackGestureEnabled": false,
       "package": "uz.ilbi.mobile",
-      "versionCode": 2,
+      "versionCode": 3,
       "blockedPermissions": [
         "android.permission.RECORD_AUDIO"
       ]
