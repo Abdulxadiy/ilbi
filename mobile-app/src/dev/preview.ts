@@ -1,5 +1,6 @@
 import { createPreviewCore } from './previewCore';
 import { createPreviewB2B } from './previewB2B';
+import { createPreviewCashbox } from './previewCashbox';
 import { createPreviewStoreSettings } from './previewStoreSettings';
 import { createPreviewSupport } from './previewSupport';
 import { createPreviewNotifications, previewNotificationSettings } from './previewNotifications';
@@ -49,12 +50,15 @@ function makeSale(payload: any, id: number) {
 sales.set(1043, makeSale({}, 1043));
 const coreRequest = createPreviewCore({ user: previewUser, customers, sales, products });
 const b2bRequest = createPreviewB2B(previewUser.id, previewUser.tenants[0].id);
+const cashboxRequest = createPreviewCashbox(previewUser.id, previewUser.tenants[0].id);
 
 export async function previewRequest(endpoint: string, options: { method?: string; body?: any; headers?: HeadersInit }): Promise<any> {
   if (!isDesignPreview) throw Error('Design preview is disabled');
   const url = new URL(endpoint, 'http://design.invalid'), path = url.pathname;
   const method = (options.method || 'GET').toUpperCase();
   const body = typeof options.body === 'string' ? JSON.parse(options.body) : options.body || {};
+  const cashboxResult = cashboxRequest(url, method, body);
+  if (cashboxResult.handled) return cashboxResult.data;
   const storeResult = storePreview.request(url, method, body, options.headers);
   if (storeResult.handled) return storeResult.data;
   const b2bResult = b2bRequest(url, method, body);
