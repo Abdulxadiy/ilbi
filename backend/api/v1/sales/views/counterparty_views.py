@@ -13,6 +13,7 @@ from api.v1.sales.serializers import (
     CounterpartyUpdateSerializer,
     DebtPaymentCorrectionSerializer,
     DebtPaymentCreateSerializer,
+    DebtPaymentQuoteSerializer,
     DebtPaymentOutputSerializer,
     SaleOutputSerializer,
 )
@@ -163,13 +164,48 @@ class DebtPaymentListCreateView(SalesAPIView):
                 recorded_by=request.user,
                 branch=branch,
                 payment_type=data["payment_type"], idempotency_key=data.get("idempotency_key"),
+                expected_quote=data.get('expected_quote'),
                 is_correction=False,
                 note=data.get('note', ''),
             )
         except DebtServiceError as exc:
             return Response({'detail': str(exc)}, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response(DebtPaymentOutputSerializer(payment).data, status=status.HTTP_201_CREATED)
+        result = dict(DebtPaymentOutputSerializer(payment).data)
+        if hasattr(payment, '_payment_operation'):
+            result['payment_operation'] = payment._payment_operation
+        return Response(result, status=status.HTTP_201_CREATED)
+
+
+class DebtPaymentQuoteView(SalesAPIView):
+    permission_classes = [HasEmployeePermission]
+    required_permission = "sales.record_debt_payment"
+
+    @extend_schema(request=None, parameters=[DebtPaymentQuoteSerializer], responses={200: OpenApiTypes.OBJECT})
+    def get(self, request, counterparty_id):
+        cp = get_object_or_404(Counterparty, pk=counterparty_id, tenant=self.tenant)
+        serializer = DebtPaymentQuoteSerializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+        branch = self.tenant
+        if data.get("branch_id"):
+            from apps.tenants.models import Tenant
+
+            branch = get_object_or_404(Tenant, pk=data["branch_id"], owner_id=self.tenant.owner_id)
+        try:
+            result = DebtService.payment_quote(
+                counterparty=cp,
+                amount=data["amount"],
+                currency=data["currency"],
+                recorded_by=request.user,
+                branch=branch,
+                payment_type=data["payment_type"],
+            )
+        except DebtServiceError as exc:
+            return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+        response = Response(result)
+        response["Cache-Control"] = "no-store"
+        return response
 
 
 class DebtPaymentCorrectionView(SalesAPIView):

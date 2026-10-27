@@ -18,6 +18,7 @@ from api.v1.sales.views.counterparty_views import (
     CounterpartySalesListView,
     DebtPaymentCorrectionView,
     DebtPaymentListCreateView,
+    DebtPaymentQuoteView,
 )
 from api.v1.sales.views.notification_views import (
     NotificationDetailView,
@@ -61,6 +62,11 @@ urlpatterns = [
         "counterparties/<int:counterparty_id>/sales/",
         CounterpartySalesListView.as_view(),
         name="counterparty-sales-list",
+    ),
+    path(
+        'counterparties/<int:counterparty_id>/payments/quote/',
+        DebtPaymentQuoteView.as_view(),
+        name='debt-payment-quote',
     ),
     path(
         "counterparties/<int:counterparty_id>/payments/",

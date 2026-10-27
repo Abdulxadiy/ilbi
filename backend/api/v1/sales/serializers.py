@@ -133,10 +133,25 @@ class DebtPaymentOutputSerializer(serializers.ModelSerializer):
 class DebtPaymentCreateSerializer(serializers.Serializer):
     payment_type = serializers.ChoiceField(choices=["cash", "card"], default="cash")
     idempotency_key = serializers.CharField(max_length=64, required=False, allow_blank=False)
+    expected_quote = serializers.RegexField(regex=r"^[a-f0-9]{64}$", required=False, write_only=True)
     amount = serializers.DecimalField(max_digits=14, decimal_places=2, min_value=Decimal("0.01"))
     currency = serializers.ChoiceField(choices=["UZS", "USD"])
     branch_id = serializers.IntegerField(required=False, allow_null=True)
     note = serializers.CharField(required=False, allow_blank=True, default="")
+
+    def validate(self, attrs):
+        if "expected_quote" in attrs and not attrs.get("idempotency_key"):
+            raise serializers.ValidationError(
+                {"idempotency_key": "Tasdiqlangan to‘lov uchun asl qayta so‘rash kaliti kerak."}
+            )
+        return attrs
+
+
+class DebtPaymentQuoteSerializer(serializers.Serializer):
+    amount = serializers.DecimalField(max_digits=14, decimal_places=2, min_value=Decimal("0.01"))
+    currency = serializers.ChoiceField(choices=["UZS", "USD"])
+    payment_type = serializers.ChoiceField(choices=["cash", "card"], default="cash")
+    branch_id = serializers.IntegerField(required=False, min_value=1)
 
 
 class DebtPaymentCorrectionSerializer(serializers.Serializer):
