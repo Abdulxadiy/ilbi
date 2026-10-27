@@ -3,7 +3,7 @@ import { usePermissions } from '../auth/usePermissions';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useAppNavigation as useNavigation } from '../../navigation/useAppNavigation';
-import { Bell, Clock, FileText, Package, Plus, Receipt, ShoppingCart } from 'lucide-react-native';
+import { Bell, Clock, FileText, Package, Plus, Receipt } from 'lucide-react-native';
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
 import { Button } from '../../components/ui/Button';
 import { useAuth } from '../auth/AuthContext';
@@ -100,43 +100,124 @@ export const HomeScreen: React.FC = () => {
           <Text style={[styles.dateText, { color: colors.textSecondary }]}>{todayDateStr}</Text>
         </View>
 
-        {/* Dashboard Metrics Card */}
-        {canDashboard && <View
-          style={[
-            styles.metricCard,
-            {
-              backgroundColor: colors.surface,
-              borderColor: colors.borderSubtle,
-            },
-          ]}
-        >
-          <View style={styles.metricHeader}>
-            <Text style={[styles.metricLabel, { color: colors.textSecondary }]}>Bugungi savdo</Text>
-            <Text style={[styles.metricChevron, { color: colors.textMuted }]}>›</Text>
-          </View>
-
-          <Text style={[styles.metricValue, { color: colors.text }]}>
-            {metrics.todaySales} <Text style={styles.metricCurrency}>so&#39;m</Text>
-          </Text>
-
-          <View style={[styles.metricDivider, { backgroundColor: colors.borderSubtle }]} />
-
-          <View style={styles.subMetricsRow}>
-            <View style={[styles.subMetric, { backgroundColor: colors.surfaceSecondary }]}>
-              <ShoppingCart size={15} color={colors.textSecondary} />
-              <Text style={[styles.subMetricText, { color: colors.text }]}>
-                {metrics.salesCount} ta <Text style={{ color: colors.textSecondary, fontWeight: '400' }}>savdo</Text>
+        {/* Dashboard Metrics Cards (Expo Dashboard 2-column grid style) */}
+        {canDashboard && (
+          <View style={styles.metricsGrid}>
+            {/* KPI 1: Bugungi savdo */}
+            <TouchableOpacity
+              activeOpacity={0.8}
+              accessibilityRole="button"
+              disabled={!canOpen('Savdo')}
+              accessibilityState={{ disabled: !canOpen('Savdo') }}
+              onPress={() => navigation.navigate('Savdo')}
+              style={[
+                styles.kpiCard,
+                {
+                  backgroundColor: colors.surface,
+                  borderColor: colors.borderSubtle,
+                },
+              ]}
+            >
+              <View style={styles.kpiHeaderRow}>
+                <Text style={[styles.kpiLabel, { color: colors.textSecondary }]}>Bugungi savdo</Text>
+                <View style={[styles.kpiBadge, { backgroundColor: colors.surfaceSecondary }]}>
+                  <Text style={[styles.kpiBadgeText, { color: colors.primaryAction }]}>so‘m</Text>
+                </View>
+              </View>
+              <Text style={[styles.kpiValue, { color: colors.text }]} numberOfLines={1}>
+                {metrics.todaySales}
               </Text>
-            </View>
-
-            <View style={[styles.subMetric, { backgroundColor: colors.surfaceSecondary }]}>
-              <Clock size={15} color={colors.textSecondary} />
-              <Text style={[styles.subMetricText, { color: colors.text }]}>
-                {metrics.debtSum} <Text style={{ color: colors.textSecondary, fontWeight: '400' }}>so&#39;m qarz</Text>
+              <Text style={[styles.kpiSubtext, { color: colors.textSecondary }]}>
+                Umumiy savdo tushumi
               </Text>
-            </View>
+            </TouchableOpacity>
+
+            {/* KPI 2: Savdolar soni */}
+            <TouchableOpacity
+              activeOpacity={0.8}
+              accessibilityRole="button"
+              disabled={!canOpen('Savdo')}
+              accessibilityState={{ disabled: !canOpen('Savdo') }}
+              onPress={() => navigation.navigate('Savdo')}
+              style={[
+                styles.kpiCard,
+                {
+                  backgroundColor: colors.surface,
+                  borderColor: colors.borderSubtle,
+                },
+              ]}
+            >
+              <View style={styles.kpiHeaderRow}>
+                <Text style={[styles.kpiLabel, { color: colors.textSecondary }]}>Savdolar soni</Text>
+                <View style={[styles.kpiBadge, { backgroundColor: colors.surfaceSecondary }]}>
+                  <Text style={[styles.kpiBadgeText, { color: colors.success }]}>↑ cheklar</Text>
+                </View>
+              </View>
+              <Text style={[styles.kpiValue, { color: colors.text }]} numberOfLines={1}>
+                {metrics.salesCount}
+              </Text>
+              <Text style={[styles.kpiSubtext, { color: colors.textSecondary }]}>
+                Muvaffaqiyatli xaridlar
+              </Text>
+            </TouchableOpacity>
+
+            {/* KPI 3: Mijozlar qarzi */}
+            {canOpen('Qarz') ? (
+              <TouchableOpacity
+                activeOpacity={0.8}
+                accessibilityRole="button"
+                onPress={() => navigation.navigate('Qarz')}
+                style={[
+                  styles.kpiCard,
+                  {
+                    backgroundColor: colors.surface,
+                    borderColor: colors.borderSubtle,
+                  },
+                ]}
+              >
+                <View style={styles.kpiHeaderRow}>
+                  <Text style={[styles.kpiLabel, { color: colors.textSecondary }]}>Mijozlar qarzi</Text>
+                  <View style={[styles.kpiBadge, { backgroundColor: colors.surfaceSecondary }]}>
+                    <Text style={[styles.kpiBadgeText, { color: colors.danger }]}>nasiya</Text>
+                  </View>
+                </View>
+                <Text style={[styles.kpiValue, { color: colors.text }]} numberOfLines={1}>
+                  {metrics.debtSum}
+                </Text>
+                <Text style={[styles.kpiSubtext, { color: colors.textSecondary }]}>
+                  Kutilayotgan summa
+                </Text>
+              </TouchableOpacity>
+            ) : null}
+
+            {/* KPI 4: Faol do'kon */}
+            <TouchableOpacity
+              activeOpacity={0.8}
+              accessibilityRole="button"
+              onPress={() => navigation.navigate('Stores')}
+              style={[
+                styles.kpiCard,
+                {
+                  backgroundColor: colors.surface,
+                  borderColor: colors.borderSubtle,
+                },
+              ]}
+            >
+              <View style={styles.kpiHeaderRow}>
+                <Text style={[styles.kpiLabel, { color: colors.textSecondary }]}>Faol do‘kon</Text>
+                <View style={[styles.kpiBadge, { backgroundColor: colors.surfaceSecondary }]}>
+                  <Text style={[styles.kpiBadgeText, { color: colors.success }]}>● faol</Text>
+                </View>
+              </View>
+              <Text style={[styles.kpiValue, { color: colors.text }]} numberOfLines={1}>
+                {activeTenant?.name ? (activeTenant.name.length > 11 ? activeTenant.name.slice(0, 10) + '…' : activeTenant.name) : 'Markaziy'}
+              </Text>
+              <Text style={[styles.kpiSubtext, { color: colors.textSecondary }]}>
+                Joriy savdo nuqtasi
+              </Text>
+            </TouchableOpacity>
           </View>
-        </View>}
+        )}
 
         {/* Primary Action Button: Yangi savdo */}
         {canOpen('Savdo') && <Button
@@ -277,56 +358,51 @@ const styles = StyleSheet.create({
     fontSize: typography.size.sm,
     fontWeight: typography.weight.medium,
   },
-  metricCard: {
-    padding: spacing.lg,
-    borderRadius: radius.lg,
-    borderWidth: 1,
+  metricsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.md,
     marginBottom: spacing.lg,
   },
-  metricHeader: {
+  kpiCard: {
+    width: '47.5%',
+    flexGrow: 1,
+    padding: spacing.md,
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 3,
+    elevation: 1,
+  },
+  kpiHeaderRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: spacing.xs,
   },
-  metricLabel: {
-    fontSize: typography.size.sm,
+  kpiLabel: {
+    fontSize: typography.size.xs,
     fontWeight: typography.weight.medium,
   },
-  metricChevron: {
-    fontSize: typography.size.lg,
+  kpiBadge: {
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: radius.full,
   },
-  metricValue: {
-    fontSize: typography.size.display,
-    fontWeight: typography.weight.bold,
-    marginBottom: spacing.md,
-  },
-  metricCurrency: {
-    fontSize: typography.size.lg,
-    fontWeight: typography.weight.medium,
-  },
-  metricDivider: {
-    height: 1,
-    marginBottom: spacing.md,
-  },
-  subMetricsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  subMetric: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.sm,
-    borderRadius: radius.md,
-  },
-  subMetricText: {
-    marginLeft: spacing.xs + 2,
-    fontSize: typography.size.xs + 1,
+  kpiBadgeText: {
+    fontSize: 10,
     fontWeight: typography.weight.semibold,
+  },
+  kpiValue: {
+    fontSize: typography.size.xl,
+    fontWeight: typography.weight.bold,
+    marginVertical: 4,
+  },
+  kpiSubtext: {
+    fontSize: typography.size.xs,
+    marginTop: 2,
   },
   newSaleBtn: {
     marginBottom: spacing.lg,

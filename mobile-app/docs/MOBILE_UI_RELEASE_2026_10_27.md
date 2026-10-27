@@ -11,3 +11,9 @@ Review caught a real API mismatch: the request serializer accepts `login` or `em
 Actual local verification: TypeScript passed, strict ESLint passed and all 41 Jest suites / 243 tests passed. Nine login tests cover existing Telegram/OTP behavior, the recovery UI, exact backend payloads, server rejection, no-email handling, password length, and stale-response/secret cleanup. Initial lint reported four unused imports, which were removed. The asynchronous dismissal test initially awaited its deliberately pending network call; the corrected test uses a native-style press and passes without extending its timeout.
 
 These are source/component checks, not production password-reset requests or native device acceptance. No production account password or email was changed.
+
+## Dashboard and cart — source checks passed
+
+The supplied dashboard uses four compact metric cards with navigation to sales, debts and stores. Sales shortcuts are disabled when that module is unavailable, preserving the existing navigation permission guard. The supplied empty cart now scrolls on small screens instead of hiding actions below the viewport. Existing sale/price operations remain intact.
+
+The same actual TypeScript, strict ESLint and 243-test run covers this slice. Browser interaction and final APK/server verification are separate checks recorded below when completed.

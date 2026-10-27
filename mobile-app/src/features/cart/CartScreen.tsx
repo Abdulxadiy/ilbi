@@ -4,7 +4,7 @@ import { taxLine } from '../../domain/tax';
 import { tryMoney } from '../../domain/money';
 import { isDesignPreview } from '../../dev/preview';
 import React, { useState } from 'react';
-import { FlatList, Image, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { FlatList, Image, ScrollView, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useAppNavigation as useNavigation } from '../../navigation/useAppNavigation';
 import { Barcode, Info, MoreVertical, Pencil, Plus, Scan, ShoppingBag, Trash2, User as UserIcon, X } from 'lucide-react-native';
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
@@ -183,9 +183,9 @@ export const CartScreen: React.FC = () => {
 
       {items.length === 0 ? (
         /* Empty Cart State (Board 27C) */
-        <View style={styles.emptyContainer}>
+        <ScrollView contentContainerStyle={styles.emptyContainer} showsVerticalScrollIndicator={false}>
           <View style={[styles.emptyBasketWrapper, { backgroundColor: colors.surfaceSecondary }]}>
-            <ShoppingBag size={48} color={colors.textMuted} />
+            <ShoppingBag size={44} color={colors.textMuted} />
           </View>
           <Text style={[styles.emptyTitle, { color: colors.text }]}>Savat hozircha bo&#39;sh</Text>
           <Text style={[styles.emptySubtext, { color: colors.textSecondary }]}>
@@ -216,7 +216,7 @@ export const CartScreen: React.FC = () => {
               + 10 ta kanonik tovarlarni yuklash (Test ma&#39;lumot)
             </Text>
           </TouchableOpacity>}
-        </View>
+        </ScrollView>
       ) : (
         /* Compact Cart Table (Board 22A & 22C) */
         <View style={styles.cartContent}>
@@ -725,18 +725,20 @@ const styles = StyleSheet.create({
     minWidth: 160,
   },
   emptyContainer: {
-    flex: 1,
+    flexGrow: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: spacing.xxl,
+    paddingHorizontal: spacing.xl,
+    paddingTop: spacing.xxl,
+    paddingBottom: spacing.xxl * 1.5,
   },
   emptyBasketWrapper: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: 72,
+    height: 72,
+    borderRadius: 36,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: spacing.lg,
+    marginBottom: spacing.md,
   },
   emptyTitle: {
     fontSize: typography.size.lg,
@@ -746,13 +748,13 @@ const styles = StyleSheet.create({
   emptySubtext: {
     fontSize: typography.size.sm,
     textAlign: 'center',
-    marginBottom: spacing.xl,
+    marginBottom: spacing.lg,
   },
   emptyAddBtn: {
-    marginBottom: spacing.md,
+    marginBottom: spacing.sm,
   },
   emptyScanBtn: {
-    marginBottom: spacing.xl,
+    marginBottom: spacing.lg,
   },
   loadFixtureBtn: {
     padding: spacing.sm,
