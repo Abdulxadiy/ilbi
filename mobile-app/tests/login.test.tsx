@@ -3,6 +3,7 @@ import { act, fireEvent, render, userEvent, waitFor } from '@testing-library/rea
 import { LoginScreen } from '../src/features/auth/LoginScreen';
 import { ThemeProvider } from '../src/theme/ThemeContext';
 import * as Linking from 'expo-linking';
+import { ApiError } from '../src/api/errors';
 const mockCheck = jest.fn(async () => {}), mockSend = jest.fn(async () => {}), mockVerify = jest.fn(async () => {}), mockReset = jest.fn();
 let mockStep = 'telegram', mockDeadline = 0;
 const mockRequest = jest.fn();
@@ -34,6 +35,55 @@ describe('Telegram login interface', () => {
     await fireEvent.press(screen.getByText('Tasdiqlash'));
     expect(mockVerify).not.toHaveBeenCalled();
     expect(screen.getByText('Tasdiqlash kodini to‘liq kiriting')).toBeTruthy();
+    expect(screen.getByPlaceholderText('123456').props['aria-invalid']).toBe(true);
+  });
+
+  test('six digits verify immediately without a confirm press; duplicate events do not resend', async () => {
+    mockStep = 'otp';
+    const screen = await render(<ThemeProvider><LoginScreen /></ThemeProvider>);
+    await fireEvent.changeText(screen.getByPlaceholderText('123456'), '12345');
+    expect(mockVerify).not.toHaveBeenCalled();
+    await fireEvent.changeText(screen.getByPlaceholderText('123456'), '123456');
+    await waitFor(() => expect(mockVerify).toHaveBeenCalledWith('123456'));
+    await fireEvent.changeText(screen.getByPlaceholderText('123456'), '123456');
+    expect(mockVerify).toHaveBeenCalledTimes(1);
+  });
+
+  test('an incorrect six-digit code is red; editing it clears the error and retries automatically', async () => {
+    mockStep = 'otp';
+    mockVerify.mockRejectedValueOnce(new ApiError('Kod noto‘g‘ri.', 400));
+    const screen = await render(<ThemeProvider><LoginScreen /></ThemeProvider>);
+    await fireEvent.changeText(screen.getByPlaceholderText('123456'), '111111');
+    await waitFor(() => expect(screen.getByText('Kod noto‘g‘ri.')).toBeTruthy());
+    expect(screen.getByPlaceholderText('123456').props['aria-invalid']).toBe(true);
+    await fireEvent.changeText(screen.getByPlaceholderText('123456'), '22222');
+    expect(screen.queryByText('Kod noto‘g‘ri.')).toBeNull();
+    expect(screen.getByPlaceholderText('123456').props['aria-invalid']).toBe(false);
+    await fireEvent.changeText(screen.getByPlaceholderText('123456'), '222222');
+    await waitFor(() => expect(mockVerify).toHaveBeenLastCalledWith('222222'));
+    expect(mockVerify).toHaveBeenCalledTimes(2);
+  });
+
+  test('a transport failure offers manual retry without marking a valid-looking code invalid', async () => {
+    mockStep = 'otp';
+    mockVerify.mockRejectedValueOnce(new ApiError('Aloqa uzildi.', 0, null, 0, 'NETWORK'));
+    const screen = await render(<ThemeProvider><LoginScreen /></ThemeProvider>);
+    await fireEvent.changeText(screen.getByPlaceholderText('123456'), '123456');
+    await waitFor(() => expect(screen.getByText('Aloqa uzildi.')).toBeTruthy());
+    expect(screen.getByPlaceholderText('123456').props['aria-invalid']).toBe(false);
+    await fireEvent.press(screen.getByText('Tasdiqlash'));
+    expect(mockVerify).toHaveBeenCalledTimes(2);
+  });
+
+  test('required credential fields show inline invalid state and clear independently on edit', async () => {
+    mockStep = 'credentials';
+    const screen = await render(<ThemeProvider><LoginScreen /></ThemeProvider>);
+    await fireEvent.press(screen.getByText('Kirish'));
+    expect(screen.getByLabelText('Foydalanuvchi nomi yoki telefon').props['aria-invalid']).toBe(true);
+    expect(screen.getByLabelText('Parol').props['aria-invalid']).toBe(true);
+    await fireEvent.changeText(screen.getByLabelText('Foydalanuvchi nomi yoki telefon'), 'seller');
+    expect(screen.getByLabelText('Foydalanuvchi nomi yoki telefon').props['aria-invalid']).toBe(false);
+    expect(screen.getByLabelText('Parol').props['aria-invalid']).toBe(true);
   });
   test('credentials screen renders clean full layout without registration and opens password reset', async () => {
     mockStep = 'credentials';

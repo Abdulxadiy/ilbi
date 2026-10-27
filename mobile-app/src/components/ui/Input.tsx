@@ -44,7 +44,7 @@ export const Input: React.FC<InputProps> = ({
         style={[
           styles.inputContainer,
           {
-            backgroundColor: colors.surface,
+            backgroundColor: error ? colors.dangerSurface : colors.surface,
             borderColor: error ? colors.danger : colors.border,
           },
         ]}
@@ -61,6 +61,8 @@ export const Input: React.FC<InputProps> = ({
           accessibilityLabel={accessibilityLabel || label || props.placeholder}
           value={value}
           placeholderTextColor={colors.textMuted}
+          aria-invalid={Boolean(error)}
+          accessibilityHint={error || props.accessibilityHint}
           style={[
             styles.input,
             {
@@ -93,7 +95,7 @@ export const Input: React.FC<InputProps> = ({
           )
         ) : null}
       </View>
-      {error ? <Text style={[styles.error, { color: colors.danger }]}>{error}</Text> : null}
+      {error ? <Text accessibilityRole="alert" accessibilityLiveRegion="polite" style={[styles.error, { color: colors.danger }]}>{error}</Text> : null}
     </View>
   );
 };

@@ -42,8 +42,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const sequence = useRef(0), ticket = useRef<string | null>(null);
   const autoOtpSent = useRef<string | null>(null);
   const pendingOtp = useRef<{ ticket: string; promise: Promise<void> } | null>(null);
+  const loginEpoch = useRef(0);
+  const pendingVerification = useRef<{ ticket: string; promise: Promise<void> } | null>(null);
   const setTicket = (value: string | null) => { ticket.current = value; setLoginTicket(value); };
-  const resetLogin = useCallback(() => { ticket.current = null; autoOtpSent.current = null; setLoginTicket(null); setLoginStep('credentials'); setPhoneHint(null); setOtpResendAt(0); }, []);
+  const resetLogin = useCallback(() => { loginEpoch.current++; ticket.current = null; autoOtpSent.current = null; setLoginTicket(null); setLoginStep('credentials'); setPhoneHint(null); setOtpResendAt(0); }, []);
   const resetSession = useCallback(() => { sequence.current += 1; setUser(null); setActiveTenant(null); setSessionError(null); resetLogin(); }, [resetLogin]);
   useEffect(() => onSessionCleared(resetSession), [resetSession]);
 
@@ -110,10 +112,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
   const login = async (username: string, password: string) => {
     setSessionError(null); resetLogin();
+    const epoch = loginEpoch.current, generation = getAuthGeneration();
     if (isDesignPreview) { setUser(previewUser); await setActiveTenantId(String(previewUser.tenants[0].id)); setActiveTenant(previewUser.tenants[0]); return { otpRequired: false }; }
     const response = await request('/auth/admin-login/', { method: 'POST', body: { username, password } });
+    if (epoch !== loginEpoch.current || generation !== getAuthGeneration()) throw new ApiError('Kirish seansi o‘zgardi.', 0, null, 0, 'SESSION_CHANGED');
     if (response.access && response.refresh) {
       await setTokens(response.access, response.refresh);
+      if (epoch !== loginEpoch.current) throw new ApiError('Kirish seansi o‘zgardi.', 0, null, 0, 'SESSION_CHANGED');
       try { await loadProfile(); } catch (error: any) { if (error.code !== 'SESSION_CHANGED') { setUser(null); setActiveTenant(null); setSessionError(error.message); } throw error; }
       return { otpRequired: false };
     }
@@ -138,10 +143,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const verifyOtp = async (code: string) => {
     if (!/^\d{6}$/.test(code)) throw new ApiError('6 xonali kodni kiriting.');
     if (!ticket.current) throw new ApiError('Kirishni qayta boshlang.');
-    try {
-      const response = await request('/auth/admin-login/verify-otp/', { method: 'POST', body: { login_ticket: ticket.current, verification_code: code } });
-      await setTokens(response.access, response.refresh); await loadProfile(); resetLogin();
-    } catch (error) { failTicket(error); }
+    const currentTicket = ticket.current;
+    if (pendingVerification.current?.ticket === currentTicket) return pendingVerification.current.promise;
+    const epoch = loginEpoch.current, generation = getAuthGeneration();
+    const current = () => epoch === loginEpoch.current && ticket.current === currentTicket;
+    const pending = { ticket: currentTicket, promise: (async () => {
+      try {
+        const response = await request('/auth/admin-login/verify-otp/', { method: 'POST', body: { login_ticket: currentTicket, verification_code: code } });
+        if (!current() || generation !== getAuthGeneration()) throw new ApiError('Kirish seansi o‘zgardi.', 0, null, 0, 'SESSION_CHANGED');
+        await setTokens(response.access, response.refresh);
+        if (!current()) throw new ApiError('Kirish seansi o‘zgardi.', 0, null, 0, 'SESSION_CHANGED');
+        await loadProfile();
+        if (current()) resetLogin();
+      } catch (error) {
+        if (!current()) throw new ApiError('Kirish seansi o‘zgardi.', 0, null, 0, 'SESSION_CHANGED');
+        failTicket(error);
+      }
+    })().finally(() => { if (pendingVerification.current === pending) pendingVerification.current = null; }) };
+    pendingVerification.current = pending;
+    return pending.promise;
   };
   const selectTenant = async (id: number) => {
     const selected = user?.tenants.find(item => item.id === id);

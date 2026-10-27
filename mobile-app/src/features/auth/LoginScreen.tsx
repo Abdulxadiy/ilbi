@@ -3,7 +3,6 @@ import { KeyboardRegion } from '../../components/ui/KeyboardRegion';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import React, { useState, useEffect, useRef } from 'react';
 import {
-  Image,
   ScrollView,
   StyleSheet,
   Text,
@@ -20,6 +19,8 @@ import { useTheme } from '../../theme/ThemeContext';
 import { radius, spacing, typography } from '../../theme/tokens';
 import { getApiBaseUrl, request, setApiBaseUrl } from '../../api/client';
 import { isDesignPreview } from '../../dev/preview';
+import { useFormErrors } from '../../hooks/useFormErrors';
+import { LoginHero } from './LoginHero';
 
 export const LoginScreen: React.FC = () => {
   const { colors } = useTheme();
@@ -32,6 +33,10 @@ export const LoginScreen: React.FC = () => {
   const [otpCode, setOtpCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const form = useFormErrors();
+  const recoveryForm = useFormErrors();
+  const authSubmission = useRef(false);
+  const lastAutoCode = useRef<string | null>(null);
   const [showServerConfig, setShowServerConfig] = useState(false);
   const [now, setNow] = useState(() => Date.now());
   const [serverUrl, setServerUrlState] = useState(getApiBaseUrl());
@@ -64,6 +69,7 @@ export const LoginScreen: React.FC = () => {
     setForgotNewPassword('');
     setForgotOldPassword('');
     setForgotShowNewPass(false);
+    recoveryForm.clear();
   };
   const closeRecovery = () => {
     resetRecovery();
@@ -93,45 +99,72 @@ export const LoginScreen: React.FC = () => {
   const resendSeconds = Math.max(0, Math.ceil((otpResendAt - now) / 1000));
 
   const handleLogin = async () => {
+    if (authSubmission.current) return;
+    form.clear();
     if (!username.trim() || !password) {
+      form.setErrors({ ...(!username.trim() ? { username: 'Login yoki telefonni kiriting.' } : {}), ...(!password ? { password: 'Parolni kiriting.' } : {}) });
       setError('Login va parolni kiriting');
       return;
     }
     setError(null);
+    authSubmission.current = true;
     setLoading(true);
     try {
       await login(username.trim(), password);
     } catch (err: any) {
+      form.capture(err, [400, 401].includes(err.status) ? { username: 'Login yoki parolni tekshiring.', password: err.message || 'Parolni tekshiring.' } : {});
       setError(err.message || 'Kirishda xatolik yuz berdi');
     } finally {
+      authSubmission.current = false;
       setLoading(false);
     }
   };
 
-  const handleVerifyOtp = async () => {
-    if (!/^\d{6}$/.test(otpCode.trim())) {
-      setError('Tasdiqlash kodini to‘liq kiriting');
+  const handleVerifyOtp = async (code = otpCode) => {
+    if (authSubmission.current) return;
+    if (!/^\d{6}$/.test(code)) {
+      form.setErrors({ verification_code: 'Tasdiqlash kodini to‘liq kiriting' });
       return;
     }
+    authSubmission.current = true;
+    form.clear();
     setError(null);
     setLoading(true);
     try {
-      await verifyOtp(otpCode.trim());
+      await verifyOtp(code);
     } catch (err: any) {
-      setError(err.message || 'Kod noto‘g‘ri yoki muddati tugagan');
+      if (err.code === 'SESSION_CHANGED') return;
+      if (!['NETWORK', 'TIMEOUT'].includes(err.code) && (!err.status || [400, 401, 422].includes(err.status))) form.setErrors({ verification_code: err.message || 'Kod noto‘g‘ri yoki muddati tugagan' });
+      else setError(err.message || 'Tasdiqlash bajarilmadi. Qayta urinib ko‘ring.');
     } finally {
+      authSubmission.current = false;
       setLoading(false);
+    }
+  };
+
+  const changeOtpCode = (value: string) => {
+    if (authSubmission.current) return;
+    const code = value.replace(/\D/g, '').slice(0, 6);
+    setOtpCode(code); form.clear('verification_code'); setError(null);
+    if (code.length !== 6) lastAutoCode.current = null;
+    else if (lastAutoCode.current !== `${loginTicket}:${code}`) {
+      lastAutoCode.current = `${loginTicket}:${code}`;
+      void handleVerifyOtp(code);
     }
   };
 
   const handleResendOtp = async () => {
+    if (authSubmission.current || resendSeconds > 0) return;
+    authSubmission.current = true;
     setError(null);
     setLoading(true);
     try {
       await sendOtp();
+      setOtpCode(''); form.clear('verification_code'); lastAutoCode.current = null;
     } catch (err: any) {
       setError(err.message || 'Kodni yuborib bo‘lmadi');
     } finally {
+      authSubmission.current = false;
       setLoading(false);
     }
   };
@@ -140,10 +173,11 @@ export const LoginScreen: React.FC = () => {
   const handlePasswordResetRequest = async () => {
     if (forgotLoading || recoveryTimer.current) return;
     if (!forgotIdentifier.trim()) {
-      setForgotError('Foydalanuvchi nomi yoki emailingizni kiriting');
+      recoveryForm.setErrors({ login: 'Foydalanuvchi nomi yoki emailingizni kiriting' });
       return;
     }
     setForgotError(null);
+    recoveryForm.clear();
     setForgotSuccess(null);
     setForgotLoading(true);
     const generation = ++recoveryGeneration.current;
@@ -157,6 +191,7 @@ export const LoginScreen: React.FC = () => {
       setForgotSuccess(res?.detail || 'Parolni tiklash havolasi emailingizga yuborildi.');
     } catch (err: any) {
       if (generation !== recoveryGeneration.current) return;
+      recoveryForm.capture(err);
       setForgotError(err?.message || 'Tiklash so‘rovini yuborib bo‘lmadi');
     } finally {
       if (generation === recoveryGeneration.current) setForgotLoading(false);
@@ -167,14 +202,15 @@ export const LoginScreen: React.FC = () => {
   const handlePasswordResetConfirm = async () => {
     if (forgotLoading || recoveryTimer.current) return;
     if (!forgotToken.trim() || !forgotNewPassword) {
-      setForgotError('Token va yangi parolni kiriting');
+      recoveryForm.setErrors({ ...(!forgotToken.trim() ? { token: 'Tiklash tokenini kiriting.' } : {}), ...(!forgotNewPassword ? { new_password: 'Yangi parolni kiriting.' } : {}) });
       return;
     }
     if (forgotNewPassword.length < 8) {
-      setForgotError('Yangi parol kamida 8 ta belgidan iborat bo‘lishi kerak');
+      recoveryForm.setErrors({ new_password: 'Yangi parol kamida 8 ta belgidan iborat bo‘lishi kerak' });
       return;
     }
     setForgotError(null);
+    recoveryForm.clear();
     setForgotSuccess(null);
     setForgotLoading(true);
     const generation = ++recoveryGeneration.current;
@@ -190,6 +226,7 @@ export const LoginScreen: React.FC = () => {
       recoveryTimer.current = setTimeout(closeRecovery, 1800);
     } catch (err: any) {
       if (generation !== recoveryGeneration.current) return;
+      recoveryForm.capture(err);
       setForgotError(err?.message || 'Parolni yangilashda xatolik yuz berdi');
     } finally {
       if (generation === recoveryGeneration.current) setForgotLoading(false);
@@ -200,14 +237,15 @@ export const LoginScreen: React.FC = () => {
   const handleChangeWithOld = async () => {
     if (forgotLoading || recoveryTimer.current) return;
     if (!forgotIdentifier.trim() || !forgotOldPassword || !forgotNewPassword) {
-      setForgotError('Barcha maydonlarni to‘ldiring');
+      recoveryForm.setErrors({ ...(!forgotIdentifier.trim() ? { login: 'Loginni kiriting.' } : {}), ...(!forgotOldPassword ? { old_password: 'Eski parolni kiriting.' } : {}), ...(!forgotNewPassword ? { new_password: 'Yangi parolni kiriting.' } : {}) });
       return;
     }
     if (forgotNewPassword.length < 8) {
-      setForgotError('Yangi parol kamida 8 ta belgidan iborat bo‘lishi kerak');
+      recoveryForm.setErrors({ new_password: 'Yangi parol kamida 8 ta belgidan iborat bo‘lishi kerak' });
       return;
     }
     setForgotError(null);
+    recoveryForm.clear();
     setForgotSuccess(null);
     setForgotLoading(true);
     const generation = ++recoveryGeneration.current;
@@ -223,6 +261,7 @@ export const LoginScreen: React.FC = () => {
       recoveryTimer.current = setTimeout(closeRecovery, 1800);
     } catch (err: any) {
       if (generation !== recoveryGeneration.current) return;
+      recoveryForm.capture(err);
       setForgotError(err?.message || 'Parolni almashtirishda xatolik yuz berdi');
     } finally {
       if (generation === recoveryGeneration.current) setForgotLoading(false);
@@ -238,19 +277,7 @@ export const LoginScreen: React.FC = () => {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        {/* Top Hero Section */}
-        <View style={styles.topSection}>
-          <Image
-            source={require('../../../assets/login-hero.png')}
-            resizeMode="contain"
-            style={styles.heroImage}
-            accessibilityLabel="ILBI savdo platformasi"
-          />
-          <Text style={[styles.title, { color: colors.text }]}>Tizimga kirish</Text>
-          <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
-            ILBI — do‘kon va savdoni boshqarish platformasi
-          </Text>
-        </View>
+        <LoginHero compact={loginStep !== 'credentials'} />
 
         {/* Form Container (Full-screen native flow, no floating card box) */}
         <View style={styles.formContainer}>
@@ -269,16 +296,24 @@ export const LoginScreen: React.FC = () => {
                 label="Foydalanuvchi nomi yoki telefon"
                 placeholder="masalan: admin yoki +99890..."
                 value={username}
-                onChangeText={setUsername}
+                onChangeText={value => { setUsername(value); form.clear('username'); setError(null); }}
                 autoCapitalize="none"
+                autoCorrect={false}
+                autoComplete="username"
+                error={form.errors.username || form.errors.login}
+                editable={!loading}
               />
 
               <Input
                 label="Parol"
                 placeholder="Parolingizni kiriting"
                 value={password}
-                onChangeText={setPassword}
+                onChangeText={value => { setPassword(value); form.clear('password'); setError(null); }}
                 secureTextEntry={!showPassword}
+                autoComplete="current-password"
+                error={form.errors.password}
+                editable={!loading}
+                onSubmitEditing={() => { void handleLogin(); }}
                 suffix={
                   <TouchableOpacity
                     accessibilityRole="button"
@@ -373,9 +408,15 @@ export const LoginScreen: React.FC = () => {
                 label="Tasdiqlash kodi"
                 placeholder="123456"
                 value={otpCode}
-                onChangeText={setOtpCode}
+                onChangeText={changeOtpCode}
                 keyboardType="number-pad"
                 maxLength={6}
+                autoComplete="one-time-code"
+                textContentType="oneTimeCode"
+                editable={!loading}
+                error={form.errors.verification_code}
+                style={{ fontSize: 26, letterSpacing: 8, textAlign: 'center' }}
+                onSubmitEditing={() => { void handleVerifyOtp(); }}
               />
 
               {error ? <Text style={[styles.error, { color: colors.danger }]}>{error}</Text> : null}
@@ -383,7 +424,7 @@ export const LoginScreen: React.FC = () => {
               <Button
                 title="Tasdiqlash"
                 loading={loading}
-                onPress={handleVerifyOtp}
+                onPress={() => { void handleVerifyOtp(); }}
                 style={styles.submitBtn}
                 fullWidth
               />
@@ -401,7 +442,8 @@ export const LoginScreen: React.FC = () => {
               <Button
                 title="Login va parolga qaytish"
                 variant="ghost"
-                onPress={() => { resetLogin(); setError(null); setOtpCode(''); }}
+                disabled={loading}
+                onPress={() => { resetLogin(); form.clear(); setError(null); setOtpCode(''); lastAutoCode.current = null; }}
               />
             </View>
           )}
@@ -549,7 +591,8 @@ export const LoginScreen: React.FC = () => {
                 label="Login, telefon yoki email"
                 placeholder="masalan: admin yoki info@ilbi.uz"
                 value={forgotIdentifier}
-                onChangeText={setForgotIdentifier}
+                onChangeText={value => { setForgotIdentifier(value); recoveryForm.clear('login'); }}
+                error={recoveryForm.errors.login || recoveryForm.errors.identifier || recoveryForm.errors.email}
                 autoCapitalize="none"
               />
 
@@ -583,7 +626,8 @@ export const LoginScreen: React.FC = () => {
                 label="Tiklash kodi / token"
                 placeholder="Email orqali kelgan token"
                 value={forgotToken}
-                onChangeText={setForgotToken}
+                onChangeText={value => { setForgotToken(value); recoveryForm.clear('token'); }}
+                error={recoveryForm.errors.token}
                 autoCapitalize="none"
               />
 
@@ -591,7 +635,8 @@ export const LoginScreen: React.FC = () => {
                 label="Yangi parol"
                 placeholder="Kamida 8 ta belgi"
                 value={forgotNewPassword}
-                onChangeText={setForgotNewPassword}
+                onChangeText={value => { setForgotNewPassword(value); recoveryForm.clear('new_password'); }}
+                error={recoveryForm.errors.new_password}
                 secureTextEntry={!forgotShowNewPass}
                 suffix={
                   <TouchableOpacity
@@ -628,7 +673,8 @@ export const LoginScreen: React.FC = () => {
                 label="Login yoki telefon"
                 placeholder="Foydalanuvchi nomi"
                 value={forgotIdentifier}
-                onChangeText={setForgotIdentifier}
+                onChangeText={value => { setForgotIdentifier(value); recoveryForm.clear('login'); }}
+                error={recoveryForm.errors.login}
                 autoCapitalize="none"
               />
 
@@ -636,7 +682,8 @@ export const LoginScreen: React.FC = () => {
                 label="Eski parol"
                 placeholder="Joriy parolingiz"
                 value={forgotOldPassword}
-                onChangeText={setForgotOldPassword}
+                onChangeText={value => { setForgotOldPassword(value); recoveryForm.clear('old_password'); }}
+                error={recoveryForm.errors.old_password}
                 secureTextEntry
               />
 
@@ -644,7 +691,8 @@ export const LoginScreen: React.FC = () => {
                 label="Yangi parol"
                 placeholder="Kamida 8 ta belgi"
                 value={forgotNewPassword}
-                onChangeText={setForgotNewPassword}
+                onChangeText={value => { setForgotNewPassword(value); recoveryForm.clear('new_password'); }}
+                error={recoveryForm.errors.new_password}
                 secureTextEntry={!forgotShowNewPass}
                 suffix={
                   <TouchableOpacity

@@ -2,7 +2,7 @@ import React from 'react';
 import { act, renderHook } from '@testing-library/react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthProvider, useAuth } from '../src/features/auth/AuthContext';
-import { request } from '../src/api/client';
+import { request, setTokens } from '../src/api/client';
 import { ApiError } from '../src/api/errors';
 let mockGeneration = 0, mockAccess: string | null = null, mockTenant: string | null = null;
 let mockCleared: (() => void) | undefined;
@@ -80,5 +80,51 @@ describe('Verified authentication state machine', () => {
     expect(calls()).toHaveLength(count);
     await act(async () => { await expect(hook.result.current.verifyOtp('123456')).rejects.toThrow('Ticket expired'); });
     expect(hook.result.current.loginStep).toBe('credentials');
+  });
+
+  test('a verification response after returning to login cannot create a session', async () => {
+    let finish!: (value: any) => void;
+    jest.mocked(request).mockImplementation(path => {
+      if (path === '/auth/admin-login/') return Promise.resolve({ login_ticket: 'ticket', telegram_linked: true });
+      if (path.includes('send-otp')) return Promise.resolve({ otp_sent: true });
+      return new Promise(resolve => { finish = resolve; });
+    });
+    const hook = await renderHook(useAuth, { wrapper });
+    await act(async () => { await hook.result.current.login('cashier', 'password'); });
+    let attempt!: Promise<unknown>;
+    await act(async () => { attempt = hook.result.current.verifyOtp('123456').catch(error => error); });
+    await act(async () => { hook.result.current.resetLogin(); finish({ access: 'stale', refresh: 'stale' }); });
+    expect(await attempt).toMatchObject({ code: 'SESSION_CHANGED' });
+    expect(setTokens).not.toHaveBeenCalled();
+    expect(hook.result.current.isAuthenticated).toBe(false);
+  });
+
+  test('duplicate OTP submissions share one request and only commit one authenticated session', async () => {
+    let finish!: (value: any) => void;
+    jest.mocked(request).mockImplementation(path => {
+      if (path === '/auth/admin-login/') return Promise.resolve({ login_ticket: 'ticket', telegram_linked: true });
+      if (path.includes('send-otp')) return Promise.resolve({ otp_sent: true });
+      if (path.includes('verify-otp')) return new Promise(resolve => { finish = resolve; });
+      return Promise.resolve(profile);
+    });
+    const hook = await renderHook(useAuth, { wrapper });
+    await act(async () => { await hook.result.current.login('cashier', 'password'); });
+    let attempts!: Promise<unknown>[];
+    await act(async () => { attempts = [hook.result.current.verifyOtp('123456'), hook.result.current.verifyOtp('123456')]; });
+    expect(calls().filter(path => path.includes('verify-otp'))).toHaveLength(1);
+    await act(async () => { finish({ access: 'a', refresh: 'r' }); await Promise.all(attempts); });
+    expect(setTokens).toHaveBeenCalledTimes(1);
+    expect(hook.result.current.isAuthenticated).toBe(true);
+  });
+
+  test('a cancelled credential response cannot restore a session', async () => {
+    let finish!: (value: any) => void;
+    jest.mocked(request).mockImplementation(() => new Promise(resolve => { finish = resolve; }));
+    const hook = await renderHook(useAuth, { wrapper });
+    let attempt!: Promise<unknown>;
+    await act(async () => { attempt = hook.result.current.login('cashier', 'password').catch(error => error); });
+    await act(async () => { hook.result.current.resetLogin(); finish({ access: 'stale', refresh: 'stale' }); });
+    expect(await attempt).toMatchObject({ code: 'SESSION_CHANGED' });
+    expect(setTokens).not.toHaveBeenCalled();
   });
 });
