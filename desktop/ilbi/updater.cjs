@@ -5,6 +5,7 @@ const { createReadStream } = require('node:fs');
 const { join } = require('node:path');
 const { OFFICIAL_SERVER } = require('./runtime.cjs');
 const { publicReleases } = require('./services.cjs');
+const { publicErrorMessage } = require('./public-errors.cjs');
 const MAX_PACKAGE = 1024 * 1024 * 1024;
 function versionParts(value) {
   if (typeof value !== 'string' || !/^\d+\.\d+\.\d+$/.test(value)) throw Error('Yangilanish versiyasi noto‘g‘ri.');
@@ -36,7 +37,7 @@ class DesktopUpdater extends EventEmitter {
     this.state = { phase: 'idle', installedVersion: current.version, installedBuild: current.sourceCommit, progress: null };
   }
   status() { return { ...this.state }; }
-  set(values) { this.state = { ...this.state, ...values }; this.emit('status', this.status()); }
+  set(values) { this.state = { ...this.state, ...values, ...(values.message !== undefined ? { message: publicErrorMessage(values.message) } : {}) }; this.emit('status', this.status()); }
   async check() {
     if (this.busy || this.checking || this.state.phase === 'installing') return this.status();
     this.checking = true;
