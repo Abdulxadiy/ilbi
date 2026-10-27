@@ -18,4 +18,4 @@ Targeted image tests cover the native multipart append arguments, denied access,
 
 ## Packaging and publication
 
-Pending. Mobile marketing version remains 1.0.0; platform remains 1.4.0; iOS build remains 1. A new immutable Android native build is required after published build 4. Existing APKs must remain byte-for-byte unchanged. No emulator/ADB interaction, main merge, frontend/backend/bot restart, push activation or iOS build is part of this UI publication.
+Android versionCode advances from 4 to 5 so existing installations can identify a newer native package; the signing identity is retained. Assembly/publication remain pending at this checkpoint. Mobile marketing version remains 1.0.0; platform remains 1.4.0; iOS build remains 1. A new immutable Android native build is required after published build 4. Existing APKs must remain byte-for-byte unchanged. No emulator/ADB interaction, main merge, frontend/backend/bot restart, push activation or iOS build is part of this UI publication.

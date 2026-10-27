@@ -5,13 +5,13 @@ Read this first when continuing the owner's build task. It is an executable hand
 ## Current scope
 
 - Android APK now; iOS/IPA later.
-- Phone notifications are **discussion only** until the owner starts implementation. Their intended scope covers the whole platform; Z reports, chat and B2B were examples. Do not install notification/Firebase modules, alter the backend or send test pushes from a proposal document.
-- Platform `1.4.0`, mobile `1.0.0`, Android code `3`, iOS build `1`. Android code 3 is the published UI update for existing build-1/build-2 installations. Do not bump marketing/platform versions for build tooling or documentation.
-- First accepted standalone APK: `dist/android/ILBI-1.0.0-android-1.apk`, source `6ac80b1b5b955587837ec5f58cd4ab690a90cca2`. The current UI update is `dist/android/ILBI-1.0.0-android-3.apk`, source `471c8be131ad6304025bf5b8f012f04a1556d522`; never relabel an old binary with a newer build number.
+- Push foundation, SDK and installation APIs are implemented. The reviewed backend is deployed; sender credentials and actual phone delivery remain disabled/unverified. Do not enable push or upload the private sender key as a side effect of an APK publication. See `docs/PRODUCTION_ROLLOUT_2026_10_27.md`.
+- Platform `1.4.0`, mobile `1.0.0`, Android code `5`, iOS build `1`. Build 5 is being prepared for the approved mobile UI update; build 4 remains the published release until its verified successor is activated. Keep marketing/platform versions unchanged. See `docs/MOBILE_UI_RELEASE_2026_10_27_BUILD5.md` for the latest actual status.
+- First accepted standalone APK: `dist/android/ILBI-1.0.0-android-1.apk`, source `6ac80b1b5b955587837ec5f58cd4ab690a90cca2`. The currently published APK is `dist/android/ILBI-1.0.0-android-4.apk`, source `364017038bedcbe20b0974a86fa75aeec29cd5ea`; never relabel an old binary with a newer build number.
 - Build 2 was published from source `19183bb7c4d10a43840bd5156d2b77c7aaeef433`; see `docs/MOBILE_UI_RELEASE_2026_10_26.md`. Build 3 is published in the official feed from source `471c8be131ad6304025bf5b8f012f04a1556d522`; actual checks and limits are in `docs/MOBILE_UI_RELEASE_2026_10_27.md`. Its manifest binds the actual payload to 112 application sources. A subsequent update needs a higher Android native build; never replace an already published native build with different bytes.
 - For the 2026-10-26 and 2026-10-27 update tasks, leave every running emulator and its installed build unchanged. Artifact/source verification and server staging must not install, restart, inspect through ADB, clear data or otherwise drive the emulator. The owner will observe the update offer themselves; do not assume which build they currently have installed.
 - `android-signing-public.json` pins the existing public certificate. Private signing material is outside Git under the owner's `~/.local/share/ilbi-signing/mobile/`.
-- No phone push transport is configured. Support polling and in-app update reminders already exist.
+- Phone push delivery is not enabled on production. Support polling, inbox APIs and in-app update reminders exist. The update reminder does not require FCM.
 
 Read `../AGENTS.md`, `AGENTS.md`, `docs/ILOVANI_YIGISH_UZ.md`, `docs/MOBILE_UPDATES_VALIDATION.md` and the live parity audit. The required sequence is **implement → test → record actual evidence → advance**.
 
@@ -65,7 +65,7 @@ Outputs are `dist/android/ILBI-<version>-android-<code>.apk` and `android-build-
 - `npm run prepare:signing` creates protected, ignored EAS credentials from the existing local record. Never print credential JSON, private records, passwords or an environment dump.
 - Preserve the owner's financial, fiscal, account/store, permission and pending-work safeguards. Do not uninstall or clear a financial app to make a test pass.
 - Do not force-upgrade/downgrade Expo or suppress the existing dependency-security gate to hide unrelated advisories. SDK changes need matching official documentation and their own validation.
-- If a future approved Firebase implementation declares `expo.android.googleServicesFile`, update isolated source copying to include only that validated client configuration. A service-account private key never belongs in APK assets. The current builder intentionally excludes arbitrary root JSON and `.env` files.
+- The current Firebase client configuration is allowlisted and validated by the isolated source copier. A service-account private key never belongs in APK assets. Arbitrary root JSON and `.env` files are excluded.
 
 ## Runtime acceptance and delivery
 

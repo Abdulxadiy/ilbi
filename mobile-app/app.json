@@ -21,7 +21,7 @@
       "predictiveBackGestureEnabled": false,
       "package": "uz.ilbi.mobile",
       "googleServicesFile": "./google-services.json",
-      "versionCode": 4,
+      "versionCode": 5,
       "blockedPermissions": [
         "android.permission.RECORD_AUDIO"
       ]
