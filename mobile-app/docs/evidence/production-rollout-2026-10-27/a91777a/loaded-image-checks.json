@@ -1,0 +1,13 @@
+{
+  "checks": {
+    "loaded_image_id_matches_verified_oci_manifest": true,
+    "descriptor_matches_verified_oci_manifest": true,
+    "config_fields_match_verified_archive": true,
+    "all_13_layer_diff_ids_match": true,
+    "revision_matches": true,
+    "platform_matches": true
+  },
+  "verified_engine_image_id": "sha256:62102671c771f78d0f4499ec422f4efb1d5b79dd74030b5a72b4b0e3563c1249",
+  "verified_config_digest": "sha256:d707f2133280fec7fe329e2cd0d23512467adb2e276873f1535a7a3faa56f111",
+  "identity_note": "Docker29 containerd reports the verified OCI manifest as image Id; CI classic image store reports the config digest. Both are linked in the immutable archive."
+}

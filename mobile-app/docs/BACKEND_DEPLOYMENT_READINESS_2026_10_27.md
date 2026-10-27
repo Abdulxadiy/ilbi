@@ -1,22 +1,26 @@
 # Backend and mobile deployment readiness — 2026-10-27
 
-Status: read-only production inspection and local preparation. Nothing in this document was deployed, merged, enabled or sent to a real device. The owner's earlier publication approval covered a mobile APK, not the feature branch's entire platform refactor. Backend activation therefore needs a concrete final scope decision after the candidate and APK are verified.
+**Current status: the owner-approved backend and Android APK build4 are live.** The owner subsequently approved “Backend va APK’ni chiqarish”, extending the earlier APK-only scope. The current verified backend image is `ghcr.io/abdulxadiy/ilbi/backend:sha-a91777a0b7908898d9359b5e24c3f1df5e1cb1b7`, with immutable API source `38aa63dccce8831ecf32b296f3a7e913980ec7cd`. Its backend tree is unchanged from the reviewed 1,152-test candidate. All eight forward migrations are applied, no migrations remain, all required mobile capability routes are ready, and 15 authenticated read-only public-HTTPS contract checks passed. Android build4 from source `364017038bedcbe20b0974a86fa75aeec29cd5ea` is publicly downloadable; its full 77,531,797-byte HTTPS download matched the signed artifact hash, while immutable build3 and non-mobile feed entries were preserved.
 
-## Observed production state
+The authoritative activation, backup/rehearsal, failed-attempt/rollback and publication record is [PRODUCTION_ROLLOUT_2026_10_27.md](PRODUCTION_ROLLOUT_2026_10_27.md). A narrow legacy-web support contact-save compatibility follow-up is being verified: API source `d35ea11043affab1671172f42e27d367033232a1`, candidate `f67d770`, [manual CI run](https://github.com/Abdulxadiy/ilbi/actions/runs/40531758799). It is **not yet claimed deployed** at this checkpoint; the rollout record will identify the final runtime after verification. The APK bytes remain unchanged for that server-only correction.
+
+Push remains disabled, the FCM sender key is absent from production, no live notification was sent and the owner's existing emulator remains untouched. Native device/FCM acceptance, the unresolved mobile toolchain advisory and advanced/fiscal parity gates remain open. Platform version is1.4.0 and mobile marketing version1.0.0. **The sections below retain the historical pre-approval inspection/preparation evidence and the reusable activation guidance; their “not deployed”, old-image and approval-pending statements describe those earlier checkpoints, not the current live state.**
+
+## Historical production state — initial pre-approval inspection
 
 Production is `/srv/ilbi`, with backend environment file `/srv/ilbi/ilbi/.env.production`. It has no application Git checkout to pull. The live Compose file retains the original `./ilbi` backend layout. Copying the feature branch's `./backend` Compose file onto it would point at the wrong environment path.
 
-All three backend processes run the existing image:
+At that initial inspection, all three backend processes ran this existing image:
 
 ```text
 ghcr.io/abdulxadiy/sales-platform/backend:sha-2d799dd5596a92fb6a0e3be6cf51a2a018c88e2d
 ```
 
-The frontend and bot use that same commit under `sales-platform/frontend` and `sales-platform/bot`. Django reports 6.1.2, matching the frozen dependencies used by the new tests. Backend readiness returns `ready`; Nginx configuration validation passes. Backend/worker/beat run as UID/GID 1000. Worker concurrency is one, and a separate Celery beat process already runs.
+The frontend and bot used that same commit under `sales-platform/frontend` and `sales-platform/bot`; those frontend/bot images are preserved by the later backend-only rollout. The initial Django check reported 6.1.2, matching the frozen dependencies used by the new tests. Backend readiness returned `ready`; Nginx configuration validation passed. Backend/worker/beat ran as UID/GID 1000. Worker concurrency was one, and a separate Celery beat process already ran.
 
-The push app, FCM configuration and push dispatch schedule are absent. Registration/revoke, safe sale/inventory/cashbox/B2B capability handlers, guarded debt quotes, the store-settings revision field and notification-detail **GET** are absent. The old detail URL resolves for other methods, so route resolution alone must not be treated as GET compatibility. Existing analytics, profile and current-store APIs are present.
+At that historical checkpoint the push app, FCM configuration and push dispatch schedule were absent. Registration/revoke, safe sale/inventory/cashbox/B2B capability handlers, guarded debt quotes, the store-settings revision field and notification-detail **GET** were absent. The old detail URL resolved for other methods, so route resolution alone must not be treated as GET compatibility. Existing analytics, profile and current-store APIs were present. These initial route/migration observations were superseded by the successful rollout checks linked above; FCM remains disabled.
 
-Applied migration heads include cashbox `0005`, inventory `0013`, sales `0019`, core `0016`, support `0003` and tenants `0014`. Sanitized evidence is [production-readonly.json](evidence/backend-deployment-readiness-2026-10-27/production-readonly.json).
+The initial applied migration heads included cashbox `0005`, inventory `0013`, sales `0019`, core `0016`, support `0003` and tenants `0014`. Historical sanitized evidence is [production-readonly.json](evidence/backend-deployment-readiness-2026-10-27/production-readonly.json).
 
 Recheck without logging in, registering a device or writing to the server:
 
@@ -28,7 +32,7 @@ python3 ops/check_mobile_backend_readiness.py \
 
 `--require-ready` returns a nonzero exit when the required mobile handlers are absent. The probe reads the migration table in a read-only database transaction and reports configuration booleans, never environment contents, credentials or tokens. It does not establish native delivery or authenticated business acceptance.
 
-## Main-compatible candidate, without the layout refactor
+## Historical candidate preparation, without the layout refactor
 
 `ops/prepare_mobile_backend_candidate.py` creates a separate local worktree from production commit `2d799dd5596a92fb6a0e3be6cf51a2a018c88e2d`. It overlays only committed backend `api/apps/config/tests` differences into the original `ilbi/` directory. The original frontend, bot, desktop, platform version, Dockerfile, entrypoint and dependency lock remain unchanged. Unknown runtime/dependency changes, deletions, symlinks and an existing destination cause an explicit failure. Uncommitted source, `.env` files and `firebase-keys` are never copied.
 
@@ -43,7 +47,7 @@ python3 ops/prepare_mobile_backend_candidate.py \
 
 The generated `ops/mobile-backend-candidate.json` records immutable base/source commits and a SHA-256 for each overlaid backend file. Review `git diff` inside that worktree. Then run the actual backend suites from its `ilbi/` directory with the frozen test environment and a dedicated PostgreSQL test database. A candidate must be regenerated when source changes; do not label an older snapshot as final.
 
-The current reviewed candidate is **`5719bc10d1978a9b2a1eba8ed7240fc19a20ea84`** on branch `mobile/backend-api-readiness-20261027`, in [draft PR #3](https://github.com/Abdulxadiy/ilbi/pull/3). It preserves the first reviewed candidate `9683b9745d8e901707dc37eb1f6a94a20f0b6b5e` and adds a separate security commit. Its immutable backend source is **`38aa63dccce8831ecf32b296f3a7e913980ec7cd`**. The local worktree retains its original historical directory name, `/mnt/storage/.cache/ilbi-mobile-backend-candidate/final-9a025e0c`; its current commit and manifest, rather than that directory suffix, identify the source.
+The reviewed pre-publication candidate was **`5719bc10d1978a9b2a1eba8ed7240fc19a20ea84`** on branch `mobile/backend-api-readiness-20261027`, in [PR #3](https://github.com/Abdulxadiy/ilbi/pull/3). It preserves the first reviewed candidate `9683b9745d8e901707dc37eb1f6a94a20f0b6b5e` and adds a separate security commit. Its immutable backend source is **`38aa63dccce8831ecf32b296f3a7e913980ec7cd`**. The local worktree retains its original historical directory name, `/mnt/storage/.cache/ilbi-mobile-backend-candidate/final-9a025e0c`; its commit and manifest, rather than that directory suffix, identify the source. Publication candidate `a91777a` changed only publication CI and retained the exact tested backend tree; subsequent candidate/runtime identities belong to the rollout record.
 
 All **538 compared** committed backend files match the current source byte-for-byte; three deliberately retained nonruntime example/document files are excluded. The candidate overlays 78 changed backend files plus two public cross-client wire-contract fixtures. The security update changes ten backend files and the manifest relative to the first candidate. Frontend, desktop, bot, platform version, the base production Compose file, dependency lock, Dockerfile and entrypoint remain unchanged from the production base.
 
@@ -84,17 +88,17 @@ The exact final `migrate --plan` is the authority. Review its SQL and forward de
 
 The image entrypoint already runs `migrate --noinput` before Gunicorn. The existing deployment helper takes an encrypted backup with active writers stopped, resumes them, switches commit-pinned images and waits for health. Ensure all new web/worker/beat images use the same candidate before turning on push. An old worker can still create an ordinary inbox row during transition; no push backfill or exactly-once OS presentation is claimed.
 
-## Concrete rollout boundary — approval still required
+## Historical pre-approval rollout plan — approval later granted and rollout executed
 
-The appropriate candidate image build context is the reviewed candidate worktree's **`ilbi/`**, target `production`. Its overlay is now committed and pushed as `5719bc10d1978a9b2a1eba8ed7240fc19a20ea84`; the worktree is clean. A release image must be tied to that reviewed candidate commit and recorded digest. No candidate image has been built or published here, and no tag is claimed to exist. Do not label this changed backend as the old production commit or the mobile APK's separate source commit.
+At this pre-approval planning checkpoint, the appropriate candidate image build context was the reviewed candidate worktree's **`ilbi/`**, target `production`. Its overlay was committed and pushed as `5719bc10d1978a9b2a1eba8ed7240fc19a20ea84`; the worktree was clean. No candidate image had yet been built/published and no tag was claimed at that checkpoint. The later publication/activation used the separately recorded `a91777a` image and exact digest. A release image must retain its reviewed candidate identity; do not label it as the old production commit or the mobile APK's separate source commit.
 
 A backend-only rollout can use the existing `/srv/ilbi/ops/deploy_release.sh` with the new candidate backend image and the **currently deployed** frontend/bot references above. It accepts three commit-pinned GHCR references, backs up and checks health. This preserves the actual frontend/bot images instead of using the feature branch's unrelated platform layout. Preserve the current root Compose file and backend environment path. Review/install only the minimal candidate operations files; do not rsync the whole feature checkout onto production.
 
 No new main merge is needed merely to publish an APK. The ordinary deployment workflow runs only after successful `main` CI, so pushing the mobile feature branch updates GitHub source, not the server or installed packages. APK publication, backend rollout and FCM activation are three distinct operations. The installed APK requires an explicit package update; GitHub pushes do not replace it.
 
-Before any live change, record the current three image references, public release feed, exact planned migrations and a verified encrypted backup/restore path. Confirm registry access to both the candidate image and retained rollback images. The server already retains previous images and its backup configuration; this inspection did not create a backup or test a production restore.
+The original plan required recording the three image references, public release feed, planned migrations and a verified encrypted backup/restore path before a live change, plus confirming candidate/rollback image access. The initial read-only inspection did not create a backup or test a restore. The later stopped-writer encrypted backups, isolated restore rehearsal and immutable image checks are recorded in the rollout document.
 
-After rollout, check container readiness, Nginx, migration heads, actual method handlers, authenticated read-only profile/history/report/inbox contracts and capability response bodies. Use an authorized test account/store; do not create financial test transactions in an owner's live store as an incidental health check. Source/ORM tests are not a substitute for these authenticated production checks.
+The original plan required post-rollout container readiness, Nginx, migration-head/method-handler checks and authenticated read-only profile/history/report/inbox/capability contracts; the successful activation and all 15 HTTPS checks are recorded separately. Use an authorized test account/store; do not create financial test transactions in an owner's live store as an incidental health check. Source/ORM tests are not a substitute for authenticated production checks.
 
 ## FCM secret and worker activation
 
@@ -114,4 +118,4 @@ Push delivery reuses existing inbox events; it does not repeat sales, stock writ
 
 First disable push and stop the candidate worker/beat if its behavior is uncertain. Preserve the outbox/receipt tables and original financial intent keys. Restore the recorded old image references using the reviewed deployment procedure, then verify web/worker/beat and readiness. Retain additive tables; the old image ignores them and the mobile capability gates prevent unsafe fallback writes. Never restore the database over newer accepted customer transactions as an ordinary image rollback. A database restore requires its own explicit recovery decision and reconciliation.
 
-This readiness work did not alter the server, merge branches, upload the private key, publish an image/APK or send a notification. The final source snapshot and backend verification are recorded; assembled native acceptance and the deployment decision remain required before activation.
+The historical inspection/preparation represented above did not itself alter the server, merge branches, upload the private key, publish an image/APK or send a notification. The owner subsequently approved the backend/APK release, which was executed and verified as recorded in [PRODUCTION_ROLLOUT_2026_10_27.md](PRODUCTION_ROLLOUT_2026_10_27.md). Native device acceptance, actual FCM activation/delivery, the dependency advisory and advanced/fiscal parity gates remain open; the earlier deployment-approval gate is no longer pending.
