@@ -133,10 +133,25 @@ class DebtPaymentOutputSerializer(serializers.ModelSerializer):
 class DebtPaymentCreateSerializer(serializers.Serializer):
     payment_type = serializers.ChoiceField(choices=["cash", "card"], default="cash")
     idempotency_key = serializers.CharField(max_length=64, required=False, allow_blank=False)
+    expected_quote = serializers.RegexField(regex=r"^[a-f0-9]{64}$", required=False, write_only=True)
     amount = serializers.DecimalField(max_digits=14, decimal_places=2, min_value=Decimal("0.01"))
     currency = serializers.ChoiceField(choices=["UZS", "USD"])
     branch_id = serializers.IntegerField(required=False, allow_null=True)
     note = serializers.CharField(required=False, allow_blank=True, default="")
+
+    def validate(self, attrs):
+        if "expected_quote" in attrs and not attrs.get("idempotency_key"):
+            raise serializers.ValidationError(
+                {"idempotency_key": "Tasdiqlangan to‘lov uchun asl qayta so‘rash kaliti kerak."}
+            )
+        return attrs
+
+
+class DebtPaymentQuoteSerializer(serializers.Serializer):
+    amount = serializers.DecimalField(max_digits=14, decimal_places=2, min_value=Decimal("0.01"))
+    currency = serializers.ChoiceField(choices=["UZS", "USD"])
+    payment_type = serializers.ChoiceField(choices=["cash", "card"], default="cash")
+    branch_id = serializers.IntegerField(required=False, min_value=1)
 
 
 class DebtPaymentCorrectionSerializer(serializers.Serializer):
@@ -256,10 +271,12 @@ class SaleCreateInputSerializer(serializers.Serializer):
 
 
 class SaleVoidSerializer(serializers.Serializer):
+    idempotency_key = serializers.CharField(max_length=64, required=False, allow_blank=False)
     reason = serializers.CharField(required=True, allow_blank=False)
 
 
 class SaleItemVoidSerializer(serializers.Serializer):
+    idempotency_key = serializers.CharField(max_length=64, required=False, allow_blank=False)
     quantity = serializers.DecimalField(max_digits=14, decimal_places=3, min_value=Decimal("0.001"))
     reason = serializers.CharField(required=True, allow_blank=False)
 
@@ -272,10 +289,12 @@ class B2BAcceptItemSerializer(serializers.Serializer):
 
 
 class B2BAcceptInputSerializer(serializers.Serializer):
+    operation_id = serializers.UUIDField(required=False, write_only=True)
     items = B2BAcceptItemSerializer(many=True)
 
 
 class B2BRejectInputSerializer(serializers.Serializer):
+    operation_id = serializers.UUIDField(required=False, write_only=True)
     reason = serializers.CharField(required=True, allow_blank=False)
 
 
@@ -285,12 +304,14 @@ class B2BReturnItemInputSerializer(serializers.Serializer):
 
 
 class B2BReturnInputSerializer(serializers.Serializer):
+    operation_id = serializers.UUIDField(required=False, write_only=True)
     idempotency_key = serializers.CharField(max_length=64, allow_blank=False)
     reason = serializers.CharField(required=True, allow_blank=False)
     items = B2BReturnItemInputSerializer(many=True, allow_empty=False)
 
 
 class B2BReturnDiscrepancyCloseInputSerializer(serializers.Serializer):
+    operation_id = serializers.UUIDField(required=False, write_only=True)
     idempotency_key = serializers.CharField(max_length=64, allow_blank=False)
     reason = serializers.CharField(required=True, allow_blank=False)
     items = B2BReturnItemInputSerializer(many=True, allow_empty=False)

@@ -1,0 +1,23 @@
+# Reviewed activation template. Merely keeping this file under ops does not activate it.
+# After credential staging is separately authorized, the server compose wrapper can
+# include it through /srv/ilbi/docker-compose.mobile-push.yml.
+services:
+  ilbi:
+    environment: &mobile_push_environment
+      MOBILE_PUSH_ENABLED: '${ILBI_MOBILE_PUSH_ENABLED:-False}'
+      FCM_PROJECT_ID: ilbi-80eb1
+      FCM_SERVICE_ACCOUNT_FILE: /run/ilbi-secrets/firebase-service-account.json
+    volumes: &mobile_push_mount
+      - type: bind
+        source: /srv/ilbi-secrets/firebase-service-account.json
+        target: /run/ilbi-secrets/firebase-service-account.json
+        read_only: true
+        bind:
+          create_host_path: false
+  celery_worker:
+    environment: *mobile_push_environment
+    volumes: *mobile_push_mount
+  celery_beat:
+    environment:
+      MOBILE_PUSH_ENABLED: '${ILBI_MOBILE_PUSH_ENABLED:-False}'
+      FCM_PROJECT_ID: ilbi-80eb1

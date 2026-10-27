@@ -74,7 +74,13 @@ INSTALLED_APPS = [
     'apps.cashbox',
     'apps.support',
     'apps.desktop_sync',
+    'apps.notifications',
 ]
+
+# Disabled until Firebase credentials, migrations, worker and acceptance are ready.
+MOBILE_PUSH_ENABLED = os.getenv('MOBILE_PUSH_ENABLED', 'False').lower() in ('true', '1', 'yes')
+FCM_PROJECT_ID = os.getenv('FCM_PROJECT_ID', '')
+FCM_SERVICE_ACCOUNT_FILE = os.getenv('FCM_SERVICE_ACCOUNT_FILE', '')
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

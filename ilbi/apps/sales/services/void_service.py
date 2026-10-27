@@ -5,7 +5,7 @@ from django.db import transaction
 from apps.core import event_clock as timezone
 
 from apps.inventory.services import StockService
-from apps.sales.models import Sale, SaleItem, SaleVoidLog
+from apps.sales.models import Sale, SaleItem, SaleVoidLog, SaleVoidRequest
 from apps.sales.models.sale_model import SaleRefund
 from apps.cashbox.services.cashbox_service import CashboxService, CashboxServiceError
 from apps.tenants.models import Tenant
@@ -18,6 +18,64 @@ class VoidServiceError(Exception):
 
 
 class VoidService:
+    @staticmethod
+    def _request(sale, user, reason, key, sale_item=None, quantity=None):
+        if key is None:
+            return None, None
+        if not isinstance(key, str) or not key.strip() or len(key.strip()) > 64:
+            raise VoidServiceError("Bekor qilishning qayta so‘rash kaliti noto‘g‘ri.")
+        key = key.strip()
+        payload = {
+            "kind": "item" if sale_item is not None else "sale",
+            "sale_id": sale.pk,
+            "sale_item_id": sale_item.pk if sale_item is not None else None,
+            "reason": (reason or "").strip(),
+            "quantity": str(quantity.normalize()) if quantity is not None else None,
+        }
+        previous = SaleVoidRequest.objects.filter(tenant_id=sale.tenant_id, idempotency_key=key).first()
+        if previous and (previous.actor_id != user.pk or previous.payload != payload):
+            raise VoidServiceError("Qayta so‘rash kaliti boshqa bekor qilish amali uchun ishlatilgan.")
+        return {"idempotency_key": key, "payload": payload}, previous
+
+    @staticmethod
+    def _attach_receipt(obj, record):
+        if record is not None:
+            obj._void_operation = {
+                "idempotency_key": record.idempotency_key,
+                "actor_id": record.actor_id,
+                "tenant_id": record.tenant_id,
+                "kind": record.kind,
+                "sale_id": record.sale_id,
+                "sale_item_id": record.sale_item_id,
+                "reason": record.payload["reason"],
+                "quantity": record.payload["quantity"],
+                "result": record.result,
+            }
+        return obj
+
+    @classmethod
+    def _save_receipt(cls, *, obj, sale, user, request, refund_amount, sale_item=None):
+        if request is None:
+            return obj
+        record = SaleVoidRequest.objects.create(
+            tenant_id=sale.tenant_id,
+            actor=user,
+            sale=sale,
+            sale_item=sale_item,
+            idempotency_key=request["idempotency_key"],
+            kind=request["payload"]["kind"],
+            payload=request["payload"],
+            result={
+                "sale_status": sale.status,
+                "refunded_amount": str(refund_amount),
+                "sale_refunded_amount": str(sale.refunded_amount),
+                "sale_net_amount": str(sale.net_amount),
+                "currency": sale.currency,
+                "voided_quantity": str(sale_item.voided_quantity) if sale_item is not None else None,
+            },
+        )
+        return cls._attach_receipt(obj, record)
+
     @staticmethod
     def _validate_void_eligibility(sale, user, reason: str):
         if not reason or not reason.strip():
@@ -51,9 +109,12 @@ class VoidService:
 
     @classmethod
     @transaction.atomic
-    def void_sale(cls, *, sale: Sale, user, reason: str) -> Sale:
+    def void_sale(cls, *, sale: Sale, user, reason: str, idempotency_key: str = None) -> Sale:
         Tenant.objects.select_for_update().get(pk=sale.tenant_id)
         sale = Sale.objects.select_for_update().get(pk=sale.pk)
+        request, previous = cls._request(sale, user, reason, idempotency_key)
+        if previous is not None:
+            return cls._attach_receipt(sale, previous)
         cls._validate_void_eligibility(sale, user, reason)
 
         reason = reason.strip()
@@ -119,19 +180,21 @@ class VoidService:
             description=f"Sale {sale.receipt_number} voided: {reason}",
         )
 
-        return sale
+        return cls._save_receipt(obj=sale, sale=sale, user=user, request=request, refund_amount=refund_amount)
 
     @classmethod
     @transaction.atomic
-    def void_sale_item(cls, *, sale_item: SaleItem, user, quantity: Decimal, reason: str) -> SaleItem:
+    def void_sale_item(cls, *, sale_item: SaleItem, user, quantity: Decimal, reason: str, idempotency_key: str = None) -> SaleItem:
         if not reason or not reason.strip():
             raise VoidServiceError("Bekor qilish sababi kiritilishi shart.")
 
         Tenant.objects.select_for_update().get(pk=sale_item.tenant_id)
         sale = Sale.objects.select_for_update().get(pk=sale_item.sale_id)
-        cls._validate_void_eligibility(sale, user, reason)
-
         sale_item = SaleItem.objects.select_for_update().get(pk=sale_item.pk)
+        request, previous = cls._request(sale, user, reason, idempotency_key, sale_item, quantity)
+        if previous is not None:
+            return cls._attach_receipt(sale_item, previous)
+        cls._validate_void_eligibility(sale, user, reason)
         available_qty = sale_item.quantity - sale_item.voided_quantity
 
         if quantity <= 0:
@@ -216,4 +279,4 @@ class VoidService:
             description=f"Sale item {sale_item.id} from {sale.receipt_number} voided ({quantity} qty): {reason}",
         )
 
-        return sale_item
+        return cls._save_receipt(obj=sale_item, sale=sale, user=user, request=request, refund_amount=refund_amount, sale_item=sale_item)

@@ -13,6 +13,7 @@ from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import generics, status
+from rest_framework.exceptions import APIException
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.throttling import ScopedRateThrottle
@@ -34,6 +35,7 @@ from apps.accounts.services.password_reset_service import request_password_reset
 from apps.core.models import AuditAction
 from apps.core.services.audit_service import AuditService
 from apps.tenants.models import SellerProfile, Tenant
+from apps.tenants.settings_revision import settings_revision
 from apps.accounts.services.permission_service import PermissionService
 from apps.tenants.seller_profile_service import SellerProfileService, SellerProfileServiceError
 from apps.tenants.services import TenantService, TenantServiceError
@@ -58,10 +60,19 @@ from .serializers import (
 logger = logging.getLogger(__name__)
 
 
+class SettingsPreconditionFailed(APIException):
+    status_code = 412
+    default_code = "settings_conflict"
+    default_detail = "Do‘kon sozlamalari boshqa oynada o‘zgardi. Qayta yuklab, o‘zgarishlarni tekshiring."
+
+
 def _save_tenant_settings_with_audit(serializer, *, request, tenant):
     """Save a tenant edit and its value-free change summary in one transaction."""
     with transaction.atomic():
         locked = Tenant.objects.select_for_update().get(pk=tenant.pk)
+        expected_revision = request.headers.get("If-Match")
+        if expected_revision is not None and expected_revision != f'"{settings_revision(locked)}"':
+            raise SettingsPreconditionFailed()
         fresh = type(serializer)(locked, data=serializer.initial_data, partial=serializer.partial, context=serializer.context)
         fresh.is_valid(raise_exception=True)
         changed_fields = sorted(field for field, value in fresh.validated_data.items() if getattr(locked, field) != value)

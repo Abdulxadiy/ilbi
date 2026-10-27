@@ -1,23 +1,24 @@
-from django.db.models import Q, Prefetch
+from django.db.models import Prefetch, Q
 from django.shortcuts import get_object_or_404
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import OpenApiTypes, extend_schema
 from rest_framework import status
 from rest_framework.response import Response
 
 from api.mixins import OwnerStaffOnlyAPIView
+from api.pagination import StandardResultsSetPagination
 from api.permissions import HasEmployeePermission
 from api.schema import ShiftStatusSerializer, optional_pagination
-from api.pagination import StandardResultsSetPagination
 from api.v1.cashbox.serializers import (
     CashExpenseSerializer,
     CashIncomeSerializer,
-    DailyCashReportSerializer,
     DailyCashReportListSerializer,
+    DailyCashReportSerializer,
     ShiftCloseSerializer,
     ShiftOpenSerializer,
 )
 from apps.cashbox.models import CashExpense, CashIncome, DailyCashReport
 from apps.cashbox.services.cashbox_service import CashboxService, CashboxServiceError
+from apps.cashbox.services.mutations import perform_cashbox_mutation
 
 
 def filter_cashbox_rows(queryset, request, text_field):
@@ -50,6 +51,12 @@ class _BaseCashboxAPIView(OwnerStaffOnlyAPIView):
     required_permission = 'cashbox.view_cashbox'
 
 
+class CashboxCapabilitiesView(_BaseCashboxAPIView):
+    @extend_schema(request=None, responses={200: OpenApiTypes.OBJECT})
+    def get(self, request):
+        return Response({'cashbox_mutations': 1, 'idempotent_operations': ['open', 'close', 'income', 'expense']})
+
+
 class CashExpenseListCreateView(_BaseCashboxAPIView):
     """Kassadan xarajatlar ro'yxati va yangi xarajat kiritish."""
     permission_map = {'GET': 'cashbox.view_cashbox', 'POST': 'cashbox.record_expense'}
@@ -68,16 +75,18 @@ class CashExpenseListCreateView(_BaseCashboxAPIView):
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
         try:
-            expense = CashboxService.record_expense(
-                tenant=self.tenant,
-                user=request.user,
-                amount=data['amount'],
-                currency=data.get('currency', CashExpense.CURRENCY_UZS),
-                category=data['category'],
-                note=data.get('note', ''),
-                date=data.get('date'),
+            key = data.pop('idempotency_key', None)
+            def action():
+                expense = CashboxService.record_expense(
+                    tenant=self.tenant, user=request.user, amount=data['amount'],
+                    currency=data.get('currency', CashExpense.CURRENCY_UZS), category=data['category'],
+                    note=data.get('note', ''), date=data.get('date'),
+                )
+                return CashExpenseSerializer(expense).data
+            result = perform_cashbox_mutation(
+                tenant=self.tenant, actor=request.user, key=key, kind='expense', payload=data, action=action,
             )
-            return Response(CashExpenseSerializer(expense).data, status=status.HTTP_201_CREATED)
+            return Response(result, status=status.HTTP_201_CREATED)
         except CashboxServiceError as e:
             return Response(
                 {"error": {"code": "invalid_expense", "message": str(e)}},
@@ -103,16 +112,18 @@ class CashIncomeListCreateView(_BaseCashboxAPIView):
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
         try:
-            income = CashboxService.record_income(
-                tenant=self.tenant,
-                user=request.user,
-                amount=data['amount'],
-                currency=data.get('currency', CashIncome.CURRENCY_UZS),
-                source=data['source'],
-                note=data.get('note', ''),
-                date=data.get('date'),
+            key = data.pop('idempotency_key', None)
+            def action():
+                income = CashboxService.record_income(
+                    tenant=self.tenant, user=request.user, amount=data['amount'],
+                    currency=data.get('currency', CashIncome.CURRENCY_UZS), source=data['source'],
+                    note=data.get('note', ''), date=data.get('date'),
+                )
+                return CashIncomeSerializer(income).data
+            result = perform_cashbox_mutation(
+                tenant=self.tenant, actor=request.user, key=key, kind='income', payload=data, action=action,
             )
-            return Response(CashIncomeSerializer(income).data, status=status.HTTP_201_CREATED)
+            return Response(result, status=status.HTTP_201_CREATED)
         except CashboxServiceError as e:
             return Response(
                 {"error": {"code": "invalid_income", "message": str(e)}},
@@ -146,16 +157,18 @@ class ShiftCloseView(_BaseCashboxAPIView):
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
         try:
-            report = CashboxService.close_shift(
-                tenant=self.tenant,
-                user=request.user,
-                actual_cash_uzs=data['actual_cash_uzs'],
-                actual_cash_usd=data['actual_cash_usd'],
-                discrepancy_reason=data.get('discrepancy_reason', ''),
-                staff_notes=data.get('staff_notes', ''),
-                shift_id=data.get('shift_id'),
+            key = data.pop('idempotency_key', None)
+            def action():
+                report = CashboxService.close_shift(
+                    tenant=self.tenant, user=request.user, actual_cash_uzs=data['actual_cash_uzs'],
+                    actual_cash_usd=data['actual_cash_usd'], discrepancy_reason=data.get('discrepancy_reason', ''),
+                    staff_notes=data.get('staff_notes', ''), shift_id=data.get('shift_id'),
+                )
+                return DailyCashReportSerializer(report).data
+            result = perform_cashbox_mutation(
+                tenant=self.tenant, actor=request.user, key=key, kind='close', payload=data, action=action,
             )
-            return Response(DailyCashReportSerializer(report).data, status=status.HTTP_201_CREATED)
+            return Response(result, status=status.HTTP_201_CREATED)
         except CashboxServiceError as e:
             return Response(
                 {"error": {"code": "shift_close_error", "message": str(e)}},
@@ -169,7 +182,9 @@ class DailyCashReportListView(_BaseCashboxAPIView):
     """
     @extend_schema(request=None, responses={200: optional_pagination(DailyCashReportListSerializer)})
     def get(self, request):
-        reports = DailyCashReport.objects.filter(tenant=self.tenant).select_related("tenant", "closed_by").order_by("-closed_at", "-pk")
+        reports = DailyCashReport.objects.filter(tenant=self.tenant).select_related(
+            "tenant", "closed_by",
+        ).order_by("-closed_at", "-pk")
         reports = filter_cashbox_rows(reports, request, "staff_notes")
         if request.query_params.get("page"):
             return cashbox_page(reports, request, DailyCashReportListSerializer)
@@ -206,7 +221,16 @@ class ShiftOpenView(_BaseCashboxAPIView):
         serializer = ShiftOpenSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         try:
-            CashboxService.open_shift(tenant=self.tenant, user=request.user, **serializer.validated_data)
+            data = dict(serializer.validated_data)
+            key = data.pop('idempotency_key', None)
+            payload = dict(data)
+            data.pop('expected_report_id', None)
+            def action():
+                CashboxService.open_shift(tenant=self.tenant, user=request.user, **data)
+                return CashboxService.get_current_shift_status(self.tenant)
+            result = perform_cashbox_mutation(
+                tenant=self.tenant, actor=request.user, key=key, kind='open', payload=payload, action=action,
+            )
         except CashboxServiceError as exc:
             return Response({'detail': str(exc)}, status=400)
-        return Response(CashboxService.get_current_shift_status(self.tenant), status=201)
+        return Response(result, status=201)

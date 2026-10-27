@@ -80,7 +80,7 @@ def _get_docs_root() -> Path:
     """Find docs directory relative to repo root, container /app/docs, or /docs."""
     base_dir = Path(settings.BASE_DIR)
 
-    # 1. Host repo root: base_dir.parent / "docs" (e.g. Sales-Platform/docs when running outside container)
+    # 1. Host repo root: base_dir.parent / "docs" (e.g. ilbi/docs when running outside container)
     candidate_parent = base_dir.parent / "docs"
     if candidate_parent.exists() and (candidate_parent / "qollanmalar").exists():
         return candidate_parent

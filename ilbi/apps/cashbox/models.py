@@ -1,10 +1,23 @@
-from apps.core.event_clock import EventDateTimeField
 from decimal import Decimal
 
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.utils import timezone
 
+from apps.core.event_clock import EventDateTimeField
 from apps.core.models import BaseModel
+
+
+class CashboxMutationReceipt(BaseModel):
+    """A cash operation and its retry acknowledgement commit in one transaction."""
+    idempotency_key = models.UUIDField()
+    actor = models.ForeignKey('accounts.User', on_delete=models.PROTECT, related_name='cashbox_mutation_receipts')
+    kind = models.CharField(max_length=12)
+    fingerprint = models.CharField(max_length=64)
+    result = models.JSONField(encoder=DjangoJSONEncoder)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=['tenant', 'idempotency_key'], name='cashbox_mutation_key_once')]
 
 
 class CashShift(BaseModel):

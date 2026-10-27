@@ -1,6 +1,7 @@
 from django.urls import path
 
 from api.v1.cashbox.views.cashbox_views import (
+    CashboxCapabilitiesView,
     CashExpenseListCreateView,
     CashIncomeListCreateView,
     CurrentShiftStatusView,
@@ -11,6 +12,7 @@ from api.v1.cashbox.views.cashbox_views import (
 )
 
 urlpatterns = [
+    path('capabilities/', CashboxCapabilitiesView.as_view(), name='cashbox-capabilities'),
     path('expenses/', CashExpenseListCreateView.as_view(), name='cashbox-expenses'),
     path('income/', CashIncomeListCreateView.as_view(), name='cashbox-income'),
     path('shift/current/', CurrentShiftStatusView.as_view(), name='cashbox-shift-current'),

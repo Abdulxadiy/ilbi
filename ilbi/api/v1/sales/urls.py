@@ -3,6 +3,10 @@ from api.v1.exports import SalesExportView, CounterpartyExportView
 
 from api.v1.sales.views.b2b_views import (
     B2BAcceptView,
+    B2BCapabilitiesView,
+    B2BDetailView,
+    B2BOutgoingListView,
+    B2BMappingListView,
     B2BInboxListView,
     B2BRejectView,
     B2BReturnDiscrepancyCloseView,
@@ -14,6 +18,7 @@ from api.v1.sales.views.counterparty_views import (
     CounterpartySalesListView,
     DebtPaymentCorrectionView,
     DebtPaymentListCreateView,
+    DebtPaymentQuoteView,
 )
 from api.v1.sales.views.notification_views import (
     NotificationDetailView,
@@ -28,6 +33,7 @@ from api.v1.sales.views.import_views import (
 )
 from api.v1.sales.views.sale_views import (
     PublicReceiptDetailView,
+    SaleCapabilitiesView,
     SaleDetailView,
     SaleItemVoidView,
     SaleListCreateView,
@@ -42,6 +48,7 @@ urlpatterns = [
     path("counterparties/import/preview/", CounterpartyImportPreviewView.as_view(), name="counterparty-import-preview"),
     path("counterparties/import/<int:job_id>/commit/", CounterpartyImportCommitView.as_view(), name="counterparty-import-commit"),
     # Sales
+    path("capabilities/", SaleCapabilitiesView.as_view(), name="sales-capabilities"),
     path("", SaleListCreateView.as_view(), name="sale-list-create"),
     path("public/receipt/<str:token>/", PublicReceiptDetailView.as_view(), name="public-receipt-detail"),
     path("<int:pk>/", SaleDetailView.as_view(), name="sale-detail"),
@@ -57,6 +64,11 @@ urlpatterns = [
         name="counterparty-sales-list",
     ),
     path(
+        'counterparties/<int:counterparty_id>/payments/quote/',
+        DebtPaymentQuoteView.as_view(),
+        name='debt-payment-quote',
+    ),
+    path(
         "counterparties/<int:counterparty_id>/payments/",
         DebtPaymentListCreateView.as_view(),
         name="debt-payment-list-create",
@@ -67,6 +79,10 @@ urlpatterns = [
         name="debt-payment-correct",
     ),
     # B2B
+    path("b2b/mapping/<str:kind>/", B2BMappingListView.as_view(), name="b2b-mapping"),
+    path("b2b/capabilities/", B2BCapabilitiesView.as_view(), name="b2b-capabilities"),
+    path("b2b/outgoing/", B2BOutgoingListView.as_view(), name="b2b-outgoing-list"),
+    path("b2b/<int:sale_id>/", B2BDetailView.as_view(), name="b2b-detail"),
     path("b2b/inbox/", B2BInboxListView.as_view(), name="b2b-inbox-list"),
     path("b2b/<int:sale_id>/accept/", B2BAcceptView.as_view(), name="b2b-accept"),
     path("b2b/<int:sale_id>/reject/", B2BRejectView.as_view(), name="b2b-reject"),

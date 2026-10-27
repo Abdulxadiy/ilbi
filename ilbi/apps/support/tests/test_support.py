@@ -438,3 +438,75 @@ def test_operator_customer_profile_get_and_patch():
     assert customer.first_name == "Ali"
     assert customer.is_active is False
 
+
+
+def test_mobile_support_wire_contracts(owner, tenant, platform_admin):
+    """Real mobile request shapes; notification delivery remains mocked by this module's fixture."""
+    import json
+    import os
+    from pathlib import Path
+
+    visitor = APIClient()
+    visitor.force_authenticate(owner)
+    visitor.credentials(HTTP_X_TENANT_ID=str(tenant.pk))
+    identity = str(uuid.uuid4())
+    first = start(visitor, root='conversations', client_id=identity, name='Mobile test customer', subject='Mobile support contract', language='uz')
+    assert first.status_code == 201, first.data
+    assert start(visitor, root='conversations', client_id=identity).data['id'] == first.data['id']
+    pk = first.data['id']
+    root = f'/api/v1/support/conversations/{pk}/'
+    operator = APIClient()
+    operator.force_authenticate(platform_admin)
+    operator_root = f'/api/v1/support/inbox/{pk}/'
+    assert operator.post(operator_root, {'action': 'claim'}, format='json').status_code == 200
+    sent_id = str(uuid.uuid4())
+    first_message = Message.objects.filter(conversation_id=pk, sender='visitor').get()
+    answer = {'text': 'Synthetic operator answer', 'client_id': sent_id, 'reply_to_id': first_message.id}
+    reply = operator.post(operator_root + 'messages/', answer, format='json')
+    assert reply.status_code == 201, reply.data
+    assert operator.post(operator_root + 'messages/', answer, format='json').data['id'] == reply.data['id']
+    messages = visitor.get(root + 'messages/')
+    assert messages.status_code == 200, messages.data
+    polled = visitor.get(root + 'messages/', {'after_id': first_message.id})
+    assert reply.data['id'] in [m['id'] for m in polled.data['results']]
+    assert visitor.post(root, {'action': 'read', 'through_id': reply.data['id']}, format='json').status_code == 200
+    detail = visitor.get(root)
+    assert detail.data['unread_count'] == 0
+    closed = visitor.post(root, {'action': 'close'}, format='json')
+    assert closed.status_code == 200 and closed.data['status'] == 'closed'
+    assert visitor.post(root + 'messages/', {'text': 'Blocked', 'client_id': str(uuid.uuid4())}, format='json').status_code == 400
+    reopened = visitor.post(root, {'action': 'reopen'}, format='json')
+    assert reopened.status_code == 200 and reopened.data['status'] == 'waiting'
+    stranger = APIClient()
+    stranger.force_authenticate(UserFactory())
+    assert stranger.get(root + 'messages/').status_code == 404
+    guest_client = guest('c')
+    guest_created = start(guest_client, name='Synthetic guest')
+    guest_pk = guest_created.data['id']
+    assert guest('d').get(f'/api/v1/support/guest/{guest_pk}/messages/').status_code == 404
+    for index in range(55):
+        Message.objects.create(conversation_id=pk, sender='operator', author=platform_admin, text=f'History {index}')
+    latest = visitor.get(root + 'messages/')
+    assert latest.data['has_more'] is True and len(latest.data['results']) == 50
+    before = visitor.get(root + 'messages/', {'before_id': latest.data['results'][0]['id']})
+    ids = [m['id'] for m in before.data['results'] + latest.data['results']]
+    assert len(set(ids)) == Message.objects.filter(conversation_id=pk).count()
+    data = {
+        'source': 'Actual Django APIClient serializers, isolated PostgreSQL; synthetic support users; notification delivery mocked',
+        'metadata': guest_client.get('/api/v1/support/metadata/').json(),
+        'conversation': detail.json(), 'created': first.json(), 'guest': guest_created.json(),
+        'messages': messages.json(), 'after': polled.json(), 'closed': closed.json(), 'reopened': reopened.json(),
+    }
+    target = Path(__file__).resolve().parents[4] / 'mobile-app/tests/contracts/support.json'
+    if os.environ.get('ILBI_WRITE_MOBILE_SUPPORT_CONTRACTS') == '1':
+        target.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n')
+    else:
+        saved = json.loads(target.read_text())
+        def shape(value):
+            if isinstance(value, dict):
+                return {key: shape(item) for key, item in value.items()}
+            if isinstance(value, list):
+                return [shape(value[0])] if value else []
+            return type(value).__name__
+        for key in ('metadata', 'conversation', 'created', 'guest', 'messages', 'after', 'closed', 'reopened'):
+            assert shape(saved[key]) == shape(data[key]), f'Support contract changed: {key}'

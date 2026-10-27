@@ -19,6 +19,7 @@ from api.v1.accounts.views import (
     UserProfileView,
 )
 from api.v1.accounts.views.token_refresh import RevocableTokenRefreshView
+from apps.notifications.views import PushRegistrationView, PushRevokeView
 
 from .views.docs_views import documentation_image
 from .views.platform_views import (
@@ -30,6 +31,8 @@ from .views.platform_views import (
 )
 
 urlpatterns = [
+    path('auth/push/installations/', PushRegistrationView.as_view(), name='push-installation-register'),
+    path('auth/push/revoke/', PushRevokeView.as_view(), name='push-installation-revoke'),
     path('platform/support-unread/', PlatformSupportUnreadView.as_view()),
     path('platform/overview/', PlatformOverviewView.as_view()),
     path('platform/accounts/', PlatformAccountsView.as_view()),

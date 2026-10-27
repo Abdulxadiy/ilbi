@@ -7,10 +7,13 @@ from apps.cashbox.models import CashExpense, CashIncome, DailyCashReport
 
 class CashExpenseSerializer(serializers.ModelSerializer):
     recorded_by_name = serializers.SerializerMethodField()
+    idempotency_key = serializers.UUIDField(required=False, write_only=True)
+    expected_shift_id = serializers.IntegerField(required=False, min_value=1, write_only=True)
 
     class Meta:
         model = CashExpense
         fields = [
+            'idempotency_key', 'expected_shift_id',
             'id',
             'amount',
             'currency',
@@ -31,10 +34,13 @@ class CashExpenseSerializer(serializers.ModelSerializer):
 
 class CashIncomeSerializer(serializers.ModelSerializer):
     recorded_by_name = serializers.SerializerMethodField()
+    idempotency_key = serializers.UUIDField(required=False, write_only=True)
+    expected_shift_id = serializers.IntegerField(required=False, min_value=1, write_only=True)
 
     class Meta:
         model = CashIncome
         fields = [
+            'idempotency_key', 'expected_shift_id',
             'id',
             'amount',
             'currency',
@@ -54,7 +60,10 @@ class CashIncomeSerializer(serializers.ModelSerializer):
 
 
 class ShiftCloseSerializer(serializers.Serializer):
+    idempotency_key = serializers.UUIDField(required=False, write_only=True)
     shift_id = serializers.IntegerField(required=False, min_value=1)
+    expected_cash_uzs = serializers.DecimalField(max_digits=14, decimal_places=2, required=False, write_only=True)
+    expected_cash_usd = serializers.DecimalField(max_digits=14, decimal_places=2, required=False, write_only=True)
     actual_cash_uzs = serializers.DecimalField(max_digits=14, decimal_places=2, min_value=Decimal('0.00'))
     actual_cash_usd = serializers.DecimalField(max_digits=14, decimal_places=2, min_value=Decimal('0.00'))
     discrepancy_reason = serializers.CharField(required=False, allow_blank=True, default='')
@@ -121,5 +130,7 @@ class DailyCashReportListSerializer(DailyCashReportSerializer):
 
 
 class ShiftOpenSerializer(serializers.Serializer):
+    idempotency_key = serializers.UUIDField(required=False, write_only=True)
+    expected_report_id = serializers.IntegerField(required=False, allow_null=True, min_value=1, write_only=True)
     opening_cash_uzs = serializers.DecimalField(max_digits=14, decimal_places=2, min_value=Decimal('0'), required=False)
     opening_cash_usd = serializers.DecimalField(max_digits=14, decimal_places=2, min_value=Decimal('0'), required=False)

@@ -9,6 +9,14 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 app.autodiscover_tasks()
 
 app.conf.beat_schedule = {
+    'notify-due-workspace-reminders': {
+        'task': 'apps.core.tasks.notify_due_workspace_reminders_task',
+        'schedule': 60.0,
+    },
+    'dispatch-mobile-push-events': {
+        'task': 'apps.notifications.tasks.dispatch_push_events',
+        'schedule': 30.0,
+    },
     'notify-due-debts-periodic': {
         'task': 'apps.sales.tasks.notify_due_debts_task',
         'schedule': crontab(minute='*/5'),

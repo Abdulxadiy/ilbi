@@ -17,10 +17,14 @@ class WorkspaceReminder(BaseModel):
     created_by = models.ForeignKey('accounts.User', on_delete=models.CASCADE, related_name='created_workspace_reminders')
     assigned_to = models.ForeignKey('accounts.User', on_delete=models.CASCADE, related_name='workspace_reminders')
     completed_at = models.DateTimeField(null=True, blank=True)
+    due_notified_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         ordering = ['due_at', 'pk']
-        indexes = [models.Index(fields=['tenant', 'assigned_to', 'completed_at', 'due_at'], name='workspace_reminder_due_idx')]
+        indexes = [
+            models.Index(fields=['tenant', 'assigned_to', 'completed_at', 'due_at'], name='workspace_reminder_due_idx'),
+            models.Index(fields=['due_at', 'id'], condition=models.Q(completed_at__isnull=True, due_notified_at__isnull=True), name='workspace_due_notice_idx'),
+        ]
 
 
 class AuditAction(models.TextChoices):

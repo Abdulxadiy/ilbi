@@ -76,7 +76,11 @@ class StockMovementOutputSerializer(SensitiveCostSerializerMixin, SensitiveSuppl
         read_only_fields = fields
 
 
-class _BaseMovementInputSerializer(serializers.Serializer):
+class InventoryIdempotencyInputSerializer(serializers.Serializer):
+    idempotency_key = serializers.UUIDField(required=False)
+
+
+class _BaseMovementInputSerializer(InventoryIdempotencyInputSerializer):
     product_variant_id = serializers.PrimaryKeyRelatedField(
         queryset=ProductVariant.objects.all(), source="product_variant"
     )
@@ -124,7 +128,7 @@ class BatchIntakeItemInputSerializer(serializers.Serializer):
         return value
 
 
-class BatchIntakeCreateSerializer(serializers.Serializer):
+class BatchIntakeCreateSerializer(InventoryIdempotencyInputSerializer):
     items = BatchIntakeItemInputSerializer(many=True)
     supplier = serializers.CharField(required=False, allow_blank=True, default="")
     faktura_number = serializers.CharField(required=False, allow_blank=True, default="")
@@ -157,7 +161,7 @@ class TenantTransferLineInputSerializer(serializers.Serializer):
     destination_category_id = serializers.IntegerField(required=False, allow_null=True, min_value=1)
 
 
-class TenantTransferCreateSerializer(serializers.Serializer):
+class TenantTransferCreateSerializer(InventoryIdempotencyInputSerializer):
     request_key = serializers.UUIDField()
     destination_tenant_id = serializers.IntegerField(min_value=1)
     note = serializers.CharField(required=False, allow_blank=True, default="")
@@ -177,7 +181,7 @@ class TenantTransferReceiveLineSerializer(serializers.Serializer):
     discrepancy_reason = serializers.CharField(required=False, allow_blank=True, default="")
 
 
-class TenantTransferReceiveSerializer(serializers.Serializer):
+class TenantTransferReceiveSerializer(InventoryIdempotencyInputSerializer):
     items = TenantTransferReceiveLineSerializer(many=True)
 
     def validate_items(self, items):
@@ -194,7 +198,7 @@ class TenantTransferReturnLineSerializer(serializers.Serializer):
     quantity = serializers.DecimalField(max_digits=14, decimal_places=3, min_value=Decimal("0.001"))
 
 
-class TenantTransferReturnSerializer(serializers.Serializer):
+class TenantTransferReturnSerializer(InventoryIdempotencyInputSerializer):
     request_key = serializers.UUIDField()
     note = serializers.CharField(required=False, allow_blank=True, default="")
     items = TenantTransferReturnLineSerializer(many=True)
@@ -208,7 +212,7 @@ class TenantTransferReturnSerializer(serializers.Serializer):
         return items
 
 
-class TenantTransferDiscrepancyCloseSerializer(serializers.Serializer):
+class TenantTransferDiscrepancyCloseSerializer(InventoryIdempotencyInputSerializer):
     reason = serializers.CharField(min_length=3, max_length=2000, trim_whitespace=True)
 
 
