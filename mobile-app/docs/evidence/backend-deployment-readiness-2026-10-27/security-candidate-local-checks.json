@@ -1,0 +1,41 @@
+{
+  "backend_source": "38aa63dccce8831ecf32b296f3a7e913980ec7cd",
+  "candidate_commit": "5719bc10d1978a9b2a1eba8ed7240fc19a20ea84",
+  "previous_candidate_commit": "9683b9745d8e901707dc37eb1f6a94a20f0b6b5e",
+  "production_base": "2d799dd5596a92fb6a0e3be6cf51a2a018c88e2d",
+  "compared_backend_files": 538,
+  "overlay_backend_files": 78,
+  "changed_backend_security_files_from_previous_candidate": 10,
+  "candidate_worktree": "/mnt/storage/.cache/ilbi-mobile-backend-candidate/final-9a025e0c",
+  "candidate_worktree_clean": true,
+  "unchanged_production_boundaries": [
+    "frontend",
+    "desktop",
+    "telegram_bot_sms",
+    "VERSION",
+    "docker-compose.prod.yml",
+    "ilbi/uv.lock",
+    "ilbi/Dockerfile",
+    "ilbi/pyproject.toml",
+    "ilbi/entrypoint.sh"
+  ],
+  "local_actual_passed": 1147,
+  "docker_cases_deselected_locally": [
+    "apps/core/tests/test_readiness.py::test_real_dependency_outage_and_recovery[postgres]",
+    "apps/core/tests/test_readiness.py::test_real_dependency_outage_and_recovery[redis]",
+    "apps/core/tests/test_shared_throttles.py::test_workers_share_existing_limits_and_recover_after_expiry[receipt-60-60]",
+    "apps/core/tests/test_shared_throttles.py::test_workers_share_existing_limits_and_recover_after_expiry[tenant-5-86400]",
+    "apps/core/tests/test_shared_throttles.py::test_default_support_and_login_keys_remain_separate"
+  ],
+  "local_test_seconds": 64.04,
+  "fatal_ruff_exit": 0,
+  "strict_schema_exit": 0,
+  "migration_drift_exit": 0,
+  "postgres": "localhost:55443 dedicated test_ilbi_security_candidate",
+  "redis": "own volatile Redis7.4.11 localhost:56446",
+  "push_enabled": false,
+  "private_key_uploaded": false,
+  "server_changed": false,
+  "native_emulator_changed": false,
+  "own_redis_stopped_after_checks": true
+}

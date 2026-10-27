@@ -1,0 +1,117 @@
+{
+  "backend_source": "38aa63dccce8831ecf32b296f3a7e913980ec7cd",
+  "candidate_commit": "5719bc10d1978a9b2a1eba8ed7240fc19a20ea84",
+  "workflow_url": "https://github.com/Abdulxadiy/ilbi/actions/runs/40506323968",
+  "backend_job_url": "https://github.com/Abdulxadiy/ilbi/actions/runs/40506323968/job/122196421025",
+  "backend_job_conclusion": "success",
+  "pytest_summary": [
+    "1152 passed, 16 warnings in 133.64s (0:02:13)"
+  ],
+  "pytest_passed": 1152,
+  "docker_integration_cases_actually_executed": 5,
+  "whole_workflow_conclusion": "success",
+  "event": "pull_request",
+  "updated_at": "2026-10-27T12:48:49Z",
+  "jobs": [
+    {
+      "name": "production-edge",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Abdulxadiy/ilbi/actions/runs/40506323968/job/122196420733"
+    },
+    {
+      "name": "frontend",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Abdulxadiy/ilbi/actions/runs/40506323968/job/122196420912"
+    },
+    {
+      "name": "dependency-security",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Abdulxadiy/ilbi/actions/runs/40506323968/job/122196420979"
+    },
+    {
+      "name": "backend",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Abdulxadiy/ilbi/actions/runs/40506323968/job/122196421025"
+    },
+    {
+      "name": "bot",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Abdulxadiy/ilbi/actions/runs/40506323968/job/122196421026"
+    },
+    {
+      "name": "automation",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Abdulxadiy/ilbi/actions/runs/40506323968/job/122196421078"
+    },
+    {
+      "name": "desktop",
+      "status": "completed",
+      "conclusion": "skipped",
+      "url": "https://github.com/Abdulxadiy/ilbi/actions/runs/40506323968/job/122197837487"
+    },
+    {
+      "name": "desktop-linux",
+      "status": "completed",
+      "conclusion": "skipped",
+      "url": "https://github.com/Abdulxadiy/ilbi/actions/runs/40506323968/job/122197837632"
+    }
+  ],
+  "backend_steps": [
+    {
+      "name": "Set up job",
+      "conclusion": "success"
+    },
+    {
+      "name": "Initialize containers",
+      "conclusion": "success"
+    },
+    {
+      "name": "Run actions/checkout@v4",
+      "conclusion": "success"
+    },
+    {
+      "name": "Run astral-sh/setup-uv@v5",
+      "conclusion": "success"
+    },
+    {
+      "name": "Run uv sync --frozen",
+      "conclusion": "success"
+    },
+    {
+      "name": "Run uv run ruff check . --select E9,F821,F822,F823",
+      "conclusion": "success"
+    },
+    {
+      "name": "Run uv run python manage.py spectacular --settings=config.settings_test --validate --fail-on-warn --file /tmp/schema.yaml",
+      "conclusion": "success"
+    },
+    {
+      "name": "Tests",
+      "conclusion": "success"
+    },
+    {
+      "name": "Post Run astral-sh/setup-uv@v5",
+      "conclusion": "success"
+    },
+    {
+      "name": "Post Run actions/checkout@v4",
+      "conclusion": "success"
+    },
+    {
+      "name": "Stop containers",
+      "conclusion": "success"
+    },
+    {
+      "name": "Complete job",
+      "conclusion": "success"
+    }
+  ],
+  "scope": "Exact normalized candidate CI. Six executed jobs succeeded; two desktop platform jobs skipped, not counted as passed. The included mobile files are public wire fixtures, so this candidate CI does not audit or compile the mobile runtime.",
+  "deployed": false
+}
