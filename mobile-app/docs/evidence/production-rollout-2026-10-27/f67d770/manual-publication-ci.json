@@ -1,0 +1,149 @@
+{
+  "candidate_commit": "f67d770fd404721d6117db1d7729cf0d09a771e7",
+  "backend_source": "d35ea11043affab1671172f42e27d367033232a1",
+  "event": "workflow_dispatch",
+  "workflow_url": "https://github.com/Abdulxadiy/ilbi/actions/runs/40531758799",
+  "workflow_conclusion": "success",
+  "backend_pytest_summary": [
+    "1165 passed, 16 warnings in 113.63s (0:01:53)"
+  ],
+  "backend_passed": 1165,
+  "docker_integration_cases_executed": 5,
+  "backend_job_url": "https://github.com/Abdulxadiy/ilbi/actions/runs/40531758799/job/122286184050",
+  "image_job_url": "https://github.com/Abdulxadiy/ilbi/actions/runs/40531758799/job/122287785739",
+  "jobs": [
+    {
+      "name": "dependency-security",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Abdulxadiy/ilbi/actions/runs/40531758799/job/122286183900"
+    },
+    {
+      "name": "backend",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Abdulxadiy/ilbi/actions/runs/40531758799/job/122286184050"
+    },
+    {
+      "name": "production-edge",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Abdulxadiy/ilbi/actions/runs/40531758799/job/122286184107"
+    },
+    {
+      "name": "bot",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Abdulxadiy/ilbi/actions/runs/40531758799/job/122286184153"
+    },
+    {
+      "name": "frontend",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Abdulxadiy/ilbi/actions/runs/40531758799/job/122286184206"
+    },
+    {
+      "name": "automation",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Abdulxadiy/ilbi/actions/runs/40531758799/job/122286184215"
+    },
+    {
+      "name": "mobile-backend-image",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Abdulxadiy/ilbi/actions/runs/40531758799/job/122287785739"
+    },
+    {
+      "name": "desktop",
+      "status": "completed",
+      "conclusion": "skipped",
+      "url": "https://github.com/Abdulxadiy/ilbi/actions/runs/40531758799/job/122287787922"
+    },
+    {
+      "name": "desktop-linux",
+      "status": "completed",
+      "conclusion": "skipped",
+      "url": "https://github.com/Abdulxadiy/ilbi/actions/runs/40531758799/job/122287789227"
+    }
+  ],
+  "image_steps": [
+    {
+      "name": "Set up job",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Run actions/checkout@v4",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Verify the reviewed backend tree before publication",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Run docker/setup-buildx-action@v3",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Run docker/login-action@v3",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Commit-pinned backend image reference",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Run docker/build-push-action@v6",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Export the published backend for authenticated artifact transfer",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Record published image identity without deploying",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Run actions/upload-artifact@v4",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Post Run docker/build-push-action@v6",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Post Run docker/login-action@v3",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Post Run docker/setup-buildx-action@v3",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Post Run actions/checkout@v4",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Complete job",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "server_changed_by_workflow": false,
+  "scope": "Seven executed jobs succeeded, including backend-only publication; two desktop jobs skipped, not counted as passes."
+}

@@ -1,0 +1,9 @@
+{
+  "legacy_support_committed_source_matches_live": true,
+  "files": {
+    "api/v1/support/serializers.py": true,
+    "api/v1/support/views.py": true
+  },
+  "public_apk_build4_and_verified_size_remain_current": true,
+  "apk_bytes_not_changed_for_backend_compatibility": true
+}

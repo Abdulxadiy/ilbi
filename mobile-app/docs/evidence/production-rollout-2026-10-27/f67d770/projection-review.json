@@ -1,0 +1,24 @@
+{
+  "backend_source": "d35ea11043affab1671172f42e27d367033232a1",
+  "reviewed_backend_tree": "8e345678586c4cbeb870ee7f0a866e1c0687e325",
+  "compared_backend_files": 538,
+  "overlay_backend_files": 78,
+  "changed_backend_files": [
+    "ilbi/api/v1/support/serializers.py",
+    "ilbi/api/v1/support/views.py",
+    "ilbi/apps/core/tests/test_security_presentation.py"
+  ],
+  "previous_candidate": "a91777a0b7908898d9359b5e24c3f1df5e1cb1b7",
+  "no_server_changes_by_agent": true,
+  "candidate_commit": "f67d770fd404721d6117db1d7729cf0d09a771e7",
+  "local_tests_passed": 1160,
+  "docker_cases_deselected_locally": 5,
+  "local_seconds": 58.38,
+  "fatal_ruff_exit": 0,
+  "strict_schema_exit": 0,
+  "migration_check_exit": 0,
+  "actionlint_exit": 0,
+  "existing_ci_handoff_tests_passed": 3,
+  "committed_publication_source_tree_manifest_gate_exit": 0,
+  "own_redis56446_stopped": true
+}

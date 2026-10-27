@@ -1,0 +1,10 @@
+{
+  "current_backend_image": "ghcr.io/abdulxadiy/ilbi/backend:sha-f67d770fd404721d6117db1d7729cf0d09a771e7",
+  "frontend_and_bot_images_preserved": true,
+  "deployed_image_record_updated": true,
+  "owned_restore_container_and_volume_removed": true,
+  "owned_restored_private_files_removed": true,
+  "encrypted_backups_retained": true,
+  "owner_emulator_changed": false,
+  "push_enabled_by_this_cleanup": false
+}

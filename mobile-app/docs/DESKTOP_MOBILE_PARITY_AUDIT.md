@@ -9,6 +9,8 @@ Status: **COMPLETE — source comparison and available checks; native/real-backe
 
 **Working principle: implement → test → record evidence → advance.** The audit below is the historical baseline; this ledger records subsequent implementation. `TESTED_CODE` means the named automated/code checks passed, not native or production acceptance. `VERIFIED_RUNTIME` states the actual runtime used. `EXTERNAL_GATE` requires the stated external runtime/service; it is not completed.
 
+Approved rollout checkpoint: backend candidate `f67d770` and signed Android build4 are deployed;1,165 backend CI cases and15 authenticated read-only HTTPS contracts passed. See [PRODUCTION_ROLLOUT_2026_10_27.md](PRODUCTION_ROLLOUT_2026_10_27.md). Native financial/device, push delivery and other external gates below remain open; deployment alone does not upgrade their status.
+
 | ID | Status | Latest evidence / remaining verification |
 | --- | --- | --- |
 | [DMP-001](#dmp-001) | TESTED_CODE | Explicit consent checkbox and sessionEntry business gate tested; legal document routes fetch server content. Auth/gates: 17 tests pass; tsc/lint pass. |

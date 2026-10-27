@@ -1,6 +1,6 @@
 # Mobile backend and APK rollout — 2026-10-27
 
-Status: IN PROGRESS. The owner explicitly approved “Backend va APK’ni chiqarish”. This extends the earlier APK-only approval to the reviewed backend. It does not authorize enabling push or touching the existing emulator; neither has been done.
+**Status: COMPLETE for the approved backend + APK publication scope.** The owner explicitly approved “Backend va APK’ni chiqarish”. This extends the earlier APK-only approval to the reviewed backend. It does not authorize enabling push or touching the existing emulator; neither has been done.
 
 ## Immutable inputs
 
@@ -43,4 +43,30 @@ APK build4 was published at15:22:33UTC. The public feed and legacy Android alias
 
 Final source review confirmed that the deployed old support editor always submits unchanged email and role alongside contact fields. The first strict allowlist intentionally closed unsafe identity edits but also rejected that legacy envelope. Backend source `d35ea11043affab1671172f42e27d367033232a1` now strips only exact unchanged public-profile echoes, supplied against trusted server-side conversation-user context, when at least one contact field is present. It still rejects any changed identity, status, password, unknown field, guest or context-free use before a partial save; it never writes email or role. Contact-only update_fields preserves concurrent security changes.158 actual PostgreSQL tests, including13 new regressions, passed; no migration is introduced.
 
-This compatibility follow-up is being verified in a new immutable candidate/image before the final rollout is marked complete. The APK bytes/build and published feed do not change for this server-only correction.
+The completed compatibility rollout is recorded below. The APK bytes/build and published feed did not change for this server-only correction.
+
+## Final accepted runtime
+
+Compatibility candidate **`f67d770fd404721d6117db1d7729cf0d09a771e7`**, backend source **`d35ea11043affab1671172f42e27d367033232a1`**, was successfully activated at15:44:03UTC. The exact [manual workflow](https://github.com/Abdulxadiy/ilbi/actions/runs/40531758799) passed **1,165 backend tests**, including all five Docker integration cases, and all seven executed jobs. Two desktop jobs were explicitly skipped. The normalized local candidate passed1,160 cases with those five Docker cases deselected locally. Strict schema, fatal Ruff and migration checks passed. The compatibility change touched only three backend files plus immutable manifest/CI source-tree anchors; no new schema migration was introduced.
+
+Current backend/worker/beat image:
+
+```text
+ghcr.io/abdulxadiy/ilbi/backend:sha-f67d770fd404721d6117db1d7729cf0d09a771e7
+```
+
+The image archive/config/OCI/layer chain was independently verified, including all28 blobs and13 layers. The complete loaded Config and ordered RootFS matched the verified artifact. Containerd image ID is `sha256:967cd800a4fcbe9a0ea87bc23338935356ab9e08a200f029d8383dd78923fbd5`, linked to config digest `sha256:7d55ff705f7d8d86cdd68ee7c9546d6ca69f58b9b582c50bfda990b56a6590c0`. The reusable `ops/verify_mobile_backend_artifact.py` passed13 real-file tests plus18 tamper subcases and verified both actual released archives without extracting them or outputting Config/Env. Its result does not replace loaded-host verification.
+
+A separate rehearsal confirmed the new candidate needs no additional migrations against the already restored/migrated network-none clone. Activation then took a new encrypted stopped-writer backup, retained a917 as the immediately previous image, and passed the complete readiness check. All three backend processes use f67. Frontend/bot images, bot container identity, base Compose, platform version and backend credential file remain unchanged. `.deployed-images` records the actual backend/frontend/bot references.
+
+All **15 authenticated public-HTTPS GET contracts passed again** against f67. Required mobile handler checks are all true, settings revision is present, and migration backlog is empty. Direct hashes of the two deployed support implementation files match committed d35ea110 source. The support compatibility change was validated through158 actual PostgreSQL tests; no real production customer was edited as a test. The public APK feed and HEAD size remain build4 /77,531,797bytes; its earlier complete public HTTPS byte/hash verification remains valid because the APK was unchanged.
+
+The owned restoration container, volume and private restored media/docs were removed after acceptance. Encrypted backups, source/artifact identity records and cached rollback images remain. No production database restore or reverse migration occurred. No private Firebase key was uploaded, push was not enabled, no live push was sent, and the owner's emulator/installed app were untouched.
+
+The accepted final evidence is [f67d770](evidence/production-rollout-2026-10-27/f67d770/); [a91777a](evidence/production-rollout-2026-10-27/a91777a/) preserves the earlier release and unsuccessful-attempt history. The signed APK remains [the verified public build4](https://ilbi.uz/downloads/mobile/364017038bedcbe20b0974a86fa75aeec29cd5ea/ILBI-1.0.0-android-4.apk).
+
+## Remaining boundaries and next ordinary deployment
+
+This completes the explicitly approved backend/APK rollout. It does not declare the entire parity backlog, native financial/device acceptance, FCM delivery, fiscal hardware, iOS or unresolved mobile Zod toolchain advisory complete. Existing APK3 users can discover build4 through the update check/next applicable login; its actual presentation on the owner's unchanged emulator was not exercised.
+
+[PR3](https://github.com/Abdulxadiy/ilbi/pull/3) remains an open draft at the deployed f67 source; `main` was not merged or changed by this backend-only release. **Integrate the reviewed backend changes before the next ordinary main-based automatic deployment**, so an older main backend does not replace the newly available mobile APIs. A GitHub source push alone neither rebuilds/publishes an APK nor installs it on a user's phone. Future APK publication must use a newly verified immutable artifact/native build; never overwrite build3 or build4 with different bytes.
