@@ -2,12 +2,11 @@ from decimal import Decimal
 
 from django.db import transaction
 from django.db.models import Q, Sum
-from apps.core import event_clock as timezone
 
 from apps.cashbox.models import CashExpense, CashIncome, CashShift, DailyCashReport
-from apps.sales.models import Notification, Sale
+from apps.core import event_clock as timezone
+from apps.sales.models import DebtPayment, Notification, Sale
 from apps.sales.models.sale_model import SaleRefund
-from apps.sales.models import DebtPayment
 from apps.tenants.models import Tenant
 from apps.tg_bot.models import TelegramContact
 
@@ -92,7 +91,7 @@ class CashboxService:
     @transaction.atomic
     def open_shift(*, tenant, user, opening_cash_uzs=None, opening_cash_usd=None):
         Tenant.objects.select_for_update().get(pk=tenant.pk)
-        last = DailyCashReport.objects.filter(tenant=tenant).first()
+        last = DailyCashReport.objects.filter(tenant=tenant).order_by('-closed_at', '-pk').first()
         if opening_cash_uzs is None:
             opening_cash_uzs = last.actual_cash_uzs if last else Decimal("0")
         if opening_cash_usd is None:
@@ -146,8 +145,8 @@ class CashboxService:
                 + values[f"total_extra_income_{suffix}"] + values[f"collected_debt_cash_{suffix}"]
                 - values[f"total_expenses_{suffix}"] - values[f"refund_cash_{suffix}"]
             )
-        last_report = DailyCashReport.objects.filter(tenant=tenant).first() if shift is None else None
-        result = {**values, "suggested_opening_cash_uzs": last_report.actual_cash_uzs if last_report else Decimal("0"),
+        last_report = DailyCashReport.objects.filter(tenant=tenant).order_by('-closed_at', '-pk').first() if shift is None else None
+        result = {**values, "last_report_id": last_report.pk if last_report else None, "suggested_opening_cash_uzs": last_report.actual_cash_uzs if last_report else Decimal("0"),
                 "suggested_opening_cash_usd": last_report.actual_cash_usd if last_report else Decimal("0"), "shift_id": shift.pk if shift else None,
                 "is_open": shift is not None, "status": "OPEN" if shift else "CLOSED",
                 "shift_start": timezone.localtime(shift.opened_at).isoformat() if shift else None}

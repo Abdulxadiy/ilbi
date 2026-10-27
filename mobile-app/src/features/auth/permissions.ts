@@ -13,6 +13,7 @@ export const modulePermissions: Record<string, string | string[]> = {
   Qarz: ['sales.manage_counterparty', 'sales.record_debt_payment'], Customers: ['sales.manage_counterparty', 'sales.record_debt_payment'],
   Documents: 'sales.view_sale', ReceiptView: 'sales.view_sale', ShareSheet: 'sales.view_sale', PdfExport: 'sales.view_sale',
   SalesHistory: 'sales.view_sale',
+  Cashbox: 'cashbox.view_cashbox',
   Inventory: 'inventory.view_stock', Reports: ['analytics.view_dashboard', 'cashbox.view_cashbox'],
 };
 export function canOpenModule(user: UserProfile | null, tenant: UserTenant | null, module: string) {

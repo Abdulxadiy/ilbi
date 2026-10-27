@@ -10,6 +10,7 @@ const paths: Record<string, string> = {
   Checkout: '/checkout', Support: '/support', Downloads: '/downloads',
   Notifications: '/(app)/(tabs)/notifications', Profile: '/(app)/(tabs)/profile', History: '/(app)/(tabs)/history',
   SalesHistory: '/(app)/(tabs)/sales-history',
+  Cashbox: '/(app)/(tabs)/cashbox',
   Sync: '/(app)/(tabs)/sync', Categories: '/(app)/(tabs)/categories',
   Product: '/(app)/(tabs)/product', NewProduct: '/(app)/(tabs)/product', Stores: '/stores', Admin: '/(app)/admin',
 };

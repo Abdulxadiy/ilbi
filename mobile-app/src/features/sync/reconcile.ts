@@ -1,11 +1,17 @@
 import { assertAuthScope, captureAuthScope, request } from '../../api/client';
 import { getServerScope } from '../../api/environment';
+import { reconcileVoidIntent } from '../sales/void';
+import { reconcileInventoryIntent } from '../inventory/commands';
+import { reconcileCashboxIntent } from '../cashbox/commands';
 import { acceptedRetailSale } from '../checkout/saleResponse';
 import { confirmFinancialIdentity, getFinancialIntent, type FinancialIntent } from '../../api/financialIdentity';
 import { hasPermission } from '../auth/permissions';
 import type { UserProfile, UserTenant } from '../auth/AuthContext';
 export async function reconcileFinancialIntent(intent: FinancialIntent, user: UserProfile, tenant: UserTenant) {
   if (intent.server !== getServerScope() || intent.userId !== user.id || intent.tenantId !== tenant.id) throw Error('Amal ushbu server, hisob va do‘konga tegishli emas.');
+  if (intent.operation.startsWith('void-')) return reconcileVoidIntent(intent, user, tenant);
+  if (intent.operation.startsWith('inventory:')) return reconcileInventoryIntent(intent, user, tenant);
+  if (intent.operation.startsWith('cashbox:')) return reconcileCashboxIntent(intent, user, tenant);
   const sale = intent.operation === 'sale' || intent.operation.startsWith('sale:');
   const debt = intent.operation.match(/^debt-(\d+)$/);
   if (!sale && !debt) throw Error('Bu amal uchun tekshirilgan qayta yuborish yo‘li topilmadi. Yozuv saqlanadi.');

@@ -3,7 +3,7 @@ import { usePermissions } from '../features/auth/usePermissions';
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { DrawerContentComponentProps } from 'expo-router/drawer';
-import { Archive, BarChart3, Bell, Clock, Download, FileText, Home, LifeBuoy, LogOut, Moon, Package, Search, Settings, ShoppingCart, Store, Sun, User as UserIcon, Users, X } from 'lucide-react-native';
+import { Archive, BarChart3, Bell, Clock, Download, FileText, Home, LifeBuoy, LogOut, Moon, Package, Search, Settings, ShoppingCart, Store, Sun, User as UserIcon, Users, Wallet, X } from 'lucide-react-native';
 import { useAppNavigation } from './useAppNavigation';
 import { IlbiLogo } from '../components/brand/IlbiLogo';
 import { useAuth } from '../features/auth/AuthContext';
@@ -24,6 +24,7 @@ export const DrawerContent: React.FC<DrawerContentComponentProps> = ({ navigatio
     ...(user?.role === 'platform_admin' ? [{ id: 'admin', label: 'Platforma boshqaruvi', icon: Home, route: 'Admin' }] : []),
     { id: 'bosh', label: 'Bosh sahifa', icon: Home, route: 'Bosh' },
     { id: 'kassa', label: 'Kassa', icon: ShoppingCart, route: 'Savdo' },
+    { id: 'smena', label: 'Kassa va smena', icon: Wallet, route: 'Cashbox' },
     { id: 'tovarlar', label: 'Tovarlar', icon: Package, route: 'Tovar' },
     { id: 'ombor', label: 'Ombor', icon: Archive, drawerRoute: 'Inventory' },
     { id: 'mijozlar', label: 'Mijozlar', icon: Users, drawerRoute: 'Customers' },

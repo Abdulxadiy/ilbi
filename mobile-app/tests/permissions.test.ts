@@ -37,4 +37,11 @@ describe('Active-store permissions', () => {
     expect(canOpenModule(admin, null, 'Savdo')).toBe(false);
     expect(hasPermission(admin, a, 'sales.add_sale')).toBe(false);
   });
+  test('cashbox navigation requires the active store read grant', () => {
+    const membership = { ...b, permissions: ['cashbox.view_cashbox'] };
+    const staff = { ...user, tenants: [a, membership] };
+    expect(canOpenModule(staff, a, 'Cashbox')).toBe(false);
+    expect(canOpenModule(staff, membership, 'Cashbox')).toBe(true);
+    expect(canOpenModule(staff, membership, 'Reports')).toBe(true);
+  });
 });

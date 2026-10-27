@@ -70,14 +70,23 @@ function SyncBody() {
     {!current || current.loading ? <Loading /> : current.error ? <Retry error={current.error} retry={() => refresh(value => value + 1)} /> : <>
       <Text style={{ color: colors.text, fontWeight: '700' }}>{current.rows.length} ta amal tekshirishni kutmoqda</Text>
       {current.rows.map(intent => <View key={intent.key} style={{ borderWidth: 1, borderColor: colors.border, borderRadius: 12, padding: 14, gap: 10 }}>
-        <Text style={{ color: colors.text, fontWeight: '700' }}>{intent.operation.startsWith('sale') ? 'Savdo' : 'Qarz to‘lovi'}</Text>
+        <Text style={{ color: colors.text, fontWeight: '700' }}>{operationLabel(intent.operation)}</Text>
         <Text selectable style={{ color: colors.textSecondary }}>Vaqt: {intent.createdAt}{'\n'}Kalit: {intent.key}</Text>
         {(intent.payload as any).items?.map((item: any) => <Text key={item.product_variant_id} style={{ color: colors.text }}>Tovar #{item.product_variant_id} · {item.quantity} × {item.unit_price}</Text>)}
+        {intent.operation.startsWith('void-') ? <Notice>Sabab: {String((intent.payload as any).reason || '—')}{(intent.payload as any).quantity ? ' · Miqdor: ' + (intent.payload as any).quantity : ''}</Notice> : null}
         {(intent.payload as any).amount != null ? <Text style={{ color: colors.text }}>{(intent.payload as any).amount} {(intent.payload as any).currency}</Text> : null}
         {intent.reviewRequired && intent.result?.id ? <><Notice>Eski talqindagi savdo serverda tasdiqlangan. Quyidagi amal joriy savatning nusxasini saqlab, uni yopadi va qayta savdo bo‘lishining oldini oladi.</Notice><Text style={{ color: colors.text }}>Chek #{intent.result.receipt_number || intent.result.id}</Text><Button title="Natijani ko‘rdim, joriy savatni yopish" loading={busy === intent.key} onPress={() => { void acknowledge(intent); }} /></> : <Button title="Asl kalit bilan natijani tekshirish" loading={busy === intent.key} disabled={Boolean(busy && busy !== intent.key)} onPress={() => { void check(intent); }} />}
       </View>)}
       {current.legacy ? <Notice error>{current.legacy} ta eski navbat yozuvida server va hisob manbasi yo‘q. Ular saqlandi; boshqa hisob nomidan avtomatik yuborilmaydi. Asl manbani tasdiqlash uchun alohida migratsiya kerak.</Notice> : null}
+      {confirmed?.void_operation?.sale_id ? <Button title="Qaytarilgan savdoni ochish" variant="secondary" onPress={() => navigation.navigate('SalesHistory', { saleId: String(confirmed.void_operation.sale_id) })} /> : null}
       {confirmed?.id ? <Text selectable style={{ color: colors.text }}>Tasdiqlangan natija: #{confirmed.receipt_number || confirmed.id}</Text> : null}
     </>}
   </Page>;
+}
+
+function operationLabel(operation: string) {
+  if (operation.startsWith('void-')) return 'Savdoni qaytarish';
+  if (operation.startsWith('inventory:')) return 'Ombor amali';
+  if (operation.startsWith('cashbox:')) return 'Kassa amali';
+  return operation.startsWith('sale') ? 'Savdo' : 'Qarz to‘lovi';
 }

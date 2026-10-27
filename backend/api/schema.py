@@ -63,6 +63,7 @@ class DocumentUpdateInputSerializer(serializers.Serializer):
 
 class ShiftStatusSerializer(serializers.Serializer):
     shift_id = serializers.IntegerField(allow_null=True)
+    last_report_id = serializers.IntegerField(allow_null=True)
     is_open = serializers.BooleanField()
     status = serializers.ChoiceField(choices=['OPEN', 'CLOSED'])
     shift_start = serializers.DateTimeField(allow_null=True)
@@ -76,4 +77,6 @@ for _name in (
     'refund_cash', 'expected_cash',
 ):
     for _currency in ('uzs', 'usd'):
-        ShiftStatusSerializer._declared_fields[f'{_name}_{_currency}'] = serializers.DecimalField(max_digits=14, decimal_places=2)
+        ShiftStatusSerializer._declared_fields[f'{_name}_{_currency}'] = serializers.DecimalField(
+            max_digits=14, decimal_places=2,
+        )
