@@ -1007,11 +1007,12 @@
     },
     "DMP-132": {
       "title": "Legacy B2B notification link has no mobile destination",
-      "status": "OPEN",
+      "status": "TESTED_CODE",
       "evidence": [
-        "2026-10-28 source-function reproduction: backend TYPE_B2B_REQUEST + /b2b produces null destination; /sales/b2b/inbox/ positive control opens B2B. See evidence/parity-2026-10-28/notification-target-reproduction.json."
+        "2026-10-28 source-function reproduction: backend TYPE_B2B_REQUEST + /b2b produces null destination; /sales/b2b/inbox/ positive control opens B2B. See evidence/parity-2026-10-28/notification-target-reproduction.json.",
+        "2026-10-28 P00: exact producer /b2b alias now opens the native B2B list after mark-read; selected-store permission, denial and external-link regressions pass. 524 tests/62 suites, TypeScript and strict ESLint passed. See evidence/parity-implementation-2026-10-28/P00/. Not deployed or observed on native hardware; push acceptance remains separate."
       ],
-      "notes": "Confirmed source integration defect, not fixed in this documentation-only audit. No production event/device interaction."
+      "notes": "2026-10-28 P00: exact producer /b2b alias now opens the native B2B list after mark-read; selected-store permission, denial and external-link regressions pass. 524 tests/62 suites, TypeScript and strict ESLint passed. See evidence/parity-implementation-2026-10-28/P00/. Not deployed or observed on native hardware; push acceptance remains separate."
     }
   },
   "lastSourceAudit": {

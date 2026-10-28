@@ -175,7 +175,7 @@ Every original audit ID is retained exactly once. Acceptance text below comes fr
 | DMP-129 | P10 | Production retail POS is intentionally closed pending fiscal integration (OPEN) | TODO | Implement and verify the intended fiscal-provider business workflow and seller readiness in an isolated environment before production acceptance; retain the protective gate until those requirements are met, and test the 100-line limit without confusing it with performance fixtures. |
 | DMP-130 | P10 | Synthetic data and mutations diverge across mobile screens (OPEN) | TODO | Use one synthetic source for shared identities and mutations; after checkout/payment/create-customer, verify Home, customer details, debt list, receipt and documents agree or clearly label an intentionally static storyboard. |
 | DMP-131 | P11 | Logout icon uses the same color as its button background (TESTED_CODE) | PRIOR_CODE_EVIDENCE | Inspect destructive buttons in both themes and disabled/loading states; use the intended contrasting foreground for icons and preserve an accessible action name. |
-| DMP-132 | P00 | Legacy B2B notification link has no mobile destination (OPEN) | TODO | Explicit safe /b2b alias/canonical destination, producer-shaped regression, allowed recipient/store/role, and continued rejection of arbitrary URLs; inspect actual open action. |
+| DMP-132 | P00 | Legacy B2B notification link has no mobile destination (TESTED_CODE) | CODE_VERIFIED | Explicit safe /b2b alias/canonical destination, producer-shaped regression, allowed recipient/store/role, and continued rejection of arbitrary URLs; inspect actual open action. |
 
 ## External acceptance inputs — do not invent or bypass
 
@@ -189,7 +189,8 @@ Every original audit ID is retained exactly once. Acceptance text below comes fr
 
 | Slice | State | Actual verification/evidence | Next action |
 | --- | --- | --- | --- |
-| Plan bootstrap | READY | All132 IDs covered once; full scope/dependencies/acceptance and final-only deletion rule recorded. | P00: implement and test DMP-132 first. |
+| Plan bootstrap | READY | All132 IDs covered once; full scope/dependencies/acceptance and final-only deletion rule recorded. | Completed plan bootstrap. |
+| P00 | CODE_VERIFIED | Producer-shaped regression reproduced3 failures before fix;524 tests/62 suites, tsc and strict ESLint pass after fix. Permanent evidence: evidence/parity-implementation-2026-10-28/P00/. No native/deploy claim. | P01 employees/permissions/onboarding; release/native acceptance remains open. |
 
 ## Final-only cleanup gate
 

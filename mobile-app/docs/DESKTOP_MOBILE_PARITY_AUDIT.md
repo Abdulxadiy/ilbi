@@ -114,6 +114,8 @@ Backend `backend/apps/sales/services/sale_service.py:319` creates TYPE_B2B_REQUE
 
 The actual TypeScript function was transpiled and executed with this producer-shaped input: result **null**; positive control `/sales/b2b/inbox/` returned module B2B. No live notification/sale was created, and this is not an installed-phone observation. This audit deliberately records the defect rather than changing app behavior. Fix acceptance: explicit safe alias/canonical destination, preserve role/tenant/recipient checks, include producer-shaped regression and keep arbitrary external URLs blocked. Evidence: `evidence/parity-2026-10-28/notification-target-reproduction.json`.
 
+**Subsequent implementation (P00):** 2026-10-28 P00: exact producer /b2b alias now opens the native B2B list after mark-read; selected-store permission, denial and external-link regressions pass. 524 tests/62 suites, TypeScript and strict ESLint passed. See evidence/parity-implementation-2026-10-28/P00/. Not deployed or observed on native hardware; push acceptance remains separate. The source reproduction above is retained as historical evidence.
+
 ### Takroriy tekshiruvlar va noto‘g‘ri xulosalarni chiqarib tashlash
 
 1. Eski131 topilma/ledger → hozirgi route/source: profil, avatar, reset, tarix, ombor, B2B, kassa va settings bo‘yicha eski “yo‘q/mock-only” tasvirlarining ko‘pi tarixiy ekanligi ajratildi.
@@ -274,7 +276,7 @@ Approved rollout checkpoint: backend candidate `f67d770` remains deployed and si
 | [DMP-130](#dmp-130) | OPEN | Pending |
 | [DMP-131](#dmp-131) | TESTED_CODE | Settings danger logout button now renders its icon white against the danger background; tsc/lint and phone navigation regression pass. |
 
-| [DMP-132](#dmp-132) | OPEN | 2026-10-28 source-function reproduction: backend TYPE_B2B_REQUEST + /b2b produces null destination; /sales/b2b/inbox/ positive control opens B2B. See evidence/parity-2026-10-28/notification-target-reproduction.json. |
+| [DMP-132](#dmp-132) | TESTED_CODE | 2026-10-28 P00: exact producer /b2b alias now opens the native B2B list after mark-read; selected-store permission, denial and external-link regressions pass. 524 tests/62 suites, TypeScript and strict ESLint passed. See evidence/parity-implementation-2026-10-28/P00/. Not deployed or observed on native hardware; push acceptance remains separate. |
 
 <!-- IMPLEMENTATION_LEDGER_END -->
 

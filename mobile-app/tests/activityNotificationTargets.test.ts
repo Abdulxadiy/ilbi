@@ -12,3 +12,12 @@ test('workspace reminders remain readable inbox items until a real module is pre
     expect(notificationCategory(type)).toBe('Eslatma');
   }
 });
+test.each(['/b2b', '/sales/b2b/inbox/'])('B2B producer destination %s opens the native B2B list', link => {
+  expect(notificationDestination(row('b2b_transfer_request', link))).toEqual({ module: 'B2B', label: 'B2B savdolarni ochish' });
+});
+test('legacy B2B aliases remain restricted to exact trusted internal links and notification types', () => {
+  for (const link of ['https://evil.invalid/b2b', '//evil.invalid/b2b', '/b2b?redirect=https://evil.invalid', '/b2b/../accounts', '/b2b#other', '/B2B', '/b2b-other']) {
+    expect(notificationDestination(row('b2b_transfer_request', link))).toBeNull();
+  }
+  expect(notificationDestination(row('unknown', '/b2b'))).toBeNull();
+});

@@ -29,7 +29,7 @@ export function notificationDestination(row: InboxNotification): { module: strin
   const sale = row.link.match(/^\/sales\/([1-9]\d{0,9})\/$/);
   if (row.type.startsWith('b2b_transfer_')) {
     if (sale && Number.isSafeInteger(Number(sale[1]))) return { module: 'B2B', label: 'B2B hujjatini ochish', params: { saleId: String(sale[1]) } };
-    if (row.link === '/sales/b2b/inbox/') return { module: 'B2B', label: 'B2B savdolarni ochish' };
+    if (row.link === '/sales/b2b/inbox/' || row.link === '/b2b') return { module: 'B2B', label: 'B2B savdolarni ochish' };
     return null;
   }
   if (sale && Number.isSafeInteger(Number(sale[1]))) return { module: 'ReceiptView', label: 'Chekni ochish', params: { sale: { id: Number(sale[1]) } } };

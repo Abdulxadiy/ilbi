@@ -1,0 +1,33 @@
+{
+  "date": "2026-10-28",
+  "slice": "P00",
+  "finding": "DMP-132",
+  "verification": "Automated source/component tests, not installed-native or production acceptance",
+  "before": {
+    "failed": 3,
+    "passed": 7,
+    "evidence": "before-fix.txt"
+  },
+  "after": {
+    "success": true,
+    "numTotalTestSuites": 62,
+    "numPassedTestSuites": 62,
+    "numFailedTestSuites": 0,
+    "numTotalTests": 524,
+    "numPassedTests": 524,
+    "numFailedTests": 0
+  },
+  "commands": [
+    "npm run typecheck",
+    "./node_modules/.bin/eslint src tests --max-warnings 0",
+    "npm test -- --silent --json --outputFile=<cache>/P00-jest.json"
+  ],
+  "scope": [
+    "Exact producer-shaped /b2b alias for b2b_transfer_*",
+    "Owner in selected store gets native open action",
+    "Owner of another store cannot open from staff membership",
+    "Mark-read failure cannot navigate",
+    "External, malformed and unknown-type destinations rejected"
+  ],
+  "release": "No build/version/deployment/emulator change"
+}
