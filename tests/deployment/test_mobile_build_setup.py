@@ -46,16 +46,22 @@ class MobileBuildSetupTests(unittest.TestCase):
     def test_isolated_cng_source_excludes_local_credentials_env_and_generated_native_folders(self):
         source = self.folder / 'source'
         source.mkdir()
-        for name in ['src', 'assets', 'node_modules', 'android']:
+        for name in ['src', 'assets', 'node_modules', 'android', 'scripts', 'vendor']:
             (source / name).mkdir()
         (source / 'src/entry.ts').write_text('export const fixture = true;')
         for name in ['App.tsx', 'app.json', 'package.json', 'credentials.json', '.env']:
             (source / name).write_text(name)
         (source / 'app.json').write_text(json.dumps({'expo': {}}))
+        (source / 'scripts/patch-toolchain.cjs').write_text('// synthetic reviewed install hook')
+        (source / 'vendor/guard.json').write_text('{"synthetic":true}')
+        (source / 'scripts/private-helper.json').write_text('{"synthetic_private":"must stay on host"}')
         target = self.folder / 'build/mobile-app'
         build_apk.copy_project(source, target)
         self.assertTrue((target / 'src/entry.ts').exists())
         self.assertTrue((target / 'node_modules').is_symlink())
+        self.assertEqual((target / 'scripts/patch-toolchain.cjs').read_bytes(), (source / 'scripts/patch-toolchain.cjs').read_bytes())
+        self.assertTrue((target / 'vendor/guard.json').exists())
+        self.assertFalse((target / 'scripts/private-helper.json').exists())
         for name in ['credentials.json', '.env', 'android']:
             self.assertFalse((target / name).exists())
 

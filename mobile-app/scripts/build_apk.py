@@ -33,9 +33,13 @@ def validate_signer(signer, public_record):
 def copy_project(source, destination):
     source, destination = Path(source), Path(destination)
     destination.mkdir(parents=True)
-    for name in ['src', 'assets', 'plugins']:
+    for name in ['src', 'assets', 'plugins', 'vendor']:
         if (source / name).is_dir():
             shutil.copytree(source / name, destination / name)
+    patch = source / 'scripts/patch-toolchain.cjs'
+    if patch.is_file():
+        (destination / 'scripts').mkdir()
+        shutil.copyfile(patch, destination / 'scripts/patch-toolchain.cjs')
     for name in ['App.tsx', 'index.js', 'index.ts', 'app.json', 'app.config.js', 'app.config.ts', 'package.json', 'package-lock.json', 'babel.config.js', 'babel.config.cjs', 'metro.config.js', 'metro.config.cjs', 'tsconfig.json']:
         if (source / name).is_file():
             shutil.copyfile(source / name, destination / name)

@@ -1,5 +1,17 @@
 # Mobile toolchain dependency findings
 
+## Current integration status — 2026-10-28
+
+The blocking high-severity finding is resolved by a reviewed migration to the real fixed **Zod4.6.7** package. Expo stays on compatible SDK58 patches (Expo58.0.21/CLI58.1.17); mobile marketing1.0.0, Android build5 and platform1.4.0 remain unchanged. The root override deliberately crosses CLI's declared Zod3 range; compatibility is now checked against the actual installed Expo plugin schemas, output parser, MCP generator and lint formatter, plus the full app/lint/export checks. `npm run test:toolchain-security` is part of the security CI job. It fails if an old nested Zod reappears or constrained sync/async collection parsing regresses. The original V3 reproduction yielded1001 issues for1000 elements despite max2; the fixed bounded parsers yield one upper-bound issue.
+
+The remaining **deepmerge4.3.1** returned-object prototype-poisoning advisory has no patched upstream release. A null-prototype target reproduces inherited attacker fields. `scripts/patch-toolchain.cjs` applies a small reviewed key guard to all three shipped source/CJS/UMD files after checking exact upstream and patched hashes. Installation fails on unknown inputs; already patched inputs are idempotent. Fresh `npm ci` applies it automatically. The package name/version and lock integrity are unchanged, so the **unfiltered audit still reports15low entries for that underlying advisory**. Those scanner records are retained; the local mitigation is checked with the real CJS/UMD exploit and positive merge regressions. It is not represented as an upstream security release or a clean audit.
+
+`npm audit --audit-level=high` keeps its original threshold and passes with **zero high/critical** findings. No audit allowlist, exclusion, ignored exit status, package relabeling or old SDK downgrade is used. Review/remove the local guard when upstream publishes an appropriate fix. Docker dependency layers, dependency fingerprints and isolated APK source/provenance include the install hook and manifest; unchanged version numbers cannot make an old APK count as rebuilt. Native release/provider and the wider parity gates remain separate.
+
+Evidence and reproducible actual-consumer tests: [main integration security](evidence/main-integration-2026-10-28/security/).
+
+## Historical investigation snapshots
+
 Rechecked on **2026-10-27** against the locked dependency tree and the live npm advisory service. `npm audit` now reports **3 high-severity dependency entries, 1 underlying advisory** (Zod and the Expo/CLI chain). The CI `mobile-dependency-security` job runs the unfiltered high-severity audit and still fails. The earlier 2026-10-25 result was 5 high entries / 2 advisories.
 
 - `node-forge` is updated to **1.4.1** within Expo CLI's existing compatible range. The [maintainer release](https://github.com/digitalbazaar/forge/releases/tag/v1.4.1) is published; the live npm audit no longer reports the Forge signature-verification advisory. The GitHub advisory page may still show its older patch metadata. This update removes the two Forge-related entries without overriding Expo's declared dependency major versions.

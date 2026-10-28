@@ -1,0 +1,8 @@
+{
+  "version": "3.25.76",
+  "input_elements": 1000,
+  "declared_maximum": 2,
+  "issues": 1001,
+  "first_issue": "too_big",
+  "source": "Unchanged original workspace dependency; bounded synthetic input only"
+}

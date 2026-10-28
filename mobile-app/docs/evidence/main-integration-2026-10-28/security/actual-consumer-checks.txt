@@ -1,0 +1,19 @@
+npm notice run mobile-app@1.0.0 test:toolchain-security
+npm notice run node --test scripts/test-toolchain-security.cjs
+✔ CLI and React lint resolve the reviewed fixed Zod, without an older nested copy (1.157239ms)
+✔ oversized bounded sync/async arrays, exact lengths and sets stop before visiting elements (1.804253ms)
+✔ actual Expo plugin schema preserves valid, stripped, readonly and invalid inputs (2.432457ms)
+✔ actual Expo MCP generator keeps command enums, primitive parameters and strict unknown-field rejection (2.102036ms)
+✔ actual Expo output parser keeps text/image/audio, invalid JSON, issue messages and exit handling (1.415333ms)
+✔ the installed lint error formatter understands fixed-version validation errors (2.990997ms)
+✔ actual CJS and UMD merges cannot poison a returned object with a null-prototype target (1.165674ms)
+✔ installed merge still clones nested configs, joins arrays, supports custom arrays, symbols and merge.all (0.277453ms)
+✔ vendor guard verifies every shipped entry point, is idempotent and fails closed on changed source (2.16621ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 106.527811

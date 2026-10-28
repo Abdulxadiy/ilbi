@@ -53,6 +53,15 @@ class MobileApkSourceVerificationTests(unittest.TestCase):
         (self.app / 'package.json').write_text(json.dumps(package))
         self.assertEqual(verify_apk.runtime_changes(self.app, self.commit), ['mobile-app/package.json'])
 
+    def test_changed_install_patch_inputs_invalidate_an_existing_apk_without_version_changes(self):
+        (self.app / 'vendor').mkdir()
+        (self.app / 'scripts').mkdir()
+        (self.app / 'vendor/guard.json').write_text('{"synthetic":"changed mitigation"}')
+        (self.app / 'scripts/patch-toolchain.cjs').write_text('// synthetic changed build hook')
+        self.assertEqual(verify_apk.runtime_changes(self.app, self.commit), [
+            'mobile-app/scripts/patch-toolchain.cjs', 'mobile-app/vendor/guard.json',
+        ])
+
 
 if __name__ == '__main__':
     unittest.main()
