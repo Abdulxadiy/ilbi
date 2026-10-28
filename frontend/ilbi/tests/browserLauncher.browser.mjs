@@ -29,7 +29,7 @@ if test ${quote(scenario)} = exit-always || { test "$first" = true && test ${quo
   echo 'synthetic Chrome startup failure' >&2
   exit 31
 fi
-if test "$first" = true && test ${quote(scenario)} = timeout-once; then exec sleep 60; fi
+if test "$first" = true && test ${quote(scenario)} = timeout-once; then exec sleep 120; fi
 exec ${quote(executable)} "$@"
 `);
     await chmod(shim, 0o700);

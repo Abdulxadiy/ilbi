@@ -1,0 +1,1 @@
+PASS desktop update notice: daily outdated reminder, same-day dismissal across remount/login, next-day reminder, guest exclusion, available/download/progress/retry/success, light/dark/mobile and subscription cleanup.

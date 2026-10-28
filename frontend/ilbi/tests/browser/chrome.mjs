@@ -46,13 +46,16 @@ async function startChrome(executable, args, startupTimeoutMs) {
   throw new Error(`Chrome startup failed after 2 attempts:\n${failures.join('\n')}`);
 }
 
-export async function launchBrowser({ width = 1920, height = 1080, reducedMotion = false, disableBackForwardCache = false, startupTimeoutMs = 30000 } = {}) {
+export async function launchBrowser({ width = 1920, height = 1080, reducedMotion = false, disableBackForwardCache = false, startupTimeoutMs = 60000 } = {}) {
   if (!Number.isFinite(startupTimeoutMs) || startupTimeoutMs < 100 || startupTimeoutMs > 60000) throw new Error('Invalid Chrome startup timeout');
   const candidates = [process.env.CHROME_PATH, '/opt/google/chrome/chrome', '/usr/bin/google-chrome-stable', '/usr/bin/chromium', '/usr/bin/chromium-browser'].filter(Boolean);
   let executable;
   for (const path of candidates) { try { await access(path); executable = path; break; } catch {} }
   if (!executable) throw new Error('Chrome/Chromium topilmadi. CHROME_PATH orqali uning manzilini bering.');
-  const { child, profile, port } = await startChrome(executable, ['--headless=new', '--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage', '--disable-background-networking', '--disable-extensions', '--no-first-run', '--no-default-browser-check', '--hide-scrollbars', '--force-color-profile=srgb', '--font-render-hinting=none', '--remote-debugging-port=0', ...(disableBackForwardCache ? ['--disable-features=BackForwardCache'] : []), `--window-size=${width},${height}`], startupTimeoutMs);
+  // Each profile is disposable and contains synthetic test data. Avoid OS
+  // keyring/first-run services and background downloads on headless CI hosts.
+  // https://github.com/GoogleChrome/chrome-launcher/blob/main/docs/chrome-flags-for-tools.md
+  const { child, profile, port } = await startChrome(executable, ['--headless=new', '--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage', '--disable-background-networking', '--disable-component-update', '--disable-default-apps', '--disable-sync', '--metrics-recording-only', '--password-store=basic', '--use-mock-keychain', '--disable-extensions', '--no-first-run', '--no-default-browser-check', '--hide-scrollbars', '--force-color-profile=srgb', '--font-render-hinting=none', '--remote-debugging-port=0', `--disable-features=MediaRouter,OptimizationHints,NetworkTimeServiceQuerying${disableBackForwardCache ? ',BackForwardCache' : ''}`, `--window-size=${width},${height}`], startupTimeoutMs);
   let socket;
   try {
     const target = await (await fetch(`http://127.0.0.1:${port}/json/new?about:blank`, { method: 'PUT' })).json();

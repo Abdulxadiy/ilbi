@@ -1,0 +1,10 @@
+npm notice run ilbi-frontend@1.4.0 test:browser-launcher
+npm notice run node tests/browserLauncher.browser.mjs
+Chrome startup failed; retrying with a fresh profile. Chrome exited: 31
+PASS exit-once: two attempts, recovery connects to real Chrome, no test process/profile left behind.
+Chrome startup failed; retrying with a fresh profile. Chrome DevTools did not start within 60000ms
+PASS timeout-once: two attempts, recovery connects to real Chrome, no test process/profile left behind.
+Chrome startup failed; retrying with a fresh profile. Chrome exited: 31
+PASS exit-always: two attempts, persistent failure is reported, no test process/profile left behind.
+Chrome startup failed; retrying with a fresh profile. spawn /tmp/ilbi-browser-launcher-BPprrr/not-executable EACCES
+PASS spawn failure: a non-executable browser fails with diagnostics, without an unhandled process error.

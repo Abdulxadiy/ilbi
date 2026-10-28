@@ -1,0 +1,15 @@
+npm notice run ilbi-frontend@1.4.0 test:auth-session
+npm notice run node tests/authSession.browser.mjs
+PASS logout clears private chat and both token namespaces
+PASS unverified/offline sessions do not expose private screens
+PASS a failed session check can be retried without losing the saved session
+PASS login clears old authentication and old chat capability; expand stays public
+PASS expanding a guest chat never opens the private layout
+PASS normal login requires the OTP step before authenticated navigation
+PASS verified login remembers both fields; opt-out deletes native saved credentials without plaintext browser storage
+PASS daily desktop password login skips repeated OTP; idle requires typing; expired second factor returns to OTP
+PASS actual POS cart and payment input survive logout/2FA with no automatic sale
+PASS switching shops preserves each shop cart
+PASS actual product form and attached image survive logout and authenticated restoration
+PASS another authenticated account in the same shop sees neither cart nor product/image drafts
+PASS logout in another tab hides private screens

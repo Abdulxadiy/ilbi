@@ -1,0 +1,3 @@
+npm notice run ilbi-frontend@1.4.0 test:desktop-guide
+npm notice run node tests/desktopGuide.browser.mjs
+{"passed":true,"scenarios":["built guide without cloud/backend","all seven bundled images","image zoom and Escape","seven section anchors with detailed Linux instructions last","mobile download-to-guide link while images load slowly","direct Linux link without image layout jumps","mobile layout","reload without internet"],"artifacts":"/tmp/ilbi-desktop-guide-OlEdIg"}

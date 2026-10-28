@@ -1,0 +1,33 @@
+2026-10-28T18:16:46.8008920Z ##[group]Run npm run test:browser-launcher
+2026-10-28T18:16:46.8009211Z npm run test:browser-launcher
+2026-10-28T18:16:46.8009446Z npm run test:sync
+2026-10-28T18:16:46.8009648Z npm run test:auth-session
+2026-10-28T18:16:46.8009862Z npm run test:validation
+2026-10-28T18:16:46.8028104Z shell: /usr/bin/bash -e {0}
+2026-10-28T18:16:46.8028336Z ##[endgroup]
+2026-10-28T18:16:46.8803652Z
+2026-10-28T18:16:46.8804218Z > ilbi-frontend@1.4.0 test:browser-launcher
+2026-10-28T18:16:46.8805072Z > node tests/browserLauncher.browser.mjs
+2026-10-28T18:16:46.8805465Z
+2026-10-28T18:16:46.9629498Z Chrome startup failed; retrying with a fresh profile. Chrome exited: 31
+2026-10-28T18:17:18.4954376Z file:///home/runner/work/ilbi/ilbi/frontend/ilbi/tests/browser/chrome.mjs:46
+2026-10-28T18:17:18.4955277Z   throw new Error(`Chrome startup failed after 2 attempts:\n${failures.join('\n')}`);
+2026-10-28T18:17:18.4955797Z         ^
+2026-10-28T18:17:18.4955943Z
+2026-10-28T18:17:18.4956256Z Error: Chrome startup failed after 2 attempts:
+2026-10-28T18:17:18.4956668Z Attempt 1: Chrome exited: 31
+2026-10-28T18:17:18.4956924Z synthetic Chrome startup failure
+2026-10-28T18:17:18.4957063Z
+2026-10-28T18:17:18.4957236Z Attempt 2: Chrome DevTools did not start within 30000ms
+2026-10-28T18:17:18.4957822Z [1028/181654.574311:WARNING:chrome/app/chrome_main_linux.cc:84] Read channel stable from /opt/google/chrome/CHROME_VERSION_EXTRA
+2026-10-28T18:17:18.4958754Z [2387:2417:1028/181712.910060:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+2026-10-28T18:17:18.4959767Z [2387:2417:1028/181712.942578:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+2026-10-28T18:17:18.4960780Z [2387:2417:1028/181712.942601:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+2026-10-28T18:17:18.4961757Z [2387:2417:1028/181714.482406:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+2026-10-28T18:17:18.4963081Z [2387:2417:1028/181717.663014:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+2026-10-28T18:17:18.4963579Z
+2026-10-28T18:17:18.4963849Z     at startChrome (file:///home/runner/work/ilbi/ilbi/frontend/ilbi/tests/browser/chrome.mjs:46:9)
+2026-10-28T18:17:18.4964426Z     at async launchBrowser (file:///home/runner/work/ilbi/ilbi/frontend/ilbi/tests/browser/chrome.mjs:55:36)
+2026-10-28T18:17:18.4966259Z     at async file:///home/runner/work/ilbi/ilbi/frontend/ilbi/tests/browserLauncher.browser.mjs:40:17
+2026-10-28T18:17:18.4966751Z
+2026-10-28T18:17:18.4966854Z Node.js v22.23.4

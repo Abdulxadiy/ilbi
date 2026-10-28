@@ -1,0 +1,93 @@
+{
+  "failed_ci": "https://github.com/Abdulxadiy/ilbi/actions/runs/40743516784/job/123011257832",
+  "observed_failure": "Synthetic first process exit was handled, but actual Chrome on the GitHub runner failed its30second startup deadline; stderr included D-Bus connection errors. Page assertions had not run.",
+  "fix": "Use documented automation flags for a disposable Chrome profile: basic password store/mock keychain, no component/default-app/sync downloads, no MediaRouter/optimization/network-time startup services. Allow a bounded60second launch deadline and retain max2 attempts/cleanup/error reporting.",
+  "primary_sources": [
+    "https://github.com/GoogleChrome/chrome-launcher/blob/main/docs/chrome-flags-for-tools.md",
+    "https://github.com/microsoft/playwright/blob/main/packages/playwright-core/src/server/chromium/chromiumSwitches.ts"
+  ],
+  "boundary": "These flags apply only to disposable Chrome UI test profiles. Native ILBI/Electron OS encryption and credential-store behavior are unchanged and remain required in native CI.",
+  "final_controlled_timeout": "Re-executed the final launcher test with a120second sleeper and60second deadline; log explicitly confirms timeout, cleanup, recovery against real Chrome, persistent failure and spawn error paths.",
+  "checks": [
+    {
+      "command": [
+        "npm",
+        "run",
+        "test:browser-launcher"
+      ],
+      "exit": 0,
+      "log": "check-0.txt",
+      "run": "Final recheck after120second controlled sleeper change; exit0 and explicit60second timeout in check-0.txt."
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "test:sync"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 9.54,
+      "log": "check-1.txt"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "test:auth-session"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 13.31,
+      "log": "check-2.txt"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "test:validation"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 5.29,
+      "log": "check-3.txt"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "test:downloads"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 5.74,
+      "log": "check-4.txt"
+    },
+    {
+      "command": [
+        "node",
+        "tests/updates.browser.mjs"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 1.5,
+      "log": "check-5.txt"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "test:desktop-guide"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 10.72,
+      "log": "check-6.txt"
+    },
+    {
+      "command": [
+        "./node_modules/.bin/oxlint",
+        "tests/browser/chrome.mjs",
+        "tests/browserLauncher.browser.mjs"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 0.07,
+      "log": "check-7.txt"
+    }
+  ],
+  "emulator_touched": false
+}
