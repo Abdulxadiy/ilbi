@@ -1,0 +1,42 @@
+Runtime errors: []
+file:///mnt/storage/Codes/Projects/Backend/ilbi/frontend/ilbi/tests/debtAdjustments.browser.mjs:14
+const wait=async(expression,label=expression)=>{for(let i=0;i<200;i++){if(await browser.evaluate(expression))return;await pause(75);}throw Error('Timed out: '+label+'; '+await browser.evaluate('document.body.innerText.slice(-1500)'));};
+                                                                                                                                           ^
+
+Error: Timed out: document.body.innerText.includes('Haqni Qaytarish'); JAMI NASIYA (UZS)
+100 UZS
+1 nafar qarzdor mijoz
+JAMI NASIYA (USD)
+$0.00
+Valyuta hisobidagi qarzlar
+MIJOZ HAQQI (ORTIQCHA TO‘LOV)
++0 UZS
+1 nafar mijoz haqqi bor
+HISOBI TOZALAR
+0 nafar
+Qarzsiz va to‘liq to‘langan
+Barchasi (1)
+Qarzdorlar (1)
+Haqqi Borlar (1)
+Hisob Toza (0)
+Fayldan yuklash
+Yangi Kontragent
+MIJOZ / HAMKOR NOMI	TELEFON RAQAMI	B2B DO‘KON BOG‘LANMASI	NASIYA QARZ (UZS)	NASIYA QARZ (USD)	OXIRGI TO‘LOV	AMALLAR
+
+Credit customer
+Qarzdor
+Haqqi bor
+	+998901234567	—	
+100 UZS
+Mijoz qarzi
+	
++$10.00
+Mijoz haqqi bor
+	To‘lov yo‘q	
+Tahrirlash
+Xaridlar
+Qarz To‘lash
+    at wait (file:///mnt/storage/Codes/Projects/Backend/ilbi/frontend/ilbi/tests/debtAdjustments.browser.mjs:14:140)
+    at async file:///mnt/storage/Codes/Projects/Backend/ilbi/frontend/ilbi/tests/debtAdjustments.browser.mjs:19:44
+
+Node.js v26.11.1

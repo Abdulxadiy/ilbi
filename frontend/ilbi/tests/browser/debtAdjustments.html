@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="uz"><head><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="data:,"></head>
+<body><div id="root"></div><script type="module">
+import React, {useState} from 'react';
+import {createRoot} from 'react-dom/client';
+import {MemoryRouter} from 'react-router-dom';
+import AuthContext from '/src/context/authContext.js';
+import {TenantProvider} from '/src/context/TenantContext.jsx';
+import {ThemeProvider} from '/src/context/ThemeContext.jsx';
+import {ToastProvider} from '/src/context/ToastContext.jsx';
+import {ConfirmProvider} from '/src/context/ConfirmContext.jsx';
+import Debts from '/src/pages/Debts.jsx';
+import '/src/index.css';
+const fixture=await(await fetch('/__adjustment-contract')).json();
+const tenant={id:fixture.tenant,name:'Controlled store',is_owner:true,permissions:['*']};
+const baseUser={id:fixture.actor,role:'owner',terms_accepted:true,first_name:'Controlled',last_name:'Owner',tenants:[tenant]};
+const encode=value=>btoa(JSON.stringify(value));
+localStorage.setItem('ilbi_access_token',encode({alg:'controlled-only'})+'.'+encode({user_id:fixture.actor,exp:Math.floor(Date.now()/1000)+3600})+'.synthetic');
+localStorage.setItem('ilbi_active_tenant:'+fixture.actor,String(fixture.tenant));
+const stored=JSON.parse(sessionStorage.getItem('controlled-refund-server')||'null');
+window.refundQA={requests:[],unexpected:[],writes:stored?.writes||0,accepted:stored?.accepted||null,balance:stored?.balance||'-10.00',mode:'normal',delayQuote:false};
+const customer=()=>({id:fixture.customer,name:'Credit customer',phone_number:'+998901234567',debt_balance_uzs:'100.00',debt_balance_usd:refundQA.balance,target_tenant:null,note:'',is_active:true,debt_due_date:null});
+const nativeFetch=window.fetch.bind(window),json=(data,status=200)=>new Response(JSON.stringify(data),{status,headers:{'Content-Type':'application/json'}});
+window.fetch=async(input,options={})=>{
+ const url=new URL(input,location.origin),path=url.pathname,method=options.method||'GET',body=options.body?JSON.parse(options.body):null;
+ if(!path.startsWith('/api/'))return nativeFetch(input,options);
+ refundQA.requests.push({path,method,body,tenant:options.headers?.['X-Tenant-ID']});
+ const root='/api/v1/sales/counterparties/';
+ if(path===root){if(Number(options.headers?.['X-Tenant-ID'])!==fixture.tenant)return json({results:[],count:0,next:null,summary:{}});return json({results:[customer()],count:1,next:null,summary:{total_debt_uzs:'100.00',total_debt_usd:'0.00',total_credit_uzs:0,total_credit_usd:-Number(refundQA.balance),debtors_count:1,credit_count:1,total_count:1,settled_count:0}});}
+ if(path===root+fixture.customer+'/')return json(customer());
+ if(path===root+fixture.customer+'/payments/adjustment-quote/'){
+   if(refundQA.mode==='unsupported')return json({detail:'Unsupported controlled endpoint'},404);
+   if(refundQA.mode==='field-errors')return json({currency:['Controlled currency error'],payment_type:['Controlled channel error'],branch_id:['Controlled branch error']},400);
+   if(refundQA.delayQuote)await new Promise(resolve=>{refundQA.releaseQuote=resolve;});
+   const amount=Number(body.amount),before=Number(refundQA.balance);
+   return json({...fixture.quote,...body,expected_quote:refundQA.overrideNonce||fixture.quote.expected_quote,payment_amount:(-amount).toFixed(2),available_credit:Math.max(0,-before).toFixed(2),balances:{UZS:'100.00',USD:before.toFixed(2)},remaining:{UZS:'100.00',USD:(before+amount).toFixed(2)}});
+ }
+ if(path===root+fixture.customer+'/payments/adjust/'){
+   if(refundQA.accepted){if(body.idempotency_key!==refundQA.accepted.adjustment_operation.idempotency_key)return json({detail:'Unexpected second key'},400);return json(refundQA.accepted,201);}
+   refundQA.writes++;refundQA.balance=(Number(refundQA.balance)+Number(body.amount)).toFixed(2);
+   refundQA.accepted={...fixture.result,amount:(-Number(body.amount)).toFixed(2),note:body.note,payment_type:body.payment_type,adjustment_operation:{...fixture.result.adjustment_operation,...body}};
+   sessionStorage.setItem('controlled-refund-server',JSON.stringify({writes:refundQA.writes,balance:refundQA.balance,accepted:refundQA.accepted}));
+   if(refundQA.mode==='lost')throw new TypeError('Controlled accepted reply lost');
+   return json(refundQA.accepted,201);
+ }
+ refundQA.unexpected.push({path,method});return json({detail:'Unexpected controlled endpoint'},503);
+};
+function App(){
+ const [user,setUser]=useState(baseUser);window.refundQA.changeUser=setUser;
+ return React.createElement(MemoryRouter,null,React.createElement(AuthContext.Provider,{value:{user,isAuthenticated:true,isAdmin:false}},React.createElement(ThemeProvider,null,React.createElement(TenantProvider,null,React.createElement(ToastProvider,null,React.createElement(ConfirmProvider,null,React.createElement(Debts)))))));
+}
+createRoot(document.getElementById('root')).render(React.createElement(App));
+</script></body></html>

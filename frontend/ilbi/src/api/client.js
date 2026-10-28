@@ -733,6 +733,8 @@ export const salesApi = {
       method: 'POST',
       body: JSON.stringify(data),
     }),
+  quoteDebtAdjustment: (counterpartyId, data) => request(`/sales/counterparties/${counterpartyId}/payments/adjustment-quote/`, { method: 'POST', body: data }),
+  commitDebtAdjustment: (counterpartyId, data) => request(`/sales/counterparties/${counterpartyId}/payments/adjust/`, { method: 'POST', body: data }),
 
   getB2BInbox: (params = {}, options = {}) => request(`/sales/b2b/inbox/?${queryString(params)}`, options),
   acceptB2B: (saleId, itemsPayload) =>

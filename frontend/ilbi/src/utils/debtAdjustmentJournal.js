@@ -45,6 +45,11 @@ export function createAdjustmentJournal(name = 'ilbi-financial-adjustments-v1') 
     });
   };
   return {
+    async read(source, operation) {
+      if (!uuid(operation)) throw Error('Qaytarish oynasining asl raqami tasdiqlanmadi.');
+      const key = sourceKey(source) + ':' + operation;
+      return transaction([key], records => ({ updates: {}, result: checked(records[key], source) }));
+    },
     async pending(source) {
       const key = sourceKey(source);
       return transaction([key], records => {

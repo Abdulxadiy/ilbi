@@ -17,7 +17,11 @@ import {
   FileText,
   Upload,
 } from 'lucide-react';
-import { salesApi } from '../api/client';
+import { getAuthenticationGeneration, salesApi } from '../api/client';
+import { useAuth } from '../hooks/useAuth';
+import CreditRefundModal from '../components/common/CreditRefundModal';
+import { captureAdjustmentSession, pendingWebAdjustment } from '../utils/debtAdjustmentCommands';
+import { safeDisplayText } from '../utils/safePresentation';
 import Modal from '../components/common/Modal';
 import ExcelExportButton from '../components/common/ExcelExportButton';
 import CounterpartyImportModal from '../components/common/CounterpartyImportModal';
@@ -34,10 +38,11 @@ import { showFormErrors } from '../utils/formValidation.js';
 
 export default function Debts() {
   const { activeTenant, tenants } = useTenant();
+  const { user } = useAuth();
   const toast = useToast();
   const confirm = useConfirm();
   const canManageCp = activeTenant?.is_owner || activeTenant?.permissions?.includes("sales.manage_counterparty");
-  const canCorrectDebt = activeTenant?.is_owner === true;
+  const canCorrectDebt = user?.role === 'owner' && user.terms_accepted === true && activeTenant?.is_owner === true;
   const [editingCp, setEditingCp] = useState(null);
   const [importModalOpen, setImportModalOpen] = useState(false);
 
@@ -67,15 +72,22 @@ export default function Debts() {
   const paymentUsdRate = Number(paymentSettings?.usd_rate || 0);
   const remainingPaymentUsd = Math.max(0, (Number(paymentAmount) || 0) - Math.max(0, Number(selectedCp?.debt_balance_usd) || 0));
 
-  // Refund Customer Credit Modal
-  const [refundModalOpen, setRefundModalOpen] = useState(false);
-  const [refundAmount, setRefundAmount] = useState('');
-  const [refundCurrency, setRefundCurrency] = useState('UZS');
-  const [refundBranchId, setRefundBranchId] = useState('');
-  const [refundNote, setRefundNote] = useState('');
-  const [refundType, setRefundType] = useState('cash');
-  const [refundRequestKey, setRefundRequestKey] = useState('');
-  const [submittingRefund, setSubmittingRefund] = useState(false);
+  // Original pending refunds survive closing/reloading this shared renderer.
+  const [refundState, setRefundState] = useState(null);
+  const [refundJournal, setRefundJournal] = useState({ scope: '', present: false, error: '' });
+  const refundScope = [user?.id, activeTenant?.id, getAuthenticationGeneration()].join(':');
+  const pendingRefund = refundJournal.scope === refundScope ? refundJournal : null;
+  useEffect(() => {
+    let active = true;
+    if (canCorrectDebt) void (async () => {
+      try {
+        const session = captureAdjustmentSession(user, activeTenant);
+        const record = await pendingWebAdjustment(session);
+        if (active) setRefundJournal({ scope: refundScope, present: Boolean(record), error: '' });
+      } catch (failure) { if (active) setRefundJournal({ scope: refundScope, present: false, error: safeDisplayText(failure.message) }); }
+    })();
+    return () => { active = false; };
+  }, [user, activeTenant, canCorrectDebt, refundScope, refundState]);
 
   // Customer Purchases & Debts Detail Modal
   const [cpDetailModalOpen, setCpDetailModalOpen] = useState(false);
@@ -206,65 +218,10 @@ export default function Debts() {
     }
   };
 
-  // Refund / Settle Customer Credit
-  const handleOpenRefundCredit = (cp) => {
+  // The modal owns its quote, original request key and durable acknowledgement.
+  const handleOpenRefundCredit = (cp = null) => {
     if (!canCorrectDebt) { toast.warning('Mijoz haqqini qaytarish uchun do‘kon egasi vakolati kerak.'); return; }
-    setSelectedCp(cp);
-    const creditUzs = Math.max(0, -Number(cp.debt_balance_uzs || 0));
-    const creditUsd = Math.max(0, -Number(cp.debt_balance_usd || 0));
-    if (creditUzs > 0) {
-      setRefundAmount(creditUzs.toString());
-      setRefundCurrency('UZS');
-    } else if (creditUsd > 0) {
-      setRefundAmount(creditUsd.toString());
-      setRefundCurrency('USD');
-    } else {
-      setRefundAmount('');
-      setRefundCurrency('UZS');
-    }
-    setRefundBranchId(String(activeTenant?.id || (tenants.length > 0 ? tenants[0]?.id : '')));
-    setRefundType('cash');
-    setRefundRequestKey(crypto.randomUUID());
-    setRefundNote('Mijozga ortiqcha to‘langan haq qaytarildi');
-    setRefundModalOpen(true);
-  };
-
-  const handleConfirmRefundCredit = async (e) => {
-    e.preventDefault();
-    if (!canCorrectDebt) { toast.warning('Mijoz haqqini qaytarish uchun do‘kon egasi vakolati kerak.'); return; }
-    const amt = parseFloat(refundAmount);
-    if (!amt || amt <= 0) {
-      showFormErrors(e.currentTarget, { amount: 'Qaytariladigan summa noldan katta bo‘lishi kerak.' });
-      toast.warning('Qaytariladigan summani kiriting');
-      return;
-    }
-    setSubmittingRefund(true);
-    try {
-      await salesApi.correctDebtPayment(selectedCp.id, {
-        amount: -amt,
-        currency: refundCurrency,
-        payment_type: refundType, idempotency_key: refundRequestKey,
-        branch_id: refundBranchId ? parseInt(refundBranchId, 10) : undefined,
-        note: refundNote || 'Mijozga ortiqcha to‘langan haq qaytarildi',
-      });
-      toast.success('Mijoz haqqi muvaffaqiyatli qaytarildi! Balans tozalandi.');
-      setRefundModalOpen(false);
-      loadCounterparties();
-      if (cpDetailModalOpen && selectedCpDetail && selectedCpDetail.id === selectedCp.id) {
-        setSelectedCpDetail((prev) => {
-          if (!prev) return null;
-          if (refundCurrency === 'UZS') {
-            return { ...prev, debt_balance_uzs: Number(prev.debt_balance_uzs || 0) + amt };
-          }
-          return { ...prev, debt_balance_usd: Number(prev.debt_balance_usd || 0) + amt };
-        });
-        handleOpenCounterpartyPurchases(selectedCp, cpDetailTab);
-      }
-    } catch (err) {
-      toast.error(err.message || 'Haqni qaytarishda xatolik yuz berdi');
-    } finally {
-      setSubmittingRefund(false);
-    }
+    setRefundState({ customer: cp, actorId: user.id, tenantId: activeTenant.id, generation: getAuthenticationGeneration() });
   };
 
   const handleOpenInvoice = (sale) => {
@@ -297,6 +254,7 @@ export default function Debts() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+      {canCorrectDebt && (pendingRefund?.present || pendingRefund?.error) && <div className="glass-card" role="status" style={{ padding: 16, display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 12 }}><span>{pendingRefund.error || 'Oldingi qaytarish natijasi tekshirilishi kerak. Asl yozuv saqlangan.'}</span><button type="button" className="btn btn-secondary" onClick={() => handleOpenRefundCredit()}>Oldingi qaytarishni tekshirish</button></div>}
       {/* Top KPI Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: 14 }}>
         <div className="glass-card" style={{ padding: '16px 20px' }}>
@@ -802,7 +760,8 @@ export default function Debts() {
                               <CreditCard size={13} />
                               <span>Qarz To‘lash</span>
                             </button>
-                          ) : hasCredit && canCorrectDebt ? (
+                          ) : null}
+                          {hasCredit && canCorrectDebt ? (
                             <button
                               type="button"
                               onClick={() => handleOpenRefundCredit(cp)}
@@ -819,7 +778,7 @@ export default function Debts() {
                                 alignItems: 'center',
                                 gap: 5,
                               }}
-                              title="Mijozga ortiqcha haqini qaytarish / hisobni tozalash"
+                              title="Mijozga ortiqcha haqidan qisman yoki to‘liq qaytarish"
                             >
                               <RotateCcw size={13} />
                               <span>Haqni Qaytarish</span>
@@ -1115,127 +1074,18 @@ export default function Debts() {
         </form>
       </Modal>
 
-      {/* Modal 3: Refund Customer Credit */}
-      <Modal
-        isOpen={refundModalOpen}
-        onClose={() => setRefundModalOpen(false)}
-        title={`Mijoz Haqqini Qaytarish — ${selectedCp?.name || ''}`}
-        maxWidth={480}
-      >
-        <form onSubmit={handleConfirmRefundCredit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <div
-            style={{
-              padding: '12px 14px',
-              borderRadius: 'var(--radius-sm)',
-              background: 'rgba(var(--success-rgb), 0.08)',
-              border: '1px solid rgba(var(--success-rgb), 0.25)',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 4,
-            }}
-          >
-            <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--accent-emerald)', display: 'flex', alignItems: 'center', gap: 6 }}>
-              <Sparkles size={16} />
-              <span>Bizda Qolgan Ortiqcha Haq</span>
-            </div>
-            <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--text-primary)' }}>
-              {Math.max(0, -Number(selectedCp?.debt_balance_uzs || 0)) > 0 &&
-                `+${Math.max(0, -Number(selectedCp?.debt_balance_uzs || 0)).toLocaleString()} UZS `}
-              {Math.max(0, -Number(selectedCp?.debt_balance_usd || 0)) > 0 &&
-                `+$${Math.max(0, -Number(selectedCp?.debt_balance_usd || 0)).toFixed(2)}`}
-            </div>
-            <div style={{ fontSize: 11.5, color: 'var(--text-muted)' }}>
-              Ushbu summa mijozga qaytarib berilgach, mijoz balansi 0 ga tenglashadi.
-            </div>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-            <div>
-              <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6 }}>
-                Qaytariladigan Summa <span style={{ color: 'var(--accent-rose)' }}>*</span>
-              </label>
-              <PriceInput
-                data-api-field="amount" value={refundAmount}
-                onChange={(e) => setRefundAmount(e.target.value)}
-                required
-                className="input-field"
-              />
-            </div>
-            <div>
-              <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6 }}>
-                Valyuta <span style={{ color: 'var(--accent-rose)' }}>*</span>
-              </label>
-              <CustomSelect
-                data-api-field="currency" value={refundCurrency}
-                onChange={(val) => setRefundCurrency(val)}
-                options={[
-                  { value: 'UZS', label: 'UZS (So‘m)' },
-                  { value: 'USD', label: 'USD (Dollar)' },
-                ]}
-                fullWidth
-              />
-            </div>
-
-            <div>
-              <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6 }}>
-                Qaytarish Turi <span style={{ color: 'var(--accent-rose)' }}>*</span>
-              </label>
-              <CustomSelect
-                data-api-field="payment_type" value={refundType}
-                onChange={setRefundType}
-                options={[
-                  { value: 'cash', label: 'Naqd pul' },
-                  { value: 'card', label: 'Bank karta' },
-                ]}
-                fullWidth
-              />
-            </div>
-
-            <div>
-              <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6 }}>
-                Qaysi Filialdan *
-              </label>
-              <CustomSelect
-                data-api-field="branch_id" value={refundBranchId}
-                onChange={(val) => setRefundBranchId(val)}
-                options={branchOptions}
-                fullWidth
-              />
-            </div>
-          </div>
-
-          <div>
-            <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6 }}>
-              Izoh / Sababi <span style={{ color: 'var(--accent-rose)' }}>*</span>
-            </label>
-            <input
-              type="text"
-              placeholder="Masalan: Mijozga ortiqcha haq qaytarildi"
-              data-api-field="note" value={refundNote}
-              onChange={(e) => setRefundNote(e.target.value)}
-              required
-              className="input-field"
-            />
-          </div>
-
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 8 }}>
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={() => setRefundModalOpen(false)}
-            >
-              Bekor qilish
-            </button>
-            <button
-              type="submit"
-              disabled={submittingRefund}
-              className="btn btn-success"
-            >
-              {submittingRefund ? 'Qaytarilmoqda...' : 'Haqni Qaytarish'}
-            </button>
-          </div>
-        </form>
-      </Modal>
+      <CreditRefundModal state={refundState} onClose={() => setRefundState(null)} onDone={async result => {
+        const session = captureAdjustmentSession(user, activeTenant);
+        const latest = await salesApi.getCounterparty(result.counterparty);
+        session.assertCurrent();
+        await loadCounterparties(); session.assertCurrent();
+        if (cpDetailModalOpen && selectedCpDetail?.id === result.counterparty) {
+          setSelectedCpDetail(latest);
+          if (cpDetailTab === 'payments') await detailPayments.refresh();
+        }
+        session.assertCurrent(); setRefundJournal({ scope: refundScope, present: false, error: '' }); setRefundState(null);
+        toast.success('Mijozga haq qaytarish serverda tasdiqlandi.');
+      }} />
 
       {/* Modal 4: Customer Purchases & Debt History */}
       <Modal
@@ -1344,7 +1194,7 @@ export default function Debts() {
 
           {/* Action buttons inside header */}
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
-            {Number(selectedCpDetail?.debt_balance_uzs || 0) < 0 || Number(selectedCpDetail?.debt_balance_usd || 0) < 0 ? (
+            {canCorrectDebt && (Number(selectedCpDetail?.debt_balance_uzs || 0) < 0 || Number(selectedCpDetail?.debt_balance_usd || 0) < 0) ? (
               <button
                 type="button"
                 onClick={() => handleOpenRefundCredit(selectedCpDetail)}
@@ -1365,7 +1215,8 @@ export default function Debts() {
                 <Sparkles size={14} />
                 <span>Haqni Qaytarish</span>
               </button>
-            ) : (
+            ) : null}
+            {(Number(selectedCpDetail?.debt_balance_uzs || 0) > 0 || Number(selectedCpDetail?.debt_balance_usd || 0) > 0) ? (
               <button
                 type="button"
                 onClick={() => {
@@ -1393,7 +1244,7 @@ export default function Debts() {
                 <CreditCard size={14} />
                 <span>Qarz To‘lash</span>
               </button>
-            )}
+            ) : null}
           </div>
 
           {/* Tab buttons */}
