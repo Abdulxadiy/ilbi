@@ -26,13 +26,13 @@ MIJOZ / HAMKOR NOMI	TELEFON RAQAMI	B2B DO‘KON BOG‘LANMASI	NASIYA QARZ (UZS)	
 Credit customer
 Qarzdor
 Haqqi bor
-	+998901234567	—	
+	+998901234567	—
 100 UZS
 Mijoz qarzi
-	
+
 +$10.00
 Mijoz haqqi bor
-	To‘lov yo‘q	
+	To‘lov yo‘q
 Tahrirlash
 Xaridlar
 Qarz To‘lash
