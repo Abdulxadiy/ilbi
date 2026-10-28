@@ -77,8 +77,8 @@ Every original audit ID is retained exactly once. Acceptance text below comes fr
 | DMP-031 | P11 | Inter-store transfer dispatch, receipt, return and discrepancy (TESTED_CODE) | PRIOR_CODE_EVIDENCE | Test same-owner transfer, external receipt, partial receipt, discrepancy and physical return with both tenant views and permission checks. |
 | DMP-032 | P05 | Deficit view and low-stock operational workflow (IN_PROGRESS) | TODO | Create a genuine below-threshold variant, verify the aggregate and filtered list and test notification/report actions with permissions. |
 | DMP-033 | P02 | Authoritative customer list and balance summaries (TESTED_CODE) | PRIOR_CODE_EVIDENCE | Load existing real customers without creating one, paginate/search, and compare UZS/USD debt/credit summaries against server aggregates. |
-| DMP-034 | P02 | Customer editing, deletion, notes, code and due date (IN_PROGRESS) | TODO | Create a customer with note/code/default due date, edit allowed fields, reject invalid/dependent deletion and preserve historical sale identity. |
-| DMP-035 | P02 | Customer purchase and payment ledger (OPEN) | TODO | Open one customer with several purchases/payments/returns and reconcile the displayed balance to the transaction history. |
+| DMP-034 | P02 | Customer editing, deletion, notes, code and due date (IN_PROGRESS) | CODE_VERIFIED | Create a customer with note/code/default due date, edit allowed fields, reject invalid/dependent deletion and preserve historical sale identity. |
+| DMP-035 | P02 | Customer purchase and payment ledger (OPEN) | CODE_VERIFIED | Open one customer with several purchases/payments/returns and reconcile the displayed balance to the transaction history. |
 | DMP-036 | P02 | Spreadsheet customer import (OPEN) | TODO | Import customers with duplicate/invalid phones and balance-related fields; inspect preview and retry commit safely. |
 | DMP-037 | P02 | Real debt filters and collection (IN_PROGRESS) | TODO | Load real overdue/soon/future debt, make a partial payment and verify the server-confirmed remaining amount after navigation and restart. |
 | DMP-038 | P02 | Payment currency, cash/card, branch and note (TESTED_CODE) | PRIOR_CODE_EVIDENCE | Record cash and card debt payments in UZS/USD and a chosen branch, including a decimal amount; verify ledger/cashbox attribution. |
@@ -195,6 +195,8 @@ Every original audit ID is retained exactly once. Acceptance text below comes fr
 | P01a | CODE_VERIFIED | DMP-047/048 source:544 mobile tests/63 suites,48 actual PostgreSQL employee tests, tsc/strict lint/Ruff pass. evidence/parity-implementation-2026-10-28/P01a/. Native/mail acceptance remains open. | P01b: DMP-002 invitation/reset deep-link onboarding. |
 
 | P01b | CODE_VERIFIED | DMP-002 source:564 mobile tests/64 suites,33 actual backend reset/invitation tests, tsc/strict lint, all-platform Expo export and isolated controlled-API Chrome UI pass. evidence/parity-implementation-2026-10-28/P01b/. Native linking/domain/mail acceptance open. | P02 customer statements/metadata/debt flows. |
+
+| P02a | CODE_VERIFIED | DMP-034/035 source:582 mobile tests/65 suites,21 actual backend customer/service tests, tsc/strict lint/Ruff, all-platform Expo export and controlled Chrome390/320 pass. evidence/parity-implementation-2026-10-28/P02a/. Native acceptance open. | Continue P02: security review/refund-correction, due filters and customer import; do not mark the phase complete. |
 
 ## Final-only cleanup gate
 

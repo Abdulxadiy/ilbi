@@ -11,6 +11,21 @@ const wrapper = ({ children }: { children: React.ReactNode }) => <CartProvider>{
 const item = { variantId: 99, productId: 5, productName: 'Stored product', unit: 'kg', defaultPrice: 11500, unitPrice: 11500, quantity: 2 };
 describe('Cart draft restoration and isolation', () => {
   beforeEach(async () => { mockUserId = 1; mockTenantId = 10; await AsyncStorage.clear(); });
+  test('customer due date and B2B recipient survive restart; manual deadline survives same-customer reselection', async () => {
+    const first = await renderHook(useCart, { wrapper });
+    const customer = { id: 4, name: 'Partner', phoneNumber: '', targetTenantId: 8, targetTenantName: 'Receiving store', debtDueDate: '2026-12-31' };
+    await act(async () => first.result.current.setCustomer(customer));
+    expect(first.result.current.payment.dueDate).toBe('2026-12-31');
+    await act(async () => first.result.current.setPayment({ dueDate: '2027-01-01' }));
+    await act(async () => first.result.current.setCustomer(customer));
+    expect(first.result.current.payment.dueDate).toBe('2027-01-01');
+    await act(async () => first.result.current.flushDraft()); await first.unmount();
+    const second = await renderHook(useCart, { wrapper });
+    expect(second.result.current.customer?.targetTenantId).toBe(8);
+    expect(second.result.current.payment.dueDate).toBe('2027-01-01');
+    await act(async () => second.result.current.setCustomer({ id: 5, name: 'Other', phoneNumber: '' }));
+    expect(second.result.current.payment.dueDate).toBe('');
+  });
 
   test('checkout method, cash text, debt deadline and cart identity survive remount', async () => {
     const first = await renderHook(useCart, { wrapper });

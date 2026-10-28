@@ -2,6 +2,7 @@ import * as Crypto from 'expo-crypto';
 import type { CartItem, SelectedCustomer } from './CartContext';
 import { scopedKey, getServerScope } from '../../api/environment';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { isIsoDate } from '../../domain/date';
 
 export interface PaymentDraft { method: 'cash' | 'card' | 'debt'; cashReceived: string; dueDate: string; }
 export const emptyPayment = (): PaymentDraft => ({ method: 'cash', cashReceived: '', dueDate: '' });
@@ -21,6 +22,7 @@ export function validateCartDraft(input: unknown, userId: number, tenantId: numb
     variants.add(item.variantId);
   }
   if (draft.customer && (!Number.isInteger(draft.customer.id) || draft.customer.id < 1 || typeof draft.customer.name !== 'string')) throw Error('Qoralamadagi mijoz tasdiqlanmadi.');
+  if (draft.customer && (draft.customer.debtDueDate != null && !isIsoDate(draft.customer.debtDueDate) || draft.customer.targetTenantId != null && (!Number.isSafeInteger(draft.customer.targetTenantId) || draft.customer.targetTenantId < 1) || draft.customer.targetTenantName !== undefined && typeof draft.customer.targetTenantName !== 'string')) throw Error('Qoralamadagi mijozning B2B yoki sana ma’lumotlari tasdiqlanmadi. Asl nusxa saqlandi.');
   if (draft.version === 3 && (typeof draft.id !== 'string' || !draft.id || !draft.payment || !['cash', 'card', 'debt'].includes(draft.payment.method) || typeof draft.payment.cashReceived !== 'string' || typeof draft.payment.dueDate !== 'string')) throw Error('To‘lov qoralamasi tasdiqlanmadi. Asl nusxa saqlandi.');
   return draft.version === 3 ? draft : newDraft(userId, tenantId, draft.items, draft.customer, { partner: draft.partner });
 }

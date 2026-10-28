@@ -141,6 +141,7 @@ export const CartScreen: React.FC = () => {
             >
               {customer ? customer.name : 'Mijoz tanlash'}
             </Text>
+            {customer?.targetTenantId ? <Text style={{ color: colors.textSecondary, fontSize: 12 }}>B2B: {customer.targetTenantName || 'Bog‘langan do‘kon'}</Text> : null}
           </View>
           <Text style={[styles.chevron, { color: colors.textMuted }]}>›</Text>
         </TouchableOpacity>

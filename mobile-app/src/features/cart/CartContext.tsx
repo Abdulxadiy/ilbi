@@ -26,6 +26,9 @@ export interface SelectedCustomer {
   id: number;
   name: string;
   phoneNumber: string;
+  targetTenantId?: number | null;
+  targetTenantName?: string;
+  debtDueDate?: string | null;
 }
 
 interface CartContextType {
@@ -176,7 +179,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
   const clearCart = () => { const fresh = newDraft(userId || 1, tenantId || 1); mutate(previous => ({ ...previous, id: fresh.id, partner: false, payment: fresh.payment, items: [], customer: null })); };
   const setPayment = (patch: Partial<PaymentDraft>) => mutate(previous => ({ ...previous, payment: { ...previous.payment, ...patch } }));
-  const setCustomer = (value: SelectedCustomer | null) => mutate(previous => ({ ...previous, customer: value }));
+  const setCustomer = (value: SelectedCustomer | null) => mutate(previous => ({ ...previous, customer: value, payment: { ...previous.payment, dueDate: previous.customer?.id === value?.id ? previous.payment.dueDate : value?.debtDueDate || '' } }));
   const loadCanonicalFixture = () => {
     if (!isDesignPreview && process.env.NODE_ENV !== 'test') return;
     mutate(previous => ({ ...previous, items: CANONICAL_CART_ITEMS.map(i => ({ ...i })), customer: { ...CANONICAL_CUSTOMER } }));

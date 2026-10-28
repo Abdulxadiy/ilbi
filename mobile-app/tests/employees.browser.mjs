@@ -11,6 +11,7 @@ const exportDir = process.env.ILBI_PARITY_WEB_EXPORT;
 const evidence = process.env.ILBI_PARITY_UI_EVIDENCE;
 if (!exportDir || !evidence) throw Error('Set ILBI_PARITY_WEB_EXPORT and ILBI_PARITY_UI_EVIDENCE to isolated test directories.');
 const root = resolve(exportDir), contract = JSON.parse(await readFile(new URL('./contracts/employees.json', import.meta.url), 'utf8'));
+const customerContract = JSON.parse(await readFile(new URL('./contracts/customers.json', import.meta.url), 'utf8'));
 await mkdir(evidence, { recursive: true });
 const mime = { '.js': 'text/javascript', '.css': 'text/css', '.html': 'text/html', '.json': 'application/json', '.png': 'image/png', '.svg': 'image/svg+xml', '.ttf': 'font/ttf', '.otf': 'font/otf', '.ico': 'image/x-icon', '.webp': 'image/webp' };
 const server = createServer(async (req, res) => {
@@ -25,8 +26,9 @@ const server = createServer(async (req, res) => {
 await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
 const base = 'http://127.0.0.1:' + server.address().port;
 const browser = await launchBrowser({ width: 390, height: 844 });
-function adapter(contract) {
+function adapter(contract, customerContract) {
   const employee = structuredClone(contract.directory.results[0]);
+  const customer = structuredClone(customerContract.customer), customerBase = `/sales/counterparties/${customer.id}/`;
   const tenantId = contract.tenant_id, teamBase = `/tenants/${tenantId}/employees/`;
   const encode = value => btoa(JSON.stringify(value));
   const jwt = encode({ alg: 'test-adapter-only' }) + '.' + encode({ user_id: 900007, exp: Math.floor(Date.now() / 1000) + 3600 }) + '.synthetic';
@@ -45,6 +47,11 @@ function adapter(contract) {
     else if (path === teamBase + 'permissions/') data = contract.choices;
     else if (path === teamBase && method === 'GET') data = { results: [employee], next: null, count: 1 };
     else if (path === teamBase + employee.id + '/' && method === 'PATCH') { Object.assign(employee, body); data = employee; }
+    else if (path === '/sales/counterparties/') data = { results: [customer], next: null, count: 1 };
+    else if (path === customerBase + 'sales/') data = customerContract.sales;
+    else if (path === customerBase + 'payments/') data = customerContract.payments;
+    else if (path === customerBase && method === 'PATCH') { Object.assign(customer, body); data = customer; }
+    else if (path === customerBase) data = customer;
     else if (path === '/auth/password-reset/verify/') data = { valid: true, purpose: 'new_employee', phase: 'password_required', has_username: false, username: '', phone_hint: '+99890***1234', tenant_name: 'QA store', position: 'Kassir' };
     else if (path === '/auth/password-reset/confirm/') data = { login_ticket: 'controlled-setup-ticket', phone_hint: '+99890***1234', telegram_linked: false, otp_sent: false };
     else if (path === '/auth/admin-login/telegram-status/') data = { telegram_linked: false };
@@ -60,7 +67,7 @@ const waitFor = async (expression, label) => {
 const click = async label => {
   await pause(350);
   const point = await browser.evaluate(`(() => {
-    const node = [...document.querySelectorAll('[role="button"],[role="tab"],button')].find(el => (el.getAttribute('aria-label') === ${JSON.stringify(label)} || el.innerText.trim() === ${JSON.stringify(label)}) && !el.closest('[aria-hidden="true"],[inert]'));
+    const node = [...document.querySelectorAll('[role="button"],[role="tab"],[role="radio"],button')].find(el => (el.getAttribute('aria-label') === ${JSON.stringify(label)} || el.innerText.trim() === ${JSON.stringify(label)}) && !el.closest('[aria-hidden="true"],[inert]'));
     if (!node) throw Error('Missing button: ' + ${JSON.stringify(label)});
     node.scrollIntoView({ block: 'center' }); const r = node.getBoundingClientRect();
     return { x: r.x + r.width / 2, y: r.y + r.height / 2 };
@@ -75,7 +82,7 @@ const fill = async (label, value) => {
 };
 const screenshot = async name => { const result = await browser.call('Page.captureScreenshot', { format: 'png' }); await writeFile(resolve(evidence, name + '.png'), Buffer.from(result.data, 'base64')); };
 try {
-  await browser.call('Page.addScriptToEvaluateOnNewDocument', { source: '(' + adapter.toString() + ')(' + JSON.stringify(contract) + ')' });
+  await browser.call('Page.addScriptToEvaluateOnNewDocument', { source: '(' + adapter.toString() + ')(' + JSON.stringify(contract) + ',' + JSON.stringify(customerContract) + ')' });
   await browser.call('Page.navigate', { url: base });
   await waitFor(`document.querySelector('input[aria-label="Foydalanuvchi nomi yoki telefon"]')`, 'login');
   await fill('Foydalanuvchi nomi yoki telefon', 'qa-owner'); await fill('Parol', 'Synthetic-qa-password'); await click('Kirish');
@@ -96,6 +103,26 @@ try {
   await click('Menyu'); await click('Tun'); await click('Menyuni yopish');
   await browser.resize(320, 740); await pause(400); await screenshot('employees-dark-320');
   assert.ok(await browser.evaluate('document.documentElement.scrollWidth <= 320'));
+  await click('Menyu'); await click('Kunduz'); await click('Mijozlar');
+  await browser.resize(390, 844);
+  await waitFor(`document.body.innerText.includes('Statement customer: ko‘chirma')`, 'customer directory');
+  await click('Statement customer: tahrirlash');
+  await waitFor(`document.querySelector('input[aria-label="Standart qarz muddati (YYYY-MM-DD)"]')`, 'customer edit');
+  await fill('Standart qarz muddati (YYYY-MM-DD)', '2026-02-30'); await click('Mijozni saqlash');
+  assert.equal(await browser.evaluate(`document.querySelector('input[aria-label="Standart qarz muddati (YYYY-MM-DD)"]').getAttribute('aria-invalid')`), 'true');
+  await fill('Standart qarz muddati (YYYY-MM-DD)', '2027-01-01'); await click('Mijozni saqlash');
+  await waitFor(`document.body.innerText.includes('Mijoz ma’lumotlari saqlandi.')`, 'customer metadata confirmed');
+  const customerWrite = await browser.evaluate(`window.__parityQa.requests.find(row => row.method === 'PATCH' && row.path.startsWith('/sales/counterparties/'))`);
+  assert.equal(customerWrite.body.debt_due_date, '2027-01-01');
+  assert.equal(customerWrite.body.phone_number, undefined); assert.equal(customerWrite.body.target_tenant_code, undefined);
+  await click('Statement customer: ko‘chirma');
+  await waitFor(`document.body.innerText.includes('Amaldagi balans: 70 UZS / 0 USD')`, 'server-backed customer statement');
+  assert.equal(await browser.evaluate(`document.querySelectorAll('[role="tab"]').length`), 5);
+  await screenshot('customer-purchases-390');
+  await click('Ko‘chirma bo‘limi: To‘lovlar');
+  await waitFor(`document.body.innerText.includes('Qabul qilingan to‘lov · 10 UZS')`, 'customer payment history');
+  await browser.resize(320, 740); await pause(300); await screenshot('customer-payments-320');
+  assert.ok(await browser.evaluate('document.documentElement.scrollWidth <= 320'));
   await click('Menyu'); await click('Chiqish');
   await waitFor(`document.body.innerText.includes('Taklif orqali hisobni faollashtirish')`, 'logout returns to entry');
   await click('Taklif orqali hisobni faollashtirish');
@@ -113,7 +140,7 @@ try {
   const qa = await browser.evaluate('window.__parityQa');
   assert.deepEqual(qa.unexpected, []);
   assert.deepEqual(browser.errors, []);
-  await writeFile(resolve(evidence, 'browser-result.json'), JSON.stringify({ runtime: 'Isolated Chrome + production React Native Web export + controlled API adapter', nativeDeviceAcceptance: false, liveBackend: false, checks: ['sidebar employee route with exactly five tabs', 'actual contract-shaped directory', 'inline email and password validation', 'server-ID permission preset and safe PATCH payload', 'light390/dark320 UI and no horizontal overflow', 'logout and invitation-to-Telegram gate'], passed: true, writes: qa.requests.filter(row => row.method === 'PATCH').length, unexpected: qa.unexpected }, null, 2) + '\n');
+  await writeFile(resolve(evidence, 'browser-result.json'), JSON.stringify({ runtime: 'Isolated Chrome + production React Native Web export + controlled API adapter', nativeDeviceAcceptance: false, liveBackend: false, checks: ['sidebar employee route with exactly five tabs', 'actual contract-shaped directory', 'inline email and password validation', 'server-ID permission preset and safe PATCH payload', 'light390/dark320 UI and no horizontal overflow', 'customer date validation and safe metadata PATCH', 'customer purchases/payments and server70 balance at390/320', 'logout and invitation-to-Telegram gate'], passed: true, writes: qa.requests.filter(row => row.method === 'PATCH').length, unexpected: qa.unexpected }, null, 2) + '\n');
   console.log('Employee/invitation browser checks passed (controlled API, no native/live delivery claim).');
 } catch (error) {
   await screenshot('browser-failure');

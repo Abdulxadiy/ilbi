@@ -9,7 +9,13 @@ import { Button } from '../../components/ui/Button';
 import { useTheme } from '../../theme/ThemeContext';
 import { radius, spacing, typography } from '../../theme/tokens';
 import { SelectedCustomer } from '../cart/CartContext';
-import { request } from '../../api/client';
+import { assertAuthScope, captureAuthScope, request } from '../../api/client';
+import { getServerScope } from '../../api/environment';
+import { useAuth } from '../auth/AuthContext';
+import { useApiAction } from '../../hooks/useApiAction';
+import { Input } from '../../components/ui/Input';
+import { customerBody } from '../customers/model';
+import { customerSelection } from '../customers/selection';
 
 
 
@@ -20,16 +26,21 @@ interface CustomerPickerSheetProps {
   onSelectCustomer: (customer: SelectedCustomer) => void;
 }
 
-const parseCustomer = (row: any): SelectedCustomer => { if (!row || typeof row.name !== 'string') throw Error('Mijoz ma’lumotlari tasdiqlanmadi.'); return { id: row.id, name: row.name, phoneNumber: row.phone_number || '' }; };
+const parseCustomer = customerSelection;
 
-export const CustomerPickerSheet: React.FC<CustomerPickerSheetProps> = ({
+export const CustomerPickerSheet: React.FC<CustomerPickerSheetProps> = props => {
+  const { user, activeTenant } = useAuth();
+  return <CustomerPickerBody key={[getServerScope(), user?.id, activeTenant?.id].join(':')} {...props} />;
+};
+const CustomerPickerBody: React.FC<CustomerPickerSheetProps> = ({
   visible,
   onClose,
   selectedCustomerId,
   onSelectCustomer,
 }) => {
   const { colors } = useTheme();
-  const { can, requirePermission } = usePermissions();
+  const { can } = usePermissions(), { user, activeTenant } = useAuth();
+  const create = useApiAction('sales.manage_counterparty');
   const [search, setSearch] = useState('');
   const query = useDebounced(search.trim());
   const resource = usePagedResource<SelectedCustomer>(visible ? '/sales/counterparties/?search=' + encodeURIComponent(query) : null, parseCustomer);
@@ -38,8 +49,7 @@ export const CustomerPickerSheet: React.FC<CustomerPickerSheetProps> = ({
   const [isCreating, setIsCreating] = useState(false);
   const [newName, setNewName] = useState('');
   const [newPhone, setNewPhone] = useState('');
-  const [createLoading, setCreateLoading] = useState(false);
-  const [createError, setCreateError] = useState('');
+  const createLoading = create.busy, createError = create.error;
 
   useEffect(() => {
     // Reset the draft selection when its externally controlled value changes.
@@ -56,31 +66,18 @@ export const CustomerPickerSheet: React.FC<CustomerPickerSheetProps> = ({
   };
 
   const handleCreateCustomer = async () => {
-    if (!newName.trim() || !newPhone.trim()) return;
-    setCreateLoading(true); setCreateError('');
-    try {
-      requirePermission('sales.manage_counterparty');
-      const created = await request('/sales/counterparties/', {
-        method: 'POST',
-        body: { name: newName.trim(), phone_number: newPhone.trim() },
-      });
-
-      if (!created?.id) throw Error('Server mijozni tasdiqlamadi');
-      const newCust: SelectedCustomer = {
-        id: created.id,
-        name: created.name,
-        phoneNumber: created.phoneNumber || created.phone_number,
-      };
-
+    const newCust = await create.run(async () => {
+      const body = customerBody({ name: newName, phone_number: newPhone, note: '', target_tenant_code: '', debt_due_date: '' }, false);
+      const scope = captureAuthScope(user?.id, activeTenant?.id); assertAuthScope(scope);
+      const selected = customerSelection(await request('/sales/counterparties/', { method: 'POST', body }));
+      assertAuthScope(scope); return selected;
+    });
+    if (newCust) {
       void resource.reload();
       onSelectCustomer(newCust);
       setIsCreating(false);
       setNewName('');
       setNewPhone('');
-    } catch (error: any) {
-      setCreateError(error.message || 'Mijoz yaratilmadi');
-    } finally {
-      setCreateLoading(false);
     }
   };
 
@@ -92,7 +89,7 @@ export const CustomerPickerSheet: React.FC<CustomerPickerSheetProps> = ({
   };
 
   return (
-    <BottomSheet scrollable={isCreating} visible={visible} onClose={onClose} title="Mijoz tanlash">
+    <BottomSheet scrollable={isCreating} visible={visible} onClose={() => { if (!createLoading) onClose(); }} title="Mijoz tanlash">
       <View style={styles.content}>
         {createError ? <Text style={{ color: colors.danger }}>{createError}</Text> : null}
         {/* Search input */}
@@ -120,24 +117,25 @@ export const CustomerPickerSheet: React.FC<CustomerPickerSheetProps> = ({
           </TouchableOpacity>
         ) : (
           <View style={[styles.createForm, { backgroundColor: colors.surfaceSecondary, borderColor: colors.border }]}>
-            <TextInput accessibilityLabel="Mijoz ismi"
+            <Input accessibilityLabel="Mijoz ismi"
               placeholder="Mijoz ismi"
               placeholderTextColor={colors.textMuted}
               value={newName}
-              onChangeText={setNewName}
-              style={[styles.createInput, { color: colors.text, borderColor: colors.border, backgroundColor: colors.surface }]}
+              onChangeText={value => { setNewName(value); create.clearField('name'); }}
+              error={create.fields.name} editable={!createLoading}
             />
-            <TextInput accessibilityLabel="+998 90 123 45 67"
+            <Input accessibilityLabel="+998 90 123 45 67"
               placeholder="+998 90 123 45 67"
               placeholderTextColor={colors.textMuted}
               value={newPhone}
-              onChangeText={setNewPhone}
+              onChangeText={value => { setNewPhone(value); create.clearField('phone_number'); }}
               keyboardType="phone-pad"
-              style={[styles.createInput, { color: colors.text, borderColor: colors.border, backgroundColor: colors.surface }]}
+              error={create.fields.phone_number} editable={!createLoading}
             />
             <View style={styles.formActionRow}>
               <Button
                 title="Bekor qilish"
+                disabled={createLoading}
                 variant="secondary"
                 size="sm"
                 onPress={() => setIsCreating(false)}
@@ -197,6 +195,7 @@ export const CustomerPickerSheet: React.FC<CustomerPickerSheetProps> = ({
                   <Text style={[styles.custPhone, { color: colors.textSecondary }]}>
                     {item.phoneNumber}
                   </Text>
+                  {item.targetTenantId ? <Text style={{ color: colors.textSecondary, fontSize: 12 }}>B2B: {item.targetTenantName || 'Bog‘langan do‘kon'}</Text> : null}
                 </View>
 
                 {isSelected ? (
