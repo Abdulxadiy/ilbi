@@ -24,6 +24,20 @@ const calls = () => jest.mocked(request).mock.calls.map(([path]) => path);
 describe('Verified authentication state machine', () => {
   beforeEach(async () => { jest.clearAllMocks(); mockAccess = null; mockTenant = null; mockGeneration = 0; await AsyncStorage.clear(); });
   afterEach(() => jest.restoreAllMocks());
+  test('account setup reuses Telegram proof and cannot authenticate from a link ticket alone', async () => {
+    jest.mocked(request).mockImplementation(async path => path.includes('telegram-status') ? { telegram_linked: true } : path.includes('send-otp') ? { otp_sent: true } : path.includes('verify-otp') ? { access: 'a', refresh: 'r' } : profile);
+    const hook = await renderHook(useAuth, { wrapper });
+    await act(async () => hook.result.current.adoptSetupChallenge({ login_ticket: 'setup-ticket', phone_hint: '+99890***1234' }));
+    expect(hook.result.current.isAuthenticated).toBe(false);
+    expect(hook.result.current.loginStep).toBe('telegram');
+    expect(setTokens).not.toHaveBeenCalled();
+    await act(async () => { await hook.result.current.checkTelegram(); });
+    expect(hook.result.current.loginStep).toBe('otp');
+    await act(async () => { await hook.result.current.verifyOtp('123456'); });
+    expect(hook.result.current.isAuthenticated).toBe(true);
+    expect(request).toHaveBeenCalledWith('/auth/admin-login/verify-otp/', { method: 'POST', body: { login_ticket: 'setup-ticket', verification_code: '123456' } });
+    expect(() => hook.result.current.adoptSetupChallenge({ login_ticket: 'another-ticket' })).toThrow('Avval joriy hisobdan chiqing.');
+  });
   test('direct login commits complete validated membership without a thin tenant lookup', async () => {
     jest.mocked(request).mockImplementation(async path => path === '/auth/admin-login/' ? { access: 'a', refresh: 'r' } : profile);
     const hook = await renderHook(useAuth, { wrapper });

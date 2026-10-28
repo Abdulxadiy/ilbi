@@ -25,7 +25,7 @@ export function RootNavigator() {
     <Stack.Screen name="legal" />
     <Stack.Screen name="support" />
     <Stack.Screen name="downloads" />
-    <Stack.Protected guard={!isAuthenticated}><Stack.Screen name="login" /></Stack.Protected>
+    <Stack.Protected guard={!isAuthenticated}><Stack.Screen name="login" /><Stack.Screen name="setup-account" /><Stack.Screen name="reset-password" /></Stack.Protected>
     <Stack.Protected guard={isAuthenticated && !accepted}><Stack.Screen name="terms" /></Stack.Protected>
     <Stack.Protected guard={isAuthenticated && accepted}><Stack.Screen name="stores" /></Stack.Protected>
     <Stack.Protected guard={isAuthenticated && businessReady} redirectTo={entry}>

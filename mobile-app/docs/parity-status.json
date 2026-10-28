@@ -11,11 +11,12 @@
     },
     "DMP-002": {
       "title": "Password reset, invitation onboarding and resume",
-      "status": "IN_PROGRESS",
+      "status": "TESTED_CODE",
       "evidence": [
-        "2026-10-28: basic request/confirm/change-with-old reset exists and login tests pass; invitation SetupAccount/resume/deep-link onboarding is still absent."
+        "2026-10-28: basic request/confirm/change-with-old reset exists and login tests pass; invitation SetupAccount/resume/deep-link onboarding is still absent.",
+        "2026-10-28 P01b: native guarded setup-account/reset-password routes, original email-link import, server token inspection, first password/username validation, pending2FA resume and secure ticket handoff into existing Telegram/auto-OTP login implemented. Timeout/stale-link/session guards checked. 564 mobile tests/64 suites,33 actual password-reset backend tests, tsc/strict lint and all-platform Expo export pass; isolated Chrome UI passes with controlled API. Evidence: evidence/parity-implementation-2026-10-28/P01b/. HTTPS app/domain association, actual native linking/mail delivery remain external acceptance; not deployed."
       ],
-      "notes": "2026-10-28: basic request/confirm/change-with-old reset exists and login tests pass; invitation SetupAccount/resume/deep-link onboarding is still absent."
+      "notes": "2026-10-28 P01b: native guarded setup-account/reset-password routes, original email-link import, server token inspection, first password/username validation, pending2FA resume and secure ticket handoff into existing Telegram/auto-OTP login implemented. Timeout/stale-link/session guards checked. 564 mobile tests/64 suites,33 actual password-reset backend tests, tsc/strict lint and all-platform Expo export pass; isolated Chrome UI passes with controlled API. Evidence: evidence/parity-implementation-2026-10-28/P01b/. HTTPS app/domain association, actual native linking/mail delivery remain external acceptance; not deployed."
     },
     "DMP-003": {
       "title": "Account profile, avatar and password management",

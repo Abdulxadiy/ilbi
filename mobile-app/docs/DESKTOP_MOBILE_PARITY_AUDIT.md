@@ -145,7 +145,7 @@ Approved rollout checkpoint: backend candidate `f67d770` remains deployed and si
 | ID | Status | Latest evidence / remaining verification |
 | --- | --- | --- |
 | [DMP-001](#dmp-001) | TESTED_CODE | Explicit consent checkbox and sessionEntry business gate tested; legal document routes fetch server content. Auth/gates: 17 tests pass; tsc/lint pass. |
-| [DMP-002](#dmp-002) | IN_PROGRESS | 2026-10-28: basic request/confirm/change-with-old reset exists and login tests pass; invitation SetupAccount/resume/deep-link onboarding is still absent. |
+| [DMP-002](#dmp-002) | TESTED_CODE | 2026-10-28 P01b: native guarded setup-account/reset-password routes, original email-link import, server token inspection, first password/username validation, pending2FA resume and secure ticket handoff into existing Telegram/auto-OTP login implemented. Timeout/stale-link/session guards checked. 564 mobile tests/64 suites,33 actual password-reset backend tests, tsc/strict lint and all-platform Expo export pass; isolated Chrome UI passes with controlled API. Evidence: evidence/parity-implementation-2026-10-28/P01b/. HTTPS app/domain association, actual native linking/mail delivery remain external acceptance; not deployed. |
 | [DMP-003](#dmp-003) | TESTED_CODE | 2026-10-28: profile edit/password/logout and avatar upload/delete plus sidebar avatar are implemented; 518 mobile tests pass including the actual mocked-picker/API contract checks in coreReadiness/productEditor/imageUpload. Native avatar UAT remains. |
 | [DMP-004](#dmp-004) | OPEN | Pending |
 | [DMP-005](#dmp-005) | TESTED_CODE | Profile failure shows retry/logout recovery; retry component and delayed profile-after-logout tests pass. |

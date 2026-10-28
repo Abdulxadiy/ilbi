@@ -45,7 +45,7 @@ Every original audit ID is retained exactly once. Acceptance text below comes fr
 | ID | Phase | Finding / current audit status | Work status | Required acceptance / next validation |
 | --- | --- | --- | --- | --- |
 | DMP-001 | P11 | Terms acceptance and policy gate (TESTED_CODE) | PRIOR_CODE_EVIDENCE | Sign in as a user who has not accepted current terms; require a blocking acceptance screen and verify the persisted server result. |
-| DMP-002 | P01 | Password reset, invitation onboarding and resume (IN_PROGRESS) | TODO | Open an invitation/reset link from email or Telegram on Android/iOS, complete recovery, reject expired tokens and resume interrupted verification. |
+| DMP-002 | P01 | Password reset, invitation onboarding and resume (IN_PROGRESS) | CODE_VERIFIED | Open an invitation/reset link from email or Telegram on Android/iOS, complete recovery, reject expired tokens and resume interrupted verification. |
 | DMP-003 | P11 | Account profile, avatar and password management (TESTED_CODE) | PRIOR_CODE_EVIDENCE | Edit profile, upload/delete an avatar, change a password, and verify behavior after refresh and relogin. |
 | DMP-004 | P09 | Remembered login with native credential protection (OPEN) | TODO | Define the mobile remember-login policy, verify OS-backed protection and account-specific forget behavior without retaining another user’s secret. |
 | DMP-005 | P11 | Account/session recovery UI (TESTED_CODE) | PRIOR_CODE_EVIDENCE | Simulate expired refresh, offline profile lookup and reconnect; show recoverable status without losing drafts or leaving a stale authenticated shell. |
@@ -193,6 +193,8 @@ Every original audit ID is retained exactly once. Acceptance text below comes fr
 | P00 | CODE_VERIFIED | Producer-shaped regression reproduced3 failures before fix;524 tests/62 suites, tsc and strict ESLint pass after fix. Permanent evidence: evidence/parity-implementation-2026-10-28/P00/. No native/deploy claim. | P01 employees/permissions/onboarding; release/native acceptance remains open. |
 
 | P01a | CODE_VERIFIED | DMP-047/048 source:544 mobile tests/63 suites,48 actual PostgreSQL employee tests, tsc/strict lint/Ruff pass. evidence/parity-implementation-2026-10-28/P01a/. Native/mail acceptance remains open. | P01b: DMP-002 invitation/reset deep-link onboarding. |
+
+| P01b | CODE_VERIFIED | DMP-002 source:564 mobile tests/64 suites,33 actual backend reset/invitation tests, tsc/strict lint, all-platform Expo export and isolated controlled-API Chrome UI pass. evidence/parity-implementation-2026-10-28/P01b/. Native linking/domain/mail acceptance open. | P02 customer statements/metadata/debt flows. |
 
 ## Final-only cleanup gate
 

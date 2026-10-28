@@ -343,6 +343,7 @@ export const LoginScreen: React.FC = () => {
               />
 
               {/* Action Links: Parolni unutdingizmi? · Qo‘llab-quvvatlash */}
+              <Button title="Taklif orqali hisobni faollashtirish" variant="ghost" disabled={loading} onPress={() => router.push('/setup-account')} />
               <View style={styles.footerLinksRow}>
                 <TouchableOpacity
                   accessibilityRole="button"

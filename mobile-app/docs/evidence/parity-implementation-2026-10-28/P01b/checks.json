@@ -1,0 +1,29 @@
+{
+  "slice": "P01b",
+  "date": "2026-10-28",
+  "mobile": {
+    "success": true,
+    "numTotalTestSuites": 64,
+    "numPassedTestSuites": 64,
+    "numTotalTests": 564,
+    "numPassedTests": 564,
+    "numFailedTests": 0
+  },
+  "backend": {
+    "passed": 33,
+    "warnings": 8,
+    "scope": "Actual password-reset/invitation API and service checks, isolated PostgreSQL55447/Redis56447 and locmem email"
+  },
+  "other_passes": [
+    "TypeScript",
+    "Strict source/test ESLint",
+    "Expo production export for Android/iOS/web",
+    "Isolated Chrome employee/invitation UI with controlled API adapter"
+  ],
+  "limits": [
+    "No installed native/physical Android/iOS acceptance",
+    "No real email/push/OTP delivery",
+    "No new build/version/publication/emulator change",
+    "HTTPS email links still open existing web; native offers manual link import and existing ilbi scheme. Verified Android App Links/iOS Universal Links require separate native/domain acceptance."
+  ]
+}

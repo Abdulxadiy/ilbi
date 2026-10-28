@@ -6,6 +6,7 @@ import { getServerScope } from '../../api/environment';
 import { ApiError } from '../../api/errors';
 import { chooseTenant, validateProfile } from './profile';
 import { revokePushInstallation } from '../notifications/pushRegistration';
+import { parseSetupChallenge, type SetupChallenge } from './setupModel';
 
 export interface UserTenant { id: number; name: string; is_owner: boolean; permissions: string[]; }
 export interface UserProfile {
@@ -21,6 +22,7 @@ interface AuthContextType {
   sendOtp: () => Promise<void>; checkTelegram: () => Promise<void>; resetLogin: () => void;
   verifyOtp: (code: string) => Promise<void>; selectTenant: (id: number) => Promise<void>;
   logout: () => Promise<void>; refreshProfile: () => Promise<void>; acceptTerms: () => Promise<void>;
+  adoptSetupChallenge: (challenge: SetupChallenge) => void;
 }
 const emptyAsync = async () => {};
 const AuthContext = createContext<AuthContextType>({
@@ -28,6 +30,7 @@ const AuthContext = createContext<AuthContextType>({
   loginStep: 'credentials', loginTicket: null, phoneHint: null, otpResendAt: 0,
   login: async () => ({ otpRequired: false }), sendOtp: emptyAsync, checkTelegram: emptyAsync, resetLogin: () => {},
   verifyOtp: emptyAsync, selectTenant: emptyAsync, logout: emptyAsync, refreshProfile: emptyAsync, acceptTerms: emptyAsync,
+  adoptSetupChallenge: () => {},
 });
 const selectionKey = (userId: number) => 'ilbi:' + encodeURIComponent(getServerScope()) + ':' + userId + ':active-store';
 
@@ -98,6 +101,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (error.status === 404 || error.data?.error === 'telegram_contact_not_found') setLoginStep('telegram');
     if (error.retryAfterMs > 0) setOtpResendAt(Date.now() + error.retryAfterMs);
     throw error;
+  };
+  const adoptSetupChallenge = (value: SetupChallenge) => {
+    if (user || getAccessToken()) throw new ApiError('Avval joriy hisobdan chiqing.', 403);
+    const challenge = parseSetupChallenge(value);
+    resetLogin(); setTicket(challenge.login_ticket); setPhoneHint(challenge.phone_hint || null); setLoginStep('telegram');
   };
   const requestOtp = async (currentTicket: string) => {
     if (pendingOtp.current?.ticket === currentTicket) return pendingOtp.current.promise;
@@ -178,6 +186,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     finally { resetSession(); await clearTokens(); }
   };
   const acceptTerms = async () => { await request('/auth/accept-terms/', { method: 'POST', body: {} }); await refreshProfile(); };
-  return <AuthContext.Provider value={{ user, activeTenant, isAuthenticated: Boolean(user), isLoading, sessionError, loginStep, loginTicket, phoneHint, otpResendAt, login, sendOtp, checkTelegram, resetLogin, verifyOtp, selectTenant, logout, refreshProfile, acceptTerms }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ user, activeTenant, isAuthenticated: Boolean(user), isLoading, sessionError, loginStep, loginTicket, phoneHint, otpResendAt, login, sendOtp, checkTelegram, resetLogin, verifyOtp, selectTenant, logout, refreshProfile, acceptTerms, adoptSetupChallenge }}>{children}</AuthContext.Provider>;
 };
 export const useAuth = () => useContext(AuthContext);
