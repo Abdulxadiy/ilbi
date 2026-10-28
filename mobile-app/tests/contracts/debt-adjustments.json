@@ -1,0 +1,69 @@
+{
+  "source": "Actual isolated PostgreSQL/API credit refund; USD-10→-7, UZS100 unchanged, replay once",
+  "customer": 2052,
+  "actor": 9449,
+  "tenant": 3673,
+  "payload": {
+    "kind": "credit_refund",
+    "amount": "3.00",
+    "currency": "USD",
+    "payment_type": "cash",
+    "note": "Partial customer credit refund"
+  },
+  "quote": {
+    "protocol": "ilbi-debt-adjustment-quote-v1",
+    "actor_id": 9449,
+    "tenant_id": 3673,
+    "counterparty_id": 2052,
+    "branch_id": 3673,
+    "kind": "credit_refund",
+    "amount": "3.00",
+    "payment_amount": "-3.00",
+    "currency": "USD",
+    "payment_type": "cash",
+    "note": "Partial customer credit refund",
+    "available_credit": "10.00",
+    "balances": {
+      "UZS": "100.00",
+      "USD": "-10.00"
+    },
+    "remaining": {
+      "UZS": "100.00",
+      "USD": "-7.00"
+    },
+    "expected_quote": "d67b18e2c2bf3262c1e3a71bef9a767d71fe90fae303d696860bec9800156713"
+  },
+  "result": {
+    "id": 597,
+    "counterparty": 2052,
+    "amount": "-3.00",
+    "currency": "USD",
+    "paid_at": "2026-10-28T14:06:29.060827+05:00",
+    "recorded_by": 9449,
+    "recorded_by_name": "owner2",
+    "branch": 3673,
+    "branch_id": 3673,
+    "branch_name": "Tenant 1",
+    "is_correction": true,
+    "payment_type": "cash",
+    "note": "Partial customer credit refund",
+    "exchange_rate": null,
+    "exchange_rate_source": "",
+    "exchange_rate_date": null,
+    "converted_amount_uzs": null,
+    "adjustment_operation": {
+      "protocol": "ilbi-debt-adjustment-quote-v1",
+      "actor_id": 9449,
+      "tenant_id": 3673,
+      "counterparty_id": 2052,
+      "branch_id": 3673,
+      "kind": "credit_refund",
+      "amount": "3.00",
+      "currency": "USD",
+      "payment_type": "cash",
+      "idempotency_key": "original-adjustment-key",
+      "expected_quote": "d67b18e2c2bf3262c1e3a71bef9a767d71fe90fae303d696860bec9800156713",
+      "note": "Partial customer credit refund"
+    }
+  }
+}

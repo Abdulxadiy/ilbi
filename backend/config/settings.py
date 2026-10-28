@@ -206,6 +206,7 @@ SPECTACULAR_SETTINGS = {
         'ShiftStatusEnum': ['OPEN', 'CLOSED'],
         'SalePaymentTypeEnum': 'apps.sales.models.Sale.PAYMENT_CHOICES',
         'DebtPaymentTypeEnum': [('cash', 'Naqd'), ('card', 'Karta'), ('none', 'Hisob tuzatish')],
+        'DebtAdjustmentKindEnum': ['credit_refund', 'correction'],
         'ReportTargetEnum': 'apps.tenants.models.Tenant.TARGET_CHOICES',
     },
 }

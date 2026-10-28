@@ -1,0 +1,48 @@
+{
+  "date": "2026-10-28",
+  "slice": "P02b-adjustment-api",
+  "finding": "DMP-134",
+  "red": {
+    "failed": 1,
+    "scope": "Actual legacy USD credit correction API leaves USD credit unchanged"
+  },
+  "targeted_backend": {
+    "passed": 114
+  },
+  "full_backend": {
+    "passed": 1206,
+    "warnings": 16,
+    "failed": 0,
+    "errors": 0
+  },
+  "mobile": {
+    "success": true,
+    "numPassedTests": 606,
+    "numTotalTestSuites": 66,
+    "numFailedTests": 0
+  },
+  "other_passes": [
+    "TypeScript",
+    "Strict source/test ESLint",
+    "Ruff all touched Python except pre-existing config file baseline (new enum mapping only)",
+    "makemigrations --check --dry-run: No changes detected",
+    "Production offline OpenAPI generation with fail_on_warn=True (part of actual full/targeted suites)"
+  ],
+  "coverage": [
+    "Legacy negative USD-credit correction retains its currency",
+    "Legacy positive USD conversion and saved rate snapshots preserved",
+    "Server credit_refund/correction quote/commit protocol binds actor/stores/customer/kind/currency/channel/signed amount/reason",
+    "Bounded refunds cannot create debt or cross currencies",
+    "Original-key replay after credit exhaustion, closed shift or archived customer",
+    "Different-payload key collision and stale quote rejected",
+    "Actual parallel requests once-only",
+    "Atomic key-save failure rolls back payment and balances",
+    "Native strict consumer uses actual captured API DTO; no opaque credentials copied"
+  ],
+  "limits": [
+    "Native and shared web/desktop refund/correction clients still require connection",
+    "No production deployment/new APK/version/emulator operation",
+    "No historical financial data rewrite",
+    "Original fiscal/idempotency/permission gates retained"
+  ]
+}

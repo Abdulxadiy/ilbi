@@ -1,0 +1,105 @@
+........................................................................ [  5%]
+........................................................................ [ 11%]
+........................................................................ [ 17%]
+........................................................................ [ 23%]
+........................................................................ [ 29%]
+........................................................................ [ 35%]
+........................................................................ [ 41%]
+........................................................................ [ 47%]
+........................................................................ [ 53%]
+........................................................................ [ 59%]
+........................................................................ [ 65%]
+........................................................................ [ 71%]
+........................................................................ [ 77%]
+........................F............................................... [ 83%]
+........................................................................ [ 89%]
+..............................F......................................... [ 95%]
+....................................................                     [100%]
+=================================== FAILURES ===================================
+___ test_debt_conversion_uses_receiving_store_and_keeps_historical_snapshot ____
+
+tenant = <Tenant: Tenant 1008>, owner = <User: owner2489>
+
+>   ???
+E   AssertionError: assert Decimal('-10.00') == 0
+E    +  where Decimal('-10.00') = <Counterparty: Client 189 (+998930000189)>.debt_balance_usd
+
+/mnt/storage/Codes/Projects/Backend/Sales-Platform/ilbi/apps/tenants/tests/test_exchange_rates.py:221: AssertionError
+__________ test_production_offline_openapi_generation_still_validates __________
+
+>   ???
+E   AssertionError: Warning: enum naming encountered a non-optimally resolvable collision for fields named "kind". The same name has been used for multiple choice sets in multiple components. The collision was resolved with "KindC1dEnum". add an entry to ENUM_NAME_OVERRIDES to fix the naming.
+E     Warning: enum naming encountered a non-optimally resolvable collision for fields named "payment_type". The same name has been used for multiple choice sets in multiple components. The collision was resolved with "PaymentTypeCafEnum". add an entry to ENUM_NAME_OVERRIDES to fix the naming.
+E     
+E     Schema generation summary:
+E     Warnings: 2 (2 unique)
+E     Errors:   0 (0 unique)
+E     
+E     Traceback (most recent call last):
+E       File "<string>", line 13, in <module>
+E       File "/mnt/storage/.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/django/core/management/__init__.py", line 195, in call_command
+E         return command.execute(*args, **defaults)
+E                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "/mnt/storage/.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/django/core/management/base.py", line 466, in execute
+E         output = self.handle(*args, **options)
+E                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "/mnt/storage/.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/drf_spectacular/management/commands/spectacular.py", line 120, in handle
+E         raise SchemaGenerationError('Failing as requested due to warnings')
+E     drf_spectacular.management.commands.spectacular.SchemaGenerationError: Failing as requested due to warnings
+E     
+E   assert 1 == 0
+E    +  where 1 = CompletedProcess(args=['/mnt/storage/.cache/ilbi-push-tests/venv/bin/python', '-B', '-c', "\nfrom unittest.mock import...ngs\')\ndrf_spectacular.management.commands.spectacular.SchemaGenerationError: Failing as requested due to warnings\n').returncode
+
+/mnt/storage/Codes/Projects/Backend/Sales-Platform/ilbi/apps/core/tests/test_api_docs_production.py:89: AssertionError
+=============================== warnings summary ===============================
+../../../../../.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394
+  /mnt/storage/.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394: RemovedInDjango2028Warning: The EMAIL_USE_SSL setting is deprecated. Migrate to MAILERS before Django 2028.
+    dj_settings.DATABASES  # noqa: B018
+
+../../../../../.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394
+  /mnt/storage/.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394: RemovedInDjango2028Warning: The EMAIL_HOST_USER setting is deprecated. Migrate to MAILERS before Django 2028.
+    dj_settings.DATABASES  # noqa: B018
+
+../../../../../.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394
+  /mnt/storage/.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394: RemovedInDjango2028Warning: The EMAIL_USE_TLS setting is deprecated. Migrate to MAILERS before Django 2028.
+    dj_settings.DATABASES  # noqa: B018
+
+../../../../../.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394
+  /mnt/storage/.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394: RemovedInDjango2028Warning: The EMAIL_HOST setting is deprecated. Migrate to MAILERS before Django 2028.
+    dj_settings.DATABASES  # noqa: B018
+
+../../../../../.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394
+  /mnt/storage/.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394: RemovedInDjango2028Warning: The EMAIL_HOST_PASSWORD setting is deprecated. Migrate to MAILERS before Django 2028.
+    dj_settings.DATABASES  # noqa: B018
+
+../../../../../.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394
+  /mnt/storage/.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394: RemovedInDjango2028Warning: The EMAIL_PORT setting is deprecated. Migrate to MAILERS before Django 2028.
+    dj_settings.DATABASES  # noqa: B018
+
+../../../../../.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394
+  /mnt/storage/.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394: RemovedInDjango2028Warning: The EMAIL_BACKEND setting is deprecated. Migrate to MAILERS before Django 2028.
+    dj_settings.DATABASES  # noqa: B018
+
+../../../../../.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394
+  /mnt/storage/.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394: RemovedInDjango2028Warning: The EMAIL_TIMEOUT setting is deprecated. Migrate to MAILERS before Django 2028.
+    dj_settings.DATABASES  # noqa: B018
+
+apps/accounts/tests/test_branding.py::test_transactional_email_has_ilbi_copy_and_embedded_logo[new_owner]
+apps/accounts/tests/test_branding.py::test_transactional_email_has_ilbi_copy_and_embedded_logo[new_employee]
+apps/accounts/tests/test_branding.py::test_transactional_email_has_ilbi_copy_and_embedded_logo[transfer_owner]
+apps/accounts/tests/test_branding.py::test_transactional_email_has_ilbi_copy_and_embedded_logo[reset_password]
+  /mnt/storage/.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/fixtures.py:580: RemovedInDjango2028Warning: The EMAIL_BACKEND setting is deprecated. Migrate to MAILERS before Django 2028.
+    override.enable()
+
+apps/accounts/tests/test_branding.py::test_transactional_email_has_ilbi_copy_and_embedded_logo[new_owner]
+apps/accounts/tests/test_branding.py::test_transactional_email_has_ilbi_copy_and_embedded_logo[new_employee]
+apps/accounts/tests/test_branding.py::test_transactional_email_has_ilbi_copy_and_embedded_logo[transfer_owner]
+apps/accounts/tests/test_branding.py::test_transactional_email_has_ilbi_copy_and_embedded_logo[reset_password]
+  /mnt/storage/.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/fixtures.py:590: RemovedInDjango2028Warning: The EMAIL_BACKEND setting is deprecated. Migrate to MAILERS before Django 2028.
+    override.disable()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED apps/tenants/tests/test_exchange_rates.py::test_debt_conversion_uses_receiving_store_and_keeps_historical_snapshot
+FAILED apps/core/tests/test_api_docs_production.py::test_production_offline_openapi_generation_still_validates
+2 failed, 1202 passed, 16 warnings in 78.80s (0:01:18)

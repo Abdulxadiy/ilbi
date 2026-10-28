@@ -1,13 +1,13 @@
 from django.urls import path
-from api.v1.exports import SalesExportView, CounterpartyExportView
 
+from api.v1.exports import CounterpartyExportView, SalesExportView
 from api.v1.sales.views.b2b_views import (
     B2BAcceptView,
     B2BCapabilitiesView,
     B2BDetailView,
-    B2BOutgoingListView,
-    B2BMappingListView,
     B2BInboxListView,
+    B2BMappingListView,
+    B2BOutgoingListView,
     B2BRejectView,
     B2BReturnDiscrepancyCloseView,
     B2BReturnReceiveView,
@@ -20,16 +20,17 @@ from api.v1.sales.views.counterparty_views import (
     DebtPaymentListCreateView,
     DebtPaymentQuoteView,
 )
-from api.v1.sales.views.notification_views import (
-    NotificationDetailView,
-    NotificationListView,
-    NotificationReadView,
-    NotificationReadAllView,
-)
+from api.v1.sales.views.debt_adjustment_views import DebtAdjustmentCommitView, DebtAdjustmentQuoteView
 from api.v1.sales.views.import_views import (
     CounterpartyImportCommitView,
     CounterpartyImportPreviewView,
     CounterpartyImportTemplateView,
+)
+from api.v1.sales.views.notification_views import (
+    NotificationDetailView,
+    NotificationListView,
+    NotificationReadAllView,
+    NotificationReadView,
 )
 from api.v1.sales.views.sale_views import (
     PublicReceiptDetailView,
@@ -44,9 +45,11 @@ from api.v1.sales.views.sale_views import (
 urlpatterns = [
     path("export/", SalesExportView.as_view(), name="sales-export"),
     path("counterparties/export/", CounterpartyExportView.as_view(), name="counterparties-export"),
-    path("counterparties/import/template/", CounterpartyImportTemplateView.as_view(), name="counterparty-import-template"),
+    path("counterparties/import/template/", CounterpartyImportTemplateView.as_view(),
+         name="counterparty-import-template"),
     path("counterparties/import/preview/", CounterpartyImportPreviewView.as_view(), name="counterparty-import-preview"),
-    path("counterparties/import/<int:job_id>/commit/", CounterpartyImportCommitView.as_view(), name="counterparty-import-commit"),
+    path("counterparties/import/<int:job_id>/commit/", CounterpartyImportCommitView.as_view(),
+         name="counterparty-import-commit"),
     # Sales
     path("capabilities/", SaleCapabilitiesView.as_view(), name="sales-capabilities"),
     path("", SaleListCreateView.as_view(), name="sale-list-create"),
@@ -56,6 +59,10 @@ urlpatterns = [
     path("<int:pk>/void/", SaleVoidView.as_view(), name="sale-void"),
     path("items/<int:pk>/void/", SaleItemVoidView.as_view(), name="sale-item-void"),
     # Counterparties & Debt
+    path("counterparties/<int:counterparty_id>/payments/adjustment-quote/",
+         DebtAdjustmentQuoteView.as_view(), name="debt-adjustment-quote"),
+    path("counterparties/<int:counterparty_id>/payments/adjust/",
+         DebtAdjustmentCommitView.as_view(), name="debt-adjustment-commit"),
     path("counterparties/", CounterpartyListCreateView.as_view(), name="counterparty-list-create"),
     path("counterparties/<int:pk>/", CounterpartyDetailView.as_view(), name="counterparty-detail"),
     path(

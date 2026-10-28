@@ -6,7 +6,7 @@ Created: 2026-10-28 (Asia/Tashkent). Baseline: `7d5bf38633477a66f2519f2595f50c28
 
 ## Execution contract
 
-- Scope is every open/partial defect and required acceptance gate in the initial132-record audit plus subsequent findings (currently DMP-133), plus regressions for previously implemented records. Historical TESTED_CODE is not native/production acceptance. No completion percentage is inferred from source-file or test counts.
+- Scope is every open/partial defect and required acceptance gate in the initial132-record audit plus subsequent findings (currently DMP-133/134), plus regressions for previously implemented records. Historical TESTED_CODE is not native/production acceptance. No completion percentage is inferred from source-file or test counts.
 - Finish the current slice’s required checks and resolve its failures before dependent work advances. Record the actual command/runtime and evidence, then commit and push that coherent slice. If external hardware/provider input is unavailable, keep that acceptance open and continue only independent authorized preparation.
 - Preserve owner changes, active-user/store/server boundaries, exact money/quantities, idempotency/unknown-result journals, immutable receipts and all permission/fiscal/production safeguards. Never remove a protective gate merely to pass a test.
 - Keep the approved mobile visual language: sidebar support, persistent quick tabs, tiny cart images, prominent negotiated sale price, authentic logo and light/dark colors. Web/desktop login must not receive the mobile 3D redesign.
@@ -82,7 +82,7 @@ Every original audit ID is retained exactly once. Acceptance text below comes fr
 | DMP-036 | P02 | Spreadsheet customer import (OPEN) | TODO | Import customers with duplicate/invalid phones and balance-related fields; inspect preview and retry commit safely. |
 | DMP-037 | P02 | Real debt filters and collection (IN_PROGRESS) | TODO | Load real overdue/soon/future debt, make a partial payment and verify the server-confirmed remaining amount after navigation and restart. |
 | DMP-038 | P02 | Payment currency, cash/card, branch and note (TESTED_CODE) | PRIOR_CODE_EVIDENCE | Record cash and card debt payments in UZS/USD and a chosen branch, including a decimal amount; verify ledger/cashbox attribution. |
-| DMP-039 | P02 | Customer credit refund and payment correction (OPEN) | TODO | Create overpayment/return credit, issue a partial refund with the correct payment channel and verify remaining credit and cash impact. |
+| DMP-039 | P02 | Customer credit refund and payment correction (IN_PROGRESS) | IN_PROGRESS | Create overpayment/return credit, issue a partial refund with the correct payment channel and verify remaining credit and cash impact. |
 | DMP-040 | P11 | Open shift and current-register status (TESTED_CODE) | PRIOR_CODE_EVIDENCE | Open a shift, prevent incompatible duplicate opening and show the current cashier/register and expected opening values. |
 | DMP-041 | P11 | Close shift, counted cash and discrepancy explanation (TESTED_CODE) | PRIOR_CODE_EVIDENCE | Close an actual test shift with a mismatch, require reason as appropriate and confirm the report is created once by the server. |
 | DMP-042 | P05 | Cash expenses/income and reusable categories (TESTED_CODE) | PRIOR_CODE_EVIDENCE | Record income and expense, verify expected cash changes, currency and reason, and preserve store-specific category preferences. |
@@ -177,6 +177,7 @@ Every original audit ID is retained exactly once. Acceptance text below comes fr
 | DMP-131 | P11 | Logout icon uses the same color as its button background (TESTED_CODE) | PRIOR_CODE_EVIDENCE | Inspect destructive buttons in both themes and disabled/loading states; use the intended contrasting foreground for icons and preserve an accessible action name. |
 | DMP-132 | P00 | Legacy B2B notification link has no mobile destination (TESTED_CODE) | CODE_VERIFIED | Explicit safe /b2b alias/canonical destination, producer-shaped regression, allowed recipient/store/role, and continued rejection of arbitrary URLs; inspect actual open action. |
 | DMP-133 | P02 | Shared backend owner-only debt correction bypass (TESTED_CODE) | CODE_VERIFIED | Deny cashier API/service correction and legacy owner-only grants without financial effects; retain ordinary collection, actual-owner correction and platform-admin retail separation; verify shared web/desktop controls. |
+| DMP-134 | P02 | USD credit correction uses collection FX allocation (TESTED_CODE) | CODE_VERIFIED | Reproduce legacy USD-credit error; keep selected currency on refund, preserve positive legacy FX and old snapshots/replays, verify quoted bounded credit refunds; review historical records without automatic rewrites. |
 
 ## External acceptance inputs — do not invent or bypass
 
@@ -200,6 +201,8 @@ Every original audit ID is retained exactly once. Acceptance text below comes fr
 | P02a | CODE_VERIFIED | DMP-034/035 source:582 mobile tests/65 suites,21 actual backend customer/service tests, tsc/strict lint/Ruff, all-platform Expo export and controlled Chrome390/320 pass. evidence/parity-implementation-2026-10-28/P02a/. Native acceptance open. | Continue P02: security review/refund-correction, due filters and customer import; do not mark the phase complete. |
 
 | P02b authority | CODE_VERIFIED | DMP-133:8 red denial checks reproduced;70 targeted/1178 full backend tests,88 web tests/build, touched Oxlint/Ruff pass. Private rootless runtime resolved5 actual Docker setup errors without skips. Evidence: evidence/parity-implementation-2026-10-28/P02b-authority/. Source fix not deployed. | Continue DMP-039 protocol/UI and remaining P02 work; no phase-wide completion claim. |
+
+| P02b adjustment API | CODE_VERIFIED | DMP-134 source and DMP-039 protocol foundation:114 targeted/1206 full backend,606 mobile strict-consumer tests, tsc/strict lint/Ruff/schema/no-migration checks pass. Evidence: evidence/parity-implementation-2026-10-28/P02b-adjustment-api/. Native/shared-renderer connection and historical-record review remain. | Connect confirmation UI and original-key journal/recovery to this exact protocol; continue remaining P02 work. |
 
 ## Final-only cleanup gate
 

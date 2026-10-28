@@ -2,7 +2,7 @@
 
 Historical baseline audit: 2026-10-24 (Asia/Tashkent). Baseline Git HEAD: `8ad308a7f755720bb7c4656eec53ef06c69433bb`.
 
-Latest source re-audit: **2026-10-28**, below. Historical baseline comparison finished with 131 records; there are now **133 tracked records**, including fixed/partial/history items, not 132 current uncorrected defects. Native/real-device acceptance remains separate.
+Latest source re-audit: **2026-10-28**, below. Historical baseline comparison finished with 131 records; there are now **134 tracked records**, including fixed/partial/history items, not 132 current uncorrected defects. Native/real-device acceptance remains separate.
 
 <!-- REAUDIT_2026_10_28_START -->
 ## 2026-10-28 — Web ↔ Desktop ↔ Mobile qayta tekshiruvi
@@ -146,6 +146,13 @@ A real isolated PostgreSQL/API regression reproduced **8 failing denial checks a
 
 Fix scope: check the distinct owner-only operation in both API and service; central checks reject legacy staff grants and non-owner memberships; web/desktop refund UI follows active ownership. Verify the denied operation changes no balance/payment row while legitimate quoted collection and owner correction still work. 2026-10-28 P02b: source/API reproduction confirms a debt-entry cashier could invoke owner-only correction, including with legacy owner-only grants. Eight regression failures reproduced before fix; API/service/central-permission guards and shared web/desktop UI restriction added.70 targeted backend tests and88 web tests/build pass; the final full backend suite passes1178 tests after resolving Docker setup errors in a private rootless runtime. Native refund/correction UI remains DMP-039.
 
+<a id="dmp-134"></a>
+## DMP-134 — USD credit correction applies collection conversion
+
+Area: **Shared financial allocation / customer credit** · Priority: **P1** · Found: **2026-10-28 implementation cross-check**. Status: **TESTED_CODE** (not deployed).
+
+A real local owner-correction API test starts at USD−10 and submits−3USD. Before the fix, USD incorrectly remains−10: the collection spillover allocator was used. A correction/refund against existing USD credit now changes the USD balance to−7 while retaining UZS. Legacy positive-USD conversion and existing saved rate snapshots are preserved by regression tests. The new explicit quote/commit contract additionally supports bounded selected-currency credit refunds and signed owner bookkeeping, with original-key acknowledgement/recovery. 2026-10-28 P02b adjustment API: real legacy USD-credit defect reproduced before fix. Negative USD adjustments against existing USD credit retain USD; legacy positive FX/snapshots preserved. New owner-only quoted refund/correction protocol enforces selected currency, credit bounds, actor/store/reason, original-key replay and rollback/concurrency safety.114 targeted/1206 full backend and606 mobile consumer tests pass; tsc/strict lint/Ruff/schema gate and no-migration check pass. Evidence: evidence/parity-implementation-2026-10-28/P02b-adjustment-api/. Not deployed; native/web journal/UI connection and historical-record review remain. No existing financial record is rewritten; historical converted negative-USD corrections still require read-only identification and owner-reviewed reconciliation if affected records exist.
+
 <!-- IMPLEMENTATION_LEDGER_START -->
 ## Implementation ledger — live
 
@@ -193,7 +200,7 @@ Approved rollout checkpoint: backend candidate `f67d770` remains deployed and si
 | [DMP-036](#dmp-036) | OPEN | Pending |
 | [DMP-037](#dmp-037) | IN_PROGRESS | Actual debtor search/summary and guarded collection/recovery work; overdue/soon/future filters and installed restart acceptance remain. |
 | [DMP-038](#dmp-038) | TESTED_CODE | Exact UZS/USD cash/card/branch/note, authoritative quote, actor-bound ack and stale-balance/no-new-credit guard:83 backend,40 quote and16 UI checks plus journal tests. See DEBT_QUOTE_PROTOCOL_2026_10_27.md. |
-| [DMP-039](#dmp-039) | OPEN | Pending |
+| [DMP-039](#dmp-039) | IN_PROGRESS | Server quoted credit-refund/signed-correction API and strict native consumer are verified. Native/shared-renderer confirmation and durable journal recovery UI remain; see P02b-adjustment-api evidence. Physical/production acceptance and historical-record review are not completed. |
 | [DMP-040](#dmp-040) | TESTED_CODE | Real current/open shift, UZS/USD cash, stale report protection and original-key receipt protocol; cashbox45 mobile /12 PostgreSQL tests passed. Deploy/native gate remains; see CASHBOX_READINESS_2026_10_27.md. |
 | [DMP-041](#dmp-041) | TESTED_CODE | Counted close/discrepancy/staff notes, reread changed totals, exact acknowledgement and atomic report/shift/inbox rollback tested; native acceptance pending. |
 | [DMP-042](#dmp-042) | TESTED_CODE | Real paged income/expense lists and keyed writes, editable dates, source/category reuse scoped to server/account/store; cashbox45/12 tests passed. More list filter controls remain. |
@@ -289,6 +296,7 @@ Approved rollout checkpoint: backend candidate `f67d770` remains deployed and si
 
 | [DMP-132](#dmp-132) | TESTED_CODE | 2026-10-28 P00: exact producer /b2b alias now opens the native B2B list after mark-read; selected-store permission, denial and external-link regressions pass. 524 tests/62 suites, TypeScript and strict ESLint passed. See evidence/parity-implementation-2026-10-28/P00/. Not deployed or observed on native hardware; push acceptance remains separate. |
 | [DMP-133](#dmp-133) | TESTED_CODE | 2026-10-28 P02b authority: restricted-cashier correction bypass reproduced8 failing denial tests before fix. API and service require sales.correct_debt_payment; central owner-only checks reject legacy staff grants; shared web/desktop UI uses selected ownership.70 targeted and1178 unfiltered backend tests pass;88 web tests, production build, touched-page Oxlint/Ruff pass. Initial Docker setup errors retained; private rootless runtime resolved them without skips. Evidence: evidence/parity-implementation-2026-10-28/P02b-authority/. Source fix not deployed; native refund/correction remains DMP-039. |
+| [DMP-134](#dmp-134) | TESTED_CODE | 2026-10-28 P02b adjustment API: real legacy USD-credit defect reproduced before fix. Negative USD adjustments against existing USD credit retain USD; legacy positive FX/snapshots preserved. New owner-only quoted refund/correction protocol enforces selected currency, credit bounds, actor/store/reason, original-key replay and rollback/concurrency safety.114 targeted/1206 full backend and606 mobile consumer tests pass; tsc/strict lint/Ruff/schema gate and no-migration check pass. Evidence: evidence/parity-implementation-2026-10-28/P02b-adjustment-api/. Not deployed; native/web journal/UI connection and historical-record review remain. |
 
 <!-- IMPLEMENTATION_LEDGER_END -->
 

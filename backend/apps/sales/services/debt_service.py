@@ -19,6 +19,16 @@ class DebtService:
     QUOTE_PROTOCOL = "ilbi-debt-payment-quote-v1"
 
     @staticmethod
+    def _correction_allocation(cp, amount, currency):
+        # A signed balance adjustment affects the chosen currency. Collection's
+        # USD→UZS spillover policy must never convert a USD credit refund.
+        uzs = cp.debt_balance_uzs - amount if currency == "UZS" else cp.debt_balance_uzs
+        usd = cp.debt_balance_usd - amount if currency == "USD" else cp.debt_balance_usd
+        if max(abs(uzs), abs(usd)) > Decimal("999999999999.99"):
+            raise DebtServiceError("Tuzatish natijasidagi balans ruxsat etilgan chegaradan oshadi.")
+        return {"uzs": uzs, "usd": usd, "rate": None, "source": "", "date": None, "converted": None, "note": ""}
+
+    @staticmethod
     def _allocation(cp, amount, currency, target_branch):
         """One allocation policy for preview and commit; preserve legacy Decimal rounding."""
         uzs, usd = cp.debt_balance_uzs, cp.debt_balance_usd
@@ -135,6 +145,7 @@ class DebtService:
         payment_type: str = None,
         idempotency_key: str = None,
         expected_quote: str = None,
+        same_currency_correction: bool = False,
     ) -> DebtPayment:
         from apps.accounts.services.permission_service import PermissionService
         if not PermissionService.has_permission(recorded_by, 'sales.record_debt_payment', tenant=counterparty.tenant):
@@ -143,6 +154,8 @@ class DebtService:
             recorded_by, 'sales.correct_debt_payment', tenant=counterparty.tenant,
         ):
             raise DebtServiceError("Tuzatish uchun faol do‘kon egasi vakolati talab qilinadi.")
+        if same_currency_correction and not is_correction:
+            raise DebtServiceError("Bir valyutadagi tuzatish alohida tuzatish amali bo‘lishi kerak.")
         payment_type = payment_type or ('none' if is_correction else 'cash')
         if payment_type not in ('cash', 'card', 'none') or (not is_correction and payment_type == 'none'):
             raise DebtServiceError("To‘lov turi naqd yoki karta bo‘lishi kerak.")
@@ -158,6 +171,8 @@ class DebtService:
             'branch': target_branch.pk, 'amount': str(amount.normalize()), 'currency': currency,
             'type': payment_type, 'correction': is_correction, 'note': note.strip(),
         }
+        if same_currency_correction:
+            request_identity['same_currency_correction'] = True
         if expected_quote is not None:
             if not idempotency_key or is_correction:
                 raise DebtServiceError('Tasdiqlangan qarz to‘lovi uchun asl qayta so‘rash kaliti kerak.')
@@ -190,7 +205,13 @@ class DebtService:
         if currency not in ('UZS', 'USD'):
             raise DebtServiceError("Valyuta 'UZS' yoki 'USD' bo'lishi shart.")
 
-        quote, allocation = cls._quote(cp, amount, currency, payment_type, target_branch, recorded_by)
+        if is_correction and (same_currency_correction or (
+            currency == 'USD' and amount < 0 and cp.debt_balance_usd < 0
+        )):
+            allocation = cls._correction_allocation(cp, amount, currency)
+            quote = None
+        else:
+            quote, allocation = cls._quote(cp, amount, currency, payment_type, target_branch, recorded_by)
         if expected_quote is not None:
             if not constant_time_compare(expected_quote, quote['expected_quote']):
                 raise DebtServiceError('Qarz qoldig‘i yoki kurs o‘zgardi. To‘lov hisobini qayta tekshiring.')

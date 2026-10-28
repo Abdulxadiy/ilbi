@@ -304,9 +304,11 @@
     },
     "DMP-039": {
       "title": "Customer credit refund and payment correction",
-      "status": "OPEN",
-      "evidence": [],
-      "notes": ""
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "2026-10-28 P02b adjustment API: real legacy USD-credit defect reproduced before fix. Negative USD adjustments against existing USD credit retain USD; legacy positive FX/snapshots preserved. New owner-only quoted refund/correction protocol enforces selected currency, credit bounds, actor/store/reason, original-key replay and rollback/concurrency safety.114 targeted/1206 full backend and606 mobile consumer tests pass; tsc/strict lint/Ruff/schema gate and no-migration check pass. Evidence: evidence/parity-implementation-2026-10-28/P02b-adjustment-api/. Not deployed; native/web journal/UI connection and historical-record review remain."
+      ],
+      "notes": "Server quoted credit-refund/signed-correction API and strict native consumer are verified. Native/shared-renderer confirmation and durable journal recovery UI remain; see P02b-adjustment-api evidence. Physical/production acceptance and historical-record review are not completed."
     },
     "DMP-040": {
       "title": "Open shift and current-register status",
@@ -1030,6 +1032,14 @@
         "2026-10-28 P02b authority: restricted-cashier correction bypass reproduced8 failing denial tests before fix. API and service require sales.correct_debt_payment; central owner-only checks reject legacy staff grants; shared web/desktop UI uses selected ownership.70 targeted and1178 unfiltered backend tests pass;88 web tests, production build, touched-page Oxlint/Ruff pass. Initial Docker setup errors retained; private rootless runtime resolved them without skips. Evidence: evidence/parity-implementation-2026-10-28/P02b-authority/. Source fix not deployed; native refund/correction remains DMP-039."
       ],
       "notes": "2026-10-28 P02b authority: restricted-cashier correction bypass reproduced8 failing denial tests before fix. API and service require sales.correct_debt_payment; central owner-only checks reject legacy staff grants; shared web/desktop UI uses selected ownership.70 targeted and1178 unfiltered backend tests pass;88 web tests, production build, touched-page Oxlint/Ruff pass. Initial Docker setup errors retained; private rootless runtime resolved them without skips. Evidence: evidence/parity-implementation-2026-10-28/P02b-authority/. Source fix not deployed; native refund/correction remains DMP-039."
+    },
+    "DMP-134": {
+      "title": "USD credit correction applies collection conversion instead of reducing USD credit",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "2026-10-28 P02b adjustment API: real legacy USD-credit defect reproduced before fix. Negative USD adjustments against existing USD credit retain USD; legacy positive FX/snapshots preserved. New owner-only quoted refund/correction protocol enforces selected currency, credit bounds, actor/store/reason, original-key replay and rollback/concurrency safety.114 targeted/1206 full backend and606 mobile consumer tests pass; tsc/strict lint/Ruff/schema gate and no-migration check pass. Evidence: evidence/parity-implementation-2026-10-28/P02b-adjustment-api/. Not deployed; native/web journal/UI connection and historical-record review remain."
+      ],
+      "notes": "2026-10-28 P02b adjustment API: real legacy USD-credit defect reproduced before fix. Negative USD adjustments against existing USD credit retain USD; legacy positive FX/snapshots preserved. New owner-only quoted refund/correction protocol enforces selected currency, credit bounds, actor/store/reason, original-key replay and rollback/concurrency safety.114 targeted/1206 full backend and606 mobile consumer tests pass; tsc/strict lint/Ruff/schema gate and no-migration check pass. Evidence: evidence/parity-implementation-2026-10-28/P02b-adjustment-api/. Not deployed; native/web journal/UI connection and historical-record review remain."
     }
   },
   "lastSourceAudit": {
