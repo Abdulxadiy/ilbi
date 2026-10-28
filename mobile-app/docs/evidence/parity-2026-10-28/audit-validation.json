@@ -1,0 +1,9 @@
+{
+  "audit_json_documents_valid": true,
+  "all_changes_are_documentation": true,
+  "finding_rows": 132,
+  "ledger_json_match": true,
+  "mobile_runtime_unchanged_since_published_apk_5": true,
+  "production_writes": false,
+  "emulator_or_device_access": false
+}

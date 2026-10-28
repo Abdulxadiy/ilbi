@@ -1,33 +1,162 @@
 # ILBI Desktop ↔ Mobile — Detailed parity audit
 
-Audit date: 2026-10-24 (Asia/Tashkent). Baseline Git HEAD: `8ad308a7f755720bb7c4656eec53ef06c69433bb`.
+Historical baseline audit: 2026-10-24 (Asia/Tashkent). Baseline Git HEAD: `8ad308a7f755720bb7c4656eec53ef06c69433bb`.
 
-Status: **COMPLETE — source comparison and available checks; native/real-backend acceptance remains open**. Unique findings currently recorded: **131**.
+Latest source re-audit: **2026-10-28**, below. Historical baseline comparison finished with 131 records; there are now **132 tracked records**, including fixed/partial/history items, not 132 current uncorrected defects. Native/real-device acceptance remains separate.
+
+<!-- REAUDIT_2026_10_28_START -->
+## 2026-10-28 — Web ↔ Desktop ↔ Mobile qayta tekshiruvi
+
+**Javob: yo‘q, mobil ilova web/desktopdagi barcha imkoniyatlarga hali teng emas.** Asosiy savdo, narx, ombor, qaytarish, B2B, kassa, profil va oddiy chek/PDF kodlari bor. Xodim/ruxsat boshqaruvi, A4 faktura/imzolar, jadval import/eksport, mijoz payment ledger, workspace va desktop darajasidagi offline/security imkoniyatlari yetishmaydi yoki qisman.
+
+**Tekshirilgan holat:** repository `888ed76f1a67ae2bbf2a9ca09ffcf5d3be9366f7`, branch `refactor/ilbi-backend-layout`. Android runtime source rasmiy build5 (`4ec8f4647fc5f9ed5bc789b7a60bb0f625c0b84c`) bilan bir xil. Rasmiy Windows/Linux feed source’i `2d799dd5596a92fb6a0e3be6cf51a2a018c88e2d`; joriy repo bilan barcha sahifalari byte-for-byte bir xil emas. Quyidagi asosiy jadval joriy kod imkoniyatlarini solishtiradi; u eski o‘rnatilgan installer yoki jonli web UI’ni alohida bosib qilingan acceptance deb ko‘rsatilmaydi. Desktop renderer web React UI’ni yuklaydi, Electron esa offline/native qatlamni qo‘shadi.
+
+**Ko‘lam:** 461 tracked source fayl census’i, web’dagi29 route va native’dagi34 route,136 web API literal yo‘li; route → ko‘rinadigan action/child component → API → native workflow bo‘yicha tekshirildi. Bu raqamlar imkoniyat foizi yoki har bir satr runtime’da bajarilganining isboti emas. Source xaritasi `evidence/parity-2026-10-28/source-inventory.json` ichida.
+
+### Belgilar
+
+`BOR` — asosiy real API/source oqimi mavjud; hamma detal yoki native qurilma acceptance’i tugagan degani emas. `QISMAN` — aniq ko‘rsatilgan qismi yetishmaydi. `YO‘Q` — teng native ish oqimi topilmadi. `RUNTIME` — source bor yoki platforma kerak, lekin yetkazish/qurilma qabul sinovi ochiq. `DESKTOPGA_XOS` — aynan OS binarini port qilish shart emas. `UMUMIY_CHEKLOV` — shared backend chegarasi.
+
+### Amaldagi imkoniyatlar jadvali
+
+| ID | Imkoniyat | Web / desktop | Mobile holati va aniq farq | Audit ID |
+| --- | --- | --- | --- | --- |
+| C01 | Qoidalarni qabul qilish, ruxsatli hisob/do‘kon bilan kirish | Bor | **BOR** — Server hujjati, rozilik va kirish gate mavjud. | DMP-001, DMP-005, DMP-006, DMP-007 |
+| C02 | Login, Telegram bog‘lash, OTP va 6-raqamdan avtomatik tasdiqlash | Bor | **BOR** — Haqiqiy auth API, qayta yuborish va xato maydoni mavjud. | DMP-084, DMP-085, DMP-086, DMP-088 |
+| C03 | Oddiy parolni tiklash va eski parol bilan almashtirish | Bor | **BOR** — Login modalidagi request/confirm/change-with-old ishlangan. | DMP-002, DMP-003 |
+| C04 | Taklif havolasi orqali yangi xodim/hisobni sozlash va reset-resume | Bor | **YO‘Q** — Web SetupAccount yo‘li uchun teng native route/deep-link onboarding yo‘q. Oddiy reset bu oqimning hammasi emas. | DMP-002 |
+| C05 | Profil, avatar yuklash/o‘chirish va parol o‘zgartirish | Bor | **BOR** — Build 5 dagi avatar API va sidebar rasmi ham bor; real qurilma yuklash UAT bu auditda bajarilmadi. | DMP-003 |
+| C06 | Loginni eslab qolishni boshqarish | Web/native siyosati; desktop OS vault | **QISMAN** — Token SecureStore’da saqlanadi. Username/parolni alohida eslab qolish/unutish va desktop vault UX’i yo‘q. | DMP-004 |
+| C07 | Bir nechta do‘konni tanlash/almashtirish | Bor | **BOR** — Hisob/serverga bog‘langan do‘kon va faol a’zolik ruxsatlari bor. | DMP-006, DMP-087 |
+| C08 | Yangi do‘kon/filial yaratish, sotuvchi profilini yaratish/bog‘lash | Bor | **YO‘Q** — Ilovada mavjud do‘konni tanlash bor; MyTenants boshqaruvining o‘zi yo‘q. | DMP-049 |
+| C09 | Rol va faol do‘kon bo‘yicha ko‘rish/amal vakolatlari | Bor | **BOR** — Route/amal tekshiruvlari bor; huquqlarni tahrirlash bilan aralashtirmaslik kerak. | DMP-007 |
+| C10 | Xodim yollash, taklif yuborish, tahrirlash, blok/arxiv/bo‘shatish | Bor | **YO‘Q** — Employees native ekrani va yozish oqimlari yo‘q. | DMP-047 |
+| C11 | Xodim huquqlarini tahrirlash va tayyor rollar | Bor | **YO‘Q** — Mavjud huquqni tekshirish bor, permission editor/preset boshqaruvi yo‘q. | DMP-048 |
+| C12 | Bugun/hafta/oy/yil statistikasi va asosiy KPI | Bor, 4 davr | **BOR** — 4 davr, savdo/naqd/karta/nasiya/qarz/o‘rtacha chek va kunlar jadvali bor. | DMP-008 |
+| C13 | Foyda, tannarx, umumiy ko‘rsatkichlar va interaktiv tahlil grafiklari | Bor | **QISMAN** — Mobile UI foyda/tannarx va web’dagi taqqoslash/grafik imkoniyatlarining hammasini chiqarmaydi. | DMP-008 |
+| C14 | Kategoriya/ichki kategoriya yaratish va tahrirlash | Bor | **BOR** — Serverdagi daraxt, valyuta, filtrlash va menu amallari bor. | DMP-020 |
+| C15 | Tovar/variantlar, 3 narx, birlik, kod, barcode, MXIK, arxiv/tiklash | Bor | **BOR** — Asosiy CRUD va tarixni saqlovchi server amallari bor. | DMP-021, DMP-022, DMP-023 |
+| C16 | Tovar rasmlari va 3 rasmli galereya | Bor, ProductToolsModal + carousel | **QISMAN** — Mavjud mahsulotning asosiy rasmini PATCH qilish bor. Galereya qo‘shish/o‘chirish/carousel va create-formdagi rasm tanlash teng emas. | DMP-024 |
+| C17 | Tovarlarni Excel fayldan template → preview → commit bilan import qilish | Bor | **YO‘Q** — Mobile file picker/import-preview/commit ekrani yo‘q. | DMP-025 |
+| C18 | Shtrix-kod yaratish va narx/etiketka chop etish | Bor | **YO‘Q** — Barcode’ni o‘qish/qo‘lda yozish bor; generate/label-print oqimi yo‘q. | DMP-026 |
+| C19 | Kamera bilan barcode o‘qish, aniq qidirish va sahifalash | Bor | **BOR** — CameraView va exact barcode query bor; build 5 kamera permission’i oldingi release tekshiruvida tasdiqlangan. | DMP-018, DMP-019 |
+| C20 | Savat, kelishilgan sotuv narxi, kasr miqdor va ulgurji rejim | Bor | **BOR** — Joriy savdo narxi katalog narxidan alohida, qoralama va aniq pul/miqdor hisoblari bor. | DMP-012, DMP-090, DMP-091, DMP-092, DMP-094, DMP-109 |
+| C21 | POS yonidagi dollar/kurs kalkulyatori | Bor | **QISMAN** — Kalkulyator StoreSettings ichida bor; POS yonida yo‘q va sozlama vakolatisiz kassir kira olmaydi. | DMP-015, DMP-053 |
+| C22 | Nasiya savdoda mijoz va alohida qaytarish sanasi | Bor | **BOR** — Checkout deadline tekshiradi va serverga yuboradi; mijoz default muddati tahriri esa alohida yetishmaydi. | DMP-090, DMP-034 |
+| C23 | Savdo oldidan stock, soliq va expiry ogohlantirishlarini tekshirish | Bor | **BOR** — Joriy variant/soliq qiymati qayta o‘qiladi, muddati o‘tgan batch uchun rozilik olinadi. Production fiskal gate saqlanadi. | DMP-013, DMP-014, DMP-016, DMP-017, DMP-129 |
+| C24 | Savdolar tarixi, mijoz/sana/holat/to‘lov/valyuta filtrlari | Bor | **BOR** — Server filtrlari, sahifalar, tafsilot va chek yo‘li mavjud. | DMP-009 |
+| C25 | Savdoni to‘liq va qisman qaytarish | Bor | **BOR** — Sabab, qolgan kasr miqdor, bir martalik moliyaviy identifikatorlar bilan ishlangan; native moliyaviy UAT ochiq. | DMP-010, DMP-011 |
+| C26 | Ombor qoldig‘i, harakatlari, partiya/expiry va tannarx huquqlari | Bor | **BOR** — Haqiqiy stock/movement/batch endpointlari va sahifalar bor. | DMP-027, DMP-030 |
+| C27 | Ko‘p qatorli kirim, ta’minotchi, tannarx, invoice/batch/expiry | Bor | **BOR** — Serverga bog‘langan draft va once-only amallar bor. | DMP-028 |
+| C28 | Mijozdan/ta’minotchiga qaytarish va hisobdan chiqarish | Bor | **BOR** — Batch, sabab va aniq miqdor bilan ishlangan. | DMP-029 |
+| C29 | Ichki transfer: yuborish, qisman qabul, jismoniy qaytish, tafovut | Bor | **BOR** — Mapping, owner cheklovi va server receipt/journal qo‘llanadi. | DMP-031 |
+| C30 | Alohida kam qoldiq/defitsit hisoboti | Bor | **QISMAN** — Qoldiqni kamidan saralash va alertdan omborga kirish bor; /inventory/deficits/ alohida UI yo‘q. | DMP-032 |
+| C31 | Mijozlar ro‘yxati/qidiruv, asosiy yaratish va ism/izoh tahriri | Bor | **BOR** — Haqiqiy paged API va UZS/USD balanslari bor; quyidagi kengroq metadata bilan teng emas. | DMP-033, DMP-034 |
+| C32 | Mijozning do‘kon kodi/B2B bog‘lanishi, default qarz muddati, o‘chirish | Bor | **QISMAN** — Native form ism/telefon/yangi izoh bilan cheklangan; target_tenant_code/default due-date/delete boshqaruvi yo‘q. | DMP-034 |
+| C33 | Bitta mijozning xaridlar, to‘lovlar va qarz harakati ko‘chirmasi | Bor | **QISMAN** — SalesHistory’da mijoz filtri bor. Mijoz kartasida payment ledger/statement va to‘liq reconciliation yo‘q. | DMP-035 |
+| C34 | Mijozlarni jadvaldan import qilish | Bor | **YO‘Q** — Template, fayl tanlash, preview va import commit yo‘q. | DMP-036 |
+| C35 | Qarz qabul qilish: UZS/USD, naqd/karta, filial va izoh | Bor | **BOR** — Server quote, joriy balans guard’i va asl kalitli qayta tekshirish mavjud. | DMP-038 |
+| C36 | Qarz/ortiqcha to‘lov va muddati o‘tgan/yaqin/kelgusi filtrlar | Bor | **QISMAN** — Qarzdorlar ro‘yxati va collection bor; kredit/settled/due-date filtrlar to‘liq emas. | DMP-037 |
+| C37 | Mijoz haqqini qaytarish va oldingi qarz to‘lovini tuzatish | Bor | **YO‘Q** — Refund/correct-debt-payment egaga mo‘ljallangan UI yo‘q. | DMP-039 |
+| C38 | Smena ochish/yopish, UZS/USD sanash, tafovut, kirim/xarajat | Bor | **BOR** — Server amallari va jurnalda aniq qayta tekshirish mavjud. | DMP-040, DMP-041, DMP-042 |
+| C39 | Kassa va hisobot ro‘yxatlaridan qidirish | Bor | **QISMAN** — Kirim/xarajat tabs va pagination bor; web Shifts’dagi search boshqaruvi native Cashbox/Reports ro‘yxatlarida yo‘q. | DMP-042 |
+| C40 | Saqlangan Z-hisobotlar va modern/thermal ko‘rinishlar | Bor | **QISMAN** — Server ro‘yxati/detail va jadval-PDF ulashish bor; qidirish, web modern/thermal layout va printer imkoniyati teng emas. | DMP-043 |
+| C41 | B2B kiruvchi/chiquvchi hujjatlar, qabul qilish/rad etish | Bor | **BOR** — List, mapping, qisman qabul va holat amallari bor. | DMP-044, DMP-045 |
+| C42 | Yangi B2B hamkor yaratish va POS’da kimga jo‘natilishini ko‘rsatish | Bor | **QISMAN** — Do‘kon kodi/badge native formda yo‘q. Mavjud web’da bog‘langan kontragentni tanlash serverda B2B savdo yaratishi mumkin; “B2B umuman yaratib bo‘lmaydi” degan xulosa qilinmadi. | DMP-034, DMP-044 |
+| C43 | B2B qaytgan tovarni qabul qilish va tafovutni yopish | Bor | **BOR** — Jo‘natuvchi/owner tekshiruvlari va bir martalik server amallari bor. | DMP-046 |
+| C44 | Oddiy saqlangan chek, 58/80mm, print, PDF va share | Bor | **BOR** — Snapshotdagi summa/soliq/identifikatsiya bilan asosiy rendering bor; native printer/share-sheet bu auditda ishlatilmadi. | DMP-068, DMP-069, DMP-095, DMP-096, DMP-097 |
+| C45 | A4 hisob-faktura, yuboruvchi/qabul qiluvchi imzo, imzoli eksport | Bor | **YO‘Q** — Mobile DocumentsScreen — oddiy savdo cheklari ro‘yxati. A4 invoice/signature screen/route yo‘q. | DMP-065, DMP-066, DMP-067 |
+| C46 | Scannable QR/barcode, ochiq chek va havolani revoke/rotate | Bor | **QISMAN** — Mavjud token havolasini nusxalash bor. FileText ikonka QR emas; native public-receipt route va rotate action yo‘q. Browserdagi public chek alohida ishlaydi. | DMP-070, DMP-071 |
+| C47 | PDF’ni alohida saqlash va fayl sifatida qayta ochish | Web download; desktop save-dialog | **QISMAN** — Vaqtinchalik PDF + OS share mavjud; aniq user-visible save/open oqimi yo‘q. OS share orqali boshqa ilovada saqlash mumkinligi haqiqiy qurilmada tekshirilmagan. | DMP-072 |
+| C48 | Savdo/ombor/mijozlarni Excel/CSV ga eksport qilish | Bor | **YO‘Q** — Native biznes ro‘yxatlarida export UI/fayl oqimi yo‘q. Client’ning blob javobni o‘qiy olishi buning o‘rnini bosmaydi. | DMP-073, DMP-098 |
+| C49 | Do‘kon, chek ko‘rinishi, QQS/soliq va CBU/ichki kurs sozlamalari | Bor | **BOR** — 6 bo‘lim, section PATCH va revision/stale settings guard mavjud. | DMP-053, DMP-054 |
+| C50 | Telegram manzil/notify sozlamalari va rejalangan/manual hisobotlar | Bor | **RUNTIME** — Native UI/API mavjud. Haqiqiy guruhga yuborish va reja bo‘yicha yetkazish bu auditda sinalmadi. | DMP-055, DMP-056 |
+| C51 | Tarix, snapshot tafsilotlari va alohida audit jurnali | Bor | **QISMAN** — Owner tarix/search/category/page/detail bor; davr/custom sana, admin do‘kon filtri, alohida audit UI va print/export teng emas. | DMP-063, DMP-064 |
+| C52 | Guest/account matnli support, suhbat va operator claim/close/reopen | Bor | **BOR** — Sidebar ekranida real API va viewable-message read-through bor. | DMP-057, DMP-059 |
+| C53 | Support rasm/voice/sticker yuborish, ko‘rish/tinglash va UI tillari | Bor | **QISMAN** — Reply-language tanlovi va media borligi yozuvi bor; image viewer, voice player/recorder va sticker composer yo‘q. | DMP-058 |
+| C54 | Support operatorining mijoz/do‘kon profilini boshqarishi | Bor | **QISMAN** — Operator inbox/claim bor; web CustomerProfileModal amallari yo‘q. | DMP-059 |
+| C55 | In-app bildirishnoma ro‘yxati, o‘qish/o‘chirish va hujjatga o‘tish | Bor | **QISMAN** — Asosiy inbox bor. Backenddagi /b2b legacy havolasi uchun ochish amali yo‘q — DMP-132 qayta hosil qilindi. | DMP-060, DMP-132 |
+| C56 | Telefon ilovasi yopiq paytdagi push | Mobilga xos yetkazish talabi | **RUNTIME** — Android FCM kodi bor, lekin server push_enabled=false, project/key konfiguratsiyasi yo‘q; iOS transporti qo‘llanmagan. | DMP-060 |
+| C57 | Global qidiruv, favorites va tezkor workspace vositalari | Bor | **YO‘Q** — Sidebar ichida menu qidiruvi bor; global biznes qidiruvi/favorites/umumiy calculator emas. | DMP-061 |
+| C58 | Topshiriq/eslatma, mas’ul, due-date va bajarildi holati | Bor | **YO‘Q** — Bildirishnomani o‘qish bor; workspace reminder CRUD/complete oqimi yo‘q. | DMP-062 |
+| C59 | Yuridik matnlar va to‘liq qo‘llanma/hujjatlar kutubxonasi | Bor | **QISMAN** — Legal matn fetch/view bor; docs list/Markdown/image/edit/certificate print teng emas. | DMP-001, DMP-074 |
+| C60 | Platforma hisoblari/do‘konlar/owner almashish/ban/seller review | Admin uchun bor | **QISMAN** — AdminHome 4 ta hisoblagich, Telegram flag va oxirgi faoliyatni o‘qiydi. To‘liq boshqaruv actionlari yo‘q; kassir roli uchun majburiy emas. | DMP-050, DMP-051, DMP-052, DMP-124, DMP-125 |
+| C61 | Internet yo‘q paytda to‘liq katalog/stock/savdo va keyingi sync | Desktopda lokal backend; oddiy web bunday emas | **YO‘Q** — Ilova savat/jurnalni saqlaydi, lekin offline biznes DB/stock mirror va qabul qilingan offline yozish protokoli yo‘q. | DMP-075 |
+| C62 | Offline enrollment, imzolangan account/device grant va avtomatik dependency sync | Desktopda bor | **YO‘Q** — Native offline ruxsat/expiry/worker/dependency graph yo‘q. | DMP-076, DMP-077 |
+| C63 | Natijasi noma’lum amal uchun qo‘lda jurnal/retry/reconciliation | Desktopda to‘liq SyncCenter | **QISMAN** — Server/account/store-bound asl kalitlar va qo‘lda tekshirish bor; to‘liq offline sync/priority emas, unscoped legacy replay yopiq. | DMP-078, DMP-079 |
+| C64 | Idle/session lock va background privacy/unlock | Desktopda bor | **YO‘Q** — Mobile token saqlashi lock emas; privacy overlay/unlock policy yo‘q. Screenshot/task-switcher amalda tekshirilmadi. | DMP-080 |
+| C65 | Shifrlangan backup/restore va pending-work recovery | Desktopda bor | **YO‘Q** — Foydalanuvchi boshqaradigan native backup/restore oqimi yo‘q; OS backup holati tekshirilmagan. | DMP-081 |
+| C66 | LAN’dagi asosiy kassaga pairing va register revoke/rejoin | Desktopda bor | **YO‘Q** — Native pairing yo‘li yo‘q; telefon ikkilamchi kassa bo‘lishi alohida product scope. | DMP-082 |
+| C67 | Sidebar, tezkor pastki tablar, light/dark va ILBI logo | Bor, platformaga mos | **BOR** — Mobile uchun alohida tasdiqlangan dizayn qo‘llanadi; desktop classic/fast skin’ni aynan ko‘chirish shart emas. | DMP-110, DMP-113, DMP-120 |
+| C68 | Android yuklab olish va eski native build uchun update eslatmasi | Desktop o‘z updater’iga ega | **BOR** — Rasmiy feed build 5; runtime source APK5 bilan teng. Eski build fixture’lari sinovlari bor, mavjud emulator ko‘rilmadi. | DMP-083 |
+| C69 | iPhone uchun tarqatilgan IPA va APNs yetkazishi | iOS alohida release | **RUNTIME** — React Native source/JS export bor; rasmiy feed’da iOS paketi yo‘q, joriy PushProvider Android-only. | DMP-083, DMP-060 |
+| C70 | Katta font, Reduce Motion va real native performance | OS/qurilmaga bog‘liq | **RUNTIME** — Avtomatik test yoki browser screenshot barcha qurilmalarda FPS/memory/keyboard/font acceptance isboti emas. | DMP-112, DMP-114, DMP-115, DMP-119 |
+| C71 | Windows/Linux installer, tray, bundled Python/PostgreSQL jarayonlari | Desktopga xos | **DESKTOPGA_XOS** — Binar/protsesslarni telefonga nusxalash talab qilinmaydi; offline biznes natijasi esa yuqorida alohida baholandi. | DMP-075, DMP-082, DMP-083 |
+| C72 | Production fiskal/OFD savdo gate va UZS-only retail | Umumiy backend cheklovi | **UMUMIY_CHEKLOV** — DEBUG=false’da create-sale ochiq emas; server DEBUG=false tasdiqlandi. Bu faqat mobile kamchiligi emas. Gate o‘zgartirilmadi, real savdo yuborilmadi. | DMP-014, DMP-129 |
+
+### Muhim source dalillari
+
+- Xodim va owner boshqaruvi: `frontend/ilbi/src/pages/Employees.jsx:94`, `components/employees/EmployeePermissionsSelector.jsx`; `pages/MyTenants.jsx:115`. Native route xaritasi `mobile-app/src/navigation/useAppNavigation.ts:7` va `features/admin/AdminHome.tsx:8` to‘liq shu UI’larni bermaydi.
+- Galereya/etiketka/import: `frontend/ilbi/src/components/common/ProductToolsModal.jsx:93`, `:175`; `CatalogImportModal.jsx`, `ProductLabelsModal.jsx`; ular `pages/Catalog.jsx:1495` dan mount qilinadi. Native `features/catalog/ProductScreen.tsx` faqat asosiy image PATCH va variant formga ega.
+- Mijoz ledger/kredit: `frontend/ilbi/src/pages/Debts.jsx:93`, `:94`, `:240`; native `features/customers/CustomersScreen.tsx:26`, `features/debts/DebtsScreen.tsx:31` da shu payment history/correction oqimi yo‘q.
+- A4/imzo: `frontend/ilbi/src/components/common/InvoiceA4Modal.jsx:140`, `:423`; native `features/documents/DocumentsScreen.tsx:21`, `features/receipts/ReceiptScreen.tsx:344` — oddiy chek/ikonka; native route yo‘q. Web imzosi ham lokal persistence: server-synced yuridik e-sign deb baholanmadi.
+- Analitika: web `pages/Dashboard.jsx:755`, `:1210`, `components/dashboard/RevenueCostAnalyticsChart.jsx`; native `features/reports/ReportsScreen.tsx:17` va `:47`. Har ikkala dashboard4davrga ega; web fetch `Dashboard.jsx:119` arbitrary custom sanani yubormaydi. Tarixning custom sanasi esa web `History.jsx:171` da bor va native HistoryScreen’da yo‘q.
+- Offline/native security: `desktop/ilbi/preload.cjs:9`, `runtime.cjs`, `pairing-manager.cjs`, `session-lock.cjs`, `backups.cjs`; native `features/sync/SyncScreen.tsx:43` — qo‘lda asl amalni tekshirish, to‘liq offline DB/grant emas. Token SecureStore (`src/api/storage.ts`) mavjud va undan password-remember/auto-lock bor degan xulosa qilinmadi.
+- Push: native `features/notifications/PushProvider.tsx:21` Android-only. 2026-10-28 jonli server read-only tekshiruvi push_enabled=false, project/key konfiguratsiyasi yo‘qligini tasdiqladi. Oddiy permission berish yetmaydi. Hech qanday kalit yuklanmadi/xabar yuborilmadi.
+- Umumiy fiskal to‘siq: `backend/apps/sales/services/sale_service.py:141` DEBUG=false’da create-sale’ni yopadi; server DEBUG=false. Bu cheklov saqlandi va live savdo yozilmadi.
+
+<a id="dmp-132"></a>
+### DMP-132 — Legacy B2B notification link has no mobile destination
+
+Area: **Notifications / B2B** · Priority: **P2** · Classification: **REPRODUCED SOURCE-BUG** · First found: **2026-10-28 re-audit pass 3**. Implementation status: **OPEN**.
+
+Backend `backend/apps/sales/services/sale_service.py:319` creates TYPE_B2B_REQUEST (`b2b_transfer_request`) with `link="/b2b"` at325. Web has the `/b2b` route. Native `src/features/notifications/inbox.ts:31` only accepts `/sales/<id>/` or `/sales/b2b/inbox/` for B2B types and returns null for `/b2b`. NotificationsScreen renders its open button only when a destination exists.
+
+The actual TypeScript function was transpiled and executed with this producer-shaped input: result **null**; positive control `/sales/b2b/inbox/` returned module B2B. No live notification/sale was created, and this is not an installed-phone observation. This audit deliberately records the defect rather than changing app behavior. Fix acceptance: explicit safe alias/canonical destination, preserve role/tenant/recipient checks, include producer-shaped regression and keep arbitrary external URLs blocked. Evidence: `evidence/parity-2026-10-28/notification-target-reproduction.json`.
+
+### Takroriy tekshiruvlar va noto‘g‘ri xulosalarni chiqarib tashlash
+
+1. Eski131 topilma/ledger → hozirgi route/source: profil, avatar, reset, tarix, ombor, B2B, kassa va settings bo‘yicha eski “yo‘q/mock-only” tasvirlarining ko‘pi tarixiy ekanligi ajratildi.
+2. Web route → form/child modal → API → native: ProductToolsModal galereyasi, etiketa/import, Employees, MyTenants, A4/signature, customer payment ledger va workspace tekshirildi. API wrapper deklaratsiyasining o‘zi ishlaydigan UI deb olinmadi.
+3. Native → web/server qarama-qarshi tekshiruv: kurs kalkulyatori allaqachon settings ichida bor; B2B serverda kontragent bog‘lanishidan avtomatik aniqlanishi mumkin; desktop dashboardda custom-date UI bor deb da’vo qilish tasdiqlanmadi. Producer → inbox consumer tekshiruvida yangi DMP-132 aniq hosil qilindi.
+4. Qarz/savdo/receipt/offline/privacy/push qayta ko‘rildi: mavjud source oqimi, qisman imkoniyat va OS/provider acceptance alohida belgilandi. Shu doirada yana mustaqil tasdiqlangan yangi topilma qo‘shilmadi; bu noma’lum runtime xatosi qolmaganining isboti emas.
+5. Testlar qayta bajarildi, public feed va server konfiguratsiyasi faqat o‘qildi. 461 fayl census’i, 29/34 route xaritasi, capability jadvali va ledger JSON o‘zaro tekshiriladi.
+
+### Haqiqiy tekshiruv natijalari va keyingi ustuvorlik
+
+- Mobile: **518 test / 62 suite**, TypeScript va strict ESLint o‘tdi. Web: **88 test** o‘tdi. Desktop: **39 test o‘tdi,5 OS testi skipped**. Bu native qurilmada barcha workflow ishlagan degani emas.
+- Fresh npm audit: **3 high +13 low**, exit1. Dependency gate yashirilmagan. Bu ishda paketlar/versiyalar yangilanmadi.
+- Server/public feed: Android build5 mavjud; iOS paketi yo‘q; push jo‘natish o‘chiq. APK yoki platforma qayta deploy qilinmadi, xizmatlar/emulator/ma’lumotlar o‘zgartirilmadi.
+- Audit yordamchi JSON statuslari live Markdown ledger’dan ortda qolgan edi: **30 status nomuvofiqligi** tiklandi. Hozir ular bir xil;132 record barcha tarixiy/fixed/partial/ochiq ishlarni birga saqlaydi, joriy132 ta xato degani emas.
+- Ustuvor ishlar: avval xodim/huquq va mijoz payment ledger/kredit tuzatish; keyin A4/imzo/real QR + fayl saqlash va import/eksport; so‘ng history/analytics/defitsit/gallery detal parity; workspace/admin; offline/lock/backup/LAN alohida loyiha sifatida. DMP-132 kichik alohida integration tuzatish; FCM/APNs va fiskal provider real acceptance’i mustaqil gate bo‘lib qoladi.
+
+Barcha dalillar: `evidence/parity-2026-10-28/`. Bu audit **kod va mavjud testlar asosidagi tekshiruv**; yangi native/brаuzer UI acceptance ishlatilmadi. Oldingi emulatorni tekshirish/start/stop/install/reset/ADB amallari bajarilmadi.
+<!-- REAUDIT_2026_10_28_END -->
 
 <!-- IMPLEMENTATION_LEDGER_START -->
 ## Implementation ledger — live
 
 **Working principle: implement → test → record evidence → advance.** The audit below is the historical baseline; this ledger records subsequent implementation. `TESTED_CODE` means the named automated/code checks passed, not native or production acceptance. `VERIFIED_RUNTIME` states the actual runtime used. `EXTERNAL_GATE` requires the stated external runtime/service; it is not completed.
 
-Approved rollout checkpoint: backend candidate `f67d770` and signed Android build4 are deployed;1,165 backend CI cases and15 authenticated read-only HTTPS contracts passed. See [PRODUCTION_ROLLOUT_2026_10_27.md](PRODUCTION_ROLLOUT_2026_10_27.md). Native financial/device, push delivery and other external gates below remain open; deployment alone does not upgrade their status.
+Approved rollout checkpoint: backend candidate `f67d770` remains deployed and signed Android build5 is now published;1,165 backend CI cases and15 authenticated read-only HTTPS contracts passed. See [PRODUCTION_ROLLOUT_2026_10_27.md](PRODUCTION_ROLLOUT_2026_10_27.md). Native financial/device, push delivery and other external gates below remain open; deployment alone does not upgrade their status.
 
 | ID | Status | Latest evidence / remaining verification |
 | --- | --- | --- |
 | [DMP-001](#dmp-001) | TESTED_CODE | Explicit consent checkbox and sessionEntry business gate tested; legal document routes fetch server content. Auth/gates: 17 tests pass; tsc/lint pass. |
-| [DMP-002](#dmp-002) | OPEN | Pending |
-| [DMP-003](#dmp-003) | IN_PROGRESS | Real profile/password API, inline validation and logout/session isolation tested; avatar upload/delete remains. See CORE_API_READINESS_2026_10_27.md. |
+| [DMP-002](#dmp-002) | IN_PROGRESS | 2026-10-28: basic request/confirm/change-with-old reset exists and login tests pass; invitation SetupAccount/resume/deep-link onboarding is still absent. |
+| [DMP-003](#dmp-003) | TESTED_CODE | 2026-10-28: profile edit/password/logout and avatar upload/delete plus sidebar avatar are implemented; 518 mobile tests pass including the actual mocked-picker/API contract checks in coreReadiness/productEditor/imageUpload. Native avatar UAT remains. |
 | [DMP-004](#dmp-004) | OPEN | Pending |
 | [DMP-005](#dmp-005) | TESTED_CODE | Profile failure shows retry/logout recovery; retry component and delayed profile-after-logout tests pass. |
 | [DMP-006](#dmp-006) | TESTED_CODE | Validated membership selection, explicit multi-store gate, saved account/server-scoped choice, Home switch entry and store-choice UI tested. |
 | [DMP-007](#dmp-007) | TESTED_CODE | 9 permission/checkout tests pass: active-membership grants, cross-store isolation, owner-only actions, admin separation and denied sale POST. Router guards and navigation/action checks added; tsc/lint pass. |
-| [DMP-008](#dmp-008) | IN_PROGRESS | Four real analytics periods, KPI/chart and scoped loading connected; custom-date/profitability/drill-down parity remains. |
+| [DMP-008](#dmp-008) | IN_PROGRESS | 2026-10-28: four period controls exist on BOTH clients. Profit/cost/store overview/interactive charts remain unequal; Dashboard.jsx:119 passes null custom dates, so custom dashboard dates are NOT counted as an existing web-only UI capability. |
 | [DMP-009](#dmp-009) | TESTED_CODE | Dedicated sales/customer/date/status/payment filters, pagination/detail:28 mobile and33 PostgreSQL cases; SALES_HISTORY_READINESS_2026_10_27.md. Native/deploy gate remains. |
 | [DMP-010](#dmp-010) | TESTED_CODE | Reasoned full returns use per-dialog IDs, actor/store-bound receipts and original-key concurrency/rollback coverage; native financial acceptance pending. |
 | [DMP-011](#dmp-011) | TESTED_CODE | Exact fractional item returns, remaining-quantity checks, actor-bound acknowledgements and retained completed keys tested;33 real sales backend cases. |
 | [DMP-012](#dmp-012) | TESTED_CODE | Cart wholesale toggle uses configured partner prices, preserves negotiated overrides, persists mode and sends is_partner_sale. Cart persistence/quote tests verify mode, prices and missing partner configuration; tsc/lint pass. |
 | [DMP-013](#dmp-013) | TESTED_CODE | Checkout re-reads selected live variants immediately before a new sale; stock reduction between opening checkout and confirming blocks POST. Quote/checkout suites: 21 tests pass; tsc/lint pass. |
 | [DMP-014](#dmp-014) | TESTED_CODE | Catalog retains USD label and disables retail add; cart domain rejects USD and live quote checks current currency. USD screen/domain/quote tests pass. |
-| [DMP-015](#dmp-015) | OPEN | Pending |
+| [DMP-015](#dmp-015) | IN_PROGRESS | 2026-10-28: StoreSettingsScreen:130 has conversion with store rates, but it is settings-permission gated and not reachable beside POS for an ordinary cashier. Not wholly absent. |
 | [DMP-016](#dmp-016) | TESTED_CODE | Integer per-line VAT inclusive/exclusive totals, current tenant receipt settings and expected_tax_settings POST guard implemented. Fractional backend contract and VAT/checkout tests pass; backend receipt-tax suite passes. |
 | [DMP-017](#dmp-017) | TESTED_CODE | Live expired_batches render their actual batch/date/quantity and require an explicit acknowledgement keyed to those warnings. Integration test blocks POST before consent and allows it afterward. |
 | [DMP-018](#dmp-018) | TESTED_CODE | 199 mobile tests plus SDK58 permission introspection and host phone regression pass. Actual installed Android deny/grant dialogs and virtual preview work; Android camera registry verifies active→background closed→resume active→dismiss closed (camera.json). |
@@ -36,7 +165,7 @@ Approved rollout checkpoint: backend candidate `f67d770` and signed Android buil
 | [DMP-021](#dmp-021) | TESTED_CODE | 192 mobile tests, 37 real PostgreSQL catalog API/service tests and interactive Chrome product/variant create/edit flow passed. Actual receipt snapshots retain old names/prices after catalog edits. tsc/strict lint passed. |
 | [DMP-022](#dmp-022) | TESTED_CODE | Actual backend accepts negotiated price below the advisory minimum and preserves old receipt prices; Chrome changed catalog default while existing cart kept its negotiated price. All 192 mobile tests passed. |
 | [DMP-023](#dmp-023) | TESTED_CODE | Actual PostgreSQL product/variant archive and restore, archived POS exclusion and preserved stock/history on DELETE tested; Chrome lifecycle flow passed; read-only UI and confirmed rejection tests pass. |
-| [DMP-024](#dmp-024) | OPEN | Pending |
+| [DMP-024](#dmp-024) | IN_PROGRESS | 2026-10-28: existing product main-image PATCH is in build5. Web ProductToolsModal gallery upload/delete/carousel and create-time image selection remain missing on native. |
 | [DMP-025](#dmp-025) | OPEN | Pending |
 | [DMP-026](#dmp-026) | OPEN | Pending |
 | [DMP-027](#dmp-027) | TESTED_CODE | Real stock/movements, scoped search/pages and reasoned adjustment/recovery:61 inventory ORM/API and48 mobile tests. See INVENTORY_READINESS_2026_10_27.md. |
@@ -62,7 +191,7 @@ Approved rollout checkpoint: backend candidate `f67d770` and signed Android buil
 | [DMP-047](#dmp-047) | OPEN | Pending |
 | [DMP-048](#dmp-048) | OPEN | Pending |
 | [DMP-049](#dmp-049) | OPEN | Pending |
-| [DMP-050](#dmp-050) | OPEN | Pending |
+| [DMP-050](#dmp-050) | IN_PROGRESS | 2026-10-28: AdminHome loads /platform/overview/ counts/activity; native account/tenant/identity/ban administration actions remain absent. |
 | [DMP-051](#dmp-051) | OPEN | Pending |
 | [DMP-052](#dmp-052) | OPEN | Pending |
 | [DMP-053](#dmp-053) | TESTED_CODE | Actual manual/CBU settings and exact conversion, section-local PATCH/revision guard;40 settings/receipt mobile and73 backend checks. STORE_SETTINGS_READINESS_2026_10_27.md. |
@@ -70,24 +199,24 @@ Approved rollout checkpoint: backend candidate `f67d770` and signed Android buil
 | [DMP-055](#dmp-055) | IN_PROGRESS | Actual Telegram/preferences form and explicit send/test confirmation connected; unknown outcomes guarded. No live Telegram acceptance send performed. |
 | [DMP-056](#dmp-056) | IN_PROGRESS | Validated schedules/targets and manual action UI connected; invalid weekday/day rejected. Actual scheduled/manual delivery acceptance remains. |
 | [DMP-057](#dmp-057) | TESTED_CODE | 222 mobile tests, strict lint/tsc, 19 PostgreSQL support tests, full host/Chrome regression and actual installed API 36 Android owner/guest sidebar flow passed; see SUPPORT_MOBILE_VALIDATION.md and support-* evidence. |
-| [DMP-058](#dmp-058) | OPEN | Pending |
+| [DMP-058](#dmp-058) | IN_PROGRESS | 2026-10-28: reply-language selector and media-presence labels exist; image/voice/sticker sending/playback and full translated support UI remain absent. |
 | [DMP-059](#dmp-059) | IN_PROGRESS | Operator inbox/claim/close/reopen/read-through and assignment-gated replies implemented; component checks reject replying to another operator’s conversation, and actual PostgreSQL support tests cover assignment. |
-| [DMP-060](#dmp-060) | TESTED_CODE | Actual inbox/actions/deep links and recipient-safe direct FCM source, Firebase inputs validated;22 push plus57 activity backend checks. OS delivery/deploy external; NOTIFICATION_READINESS_2026_10_27.md. |
+| [DMP-060](#dmp-060) | IN_PROGRESS | 2026-10-28: real inbox/read/delete/preferences are present. DMP-132 reproduces missing /b2b target; read-only production check confirms push disabled and no configured project/sender file. Android native delivery and APNs remain unaccepted. |
 | [DMP-061](#dmp-061) | OPEN | Pending |
 | [DMP-062](#dmp-062) | OPEN | Pending |
 | [DMP-063](#dmp-063) | IN_PROGRESS | Owner-scoped real timeline/categories/search/pages/details connected and API-tested; advanced actor/date filters and all snapshot/link cases remain. |
-| [DMP-064](#dmp-064) | IN_PROGRESS | Actual audit-backed history respects owner/store scope; standalone full audit filters remain. Credential presentation hardening in progress. |
+| [DMP-064](#dmp-064) | IN_PROGRESS | 2026-10-28: owner history and credential-redacted snapshots exist; separate /audit/logs UI and full filters do not. Security redaction is already implemented, not still pending. |
 | [DMP-065](#dmp-065) | OPEN | Pending |
 | [DMP-066](#dmp-066) | OPEN | Pending |
 | [DMP-067](#dmp-067) | OPEN | Pending |
 | [DMP-068](#dmp-068) | IN_PROGRESS | Saved identity/address/header/footer/legal data/display flags,58/80mm PDFs and server line totals implemented; native print/fiscal provider acceptance remains. |
-| [DMP-069](#dmp-069) | OPEN | Pending |
-| [DMP-070](#dmp-070) | OPEN | Pending |
+| [DMP-069](#dmp-069) | IN_PROGRESS | 2026-10-28: saved 58/80mm width and native Print/PDF source exist; exact physical printer output and all desktop thermal layouts remain unverified. |
+| [DMP-070](#dmp-070) | IN_PROGRESS | 2026-10-28: public token copy link exists; native public receipt route, actual QR/barcode renderer and scan/open acceptance remain missing. |
 | [DMP-071](#dmp-071) | OPEN | Pending |
-| [DMP-072](#dmp-072) | OPEN | Pending |
+| [DMP-072](#dmp-072) | IN_PROGRESS | 2026-10-28: temporary native PDF and share sheet exist; explicit permanent save/reopen UX and real OS destination acceptance remain. |
 | [DMP-073](#dmp-073) | OPEN | Pending |
-| [DMP-074](#dmp-074) | OPEN | Pending |
-| [DMP-075](#dmp-075) | OPEN | Pending |
+| [DMP-074](#dmp-074) | IN_PROGRESS | 2026-10-28: legal-text route exists; help/docs library, Markdown/images, editing and certificate print remain missing. Sales DocumentsScreen is not that library. |
+| [DMP-075](#dmp-075) | IN_PROGRESS | 2026-10-28: native SQLite/financial journal and cart draft persistence exist, but no full offline catalog/stock/business authorization/sync. Do not equate a retry journal with desktop offline business parity. |
 | [DMP-076](#dmp-076) | OPEN | Pending |
 | [DMP-077](#dmp-077) | OPEN | Pending |
 | [DMP-078](#dmp-078) | IN_PROGRESS | Native journal screen lists active account/store intents, original payload summaries, explicit retry/busy status and confirmed results; 16 journal/reconciliation/UI tests pass; tsc/lint pass. |
@@ -95,7 +224,7 @@ Approved rollout checkpoint: backend candidate `f67d770` and signed Android buil
 | [DMP-080](#dmp-080) | OPEN | Pending |
 | [DMP-081](#dmp-081) | OPEN | Pending |
 | [DMP-082](#dmp-082) | OPEN | Pending |
-| [DMP-083](#dmp-083) | IN_PROGRESS | Genuine owner-signed standalone 1.0.0/build 1 APK built and installed on fresh API 36 Android; login/downloads/native version work with Metro stopped. Real APK export/local staging activation passed, preserving desktop metadata. See MOBILE_UPDATES_VALIDATION.md. |
+| [DMP-083](#dmp-083) | IN_PROGRESS | 2026-10-28: APK1.0.0/build5 is published from4ec8f46, signed/source checked and fully downloaded via HTTPS; public feed freshly confirmed. iOS release, installed build5 upgrade/data migration and physical native acceptance remain unexecuted; owner emulator untouched. |
 | [DMP-084](#dmp-084) | TESTED_CODE | tests/auth.test.tsx + login.test.tsx: unlinked bot gate, real bot link, polling confirmation and one automatic OTP; 17 auth/profile/gate/UI tests pass; tsc/lint pass. |
 | [DMP-085](#dmp-085) | TESTED_CODE | Linked-account initial OTP and concurrent bot confirmation tests pass; OTP UI appears only after otp_sent acknowledgment. |
 | [DMP-086](#dmp-086) | TESTED_CODE | Tests reject incomplete codes, prevent cooldown resend, and reset expired login tickets; UI countdown and back action tested. |
@@ -129,9 +258,9 @@ Approved rollout checkpoint: backend candidate `f67d770` and signed Android buil
 | [DMP-114](#dmp-114) | TESTED_CODE | 199 tests, strict lint/tsc pass. Actual installed Android API36 test found and fixed missing absolute keyboard offset; real keyboard price/quantity/checkout interaction, process-restart draft and confirmed synthetic sale passed. |
 | [DMP-115](#dmp-115) | OPEN | Pending |
 | [DMP-116](#dmp-116) | TESTED_CODE | Neutral/cancel feedback defaults to informational icon; errors announce an alert and use an error icon, with explicit feedback types and no success icon. Component regressions plus full 169-test suite pass. |
-| [DMP-117](#dmp-117) | OPEN | Pending |
+| [DMP-117](#dmp-117) | IN_PROGRESS | 2026-10-28: ListState distinguishes loading/error/empty and retry across core paged screens; full all-screen/network/native acceptance is not established by 518 tests. |
 | [DMP-118](#dmp-118) | OPEN | Pending |
-| [DMP-119](#dmp-119) | OPEN | Pending |
+| [DMP-119](#dmp-119) | IN_PROGRESS | 2026-10-28: LoginHero has one-shot/Reduce Motion source; broad native animation/list/memory/FPS evidence is still absent. |
 | [DMP-120](#dmp-120) | TESTED_CODE | Template launcher/adaptive/monochrome assets replaced by deterministic PNG renders of the approved ILBI vector mark; actual icon inspected. Expo doctor: 20/20; Android and iOS Hermes exports pass. |
 | [DMP-121](#dmp-121) | TESTED_CODE | Native receipt header test retains R&1, while exported HTML correctly contains R&amp;1; native Text no longer receives HTML entities. |
 | [DMP-122](#dmp-122) | TESTED_CODE | Actual isolated PostgreSQL/Django API test passes, including fractional sale and idempotent retry; 13 mobile contract/checkout tests pass against generated real serializer responses; tsc/lint pass. |
@@ -139,11 +268,13 @@ Approved rollout checkpoint: backend candidate `f67d770` and signed Android buil
 | [DMP-124](#dmp-124) | OPEN | Pending |
 | [DMP-125](#dmp-125) | OPEN | Pending |
 | [DMP-126](#dmp-126) | TESTED_CODE | Repository CI now runs mobile lint, tsc, Jest/real serializer contracts, Android+iOS Hermes exports, Docker phone interaction/Fast Refresh and evidence uploads. Matching local checks pass (176 tests, zero lint warnings, both exports, browser regression); YAML parses. |
-| [DMP-127](#dmp-127) | EXTERNAL_GATE | 2026-10-27 live npm audit reports 3 high entries / 1 Zod advisory after compatible Forge1.4.1 update. Expo CLI still requires Zod3 while the published patch is v4. Audit gate remains active; primary sources and resolution conditions in docs/DEPENDENCY_SECURITY.md. |
+| [DMP-127](#dmp-127) | EXTERNAL_GATE | 2026-10-28 fresh npm audit: 3 high and 13 low entries; gate exits1 and is not suppressed. No dependency update is part of this audit. |
 | [DMP-128](#dmp-128) | TESTED_CODE | Unused prototype imports/state and generic transition adapter removed; unused direct navigation dependencies removed while Router requirements remain. 176 tests and tsc pass; ESLint across all sources/tests reports zero errors and zero warnings. |
-| [DMP-129](#dmp-129) | OPEN | Pending |
+| [DMP-129](#dmp-129) | OPEN | 2026-10-28: shared SaleService still raises when DEBUG=false pending fiscal/OFD integration; production DEBUG=false confirmed read-only. No live financial write and no guard bypass performed. |
 | [DMP-130](#dmp-130) | OPEN | Pending |
 | [DMP-131](#dmp-131) | TESTED_CODE | Settings danger logout button now renders its icon white against the danger background; tsc/lint and phone navigation regression pass. |
+
+| [DMP-132](#dmp-132) | OPEN | 2026-10-28 source-function reproduction: backend TYPE_B2B_REQUEST + /b2b produces null destination; /sales/b2b/inbox/ positive control opens B2B. See evidence/parity-2026-10-28/notification-target-reproduction.json. |
 
 <!-- IMPLEMENTATION_LEDGER_END -->
 
@@ -159,7 +290,7 @@ Priority: P1 blocks reliable business use/data integrity or an essential operati
 
 A complete list of discoverable differences in this snapshot is the objective. Finite source review cannot prove that no unknown runtime bug exists. The final pass ledger states what was reviewed, how new findings were deduplicated, and the native/backend limitations.
 
-## Current counts
+## Historical baseline counts — 2026-10-24
 
 | Classification | Findings |
 | --- | ---: |
@@ -178,7 +309,7 @@ A complete list of discoverable differences in this snapshot is the objective. F
 | P2 | 69 |
 | P3 | 3 |
 
-## Desktop capability inventory and scope
+## Historical desktop capability inventory and scope — 2026-10-24
 
 **Baseline is implemented source, not a claim that every desktop business flow is production-ready.** In particular, the source deliberately closes retail POS when DEBUG is false pending fiscal integration (see DMP-129). Some desktop signatures are locally stored, not server-verified legal signing. Mixed payment is not supported by the current sale serializer, and unreachable dual-currency comments do not override POS’s explicit UZS-only checks.
 
@@ -251,137 +382,137 @@ Passes are additive and deduplicated; a newly noticed detail of an existing item
 
 | ID | Area | Priority | Classification | Finding |
 | --- | --- | --- | --- | --- |
-| [DMP-001](#dmp-001) | Auth | P1 | ABSENT | Terms acceptance and policy gate |
-| [DMP-002](#dmp-002) | Auth | P1 | ABSENT | Password reset, invitation onboarding and resume |
-| [DMP-003](#dmp-003) | Auth | P2 | ABSENT | Account profile, avatar and password management |
-| [DMP-004](#dmp-004) | Auth | P2 | ABSENT | Remembered login with native credential protection |
-| [DMP-005](#dmp-005) | Auth | P1 | PARTIAL | Account/session recovery UI |
-| [DMP-006](#dmp-006) | Stores | P1 | PARTIAL | Explicit multi-store choice and consistent store switching |
-| [DMP-007](#dmp-007) | Permissions | P1 | PARTIAL | Role/permission-aware navigation and action guards |
-| [DMP-008](#dmp-008) | Analytics | P2 | PARTIAL | Dashboard periods, custom dates and detailed analytics |
-| [DMP-009](#dmp-009) | Sales history | P1 | ABSENT | Dedicated sales list, server filters and pagination |
-| [DMP-010](#dmp-010) | Sales history | P1 | ABSENT | Full sale cancellation and reason |
-| [DMP-011](#dmp-011) | Sales history | P1 | ABSENT | Partial item cancellation and returned quantities |
-| [DMP-012](#dmp-012) | POS | P2 | ABSENT | Partner/wholesale price mode |
-| [DMP-013](#dmp-013) | POS | P1 | ABSENT | Live stock revalidation before accepting payment |
-| [DMP-014](#dmp-014) | POS | P1 | SOURCE-BUG | Non-UZS item handling and currency safety |
-| [DMP-015](#dmp-015) | POS | P2 | ABSENT | USD exchange calculator with current tenant rate |
-| [DMP-016](#dmp-016) | POS | P1 | ABSENT | Tax-inclusive/exclusive totals and settings expectation |
-| [DMP-017](#dmp-017) | POS | P1 | ABSENT | Expiry/batch warning at checkout |
-| [DMP-018](#dmp-018) | POS | P2 | ABSENT | Real camera barcode scanning |
-| [DMP-019](#dmp-019) | Catalog | P1 | PARTIAL | Server pagination and exact barcode lookup |
-| [DMP-020](#dmp-020) | Catalog | P2 | ABSENT | Category tree and category administration |
-| [DMP-021](#dmp-021) | Catalog | P2 | ABSENT | Product and variant creation/editing |
-| [DMP-022](#dmp-022) | Catalog | P2 | ABSENT | Persistent product prices and minimum-price policy |
-| [DMP-023](#dmp-023) | Catalog | P2 | ABSENT | Archive, restore and delete product lifecycle |
-| [DMP-024](#dmp-024) | Catalog | P2 | PARTIAL | Product images, thumbnails and gallery management |
-| [DMP-025](#dmp-025) | Catalog | P2 | ABSENT | Spreadsheet product import with preview/commit |
-| [DMP-026](#dmp-026) | Catalog | P2 | ABSENT | Product barcode generation and label printing |
-| [DMP-027](#dmp-027) | Inventory | P1 | MOCK-ONLY | Real stock list, movements and reconciliation |
-| [DMP-028](#dmp-028) | Inventory | P1 | ABSENT | Rapid multi-line stock intake |
-| [DMP-029](#dmp-029) | Inventory | P1 | ABSENT | Customer return, supplier return and write-off |
-| [DMP-030](#dmp-030) | Inventory | P1 | ABSENT | Batch stock, suppliers, expiry and protected costs |
-| [DMP-031](#dmp-031) | Inventory | P1 | ABSENT | Inter-store transfer dispatch, receipt, return and discrepancy |
-| [DMP-032](#dmp-032) | Inventory | P2 | ABSENT | Deficit view and low-stock operational workflow |
-| [DMP-033](#dmp-033) | Customers | P1 | PARTIAL | Authoritative customer list and balance summaries |
-| [DMP-034](#dmp-034) | Customers | P2 | PARTIAL | Customer editing, deletion, notes, code and due date |
-| [DMP-035](#dmp-035) | Customers | P1 | ABSENT | Customer purchase and payment ledger |
-| [DMP-036](#dmp-036) | Customers | P2 | ABSENT | Spreadsheet customer import |
-| [DMP-037](#dmp-037) | Debts | P1 | MOCK-ONLY | Real debt filters and collection |
-| [DMP-038](#dmp-038) | Debts | P1 | PARTIAL | Payment currency, cash/card, branch and note |
-| [DMP-039](#dmp-039) | Debts | P1 | ABSENT | Customer credit refund and payment correction |
-| [DMP-040](#dmp-040) | Cashbox | P1 | ABSENT | Open shift and current-register status |
-| [DMP-041](#dmp-041) | Cashbox | P1 | ABSENT | Close shift, counted cash and discrepancy explanation |
-| [DMP-042](#dmp-042) | Cashbox | P1 | ABSENT | Cash expenses/income and reusable categories |
-| [DMP-043](#dmp-043) | Cashbox | P1 | MOCK-ONLY | Historical Z-reports and share/print layouts |
-| [DMP-044](#dmp-044) | B2B | P1 | ABSENT | Incoming/outgoing B2B transaction lists |
-| [DMP-045](#dmp-045) | B2B | P1 | ABSENT | Accept B2B with destination product/category mapping |
-| [DMP-046](#dmp-046) | B2B | P1 | ABSENT | Reject, receive return and close B2B discrepancy |
-| [DMP-047](#dmp-047) | Team | P2 | ABSENT | Hire, edit, invite and lifecycle management |
-| [DMP-048](#dmp-048) | Team | P2 | ABSENT | Granular permission editor and role presets |
-| [DMP-049](#dmp-049) | Stores | P2 | ABSENT | Owner store creation and seller-profile binding |
-| [DMP-050](#dmp-050) | Platform administration | P2 | CONDITIONAL | Platform overview, account status and identity recovery |
-| [DMP-051](#dmp-051) | Platform administration | P2 | CONDITIONAL | Tenant administration, ownership transfer and activation |
-| [DMP-052](#dmp-052) | Platform administration | P2 | CONDITIONAL | Seller verification decisions and validity |
-| [DMP-053](#dmp-053) | Settings | P2 | ABSENT | Store currency settings and automatic CBU rate |
-| [DMP-054](#dmp-054) | Settings | P1 | ABSENT | Receipt identity, layout and tax configuration |
-| [DMP-055](#dmp-055) | Settings | P2 | ABSENT | Telegram destination, notification preferences and test |
-| [DMP-056](#dmp-056) | Settings | P2 | ABSENT | Scheduled and on-demand daily/shift/low-stock reports |
-| [DMP-057](#dmp-057) | Support | P2 | ABSENT | Authenticated and guest help conversations |
-| [DMP-058](#dmp-058) | Support | P2 | ABSENT | Attachments, voice, stickers and multilingual support UI |
-| [DMP-059](#dmp-059) | Support | P2 | CONDITIONAL | Operator inbox and customer/tenant profile actions |
-| [DMP-060](#dmp-060) | Notifications | P2 | ABSENT | Real notification inbox, unread count and actions |
-| [DMP-061](#dmp-061) | Workspace | P2 | ABSENT | Global search, favorites and quick tools |
-| [DMP-062](#dmp-062) | Workspace | P2 | ABSENT | Reminders, assignment, due dates and completion |
-| [DMP-063](#dmp-063) | History | P2 | ABSENT | Unified activity timeline and change snapshots |
-| [DMP-064](#dmp-064) | History | P2 | ABSENT | Audit journal with filters and detail |
-| [DMP-065](#dmp-065) | Documents | P1 | MOCK-ONLY | Sale-linked A4 invoice with authoritative rows |
-| [DMP-066](#dmp-066) | Documents | P1 | PARTIAL | Sender and receiver signatures with persisted document identity |
-| [DMP-067](#dmp-067) | Documents | P1 | MOCK-ONLY | Actual document PDF/share action |
-| [DMP-068](#dmp-068) | Receipts | P1 | PARTIAL | Saved receipt snapshot, taxes and product identifiers |
-| [DMP-069](#dmp-069) | Receipts | P1 | PARTIAL | Thermal 58/80 mm format and configurable printer output |
-| [DMP-070](#dmp-070) | Receipts | P2 | PARTIAL | Real QR/barcode and public receipt viewing |
-| [DMP-071](#dmp-071) | Receipts | P2 | ABSENT | Rotate/revoke public receipt share token |
-| [DMP-072](#dmp-072) | Receipts | P2 | PARTIAL | Permanent file saving and genuine file viewing |
-| [DMP-073](#dmp-073) | Exports | P2 | ABSENT | Excel/CSV exports of business lists |
-| [DMP-074](#dmp-074) | Documentation | P2 | ABSENT | Real help/legal documentation and certificate printing |
-| [DMP-075](#dmp-075) | Offline | P1 | ABSENT | Usable offline data store and business write journal |
-| [DMP-076](#dmp-076) | Offline | P1 | ABSENT | Offline enrollment, account grants and credential expiry |
-| [DMP-077](#dmp-077) | Offline | P1 | ABSENT | Automatic reconnect synchronization with ordered dependencies |
-| [DMP-078](#dmp-078) | Offline | P2 | ABSENT | Sync center, progress, priority and retry controls |
-| [DMP-079](#dmp-079) | Offline | P1 | PARTIAL | Uncertain result reconciliation and journal migration |
-| [DMP-080](#dmp-080) | Security | P1 | ABSENT | Session auto-lock and background privacy |
-| [DMP-081](#dmp-081) | Offline | P1 | ABSENT | Encrypted backup, restore and pending-work preservation |
-| [DMP-082](#dmp-082) | Offline | P2 | CONDITIONAL | Connect to an existing local primary register |
-| [DMP-083](#dmp-083) | Release | P1 | UNVERIFIED | Installed mobile package, updates and data migration |
-| [DMP-084](#dmp-084) | Auth | P1 | ABSENT | Telegram bot connection onboarding is missing |
-| [DMP-085](#dmp-085) | Auth | P1 | SOURCE-BUG | Initial OTP is never requested by mobile login |
-| [DMP-086](#dmp-086) | Auth | P2 | PARTIAL | OTP validity, resend cooldown and expired-ticket recovery |
-| [DMP-087](#dmp-087) | Auth | P1 | SOURCE-BUG | Membership permission metadata is overwritten by a thinner response |
-| [DMP-088](#dmp-088) | Auth | P1 | SOURCE-BUG | Partially initialized profile becomes an authenticated session |
-| [DMP-089](#dmp-089) | Catalog | P2 | SOURCE-BUG | Variant parent-product ID mapping differs from backend |
-| [DMP-090](#dmp-090) | Checkout | P1 | ABSENT | Per-sale debt due-date selection and payload |
-| [DMP-091](#dmp-091) | Money input | P1 | REPRODUCED | Decimal prices and payments are changed into different amounts |
-| [DMP-092](#dmp-092) | Cart | P2 | PARTIAL | Fractional quantity entry and precise line display |
-| [DMP-093](#dmp-093) | Checkout | P1 | SOURCE-BUG | Confirmed change uses the earlier local total, not accepted server total |
-| [DMP-094](#dmp-094) | Checkout | P2 | PARTIAL | Payment draft survives neither navigation nor process restart |
-| [DMP-095](#dmp-095) | Receipts | P1 | SOURCE-BUG | Card/debt receipts are labeled as cash |
-| [DMP-096](#dmp-096) | Receipts | P2 | SOURCE-BUG | Invalid/missing sale ID waits forever without an actionable error |
-| [DMP-097](#dmp-097) | Receipts | P2 | UNVERIFIED | Route-parameter changes do not reset the loaded receipt/PDF state |
-| [DMP-098](#dmp-098) | API | P2 | REPRODUCED | Declared binary response handling returns text instead of a file |
-| [DMP-099](#dmp-099) | API | P1 | REPRODUCED | Runtime API-origin changes retain the current authorization |
-| [DMP-100](#dmp-100) | Persistence | P1 | SOURCE-BUG | Server identity is absent from draft and financial-intent keys |
-| [DMP-101](#dmp-101) | Financial operations | P1 | REPRODUCED | Concurrent submissions get different retry identities |
-| [DMP-102](#dmp-102) | Persistence | P1 | SOURCE-BUG | A transient cart restore failure can overwrite the saved draft |
-| [DMP-103](#dmp-103) | Persistence | P1 | PARTIAL | Saved cart records have no schema validation or migration |
-| [DMP-104](#dmp-104) | Persistence | P2 | PARTIAL | Cart mutation has no readiness/saved/error feedback |
-| [DMP-105](#dmp-105) | Lists | P2 | SOURCE-BUG | Older requests can overwrite newer search/store results |
-| [DMP-106](#dmp-106) | Customers | P2 | PARTIAL | Customer picker only loads and searches the first server page |
-| [DMP-107](#dmp-107) | API | P2 | PARTIAL | No default request timeout or structured retry/backoff UX |
-| [DMP-108](#dmp-108) | Financial operations | P1 | SOURCE-BUG | Storage cleanup error can hide the original checkout failure |
-| [DMP-109](#dmp-109) | Cart UX | P2 | SOURCE-BUG | Clear-cart action has no confirmation or undo |
-| [DMP-110](#dmp-110) | Navigation | P2 | REPRODUCED | Bottom navigation disappears on secondary main modules |
-| [DMP-111](#dmp-111) | Touch UX | P2 | REPRODUCED | Price editor touch target is approximately 20 px high |
-| [DMP-112](#dmp-112) | Accessibility | P2 | PARTIAL | Input labels and icon controls lack consistent accessible names |
-| [DMP-113](#dmp-113) | Native layout | P2 | UNVERIFIED | Bottom safe areas are not handled consistently outside tabs |
-| [DMP-114](#dmp-114) | Native layout | P2 | UNVERIFIED | Price/customer/signature sheets lack verified keyboard avoidance |
-| [DMP-115](#dmp-115) | Accessibility | P2 | UNVERIFIED | Large text and small-screen acceptance covers too little |
-| [DMP-116](#dmp-116) | Feedback | P2 | SOURCE-BUG | Error and cancellation feedback uses a success presentation |
-| [DMP-117](#dmp-117) | Loading UX | P2 | PARTIAL | Lists conflate initial loading, empty and failed states |
-| [DMP-118](#dmp-118) | Time handling | P2 | PARTIAL | Business timestamps use device timezone instead of a consistent store timezone |
-| [DMP-119](#dmp-119) | Motion/performance | P2 | UNVERIFIED | No native animation, Reduce Motion or large-list performance evidence |
-| [DMP-120](#dmp-120) | Brand/release | P2 | PARTIAL | Launcher and adaptive icons still reference template assets |
-| [DMP-121](#dmp-121) | Receipt display | P3 | SOURCE-BUG | HTML escaping is applied to a native header string |
-| [DMP-122](#dmp-122) | Quality | P1 | PARTIAL | Test suite lacks real API-contract and non-fixture coverage |
-| [DMP-123](#dmp-123) | Desktop/web quality | P2 | REPRODUCED | Document-share browser regression expects the obsolete domain |
-| [DMP-124](#dmp-124) | Platform administration | P2 | CONDITIONAL | Login-throttle ban recovery is distinct from account status |
-| [DMP-125](#dmp-125) | Platform administration | P2 | CONDITIONAL | Global support Telegram settings and delivery test |
-| [DMP-126](#dmp-126) | Quality | P2 | ABSENT | Mobile checks are not part of the repository CI workflow |
-| [DMP-127](#dmp-127) | Dependencies | P2 | UNVERIFIED | Expo toolchain has unresolved high-severity audit entries |
-| [DMP-128](#dmp-128) | Maintenance | P3 | PARTIAL | Unused prototype code and navigation dependencies remain |
-| [DMP-129](#dmp-129) | Shared platform boundary | P1 | SHARED-BLOCKER | Production retail POS is intentionally closed pending fiscal integration |
-| [DMP-130](#dmp-130) | Preview consistency | P2 | SOURCE-BUG | Synthetic data and mutations diverge across mobile screens |
-| [DMP-131](#dmp-131) | Accessibility | P3 | SOURCE-BUG | Logout icon uses the same color as its button background |
+| [DMP-001](#dmp-001) | TESTED_CODE | Explicit consent checkbox and sessionEntry business gate tested; legal document routes fetch server content. Auth/gates: 17 tests pass; tsc/lint pass. |
+| [DMP-002](#dmp-002) | IN_PROGRESS | 2026-10-28: basic request/confirm/change-with-old reset exists and login tests pass; invitation SetupAccount/resume/deep-link onboarding is still absent. |
+| [DMP-003](#dmp-003) | TESTED_CODE | 2026-10-28: profile edit/password/logout and avatar upload/delete plus sidebar avatar are implemented; 518 mobile tests pass including the actual mocked-picker/API contract checks in coreReadiness/productEditor/imageUpload. Native avatar UAT remains. |
+| [DMP-004](#dmp-004) | OPEN | Pending |
+| [DMP-005](#dmp-005) | TESTED_CODE | Profile failure shows retry/logout recovery; retry component and delayed profile-after-logout tests pass. |
+| [DMP-006](#dmp-006) | TESTED_CODE | Validated membership selection, explicit multi-store gate, saved account/server-scoped choice, Home switch entry and store-choice UI tested. |
+| [DMP-007](#dmp-007) | TESTED_CODE | 9 permission/checkout tests pass: active-membership grants, cross-store isolation, owner-only actions, admin separation and denied sale POST. Router guards and navigation/action checks added; tsc/lint pass. |
+| [DMP-008](#dmp-008) | IN_PROGRESS | 2026-10-28: four period controls exist on BOTH clients. Profit/cost/store overview/interactive charts remain unequal; Dashboard.jsx:119 passes null custom dates, so custom dashboard dates are NOT counted as an existing web-only UI capability. |
+| [DMP-009](#dmp-009) | TESTED_CODE | Dedicated sales/customer/date/status/payment filters, pagination/detail:28 mobile and33 PostgreSQL cases; SALES_HISTORY_READINESS_2026_10_27.md. Native/deploy gate remains. |
+| [DMP-010](#dmp-010) | TESTED_CODE | Reasoned full returns use per-dialog IDs, actor/store-bound receipts and original-key concurrency/rollback coverage; native financial acceptance pending. |
+| [DMP-011](#dmp-011) | TESTED_CODE | Exact fractional item returns, remaining-quantity checks, actor-bound acknowledgements and retained completed keys tested;33 real sales backend cases. |
+| [DMP-012](#dmp-012) | TESTED_CODE | Cart wholesale toggle uses configured partner prices, preserves negotiated overrides, persists mode and sends is_partner_sale. Cart persistence/quote tests verify mode, prices and missing partner configuration; tsc/lint pass. |
+| [DMP-013](#dmp-013) | TESTED_CODE | Checkout re-reads selected live variants immediately before a new sale; stock reduction between opening checkout and confirming blocks POST. Quote/checkout suites: 21 tests pass; tsc/lint pass. |
+| [DMP-014](#dmp-014) | TESTED_CODE | Catalog retains USD label and disables retail add; cart domain rejects USD and live quote checks current currency. USD screen/domain/quote tests pass. |
+| [DMP-015](#dmp-015) | IN_PROGRESS | 2026-10-28: StoreSettingsScreen:130 has conversion with store rates, but it is settings-permission gated and not reachable beside POS for an ordinary cashier. Not wholly absent. |
+| [DMP-016](#dmp-016) | TESTED_CODE | Integer per-line VAT inclusive/exclusive totals, current tenant receipt settings and expected_tax_settings POST guard implemented. Fractional backend contract and VAT/checkout tests pass; backend receipt-tax suite passes. |
+| [DMP-017](#dmp-017) | TESTED_CODE | Live expired_batches render their actual batch/date/quantity and require an explicit acknowledgement keyed to those warnings. Integration test blocks POST before consent and allows it afterward. |
+| [DMP-018](#dmp-018) | TESTED_CODE | 199 mobile tests plus SDK58 permission introspection and host phone regression pass. Actual installed Android deny/grant dialogs and virtual preview work; Android camera registry verifies active→background closed→resume active→dismiss closed (camera.json). |
+| [DMP-019](#dmp-019) | TESTED_CODE | Paged catalog and exact barcode mode implemented; pagination/real-shape screen tests pass, including complete barcode query; full Jest suite, tsc and lint pass. |
+| [DMP-020](#dmp-020) | TESTED_CODE | 14 targeted mobile checks and 36 isolated PostgreSQL catalog/category API/service checks passed; Chrome created USD parent/child, followed category filter and deleted both with persistent tabs. tsc/strict lint passed. |
+| [DMP-021](#dmp-021) | TESTED_CODE | 192 mobile tests, 37 real PostgreSQL catalog API/service tests and interactive Chrome product/variant create/edit flow passed. Actual receipt snapshots retain old names/prices after catalog edits. tsc/strict lint passed. |
+| [DMP-022](#dmp-022) | TESTED_CODE | Actual backend accepts negotiated price below the advisory minimum and preserves old receipt prices; Chrome changed catalog default while existing cart kept its negotiated price. All 192 mobile tests passed. |
+| [DMP-023](#dmp-023) | TESTED_CODE | Actual PostgreSQL product/variant archive and restore, archived POS exclusion and preserved stock/history on DELETE tested; Chrome lifecycle flow passed; read-only UI and confirmed rejection tests pass. |
+| [DMP-024](#dmp-024) | IN_PROGRESS | 2026-10-28: existing product main-image PATCH is in build5. Web ProductToolsModal gallery upload/delete/carousel and create-time image selection remain missing on native. |
+| [DMP-025](#dmp-025) | OPEN | Pending |
+| [DMP-026](#dmp-026) | OPEN | Pending |
+| [DMP-027](#dmp-027) | TESTED_CODE | Real stock/movements, scoped search/pages and reasoned adjustment/recovery:61 inventory ORM/API and48 mobile tests. See INVENTORY_READINESS_2026_10_27.md. |
+| [DMP-028](#dmp-028) | TESTED_CODE | Multi-line intake with actual supplier/invoice/cost/batch/expiry, persisted drafts and capability gate; once-only/rollback tested. Native acceptance pending. |
+| [DMP-029](#dmp-029) | TESTED_CODE | Actual customer/supplier returns and write-off, batch selection/reasons and durable keyed receipts;61 inventory/48 mobile checks passed. |
+| [DMP-030](#dmp-030) | TESTED_CODE | Real batch selection/expiry filters, exact quantities and protected supplier/cost visibility. Replays use current permissions; native acceptance pending. |
+| [DMP-031](#dmp-031) | TESTED_CODE | Dispatch, mapped partial receipt, physical return and owner discrepancy closure; real concurrency/rollback/permission checks passed. No physical-return bypass. |
+| [DMP-032](#dmp-032) | IN_PROGRESS | Real quantity sorting/expiry filters and notification-to-stock navigation work; dedicated deficit report/operational delivery remains. |
+| [DMP-033](#dmp-033) | TESTED_CODE | Real paged customer list/search/store-wide debt summaries and basic create/edit;29 core mobile and12 API/ORM cases passed. |
+| [DMP-034](#dmp-034) | IN_PROGRESS | Actual basic create/name/note editing connected; code/due-date/archive/delete lifecycle remains separate. |
+| [DMP-035](#dmp-035) | OPEN | Pending |
+| [DMP-036](#dmp-036) | OPEN | Pending |
+| [DMP-037](#dmp-037) | IN_PROGRESS | Actual debtor search/summary and guarded collection/recovery work; overdue/soon/future filters and installed restart acceptance remain. |
+| [DMP-038](#dmp-038) | TESTED_CODE | Exact UZS/USD cash/card/branch/note, authoritative quote, actor-bound ack and stale-balance/no-new-credit guard:83 backend,40 quote and16 UI checks plus journal tests. See DEBT_QUOTE_PROTOCOL_2026_10_27.md. |
+| [DMP-039](#dmp-039) | OPEN | Pending |
+| [DMP-040](#dmp-040) | TESTED_CODE | Real current/open shift, UZS/USD cash, stale report protection and original-key receipt protocol; cashbox45 mobile /12 PostgreSQL tests passed. Deploy/native gate remains; see CASHBOX_READINESS_2026_10_27.md. |
+| [DMP-041](#dmp-041) | TESTED_CODE | Counted close/discrepancy/staff notes, reread changed totals, exact acknowledgement and atomic report/shift/inbox rollback tested; native acceptance pending. |
+| [DMP-042](#dmp-042) | TESTED_CODE | Real paged income/expense lists and keyed writes, editable dates, source/category reuse scoped to server/account/store; cashbox45/12 tests passed. More list filter controls remain. |
+| [DMP-043](#dmp-043) | IN_PROGRESS | Authoritative historical Z-report list/detail/PDF sharing connected and API/component tested. Full desktop layout variants, printer/native sharing acceptance remain; see CORE_API_READINESS_2026_10_27.md. |
+| [DMP-044](#dmp-044) | TESTED_CODE | Actual scoped B2B incoming/outgoing lists, detail and escaped PDF;33 PostgreSQL/23 mobile checks and host Chrome flow passed. See B2B_API_READINESS_2026_10_27.md. |
+| [DMP-045](#dmp-045) | TESTED_CODE | Permitted category/variant mapping, durable actor/payload receipts and exact1.250 acceptance verified by ORM and synthetic Chrome. |
+| [DMP-046](#dmp-046) | TESTED_CODE | Reject, physical-return receipt and owner-only discrepancy closure have once-only stock/debt tests. Dispatched goods cannot be generically cancelled. |
+| [DMP-047](#dmp-047) | OPEN | Pending |
+| [DMP-048](#dmp-048) | OPEN | Pending |
+| [DMP-049](#dmp-049) | OPEN | Pending |
+| [DMP-050](#dmp-050) | IN_PROGRESS | 2026-10-28: AdminHome loads /platform/overview/ counts/activity; native account/tenant/identity/ban administration actions remain absent. |
+| [DMP-051](#dmp-051) | OPEN | Pending |
+| [DMP-052](#dmp-052) | OPEN | Pending |
+| [DMP-053](#dmp-053) | TESTED_CODE | Actual manual/CBU settings and exact conversion, section-local PATCH/revision guard;40 settings/receipt mobile and73 backend checks. STORE_SETTINGS_READINESS_2026_10_27.md. |
+| [DMP-054](#dmp-054) | TESTED_CODE | Real receipt/tax configuration and immutable saved identity/layout/server totals;40 mobile/73 backend and host persistence/snapshot checks. Native/fiscal acceptance remains. |
+| [DMP-055](#dmp-055) | IN_PROGRESS | Actual Telegram/preferences form and explicit send/test confirmation connected; unknown outcomes guarded. No live Telegram acceptance send performed. |
+| [DMP-056](#dmp-056) | IN_PROGRESS | Validated schedules/targets and manual action UI connected; invalid weekday/day rejected. Actual scheduled/manual delivery acceptance remains. |
+| [DMP-057](#dmp-057) | TESTED_CODE | 222 mobile tests, strict lint/tsc, 19 PostgreSQL support tests, full host/Chrome regression and actual installed API 36 Android owner/guest sidebar flow passed; see SUPPORT_MOBILE_VALIDATION.md and support-* evidence. |
+| [DMP-058](#dmp-058) | IN_PROGRESS | 2026-10-28: reply-language selector and media-presence labels exist; image/voice/sticker sending/playback and full translated support UI remain absent. |
+| [DMP-059](#dmp-059) | IN_PROGRESS | Operator inbox/claim/close/reopen/read-through and assignment-gated replies implemented; component checks reject replying to another operator’s conversation, and actual PostgreSQL support tests cover assignment. |
+| [DMP-060](#dmp-060) | IN_PROGRESS | 2026-10-28: real inbox/read/delete/preferences are present. DMP-132 reproduces missing /b2b target; read-only production check confirms push disabled and no configured project/sender file. Android native delivery and APNs remain unaccepted. |
+| [DMP-061](#dmp-061) | OPEN | Pending |
+| [DMP-062](#dmp-062) | OPEN | Pending |
+| [DMP-063](#dmp-063) | IN_PROGRESS | Owner-scoped real timeline/categories/search/pages/details connected and API-tested; advanced actor/date filters and all snapshot/link cases remain. |
+| [DMP-064](#dmp-064) | IN_PROGRESS | 2026-10-28: owner history and credential-redacted snapshots exist; separate /audit/logs UI and full filters do not. Security redaction is already implemented, not still pending. |
+| [DMP-065](#dmp-065) | OPEN | Pending |
+| [DMP-066](#dmp-066) | OPEN | Pending |
+| [DMP-067](#dmp-067) | OPEN | Pending |
+| [DMP-068](#dmp-068) | IN_PROGRESS | Saved identity/address/header/footer/legal data/display flags,58/80mm PDFs and server line totals implemented; native print/fiscal provider acceptance remains. |
+| [DMP-069](#dmp-069) | IN_PROGRESS | 2026-10-28: saved 58/80mm width and native Print/PDF source exist; exact physical printer output and all desktop thermal layouts remain unverified. |
+| [DMP-070](#dmp-070) | IN_PROGRESS | 2026-10-28: public token copy link exists; native public receipt route, actual QR/barcode renderer and scan/open acceptance remain missing. |
+| [DMP-071](#dmp-071) | OPEN | Pending |
+| [DMP-072](#dmp-072) | IN_PROGRESS | 2026-10-28: temporary native PDF and share sheet exist; explicit permanent save/reopen UX and real OS destination acceptance remain. |
+| [DMP-073](#dmp-073) | OPEN | Pending |
+| [DMP-074](#dmp-074) | IN_PROGRESS | 2026-10-28: legal-text route exists; help/docs library, Markdown/images, editing and certificate print remain missing. Sales DocumentsScreen is not that library. |
+| [DMP-075](#dmp-075) | IN_PROGRESS | 2026-10-28: native SQLite/financial journal and cart draft persistence exist, but no full offline catalog/stock/business authorization/sync. Do not equate a retry journal with desktop offline business parity. |
+| [DMP-076](#dmp-076) | OPEN | Pending |
+| [DMP-077](#dmp-077) | OPEN | Pending |
+| [DMP-078](#dmp-078) | IN_PROGRESS | Native journal screen lists active account/store intents, original payload summaries, explicit retry/busy status and confirmed results; 16 journal/reconciliation/UI tests pass; tsc/lint pass. |
+| [DMP-079](#dmp-079) | IN_PROGRESS | Original-key reconciliation, stale-session/foreign-origin guards and scoped legacy-sale review with cart backup/tombstone implemented; 16 tests pass. Unscoped legacy records are retained and never transmitted. |
+| [DMP-080](#dmp-080) | OPEN | Pending |
+| [DMP-081](#dmp-081) | OPEN | Pending |
+| [DMP-082](#dmp-082) | OPEN | Pending |
+| [DMP-083](#dmp-083) | IN_PROGRESS | 2026-10-28: APK1.0.0/build5 is published from4ec8f46, signed/source checked and fully downloaded via HTTPS; public feed freshly confirmed. iOS release, installed build5 upgrade/data migration and physical native acceptance remain unexecuted; owner emulator untouched. |
+| [DMP-084](#dmp-084) | TESTED_CODE | tests/auth.test.tsx + login.test.tsx: unlinked bot gate, real bot link, polling confirmation and one automatic OTP; 17 auth/profile/gate/UI tests pass; tsc/lint pass. |
+| [DMP-085](#dmp-085) | TESTED_CODE | Linked-account initial OTP and concurrent bot confirmation tests pass; OTP UI appears only after otp_sent acknowledgment. |
+| [DMP-086](#dmp-086) | TESTED_CODE | Tests reject incomplete codes, prevent cooldown resend, and reset expired login tickets; UI countdown and back action tested. |
+| [DMP-087](#dmp-087) | TESTED_CODE | profile.test.ts: 4 tests passed using membership-shaped server data; AuthProvider now retains /auth/me permissions and rejects a thin tenant response. |
+| [DMP-088](#dmp-088) | TESTED_CODE | auth.test.tsx/profile.test.ts: 10 tests passed; no authenticated profile on lookup failure, no stale profile resurrection after logout, authoritative membership retained. |
+| [DMP-089](#dmp-089) | TESTED_CODE | 4 catalog contract tests pass: backend product parent field maps to valid cart ID, malformed records rejected, decimal price fallback verified; tsc/lint pass. |
+| [DMP-090](#dmp-090) | TESTED_CODE | Per-sale optional ISO debt deadline input/payload added; valid date reaches sale POST, invalid calendar date is blocked. Financial suite: 33 tests pass; tsc/lint pass. |
+| [DMP-091](#dmp-091) | TESTED_CODE | 26 targeted Jest tests passed: money.test.ts, cartPrice.test.tsx, checkout.test.tsx; typecheck passed; lint 0 errors. Decimal and negative-input screen cases included. |
+| [DMP-092](#dmp-092) | TESTED_CODE | Dedicated decimal quantity sheet accepts 0,125 with three-place validation. BigInt line math and exact fractional increment tests pass; Docker browser applies 0,125 then restores quantity 2. |
+| [DMP-093](#dmp-093) | TESTED_CODE | Confirmed change uses Decimal-compatible accepted server total. Regression test: 30,000 tendered and 24,000.50 server total produces 5,999.50; no earlier local-total substitution. |
+| [DMP-094](#dmp-094) | TESTED_CODE | Version-3 origin/account/store cart persists payment method, raw amount, deadline and stable cart ID. Remount and v2 backup/migration tests pass. |
+| [DMP-095](#dmp-095) | TESTED_CODE | Card/debt receipt rendering tests verify Karta/Nasiya labels and no cash/change rows; HTML output uses the same payment selection. |
+| [DMP-096](#dmp-096) | TESTED_CODE | 9 receipt regression tests pass: missing/invalid IDs show an actionable error, request failure offers retry; tsc/lint pass. |
+| [DMP-097](#dmp-097) | TESTED_CODE | Receipt scope/ID/mode changes remount isolated state. Tests generate a mocked PDF then change ID and verify cleared PDF state; late old request is ignored. |
+| [DMP-098](#dmp-098) | TESTED_CODE | client.test.ts: 5 tests passed, including binary Blob preservation and explicit text; existing refresh/stale-session/failed-POST regressions retained. |
+| [DMP-099](#dmp-099) | TESTED_CODE | client.test.ts: 10 tests passed, including clearing authorization before server-origin change and rejecting credential-bearing invalid URLs. |
+| [DMP-100](#dmp-100) | TESTED_CODE | 26 persistence/identity/draft tests passed. Equal account/store IDs on distinct API servers restore separate carts and use separate financial identities; original data retained. |
+| [DMP-101](#dmp-101) | TESTED_CODE | 11 transaction/identity tests pass: 40 concurrent increments across connections, atomic rollback, 20 same-intent submissions, distinct pending carts serialized by atomic sale lock, retained confirmed cart key. Native SQLite adapter compiles; native DB runtime remains unexecuted. |
+| [DMP-102](#dmp-102) | TESTED_CODE | Injected read failure and corrupt-data tests passed: no empty overwrite; draft remains stored; explicit retry restores original items. |
+| [DMP-103](#dmp-103) | TESTED_CODE | drafts.test.ts validates version/server/account/store, IDs, numeric types/finite quantities/prices and fractional precision; corrupt data is blocked and retained. |
+| [DMP-104](#dmp-104) | TESTED_CODE | Persistence tests cover failed write, visible error state, blocked unready mutations, retry and flush; global saving/error UI and catalog readiness guard added. Typecheck/lint pass. |
+| [DMP-105](#dmp-105) | TESTED_CODE | Search/store sequencing and AbortController guards implemented in paged resources and dashboard. Deferred-response and store-switch tests pass; full Jest suite/tsc/lint pass. |
+| [DMP-106](#dmp-106) | TESTED_CODE | Customer picker uses server search and numbered pages with visible load/retry controls. UI test selects a customer on page 2; full Jest suite/tsc/lint pass. |
+| [DMP-107](#dmp-107) | TESTED_CODE | client.test.ts: deadline/uncertain-outcome, 429 Retry-After and refresh-401 metadata/session-clear notification tests passed. |
+| [DMP-108](#dmp-108) | TESTED_CODE | Failed rejection persistence retains original server error. Confirmed result remains visible after local save failure; local-only retry never repeats POST. 33 financial tests/tsc/lint pass. |
+| [DMP-109](#dmp-109) | TESTED_CODE | Clear-cart sheet offers retain/explicit clear actions. UI test proves neither opening nor cancellation clears data; confirmed clear resets cart identity/payment. Pending journal records remain preserved. |
+| [DMP-110](#dmp-110) | VERIFIED_RUNTIME | Docker Chrome phone preview passed: visible five-tab navigation in Documents, Inventory, Customers, Reports and Settings; sidebar navigation, theme, price, live refresh and checkout regression pass. |
+| [DMP-111](#dmp-111) | VERIFIED_RUNTIME | Docker Chrome phone test asserts editable price target height >=44px; price negotiation and fractional quantity interaction pass at the phone viewport. |
+| [DMP-112](#dmp-112) | TESTED_CODE | All current raw TextInputs have explicit accessible names; icon-only controls have labels; shared Button retains name and busy/disabled state while loading. 169 Jest tests, tsc and lint pass; phone browser regression passes. |
+| [DMP-113](#dmp-113) | TESTED_CODE | Fullscreen checkout/receipt and login handle bottom insets; secondary screens retain inset-aware tabs; drawer/footer and modal sheets consume bottom insets. Full 169-test/tsc/lint and web phone regression pass. |
+| [DMP-114](#dmp-114) | TESTED_CODE | 199 tests, strict lint/tsc pass. Actual installed Android API36 test found and fixed missing absolute keyboard offset; real keyboard price/quantity/checkout interaction, process-restart draft and confirmed synthetic sale passed. |
+| [DMP-115](#dmp-115) | OPEN | Pending |
+| [DMP-116](#dmp-116) | TESTED_CODE | Neutral/cancel feedback defaults to informational icon; errors announce an alert and use an error icon, with explicit feedback types and no success icon. Component regressions plus full 169-test suite pass. |
+| [DMP-117](#dmp-117) | IN_PROGRESS | 2026-10-28: ListState distinguishes loading/error/empty and retry across core paged screens; full all-screen/network/native acceptance is not established by 518 tests. |
+| [DMP-118](#dmp-118) | OPEN | Pending |
+| [DMP-119](#dmp-119) | IN_PROGRESS | 2026-10-28: LoginHero has one-shot/Reduce Motion source; broad native animation/list/memory/FPS evidence is still absent. |
+| [DMP-120](#dmp-120) | TESTED_CODE | Template launcher/adaptive/monochrome assets replaced by deterministic PNG renders of the approved ILBI vector mark; actual icon inspected. Expo doctor: 20/20; Android and iOS Hermes exports pass. |
+| [DMP-121](#dmp-121) | TESTED_CODE | Native receipt header test retains R&1, while exported HTML correctly contains R&amp;1; native Text no longer receives HTML entities. |
+| [DMP-122](#dmp-122) | TESTED_CODE | Actual isolated PostgreSQL/Django API test passes, including fractional sale and idempotent retry; 13 mobile contract/checkout tests pass against generated real serializer responses; tsc/lint pass. |
+| [DMP-123](#dmp-123) | VERIFIED_RUNTIME | frontend npm run test:document-share passes in real Chrome: public links, offline/pending recovery, clipboard/cancel, downloadable 58/80mm/A4/multipage PDFs and QR/tax preservation. Obsolete domain assertion updated to ilbi.uz and dialog-close helper now waits for committed closure. |
+| [DMP-124](#dmp-124) | OPEN | Pending |
+| [DMP-125](#dmp-125) | OPEN | Pending |
+| [DMP-126](#dmp-126) | TESTED_CODE | Repository CI now runs mobile lint, tsc, Jest/real serializer contracts, Android+iOS Hermes exports, Docker phone interaction/Fast Refresh and evidence uploads. Matching local checks pass (176 tests, zero lint warnings, both exports, browser regression); YAML parses. |
+| [DMP-127](#dmp-127) | EXTERNAL_GATE | 2026-10-28 fresh npm audit: 3 high and 13 low entries; gate exits1 and is not suppressed. No dependency update is part of this audit. |
+| [DMP-128](#dmp-128) | TESTED_CODE | Unused prototype imports/state and generic transition adapter removed; unused direct navigation dependencies removed while Router requirements remain. 176 tests and tsc pass; ESLint across all sources/tests reports zero errors and zero warnings. |
+| [DMP-129](#dmp-129) | OPEN | 2026-10-28: shared SaleService still raises when DEBUG=false pending fiscal/OFD integration; production DEBUG=false confirmed read-only. No live financial write and no guard bypass performed. |
+| [DMP-130](#dmp-130) | OPEN | Pending |
+| [DMP-131](#dmp-131) | TESTED_CODE | Settings danger logout button now renders its icon white against the danger background; tsc/lint and phone navigation regression pass. |
 
 ## Detailed findings
 
