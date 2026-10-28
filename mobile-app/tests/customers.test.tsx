@@ -13,10 +13,11 @@ import { parseMoneyMinor } from '../src/domain/money';
 let mockTenant = { id: 1, name: 'Store', is_owner: true, permissions: [] as string[] };
 let mockUser = { id: 7, role: 'owner', terms_accepted: true, tenants: [mockTenant] };
 let mockParams = { id: '1' };
+let mockRefocus: () => void;
 const mockNavigate = jest.fn();
 jest.mock('../src/features/auth/AuthContext', () => ({ useAuth: () => ({ user: mockUser, activeTenant: mockTenant }) }));
 jest.mock('../src/navigation/useAppNavigation', () => ({ useAppNavigation: () => ({ navigate: mockNavigate, goBack: jest.fn(), openDrawer: jest.fn() }) }));
-jest.mock('expo-router', () => ({ useLocalSearchParams: () => mockParams }));
+jest.mock('expo-router', () => ({ useLocalSearchParams: () => mockParams, useFocusEffect: (callback: () => void) => { mockRefocus = callback; jest.requireActual('react').useEffect(callback, [callback]); } }));
 jest.mock('../src/api/client', () => ({ request: jest.fn(), captureAuthScope: jest.fn(() => ({})), assertAuthScope: jest.fn() }));
 const customer = (overrides: object = {}) => ({ id: 1, name: 'Ali', phone_number: '+998901234567', debt_balance_uzs: '70.00', debt_balance_usd: '-2.50', note: 'Regular', debt_due_date: '2026-12-31', target_tenant: 8, target_tenant_name: 'B2B store', is_active: true, ...overrides });
 const sale = (overrides: object = {}) => ({ id: 11, counterparty: 1, receipt_number: 'CUSTOMER-11', currency: 'UZS', total_amount: '100.00', refunded_amount: '20.00', net_amount: '80.00', payment_type: 'debt', status: 'partially_voided', items: [], created_at: '2026-10-28T09:00:00+05:00', ...overrides });
@@ -137,10 +138,18 @@ describe('Customer purchase and payment statements', () => {
     mockUser = { ...mockUser, role: 'staff', tenants: [mockTenant] };
     const screen = await renderStatement(); await screen.findByText('#CUSTOMER-11 · 80 UZS');
     expect(screen.queryByText('Chekni ochish: CUSTOMER-11')).toBeNull();
+    expect(screen.queryByText('Qarz hisobini tuzatish')).toBeNull();
+    expect(screen.queryByText('Mijoz haqqini qaytarish')).toBeNull();
     await screen.unmount();
     const list = await renderList(); await list.findByText('Ali');
     expect(list.queryByText('Ali: tahrirlash')).toBeNull();
     expect(list.getByText('Ali: ko‘chirma')).toBeTruthy();
+  });
+  test('returning to a cached statement reloads the actual server balance', async () => {
+    const screen = await renderStatement(); await screen.findByText('Amaldagi balans: 70 UZS / -2,5 USD');
+    jest.mocked(request).mockImplementation(async path => path.includes('/sales/?') ? page([sale()]) : customer({ debt_balance_usd: '-1.00' }));
+    await act(async () => { mockRefocus(); });
+    expect(await screen.findByText('Amaldagi balans: 70 UZS / -1 USD')).toBeTruthy();
   });
   test('untrusted next URL is never followed and a foreign-customer payment is rejected', async () => {
     jest.mocked(request).mockImplementation(async path => path.includes('/payments/') ? page([payment({ counterparty: 99 })]) : path.includes('page=2') ? page([sale({ id: 12, receipt_number: 'OLDER' })]) : path.includes('/sales/?') ? page([sale()], true) : customer());

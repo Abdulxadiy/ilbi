@@ -23,7 +23,7 @@ function family(operation: string): 'sale' | 'inventory' | 'void' | 'cashbox' | 
   if (operation.startsWith('void-sale-') || operation.startsWith('void-item-')) return 'void';
   if (operation.startsWith('cashbox:')) return 'cashbox';
   if (operation.startsWith('b2b:')) return 'b2b';
-  if (operation.startsWith('debt:') || /^debt-\d+$/.test(operation)) return 'debt';
+  if (operation.startsWith('debt-adjustment:') || operation.startsWith('debt:') || /^debt-\d+$/.test(operation)) return 'debt';
   return null;
 }
 export async function withFinancialIdentity(operation: string, payload: object, userId?: number, tenantId?: number) {
@@ -42,7 +42,7 @@ export async function withFinancialIdentity(operation: string, payload: object, 
   }
   const intent = await recordStore.transaction([storageKey, ...(lockKey ? [lockKey] : [])], records => {
     const record: FinancialIntent | null = records[storageKey];
-    const immutableDraft = operation.startsWith('sale:') || operation.startsWith('inventory:') || operation.startsWith('cashbox:') || operation.startsWith('b2b:') || operation.startsWith('debt:')
+    const immutableDraft = operation.startsWith('sale:') || operation.startsWith('inventory:') || operation.startsWith('cashbox:') || operation.startsWith('b2b:') || operation.startsWith('debt:') || operation.startsWith('debt-adjustment:')
       || /^void-(?:sale-\d+|item-\d+-\d+):[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/.test(operation);
     if (record?.status === 'pending' || (record?.status === 'confirmed' && immutableDraft)) {
       if (record.fingerprint !== fingerprint) throw new PendingOperationError(record);

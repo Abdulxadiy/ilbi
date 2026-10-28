@@ -1,0 +1,116 @@
+Browser runtime errors: []
+file:///mnt/storage/Codes/Projects/Backend/ilbi/mobile-app/tests/employees.browser.mjs:83
+  throw Error('Timed out: ' + label + '; ' + await browser.evaluate('document.body.innerText.slice(-2000)'));
+        ^
+
+Error: Timed out: credit customer refresh; QA
+Do'kon egasi
+QA store
+›
+Bosh sahifa
+Kassa
+Kassa va smena
+Tovarlar
+Ombor
+Mijozlar
+Xodimlar
+Qarzlar
+Hujjatlar
+Hisobotlar
+Tarix
+Savdolar tarixi
+B2B savdolar
+Bildirishnomalar
+Profil
+Amallar va sinxronlash
+Sozlamalar
+Chiqish
+Yuklab olish
+Qo‘llab-quvvatlash
+Mavzu
+Kunduz
+Tun
+QA store ∨
+Bugungi holat
+2026-10-28
+Bugungi savdo
+so‘m
+0
+Umumiy savdo tushumi
+Savdolar soni
+↑ cheklar
+0
+Muvaffaqiyatli xaridlar
+Mijozlar qarzi
+nasiya
+0
+Kutilayotgan summa
+Faol do‘kon
+● faol
+QA store
+Joriy savdo nuqtasi
+Yangi savdo
+Tovar
+Qarz
+Hujjatlar
+So'nggi savdolar
+Barchasi ›
+Mijozlar
+Yangi mijoz
+Mijoz qidirish
+Mijoz balansi
+Barchasi
+Qarzdorlar
+Mijoz haqqi
+Hisobi yopilgan
+Arxivdagilarni ham ko‘rsatish
+Mijoz ma’lumotlari saqlandi.
+Statement customer
++998991234003
+Balans: 70 UZS / 0 USD
+Qarz muddati: 2027-01-01
+Statement customer: ko‘chirma
+Statement customer: tahrirlash
+Statement customer: arxivlash
+Mijoz ko‘chirmasi
+Statement customer
++998991234003
+Amaldagi balans: 70 UZS / 0 USD
+Musbat — mijoz qarzi; manfiy — mijoz haqqi.
+Qarz muddati: 2027-01-01
+Qarz hisobini tuzatish
+Ko‘chirma bo‘limi
+Barcha xaridlar
+Nasiya xaridlar
+To‘lovlar
+Qabul qilingan to‘lov · 10 UZS
+2026-10-28 11:50:59 · Naqd
+Tenant 0 · owner0
+Partial collection
+Xodimlar
+Xodim yollash
+Xodim qidirish
+Xodim holati
+Barchasi
+Faol
+Nofaol
+Arxiv
+Xodim ma’lumotlari saqlandi.
+Native Contract
+Kassir · Faol
++998991231234 · worker@example.invalid
+Hisob faol · Hisobni sozlash kerak
+Tahrirlash: Native Contract
+Ishdan bo‘shatish
+Hisobni bloklash
+Arxivlash
+Taklif yuborish
+Bosh
+Tovar
+Savdo
+Qarz
+Menyu
+    at waitFor (file:///mnt/storage/Codes/Projects/Backend/ilbi/mobile-app/tests/employees.browser.mjs:83:9)
+    at async file:///mnt/storage/Codes/Projects/Backend/ilbi/mobile-app/tests/employees.browser.mjs:146:3
+
+Node.js v26.11.1

@@ -1,0 +1,7 @@
+{
+  "records": 134,
+  "unique": true,
+  "ledger_matches_json": true,
+  "cleanup_allowed": false,
+  "reason": "Required native/provider/security/source work remains; master plan retained"
+}

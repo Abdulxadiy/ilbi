@@ -3,6 +3,7 @@ import { getServerScope } from '../../api/environment';
 import { reconcileVoidIntent } from '../sales/void';
 import { reconcileB2BIntent } from '../b2b/commands';
 import { reconcileDebtIntent } from '../debts/commands';
+import { reconcileAdjustmentIntent } from '../debts/adjustments';
 import { reconcileInventoryIntent } from '../inventory/commands';
 import { reconcileCashboxIntent } from '../cashbox/commands';
 import { acceptedRetailSale } from '../checkout/saleResponse';
@@ -13,6 +14,7 @@ export async function reconcileFinancialIntent(intent: FinancialIntent, user: Us
   if (intent.server !== getServerScope() || intent.userId !== user.id || intent.tenantId !== tenant.id) throw Error('Amal ushbu server, hisob va do‘konga tegishli emas.');
   if (intent.operation.startsWith('void-')) return reconcileVoidIntent(intent, user, tenant);
   if (intent.operation.startsWith('b2b:')) return reconcileB2BIntent(intent, user, tenant);
+  if (intent.operation.startsWith('debt-adjustment:')) return reconcileAdjustmentIntent(intent, user, tenant);
   if (intent.operation.startsWith('debt:') || intent.operation.startsWith('debt-')) return reconcileDebtIntent(intent, user, tenant);
   if (intent.operation.startsWith('inventory:')) return reconcileInventoryIntent(intent, user, tenant);
   if (intent.operation.startsWith('cashbox:')) return reconcileCashboxIntent(intent, user, tenant);

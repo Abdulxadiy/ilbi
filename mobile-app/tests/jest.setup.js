@@ -13,6 +13,7 @@ jest.mock('react-native-safe-area-context', () => require('react-native-safe-are
 
 // Feature component tests isolate Router; actual route guards and URL transitions run in Chrome.
 jest.mock('expo-router', () => ({
+  useFocusEffect: callback => require('react').useEffect(callback, [callback]),
   useLocalSearchParams: () => ({}),
   router: { setParams: jest.fn(), navigate: jest.fn(), push: jest.fn(), replace: jest.fn(), back: jest.fn(), canGoBack: () => true },
 }));

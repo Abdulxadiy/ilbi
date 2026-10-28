@@ -70,7 +70,7 @@ function SyncBody() {
     {!current || current.loading ? <Loading /> : current.error ? <Retry error={current.error} retry={() => refresh(value => value + 1)} /> : <>
       <Text style={{ color: colors.text, fontWeight: '700' }}>{current.rows.length} ta amal tekshirishni kutmoqda</Text>
       {current.rows.map(intent => <View key={intent.key} style={{ borderWidth: 1, borderColor: colors.border, borderRadius: 12, padding: 14, gap: 10 }}>
-        <Text style={{ color: colors.text, fontWeight: '700' }}>{operationLabel(intent.operation)}</Text>
+        <Text style={{ color: colors.text, fontWeight: '700' }}>{operationLabel(intent.operation, intent.payload)}</Text>
         <Text style={{ color: colors.textSecondary }}>Vaqt: {intent.createdAt}</Text>
         {(intent.payload as any).items?.map((item: any) => <Text key={item.product_variant_id} style={{ color: colors.text }}>Tovar #{item.product_variant_id} · {item.quantity} × {item.unit_price}</Text>)}
         {intent.operation.startsWith('void-') ? <Notice>Sabab: {String((intent.payload as any).reason || '—')}{(intent.payload as any).quantity ? ' · Miqdor: ' + (intent.payload as any).quantity : ''}</Notice> : null}
@@ -84,7 +84,8 @@ function SyncBody() {
   </Page>;
 }
 
-function operationLabel(operation: string) {
+function operationLabel(operation: string, payload: any) {
+  if (operation.startsWith('debt-adjustment:')) return payload?.kind === 'credit_refund' ? 'Mijoz haqqini qaytarish' : 'Qarz hisobini tuzatish';
   if (operation.startsWith('void-')) return 'Savdoni qaytarish';
   if (operation.startsWith('inventory:')) return 'Ombor amali';
   if (operation.startsWith('cashbox:')) return 'Kassa amali';

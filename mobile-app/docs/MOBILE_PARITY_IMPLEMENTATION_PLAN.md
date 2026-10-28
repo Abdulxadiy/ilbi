@@ -213,3 +213,5 @@ Keep this file while even one required item, genuine native/provider acceptance,
 3. Required builds, real-device/provider/upgrade and data-preservation checks pass; remaining external acceptance is zero.
 4. Copy final evidence and completion notes to the permanent audit/ledger, commit and push verified coherent changes, and finish any explicitly authorized publication.
 5. Delete **only `mobile-app/docs/MOBILE_PARITY_IMPLEMENTATION_PLAN.md`**, record its intentional completed-work removal in a final commit and preserve all permanent evidence.
+
+| P02c native adjustments | CODE_VERIFIED | DMP-039 native quote/confirmation/journal and DMP-035 refocus:627 mobile tests/68 suites; tsc/strict ESLint; Android/iOS/web export; controlled Chrome390/320 pass. Real cached-balance defect reproduced/fixed. Evidence: evidence/parity-implementation-2026-10-28/P02c-native-adjustments/. | Shared-renderer quote/journal integration and native/production acceptance remain. Continue debt filters and P02 work; no phase-wide completion claim. |
