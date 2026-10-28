@@ -1,6 +1,9 @@
 import io
+import json
+import os
 from datetime import timedelta
 from decimal import Decimal
+from pathlib import Path
 
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -41,6 +44,64 @@ def csv(body):
 def commit_url(preview):
     assert preview.status_code == 201, preview.data
     return ROOT + f"{preview.data['id']}/commit/"
+
+
+def test_mobile_preview_and_commit_bind_original_job_actor_and_store(client, owner, tenant):
+    preview = client.post(
+        ROOT + "preview/",
+        {
+            "file": csv(
+                    "mijoz,telefon,nasiya_uzs,nasiya_usd,izoh\n"
+                    "Ali,+998901234001,1250.50,2.75,Opening balance\n"
+                    "Nodira,+998901234002,,,No opening debt\n"
+            )
+        },
+        format="multipart",
+    )
+    assert preview.status_code == 201
+    context = {
+        "protocol": "ilbi-counterparty-import-v1",
+        "job_id": preview.data["id"],
+        "actor_id": owner.pk,
+        "tenant_id": tenant.pk,
+    }
+    assert preview.data["operation_context"] == context
+    assert not Counterparty.objects.filter(tenant=tenant).exists()
+    result = client.post(commit_url(preview))
+    assert result.status_code == 200
+    assert result.data["import_operation"] == context
+    assert result.data["created_count"] == 2
+    assert Decimal(result.data["total_debt_uzs"]) == Decimal("1250.50")
+    assert Decimal(result.data["total_debt_usd"]) == Decimal("2.75")
+    # Completed jobs stay replayable after expiry; no new customers/payment/audit effects.
+    CounterpartyImportJob.objects.filter(pk=preview.data["id"]).update(expires_at=timezone.now() - timedelta(seconds=1))
+    assert client.post(commit_url(preview)).data == result.data
+    assert Counterparty.objects.filter(tenant=tenant).count() == 2
+    invalid = client.post(
+        ROOT + "preview/",
+        {"file": csv("mijoz,telefon,nasiya_uzs\nDuplicate,+998901234001,0\nInvalid,wrong-phone,-1\n")},
+        format="multipart",
+    )
+    assert invalid.status_code == 201
+    assert all(row["errors"] for row in invalid.data["rows"])
+    if os.environ.get("ILBI_WRITE_COUNTERPARTY_IMPORT_CONTRACTS") == "1":
+        target = Path(__file__).resolve().parents[4] / "mobile-app/tests/contracts/counterparty-import.json"
+        target.write_text(
+            json.dumps(
+                {
+                    "source": (
+                        "Actual isolated PostgreSQL/API multipart previews and original-job commit/replay; "
+                        "no provider/native acceptance"
+                    ),
+                    "valid": preview.json(),
+                    "invalid": invalid.json(),
+                    "result": result.json(),
+                },
+                ensure_ascii=False,
+                indent=2,
+            )
+            + "\n"
+        )
 
 
 def test_xlsx_preview_commit_balances_history_and_retry(client, owner, tenant):

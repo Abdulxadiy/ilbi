@@ -61,6 +61,7 @@ function CustomersBody() {
   return <Page title="Mijozlar" onMenu={navigation.openDrawer} insetBottom={false} scroll={false}>
     <View style={{ padding: 16, gap: 12 }}>
       {can('sales.manage_counterparty') && <Button title="Yangi mijoz" onPress={() => open('new')} />}
+      {can('sales.manage_counterparty') && <Button title="Excel / CSV orqali mijozlarni yuklash" variant="secondary" onPress={() => navigation.navigate('CustomerImport')} />}
       <Input label="Mijoz qidirish" value={search} onChangeText={setSearch} placeholder="Ism yoki telefon" />
       <ChoiceField label="Mijoz balansi" value={balance} options={[{ value: '', label: 'Barchasi' }, { value: 'debtors', label: 'Qarzdorlar' }, { value: 'credit', label: 'Mijoz haqqi' }, { value: 'settled', label: 'Hisobi yopilgan' }]} onChange={setBalance} />
       <Button title={includeArchived ? 'Arxiv ham ko‘rsatilmoqda' : 'Arxivdagilarni ham ko‘rsatish'} variant="ghost" onPress={() => setIncludeArchived(value => !value)} />

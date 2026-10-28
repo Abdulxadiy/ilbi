@@ -74,7 +74,7 @@ describe('Real core API screen contracts', () => {
     const write = jest.mocked(request).mock.calls.find(([, options]) => options?.method === 'POST');
     expect(write?.[0]).toBe('/auth/profile/avatar/');
     expect(write?.[1]?.body).toBeInstanceOf(FormData);
-    expect(append).toHaveBeenCalledWith('avatar', expect.objectContaining({ uri: 'file:///avatar.jpg' }));
+    expect(append).toHaveBeenCalledWith('avatar', expect.objectContaining({ bytes: expect.any(Function), name: 'image.jpg', type: 'image/jpeg' }));
     append.mockRestore();
     expect(mockRefresh).toHaveBeenCalledTimes(1);
   });

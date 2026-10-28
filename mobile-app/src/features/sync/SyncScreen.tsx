@@ -80,11 +80,13 @@ function SyncBody() {
       {current.legacy ? <Notice error>{current.legacy} ta eski navbat yozuvida server va hisob manbasi yo‘q. Ular saqlandi; boshqa hisob nomidan avtomatik yuborilmaydi. Asl manbani tasdiqlash uchun alohida migratsiya kerak.</Notice> : null}
       {confirmed?.void_operation?.sale_id ? <Button title="Qaytarilgan savdoni ochish" variant="secondary" onPress={() => navigation.navigate('SalesHistory', { saleId: String(confirmed.void_operation.sale_id) })} /> : null}
       {confirmed?.id ? <Text selectable style={{ color: colors.text }}>Tasdiqlangan natija: #{confirmed.receipt_number || confirmed.id}</Text> : null}
+      {confirmed?.import_operation ? <Notice>{confirmed.created_count} ta mijoz importi tasdiqlandi.</Notice> : null}
     </>}
   </Page>;
 }
 
 function operationLabel(operation: string, payload: any) {
+  if (operation.startsWith('customer-import:')) return 'Mijozlarni fayldan yuklash';
   if (operation.startsWith('debt-adjustment:')) return payload?.kind === 'credit_refund' ? 'Mijoz haqqini qaytarish' : 'Qarz hisobini tuzatish';
   if (operation.startsWith('void-')) return 'Savdoni qaytarish';
   if (operation.startsWith('inventory:')) return 'Ombor amali';

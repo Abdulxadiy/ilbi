@@ -1,0 +1,94 @@
+import React from 'react';
+import { act, fireEvent, render } from '@testing-library/react-native';
+import { ThemeProvider } from '../src/theme/ThemeContext';
+import { CustomerImportScreen } from '../src/features/customers/CustomerImportScreen';
+import { acknowledgeCustomerImport, commitCustomerImport, previewCustomerImport, type AcceptedImport } from '../src/features/customers/importCommands';
+import { downloadCustomerTemplate, pickSpreadsheet, releasePickedSpreadsheet } from '../src/features/customers/importFiles';
+import { parseImportJob } from '../src/features/customers/importModel';
+import { ApiError } from '../src/api/errors';
+import contract from './contracts/counterparty-import.json';
+const mockTenant = { id: contract.valid.operation_context.tenant_id, name: 'Synthetic', is_owner: true, permissions: [] as string[] };
+const mockUser = { id: contract.valid.operation_context.actor_id, role: 'owner', terms_accepted: true, tenants: [mockTenant] };
+const mockNavigate = jest.fn(), mockPresses: Record<string, () => Promise<void>> = {};
+jest.mock('../src/components/ui/Button', () => ({ Button: (props: any) => { mockPresses[props.title] = props.onPress; return jest.requireActual('react').createElement(jest.requireActual('../src/components/ui/Button').Button, props); } }));
+jest.mock('../src/features/auth/AuthContext', () => ({ useAuth: () => ({ user: mockUser, activeTenant: mockTenant }) }));
+jest.mock('../src/navigation/useAppNavigation', () => ({ useAppNavigation: () => ({ navigate: mockNavigate, goBack: jest.fn() }) }));
+jest.mock('../src/api/client', () => ({ assertAuthScope: jest.fn(), captureAuthScope: jest.fn(() => ({})) }));
+jest.mock('../src/features/customers/importCommands', () => ({ previewCustomerImport: jest.fn(), commitCustomerImport: jest.fn(), acknowledgeCustomerImport: jest.fn() }));
+jest.mock('../src/features/customers/importFiles', () => ({ pickSpreadsheet: jest.fn(), spreadsheetBody: jest.fn(() => new FormData()), releasePickedSpreadsheet: jest.fn(), downloadCustomerTemplate: jest.fn() }));
+const job = parseImportJob(contract.valid, { actorId: mockUser.id, tenantId: mockTenant.id });
+const show = () => render(<ThemeProvider><CustomerImportScreen /></ThemeProvider>);
+beforeEach(() => {
+  jest.clearAllMocks();
+  jest.mocked(pickSpreadsheet).mockResolvedValue({ name: 'Synthetic.csv', size: 500, uri: 'file:///cache/synthetic.csv', mime: 'text/csv' });
+  jest.mocked(previewCustomerImport).mockResolvedValue(job);
+  jest.mocked(commitCustomerImport).mockResolvedValue(contract.result);
+  jest.mocked(acknowledgeCustomerImport).mockResolvedValue(contract.result);
+  jest.mocked(downloadCustomerTemplate).mockResolvedValue('Controlled template handoff');
+});
+const openPreview = async () => { const screen = await show(); await fireEvent.press(screen.getByText('Excel / CSV faylni tanlash')); await fireEvent.press(screen.getByText('Fayldagi mijozlarni tekshirish')); return screen; };
+test('explicit selection then preview shows exact opening debt and does not commit', async () => {
+  const screen = await openPreview();
+  expect(screen.getByText('2 ta qator · Xatoli: 0')).toBeTruthy();
+  expect(screen.getByText('Boshlang‘ich nasiya: 1 250,50 UZS / 2,75 USD')).toBeTruthy();
+  expect(commitCustomerImport).not.toHaveBeenCalled(); expect(releasePickedSpreadsheet).toHaveBeenCalledTimes(1);
+  await fireEvent.press(screen.getByText('2 ta mijozni saqlashni tasdiqlash'));
+  expect(commitCustomerImport).toHaveBeenCalledWith(job.payload, mockUser, mockTenant, expect.any(Function), expect.any(Function));
+  expect(screen.getByText('2 ta mijoz importi tasdiqlandi.')).toBeTruthy();
+  await fireEvent.press(screen.getByText('Yana mijozlar faylini yuklash'));
+  expect(screen.getByText('Excel / CSV faylni tanlash')).toBeTruthy();
+});
+test('invalid rows are visible alerts, searchable, and cannot be committed', async () => {
+  jest.mocked(previewCustomerImport).mockResolvedValue(parseImportJob(contract.invalid, job.scope));
+  const screen = await openPreview();
+  expect(screen.getByText('2 ta qator · Xatoli: 2')).toBeTruthy();
+  expect(screen.getByText('Telefon: Bu telefonli mijoz mavjud (arxivni ham tekshiring).').props.accessibilityRole).toBe('alert');
+  expect(screen.queryByText('2 ta mijozni saqlashni tasdiqlash')).toBeNull();
+  await fireEvent.press(screen.getByText('Faqat xatoli import qatorlari'));
+  await fireEvent.changeText(screen.getByLabelText('Import qatorlarini qidirish'), 'Duplicate');
+  expect(screen.getByText('Fayl qatori: 2 · Duplicate')).toBeTruthy();
+  expect(screen.queryByText('Fayl qatori: 3 · Invalid')).toBeNull(); expect(commitCustomerImport).not.toHaveBeenCalled();
+});
+test('unknown result freezes original job, blocks an old file-picker callback and retries that same job', async () => {
+  jest.mocked(commitCustomerImport).mockImplementationOnce(async (_payload, _user, _tenant, _accepted, recorded) => { recorded?.(true); throw Error('Response lost'); });
+  const screen = await show(), staleChoose = mockPresses['Excel / CSV faylni tanlash'];
+  await fireEvent.press(screen.getByText('Excel / CSV faylni tanlash')); await fireEvent.press(screen.getByText('Fayldagi mijozlarni tekshirish'));
+  await fireEvent.press(screen.getByText('2 ta mijozni saqlashni tasdiqlash'));
+  expect(screen.getByText('Response lost')).toBeTruthy();
+  expect(screen.queryByText('Boshqa Excel / CSV faylni tanlash')).toBeNull();
+  await act(async () => { await staleChoose(); }); expect(pickSpreadsheet).toHaveBeenCalledTimes(1);
+  await fireEvent.press(screen.getByText('Asl import natijasini tekshirish'));
+  expect(jest.mocked(commitCustomerImport).mock.calls[1].slice(0, 3)).toEqual(jest.mocked(commitCustomerImport).mock.calls[0].slice(0, 3));
+  expect(previewCustomerImport).toHaveBeenCalledTimes(1);
+});
+test('accepted response with failed local storage offers acknowledgement only', async () => {
+  const record = { result: contract.result } as unknown as AcceptedImport;
+  jest.mocked(commitCustomerImport).mockImplementationOnce(async (_payload, _user, _tenant, accepted, recorded) => { recorded?.(true); accepted?.(record); throw Error('Storage unavailable'); });
+  const screen = await openPreview(); await fireEvent.press(screen.getByText('2 ta mijozni saqlashni tasdiqlash'));
+  await fireEvent.press(screen.getByText('Import tasdiqini telefonga qayta saqlash'));
+  expect(acknowledgeCustomerImport).toHaveBeenCalledWith(record); expect(commitCustomerImport).toHaveBeenCalledTimes(1);
+});
+test('commit-time duplicate rows replace the preview after a definitive fresh rejection', async () => {
+  jest.mocked(commitCustomerImport).mockImplementationOnce(async (_payload, _user, _tenant, _accepted, recorded) => { recorded?.(false); throw new ApiError('Rows changed', 400, { rows: contract.invalid.rows }); });
+  const screen = await openPreview(); await fireEvent.press(screen.getByText('2 ta mijozni saqlashni tasdiqlash'));
+  expect(screen.getByText('2 ta qator · Xatoli: 2')).toBeTruthy();
+  expect(screen.queryByText('2 ta mijozni saqlashni tasdiqlash')).toBeNull();
+});
+test('a bounded/truncated commit-error response never becomes a smaller apparently valid import', async () => {
+  const manyRows = Array.from({ length: 120 }, (_, index) => ({ ...contract.valid.rows[0], row_number: index + 2, data: { ...contract.valid.rows[0].data, phone_number: '+998901' + String(index).padStart(6, '0') } }));
+  jest.mocked(previewCustomerImport).mockResolvedValue(parseImportJob({ ...contract.valid, rows: manyRows }, job.scope));
+  jest.mocked(commitCustomerImport).mockImplementationOnce(async (_payload, _user, _tenant, _accepted, recorded) => { recorded?.(false); throw new ApiError('Rows invalid', 400, { rows: manyRows.slice(0, 100) }); });
+  const screen = await openPreview(); await fireEvent.press(screen.getByText('120 ta mijozni saqlashni tasdiqlash'));
+  expect(screen.getByText('120 ta qator · Qator xatolari to‘liq olinmadi')).toBeTruthy();
+  expect(screen.getByText('Server qator xatolarini to‘liq qaytarmadi. Faylni tuzatib, qayta tekshiring.')).toBeTruthy();
+  expect(screen.queryByText('100 ta mijozni saqlashni tasdiqlash')).toBeNull();
+  expect(screen.queryByText('120 ta mijozni saqlashni tasdiqlash')).toBeNull();
+});
+test('cancelled/invalid file selection has no preview or commit; template remains an explicit action', async () => {
+  jest.mocked(pickSpreadsheet).mockResolvedValueOnce(null).mockRejectedValueOnce(Error('8 MB limit'));
+  const screen = await show(); await fireEvent.press(screen.getByText('Excel / CSV faylni tanlash')); await fireEvent.press(screen.getByText('Excel / CSV faylni tanlash'));
+  expect(screen.getByText('8 MB limit')).toBeTruthy(); expect(previewCustomerImport).not.toHaveBeenCalled(); expect(commitCustomerImport).not.toHaveBeenCalled();
+  await fireEvent.press(screen.getByText('Mijozlar shablonini olish'));
+  expect(downloadCustomerTemplate).toHaveBeenCalledWith(mockUser.id, mockTenant.id);
+  expect(screen.getByText('Controlled template handoff')).toBeTruthy();
+});

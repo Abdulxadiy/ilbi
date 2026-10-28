@@ -6,7 +6,7 @@ Created: 2026-10-28 (Asia/Tashkent). Baseline: `7d5bf38633477a66f2519f2595f50c28
 
 ## Execution contract
 
-- Scope is every open/partial defect and required acceptance gate in the initial132-record audit plus subsequent findings (currently DMP-133/134), plus regressions for previously implemented records. Historical TESTED_CODE is not native/production acceptance. No completion percentage is inferred from source-file or test counts.
+- Scope is every open/partial defect and required acceptance gate in the initial132-record audit plus subsequent findings (currently DMP-133/134/135), plus regressions for previously implemented records. Historical TESTED_CODE is not native/production acceptance. No completion percentage is inferred from source-file or test counts.
 - Finish the current slice’s required checks and resolve its failures before dependent work advances. Record the actual command/runtime and evidence, then commit and push that coherent slice. If external hardware/provider input is unavailable, keep that acceptance open and continue only independent authorized preparation.
 - Preserve owner changes, active-user/store/server boundaries, exact money/quantities, idempotency/unknown-result journals, immutable receipts and all permission/fiscal/production safeguards. Never remove a protective gate merely to pass a test.
 - Keep the approved mobile visual language: sidebar support, persistent quick tabs, tiny cart images, prominent negotiated sale price, authentic logo and light/dark colors. Web/desktop login must not receive the mobile 3D redesign.
@@ -79,7 +79,7 @@ Every original audit ID is retained exactly once. Acceptance text below comes fr
 | DMP-033 | P02 | Authoritative customer list and balance summaries (TESTED_CODE) | PRIOR_CODE_EVIDENCE | Load existing real customers without creating one, paginate/search, and compare UZS/USD debt/credit summaries against server aggregates. |
 | DMP-034 | P02 | Customer editing, deletion, notes, code and due date (IN_PROGRESS) | CODE_VERIFIED | Create a customer with note/code/default due date, edit allowed fields, reject invalid/dependent deletion and preserve historical sale identity. |
 | DMP-035 | P02 | Customer purchase and payment ledger (OPEN) | CODE_VERIFIED | Open one customer with several purchases/payments/returns and reconcile the displayed balance to the transaction history. |
-| DMP-036 | P02 | Spreadsheet customer import (OPEN) | TODO | Import customers with duplicate/invalid phones and balance-related fields; inspect preview and retry commit safely. |
+| DMP-036 | P02 | Spreadsheet customer import (TESTED_CODE) | CODE_VERIFIED | Import customers with duplicate/invalid phones and balance-related fields; inspect preview and retry commit safely. |
 | DMP-037 | P02 | Real debt filters and collection (TESTED_CODE) | CODE_VERIFIED | Load real overdue/soon/future debt, make a partial payment and verify the server-confirmed remaining amount after navigation and restart. |
 | DMP-038 | P02 | Payment currency, cash/card, branch and note (TESTED_CODE) | PRIOR_CODE_EVIDENCE | Record cash and card debt payments in UZS/USD and a chosen branch, including a decimal amount; verify ledger/cashbox attribution. |
 | DMP-039 | P02 | Customer credit refund and payment correction (IN_PROGRESS) | IN_PROGRESS | Create overpayment/return credit, issue a partial refund with the correct payment channel and verify remaining credit and cash impact. |
@@ -178,6 +178,7 @@ Every original audit ID is retained exactly once. Acceptance text below comes fr
 | DMP-132 | P00 | Legacy B2B notification link has no mobile destination (TESTED_CODE) | CODE_VERIFIED | Explicit safe /b2b alias/canonical destination, producer-shaped regression, allowed recipient/store/role, and continued rejection of arbitrary URLs; inspect actual open action. |
 | DMP-133 | P02 | Shared backend owner-only debt correction bypass (TESTED_CODE) | CODE_VERIFIED | Deny cashier API/service correction and legacy owner-only grants without financial effects; retain ordinary collection, actual-owner correction and platform-admin retail separation; verify shared web/desktop controls. |
 | DMP-134 | P02 | USD credit correction uses collection FX allocation (TESTED_CODE) | CODE_VERIFIED | Reproduce legacy USD-credit error; keep selected currency on refund, preserve positive legacy FX and old snapshots/replays, verify quoted bounded credit refunds; review historical records without automatic rewrites. |
+| DMP-135 | P02 | SDK58 native URI-only multipart uploads (TESTED_CODE) | CODE_VERIFIED | Actual installed SDK encoder must preserve bytes for avatar/product/spreadsheet; verify provider/scope and real native/server upload separately. |
 
 ## External acceptance inputs — do not invent or bypass
 
@@ -217,3 +218,5 @@ Keep this file while even one required item, genuine native/provider acceptance,
 | P02c native adjustments | CODE_VERIFIED | DMP-039 native quote/confirmation/journal and DMP-035 refocus:627 mobile tests/68 suites; tsc/strict ESLint; Android/iOS/web export; controlled Chrome390/320 pass. Real cached-balance defect reproduced/fixed. Evidence: evidence/parity-implementation-2026-10-28/P02c-native-adjustments/. | Shared-renderer quote/journal integration and native/production acceptance remain. Continue debt filters and P02 work; no phase-wide completion claim. |
 
 | P02d debt filters | CODE_VERIFIED | DMP-037 source and DMP-033 summary:10 red API cases reproduced,1217 full backend and647 mobile tests; tsc/strict ESLint/Ruff/export; controlled Chrome390/320 pass. Evidence: evidence/parity-implementation-2026-10-28/P02d-debt-filters/. | Native restart/upgrade/cash/production acceptance remains. Continue P02 import and shared-renderer quoted adjustments. |
+
+| P02e customer import | CODE_VERIFIED | DMP-036 source and DMP-135 transport defect:3 real encoder failures reproduced/fixed;1218 backend/688 mobile tests; tsc/strict ESLint/Ruff/schema/no-migration/SDK58 compatibility/all-platform export and controlled Chrome390/320 pass. Evidence: evidence/parity-implementation-2026-10-28/P02e-customer-import/. | Native/provider/save/share/upgrade/production and dependency-security gates remain. Continue shared-renderer refund protocol integration and P03 documents. |

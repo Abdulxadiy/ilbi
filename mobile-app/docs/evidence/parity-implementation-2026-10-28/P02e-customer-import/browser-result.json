@@ -1,0 +1,28 @@
+{
+  "runtime": "Isolated Chrome + production React Native Web export + controlled API adapter",
+  "nativeDeviceAcceptance": false,
+  "liveBackend": false,
+  "checks": [
+    "sidebar employee route with exactly five tabs",
+    "actual contract-shaped directory",
+    "inline email and password validation",
+    "server-ID permission preset and safe PATCH payload",
+    "light390/dark320 UI and no horizontal overflow",
+    "customer date validation and safe metadata PATCH",
+    "customer purchases/payments and server70 balance at390/320",
+    "credit refund quote-before-write without hash disclosure",
+    "lost refund response freezes draft and replays original key/body once",
+    "signed correction inline validation and quote invalidation",
+    "customer balances refreshed and five tabs retained at320",
+    "actual API-shaped due filter acknowledged before displaying rows",
+    "debt filters and credit-to-refund shortcut at390/320",
+    "real browser file input with multipart invalid/valid contract-shaped previews",
+    "import exact totals/error filter and same-job lost-response recovery",
+    "logout and invitation-to-Telegram gate"
+  ],
+  "passed": true,
+  "writes": 2,
+  "financialWrites": 2,
+  "importWrites": 1,
+  "unexpected": []
+}

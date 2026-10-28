@@ -1,5 +1,6 @@
 import { Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import { appendLocalUpload } from './localMultipart';
 
 /** Keep the system picker and its eventual upload bound to the initiating account/store. */
 export async function pickImageUpload(field: 'avatar' | 'image', assertCurrent: () => void): Promise<FormData | null> {
@@ -18,7 +19,7 @@ export async function pickImageUpload(field: 'avatar' | 'image', assertCurrent: 
     if (!asset.file) throw Error('Tanlangan rasm faylini ochib bo‘lmadi. Qayta tanlang.');
     body.append(field, asset.file, asset.fileName || 'image.jpg');
   } else {
-    body.append(field, { uri: asset.uri, name: asset.fileName || 'image.jpg', type: asset.mimeType || 'image/jpeg' } as any);
+    appendLocalUpload(body, field, { uri: asset.uri, name: asset.fileName || 'image.jpg', type: asset.mimeType || 'image/jpeg' });
   }
   return body;
 }

@@ -22,6 +22,7 @@ export function BottomTabNavigator() {
     <Tabs.Protected guard={canOpen('Inventory')}><Tabs.Screen name="inventory" options={{ tabBarButton: () => null, tabBarItemStyle: { display: 'none' } }} /></Tabs.Protected>
     <Tabs.Protected guard={canOpen('Customers')}><Tabs.Screen name="customers" options={{ tabBarButton: () => null, tabBarItemStyle: { display: 'none' } }} /></Tabs.Protected>
     <Tabs.Protected guard={canOpen('Customer')}><Tabs.Screen name="customer" options={{ tabBarButton: () => null, tabBarItemStyle: { display: 'none' } }} /></Tabs.Protected>
+    <Tabs.Protected guard={canOpen('CustomerImport')}><Tabs.Screen name="customer-import" options={{ tabBarButton: () => null, tabBarItemStyle: { display: 'none' } }} /></Tabs.Protected>
     <Tabs.Protected guard={canOpen('Employees')}><Tabs.Screen name="employees" options={{ tabBarButton: () => null, tabBarItemStyle: { display: 'none' } }} /></Tabs.Protected>
     <Tabs.Protected guard={canOpen('Reports')}><Tabs.Screen name="reports" options={{ tabBarButton: () => null, tabBarItemStyle: { display: 'none' } }} /></Tabs.Protected>
     <Tabs.Protected guard={canOpen('Cashbox')}><Tabs.Screen name="cashbox" options={{ tabBarButton: () => null, tabBarItemStyle: { display: 'none' } }} /></Tabs.Protected>

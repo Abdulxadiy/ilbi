@@ -73,7 +73,7 @@ describe('Product and variant management', () => {
     expect(writes).toHaveLength(1);
     expect(writes[0][0]).toBe(`/catalog/products/${product.id}/`);
     expect(writes[0][1]!.body).toBeInstanceOf(FormData);
-    expect(append).toHaveBeenCalledWith('image', expect.objectContaining({ uri: 'file:///product.jpg' }));
+    expect(append).toHaveBeenCalledWith('image', expect.objectContaining({ bytes: expect.any(Function), name: 'image.jpg', type: 'image/jpeg' }));
     append.mockRestore();
     expect(await screen.findByText('Rasm yuklandi.')).toBeTruthy();
     expect(jest.mocked(request).mock.calls.some(([path]) => path.endsWith('/images/'))).toBe(false);

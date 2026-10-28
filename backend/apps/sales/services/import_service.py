@@ -15,6 +15,7 @@ from apps.sales.services.counterparty_service import CounterpartyService
 from apps.tenants.models import Tenant
 
 TEMPLATE_HEADERS = ["mijoz", "telefon", "nasiya_uzs", "nasiya_usd", "izoh"]
+IMPORT_PROTOCOL = "ilbi-counterparty-import-v1"
 HEADERS = dict(
     zip(TEMPLATE_HEADERS, ["name", "phone_number", "debt_balance_uzs", "debt_balance_usd", "note"], strict=True)
 )

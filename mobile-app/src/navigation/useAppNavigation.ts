@@ -14,6 +14,7 @@ const paths: Record<string, string> = {
   B2B: '/(app)/(tabs)/b2b',
   Employees: '/(app)/(tabs)/employees',
   Customer: '/(app)/(tabs)/customer',
+  CustomerImport: '/(app)/(tabs)/customer-import',
   StoreSettings: '/(app)/(tabs)/store-settings',
   Sync: '/(app)/(tabs)/sync', Categories: '/(app)/(tabs)/categories',
   Product: '/(app)/(tabs)/product', NewProduct: '/(app)/(tabs)/product', Stores: '/stores', Admin: '/(app)/admin',

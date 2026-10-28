@@ -1,0 +1,89 @@
+{
+  "source": "Actual isolated PostgreSQL/API multipart previews and original-job commit/replay; no provider/native acceptance",
+  "valid": {
+    "id": 1,
+    "rows": [
+      {
+        "row_number": 2,
+        "data": {
+          "name": "Ali",
+          "phone_number": "+998901234001",
+          "debt_balance_uzs": "1250.50",
+          "debt_balance_usd": "2.75",
+          "note": "Opening balance"
+        },
+        "errors": {}
+      },
+      {
+        "row_number": 3,
+        "data": {
+          "name": "Nodira",
+          "phone_number": "+998901234002",
+          "note": "No opening debt"
+        },
+        "errors": {}
+      }
+    ],
+    "expires_at": "2026-10-28T16:33:33.701230+05:00",
+    "completed_at": null,
+    "result": {},
+    "operation_context": {
+      "protocol": "ilbi-counterparty-import-v1",
+      "job_id": 1,
+      "actor_id": 15617,
+      "tenant_id": 6152
+    }
+  },
+  "invalid": {
+    "id": 2,
+    "rows": [
+      {
+        "row_number": 2,
+        "data": {
+          "name": "Duplicate",
+          "phone_number": "+998901234001",
+          "debt_balance_uzs": "0"
+        },
+        "errors": {
+          "phone_number": "Bu telefonli mijoz mavjud (arxivni ham tekshiring)."
+        }
+      },
+      {
+        "row_number": 3,
+        "data": {
+          "name": "Invalid",
+          "phone_number": "wrong-phone",
+          "debt_balance_uzs": "-1"
+        },
+        "errors": {
+          "phone_number": "Telefon raqami 7–15 ta raqamdan iborat bo‘lsin.",
+          "debt_balance_uzs": "Ensure this value is greater than or equal to 0."
+        }
+      }
+    ],
+    "expires_at": "2026-10-28T16:33:33.735275+05:00",
+    "completed_at": null,
+    "result": {},
+    "operation_context": {
+      "protocol": "ilbi-counterparty-import-v1",
+      "job_id": 2,
+      "actor_id": 15617,
+      "tenant_id": 6152
+    }
+  },
+  "result": {
+    "created_count": 2,
+    "counterparty_ids": [
+      3880,
+      3881
+    ],
+    "total_debt_uzs": "1250.50",
+    "total_debt_usd": "2.75",
+    "import_operation": {
+      "protocol": "ilbi-counterparty-import-v1",
+      "job_id": 1,
+      "actor_id": 15617,
+      "tenant_id": 6152
+    }
+  }
+}

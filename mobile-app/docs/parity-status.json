@@ -284,9 +284,12 @@
     },
     "DMP-036": {
       "title": "Spreadsheet customer import",
-      "status": "OPEN",
-      "evidence": [],
-      "notes": ""
+      "status": "TESTED_CODE",
+      "evidence": [
+        "2026-10-28 P02e: multipart template/picker/preview/error/confirmation screen and original-job durable recovery are connected. Backend context protocol and real isolated API fixture added;1218 unfiltered backend tests pass. Final SDK58 patched dependency/mobile/export/browser checks are in progress. Native/provider/production acceptance remains open.",
+        "2026-10-28 P02e: native authenticated template/system XLSX-CSV picker, bounded server preview with red row errors/search/pages, exact BigInt opening totals, explicit original-job commit and durable journal/recovery connected. Versioned job/actor/store preview/ack added.1218 backend/688 mobile tests, tsc/strict ESLint/Ruff/schema/no-migration/SDK58 compatibility/all-platform export and controlled real-input Chrome390/320 pass. Evidence: evidence/parity-implementation-2026-10-28/P02e-customer-import/. Native/provider/save/share/upgrade/production acceptance open; dependency audit still3high+13low."
+      ],
+      "notes": "Customer import source/controlled UI verified; native providers and production acceptance remain open."
     },
     "DMP-037": {
       "title": "Real debt filters and collection",
@@ -1044,6 +1047,15 @@
         "2026-10-28 P02b adjustment API: real legacy USD-credit defect reproduced before fix. Negative USD adjustments against existing USD credit retain USD; legacy positive FX/snapshots preserved. New owner-only quoted refund/correction protocol enforces selected currency, credit bounds, actor/store/reason, original-key replay and rollback/concurrency safety.114 targeted/1206 full backend and606 mobile consumer tests pass; tsc/strict lint/Ruff/schema gate and no-migration check pass. Evidence: evidence/parity-implementation-2026-10-28/P02b-adjustment-api/. Not deployed; native/web journal/UI connection and historical-record review remain."
       ],
       "notes": "2026-10-28 P02b adjustment API: real legacy USD-credit defect reproduced before fix. Negative USD adjustments against existing USD credit retain USD; legacy positive FX/snapshots preserved. New owner-only quoted refund/correction protocol enforces selected currency, credit bounds, actor/store/reason, original-key replay and rollback/concurrency safety.114 targeted/1206 full backend and606 mobile consumer tests pass; tsc/strict lint/Ruff/schema gate and no-migration check pass. Evidence: evidence/parity-implementation-2026-10-28/P02b-adjustment-api/. Not deployed; native/web journal/UI connection and historical-record review remain."
+    },
+    "DMP-135": {
+      "title": "SDK58 default fetch rejects native URI-only multipart uploads",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "2026-10-28 P02e:3 real installed-Expo encoder failures reproduced for avatar/product/spreadsheet URI-only parts. Shared bytes-capable adapter and documented RN-fetch opt-in tests pass5 focused checks. Final mobile regressions/export/browser checks are in progress; physical/native/server acceptance remains open.",
+        "2026-10-28 P02e:3 actual installed SDK58 multipart encoder failures reproduced for avatar/product/spreadsheet URI-only parts. Shared bytes-capable File adapter fixes them and honors documented RN-fetch opt-in.5 real encoder/opt-in checks,688 total mobile tests, tsc/strict ESLint and Android/iOS/web export pass. Compatibility patches remain SDK58; app/platform/build unchanged. Evidence: evidence/parity-implementation-2026-10-28/P02e-customer-import/. Actual native/provider/server uploads remain open; no request mock is called physical acceptance."
+      ],
+      "notes": "SDK58 native multipart encoding defect source-verified; physical provider/network upload and release acceptance remain open."
     }
   },
   "lastSourceAudit": {

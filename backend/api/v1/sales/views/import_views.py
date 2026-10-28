@@ -10,7 +10,7 @@ from api.permissions import HasEmployeePermission
 from apps.core.spreadsheets import MONEY_FORMAT, XLSX_MIME, excel_response
 from apps.sales.models import CounterpartyImportJob
 from apps.sales.services.counterparty_service import CounterpartyServiceError
-from apps.sales.services.import_service import TEMPLATE_HEADERS, CounterpartyImportService
+from apps.sales.services.import_service import IMPORT_PROTOCOL, TEMPLATE_HEADERS, CounterpartyImportService
 
 from ._base import SalesAPIView
 
@@ -19,10 +19,24 @@ class CounterpartyImportFileSerializer(serializers.Serializer):
     file = serializers.FileField()
 
 
+def import_operation(job):
+    return {
+        "protocol": IMPORT_PROTOCOL,
+        "job_id": job.pk,
+        "actor_id": job.created_by_id,
+        "tenant_id": job.tenant_id,
+    }
+
+
 class CounterpartyImportJobSerializer(serializers.ModelSerializer):
+    operation_context = serializers.SerializerMethodField()
+
+    def get_operation_context(self, obj) -> dict:
+        return import_operation(obj)
+
     class Meta:
         model = CounterpartyImportJob
-        fields = ["id", "rows", "expires_at", "completed_at", "result"]
+        fields = ["id", "rows", "expires_at", "completed_at", "result", "operation_context"]
         read_only_fields = fields
 
 
@@ -94,7 +108,7 @@ class CounterpartyImportCommitView(SalesAPIView):
 
     @extend_schema(request=None, responses={200: OpenApiTypes.OBJECT})
     def post(self, request, job_id):
-        get_object_or_404(CounterpartyImportJob, pk=job_id, tenant=self.tenant, created_by=request.user)
+        job = get_object_or_404(CounterpartyImportJob, pk=job_id, tenant=self.tenant, created_by=request.user)
         try:
             result = CounterpartyImportService.commit(
                 job_id=job_id, tenant=self.tenant, user=request.user, request=request
@@ -108,4 +122,4 @@ class CounterpartyImportCommitView(SalesAPIView):
                 },
                 status=400,
             )
-        return Response(result)
+        return Response({**result, "import_operation": import_operation(job)})

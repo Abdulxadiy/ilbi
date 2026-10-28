@@ -17,7 +17,8 @@ function canonical(value: any): string {
   if (value && typeof value === 'object') return '{' + Object.keys(value).sort().map(key => JSON.stringify(key) + ':' + canonical(value[key])).join(',') + '}';
   return JSON.stringify(value);
 }
-function family(operation: string): 'sale' | 'inventory' | 'void' | 'cashbox' | 'b2b' | 'debt' | null {
+function family(operation: string): 'sale' | 'inventory' | 'void' | 'cashbox' | 'b2b' | 'debt' | 'customer-import' | null {
+  if (operation.startsWith('customer-import:')) return 'customer-import';
   if (operation.startsWith('sale:')) return 'sale';
   if (operation.startsWith('inventory:')) return 'inventory';
   if (operation.startsWith('void-sale-') || operation.startsWith('void-item-')) return 'void';
@@ -42,7 +43,7 @@ export async function withFinancialIdentity(operation: string, payload: object, 
   }
   const intent = await recordStore.transaction([storageKey, ...(lockKey ? [lockKey] : [])], records => {
     const record: FinancialIntent | null = records[storageKey];
-    const immutableDraft = operation.startsWith('sale:') || operation.startsWith('inventory:') || operation.startsWith('cashbox:') || operation.startsWith('b2b:') || operation.startsWith('debt:') || operation.startsWith('debt-adjustment:')
+    const immutableDraft = operation.startsWith('customer-import:') || operation.startsWith('sale:') || operation.startsWith('inventory:') || operation.startsWith('cashbox:') || operation.startsWith('b2b:') || operation.startsWith('debt:') || operation.startsWith('debt-adjustment:')
       || /^void-(?:sale-\d+|item-\d+-\d+):[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/.test(operation);
     if (record?.status === 'pending' || (record?.status === 'confirmed' && immutableDraft)) {
       if (record.fingerprint !== fingerprint) throw new PendingOperationError(record);

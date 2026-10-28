@@ -11,6 +11,7 @@ export function hasPermission(user: UserProfile | null, tenant: UserTenant | nul
 export const modulePermissions: Record<string, string | string[]> = {
   Product: 'catalog.view_product', NewProduct: 'catalog.add_product', Categories: 'catalog.view_category', Tovar: 'catalog.view_product', Savdo: 'sales.add_sale', Checkout: 'sales.add_sale',
   Qarz: ['sales.manage_counterparty', 'sales.record_debt_payment'], Customers: ['sales.manage_counterparty', 'sales.record_debt_payment'], Customer: ['sales.manage_counterparty', 'sales.record_debt_payment'],
+  CustomerImport: 'sales.manage_counterparty',
   Documents: 'sales.view_sale', ReceiptView: 'sales.view_sale', ShareSheet: 'sales.view_sale', PdfExport: 'sales.view_sale',
   SalesHistory: 'sales.view_sale',
   Cashbox: 'cashbox.view_cashbox',

@@ -14,7 +14,9 @@ const root = resolve(exportDir), contract = JSON.parse(await readFile(new URL('.
 const customerContract = JSON.parse(await readFile(new URL('./contracts/customers.json', import.meta.url), 'utf8'));
 const adjustmentContract = JSON.parse(await readFile(new URL('./contracts/debt-adjustments.json', import.meta.url), 'utf8'));
 const debtFilterContract = JSON.parse(await readFile(new URL('./contracts/debt-filters.json', import.meta.url), 'utf8'));
+const importContract = JSON.parse(await readFile(new URL('./contracts/counterparty-import.json', import.meta.url), 'utf8'));
 await mkdir(evidence, { recursive: true });
+for (const name of ['invalid-import.csv', 'valid-import.csv']) await writeFile(resolve(evidence, name), 'mijoz,telefon,nasiya_uzs\nSynthetic,+998901234001,1250.50\n');
 const mime = { '.js': 'text/javascript', '.css': 'text/css', '.html': 'text/html', '.json': 'application/json', '.png': 'image/png', '.svg': 'image/svg+xml', '.ttf': 'font/ttf', '.otf': 'font/otf', '.ico': 'image/x-icon', '.webp': 'image/webp' };
 const server = createServer(async (req, res) => {
   try {
@@ -28,14 +30,15 @@ const server = createServer(async (req, res) => {
 await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
 const base = 'http://127.0.0.1:' + server.address().port;
 const browser = await launchBrowser({ width: 390, height: 844 });
-function adapter(contract, customerContract, adjustmentContract, debtFilterContract) {
+function adapter(contract, customerContract, adjustmentContract, debtFilterContract, importContract) {
   const employee = structuredClone(contract.directory.results[0]);
   const customer = structuredClone(customerContract.customer), customerBase = `/sales/counterparties/${customer.id}/`;
   const tenantId = contract.tenant_id, teamBase = `/tenants/${tenantId}/employees/`;
   const encode = value => btoa(JSON.stringify(value));
   const jwt = encode({ alg: 'test-adapter-only' }) + '.' + encode({ user_id: 900007, exp: Math.floor(Date.now() / 1000) + 3600 }) + '.synthetic';
   const adjustments = new Map();
-  window.__parityQa = { requests: [], unexpected: [], adjustmentWrites: 0, seedCredit: () => { customer.debt_balance_uzs = '100.00'; customer.debt_balance_usd = '-10.00'; }, api: 'Controlled browser adapter; no live backend or native acceptance' };
+  window.__parityQa = { requests: [], unexpected: [], adjustmentWrites: 0, importWrites: 0, seedCredit: () => { customer.debt_balance_uzs = '100.00'; customer.debt_balance_usd = '-10.00'; }, api: 'Controlled browser adapter; no live backend or native acceptance' };
+  const importContext = jobId => ({ protocol: 'ilbi-counterparty-import-v1', job_id: jobId, actor_id: 900007, tenant_id: tenantId });
   const quoteFor = body => {
     const signed = body.kind === 'credit_refund' ? -Number(body.amount) : Number(body.amount), balances = { UZS: customer.debt_balance_uzs, USD: customer.debt_balance_usd };
     return { ...adjustmentContract.quote, actor_id: 900007, tenant_id: tenantId, counterparty_id: customer.id, branch_id: tenantId, ...body, payment_amount: signed.toFixed(2), available_credit: Math.max(0, -Number(balances[body.currency])).toFixed(2), balances, remaining: { ...balances, [body.currency]: (Number(balances[body.currency]) - signed).toFixed(2) } };
@@ -43,7 +46,8 @@ function adapter(contract, customerContract, adjustmentContract, debtFilterContr
   window.fetch = async (input, options = {}) => {
     const url = new URL(typeof input === 'string' ? input : input.url, location.origin);
     const path = url.pathname.replace(/^\/api\/v1/, '');
-    const method = options.method || 'GET', body = options.body ? JSON.parse(options.body) : null;
+    const upload = options.body instanceof FormData ? options.body.get('file') : null;
+    const method = options.method || 'GET', body = upload ? { file: { name: upload.name, size: upload.size } } : options.body ? JSON.parse(options.body) : null;
     window.__parityQa.requests.push({ path, method, body });
     let data;
     if (path === '/auth/admin-login/') data = { access: jwt, refresh: jwt };
@@ -54,6 +58,14 @@ function adapter(contract, customerContract, adjustmentContract, debtFilterContr
     else if (path === teamBase + 'permissions/') data = contract.choices;
     else if (path === teamBase && method === 'GET') data = { results: [employee], next: null, count: 1 };
     else if (path === teamBase + employee.id + '/' && method === 'PATCH') { Object.assign(employee, body); data = employee; }
+    else if (path === '/sales/counterparties/import/preview/' && upload) {
+      const job = upload.name.startsWith('invalid') ? importContract.invalid : importContract.valid;
+      data = { ...job, operation_context: importContext(job.id) };
+    }
+    else if (path === `/sales/counterparties/import/${importContract.valid.id}/commit/`) {
+      data = { ...importContract.result, import_operation: importContext(importContract.valid.id) };
+      if (!window.__parityQa.importWrites) { window.__parityQa.importWrites++; throw new TypeError('Controlled import response lost after commit'); }
+    }
     else if (path === '/sales/counterparties/') {
       if (url.searchParams.get('due_status') === 'today') data = debtFilterContract.today;
       else data = { results: [customer], next: null, count: 1, summary: { ...debtFilterContract.today.summary, applied_due_status: '', total_debt_uzs: customer.debt_balance_uzs, total_debt_usd: '0.00', total_credit_uzs: '0.00', total_credit_usd: Math.max(0, -Number(customer.debt_balance_usd)).toFixed(2), credit_count: 1 } };
@@ -103,8 +115,16 @@ const fill = async (label, value) => {
   await browser.call('Input.insertText', { text: value });
 };
 const screenshot = async name => { await pause(400); const result = await browser.call('Page.captureScreenshot', { format: 'png' }); await writeFile(resolve(evidence, name + '.png'), Buffer.from(result.data, 'base64')); };
+const selectImport = async filename => {
+  await waitFor(`document.querySelector('input[type="file"]')`, 'real browser document picker');
+  const doc = await browser.call('DOM.getDocument');
+  const input = await browser.call('DOM.querySelector', { nodeId: doc.root.nodeId, selector: 'input[type="file"]' });
+  await browser.call('DOM.setFileInputFiles', { nodeId: input.nodeId, files: [resolve(evidence, filename)] });
+  await waitFor(`document.body.innerText.includes('Fayldagi mijozlarni tekshirish')`, 'selected CSV');
+};
 try {
-  await browser.call('Page.addScriptToEvaluateOnNewDocument', { source: '(' + adapter.toString() + ')(' + JSON.stringify(contract) + ',' + JSON.stringify(customerContract) + ',' + JSON.stringify(adjustmentContract) + ',' + JSON.stringify(debtFilterContract) + ')' });
+  await browser.call('Page.setInterceptFileChooserDialog', { enabled: true });
+  await browser.call('Page.addScriptToEvaluateOnNewDocument', { source: '(' + adapter.toString() + ')(' + JSON.stringify(contract) + ',' + JSON.stringify(customerContract) + ',' + JSON.stringify(adjustmentContract) + ',' + JSON.stringify(debtFilterContract) + ',' + JSON.stringify(importContract) + ')' });
   await browser.call('Page.navigate', { url: base });
   await waitFor(`document.querySelector('input[aria-label="Foydalanuvchi nomi yoki telefon"]')`, 'login');
   await fill('Foydalanuvchi nomi yoki telefon', 'qa-owner'); await fill('Parol', 'Synthetic-qa-password'); await click('Kirish');
@@ -193,6 +213,26 @@ try {
   await waitFor(`document.querySelector('input[aria-label="Qaytariladigan summa"]')`, 'refund accessible from debt list');
   await screenshot('debt-credit-refund-320');
   await click('Mijoz haqqini qaytarishni yopish');
+  await click('Menyu'); await click('Mijozlar'); await click('Excel / CSV orqali mijozlarni yuklash');
+  await waitFor(`document.body.innerText.includes('Excel / CSV faylni tanlash')`, 'native import utility route');
+  assert.equal(await browser.evaluate(`document.querySelectorAll('[role="tab"]').length`), 5);
+  await click('Excel / CSV faylni tanlash'); await selectImport('invalid-import.csv'); await click('Fayldagi mijozlarni tekshirish');
+  await waitFor(`document.body.innerText.includes('2 ta qator · Xatoli: 2')`, 'server-shaped invalid import rows');
+  assert.equal(await browser.evaluate(`document.body.innerText.includes('2 ta mijozni saqlashni tasdiqlash')`), false);
+  await click('Faqat xatoli import qatorlari'); await fill('Import qatorlarini qidirish', 'Duplicate');
+  await browser.resize(390, 844); await screenshot('customer-import-errors-390');
+  await click('Boshqa Excel / CSV faylni tanlash'); await selectImport('valid-import.csv'); await click('Fayldagi mijozlarni tekshirish');
+  await waitFor(`document.body.innerText.includes('Boshlang‘ich nasiya: 1 250,50 UZS / 2,75 USD')`, 'exact import totals');
+  assert.equal(await browser.evaluate('window.__parityQa.importWrites'), 0);
+  await browser.resize(320, 740); await screenshot('customer-import-preview-320');
+  await click('2 ta mijozni saqlashni tasdiqlash');
+  await waitFor(`document.body.innerText.includes('Asl import natijasini tekshirish')`, 'unknown import result');
+  await screenshot('customer-import-pending-320'); await click('Asl import natijasini tekshirish');
+  await waitFor(`document.body.innerText.includes('2 ta mijoz importi tasdiqlandi.')`, 'same-job import acknowledgement');
+  assert.equal(await browser.evaluate('window.__parityQa.importWrites'), 1);
+  const importCalls = await browser.evaluate(`window.__parityQa.requests.filter(row => row.path.includes('/import/') && row.path.endsWith('/commit/'))`);
+  assert.equal(importCalls.length, 2); assert.deepEqual(importCalls[0], importCalls[1]);
+  assert.ok(await browser.evaluate('document.documentElement.scrollWidth <= 320')); await screenshot('customer-import-confirmed-320');
   await click('Menyu'); await click('Chiqish');
   await waitFor(`document.body.innerText.includes('Taklif orqali hisobni faollashtirish')`, 'logout returns to entry');
   await click('Taklif orqali hisobni faollashtirish');
@@ -210,7 +250,7 @@ try {
   const qa = await browser.evaluate('window.__parityQa');
   assert.deepEqual(qa.unexpected, []);
   assert.deepEqual(browser.errors, []);
-  await writeFile(resolve(evidence, 'browser-result.json'), JSON.stringify({ runtime: 'Isolated Chrome + production React Native Web export + controlled API adapter', nativeDeviceAcceptance: false, liveBackend: false, checks: ['sidebar employee route with exactly five tabs', 'actual contract-shaped directory', 'inline email and password validation', 'server-ID permission preset and safe PATCH payload', 'light390/dark320 UI and no horizontal overflow', 'customer date validation and safe metadata PATCH', 'customer purchases/payments and server70 balance at390/320', 'credit refund quote-before-write without hash disclosure', 'lost refund response freezes draft and replays original key/body once', 'signed correction inline validation and quote invalidation', 'customer balances refreshed and five tabs retained at320', 'actual API-shaped due filter acknowledged before displaying rows', 'debt filters and credit-to-refund shortcut at390/320', 'logout and invitation-to-Telegram gate'], passed: true, writes: qa.requests.filter(row => row.method === 'PATCH').length, financialWrites: qa.adjustmentWrites, unexpected: qa.unexpected }, null, 2) + '\n');
+  await writeFile(resolve(evidence, 'browser-result.json'), JSON.stringify({ runtime: 'Isolated Chrome + production React Native Web export + controlled API adapter', nativeDeviceAcceptance: false, liveBackend: false, checks: ['sidebar employee route with exactly five tabs', 'actual contract-shaped directory', 'inline email and password validation', 'server-ID permission preset and safe PATCH payload', 'light390/dark320 UI and no horizontal overflow', 'customer date validation and safe metadata PATCH', 'customer purchases/payments and server70 balance at390/320', 'credit refund quote-before-write without hash disclosure', 'lost refund response freezes draft and replays original key/body once', 'signed correction inline validation and quote invalidation', 'customer balances refreshed and five tabs retained at320', 'actual API-shaped due filter acknowledged before displaying rows', 'debt filters and credit-to-refund shortcut at390/320', 'real browser file input with multipart invalid/valid contract-shaped previews', 'import exact totals/error filter and same-job lost-response recovery', 'logout and invitation-to-Telegram gate'], passed: true, writes: qa.requests.filter(row => row.method === 'PATCH').length, financialWrites: qa.adjustmentWrites, importWrites: qa.importWrites, unexpected: qa.unexpected }, null, 2) + '\n');
   console.log('Employee/invitation browser checks passed (controlled API, no native/live delivery claim).');
 } catch (error) {
   await screenshot('browser-failure');

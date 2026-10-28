@@ -1,5 +1,6 @@
 import * as ImagePicker from 'expo-image-picker';
 import { pickImageUpload } from '../src/api/imageUpload';
+jest.mock('expo-file-system', () => ({ File: jest.fn(function () { return { bytes: jest.fn() }; }) }));
 
 const asset = { uri: 'file:///selected.jpg', fileName: 'selected.jpg', mimeType: 'image/jpeg', width: 64, height: 64 };
 describe('Image selection before authenticated uploads', () => {
@@ -13,7 +14,7 @@ describe('Image selection before authenticated uploads', () => {
     const assertCurrent = jest.fn(), append = jest.spyOn(FormData.prototype, 'append');
     const body = await pickImageUpload(field, assertCurrent);
     expect(body).toBeInstanceOf(FormData);
-    expect(append.mock.calls).toEqual([[field, expect.objectContaining({ uri: asset.uri, name: 'selected.jpg', type: 'image/jpeg' })]]);
+    expect(append.mock.calls).toEqual([[field, expect.objectContaining({ bytes: expect.any(Function), name: 'selected.jpg', type: 'image/jpeg' })]]);
     expect(ImagePicker.launchImageLibraryAsync).toHaveBeenCalledWith(expect.objectContaining({ mediaTypes: ['images'], allowsEditing: true }));
     expect(assertCurrent).toHaveBeenCalledTimes(2);
   });
