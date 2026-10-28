@@ -13,6 +13,7 @@ if (!exportDir || !evidence) throw Error('Set ILBI_PARITY_WEB_EXPORT and ILBI_PA
 const root = resolve(exportDir), contract = JSON.parse(await readFile(new URL('./contracts/employees.json', import.meta.url), 'utf8'));
 const customerContract = JSON.parse(await readFile(new URL('./contracts/customers.json', import.meta.url), 'utf8'));
 const adjustmentContract = JSON.parse(await readFile(new URL('./contracts/debt-adjustments.json', import.meta.url), 'utf8'));
+const debtFilterContract = JSON.parse(await readFile(new URL('./contracts/debt-filters.json', import.meta.url), 'utf8'));
 await mkdir(evidence, { recursive: true });
 const mime = { '.js': 'text/javascript', '.css': 'text/css', '.html': 'text/html', '.json': 'application/json', '.png': 'image/png', '.svg': 'image/svg+xml', '.ttf': 'font/ttf', '.otf': 'font/otf', '.ico': 'image/x-icon', '.webp': 'image/webp' };
 const server = createServer(async (req, res) => {
@@ -27,7 +28,7 @@ const server = createServer(async (req, res) => {
 await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
 const base = 'http://127.0.0.1:' + server.address().port;
 const browser = await launchBrowser({ width: 390, height: 844 });
-function adapter(contract, customerContract, adjustmentContract) {
+function adapter(contract, customerContract, adjustmentContract, debtFilterContract) {
   const employee = structuredClone(contract.directory.results[0]);
   const customer = structuredClone(customerContract.customer), customerBase = `/sales/counterparties/${customer.id}/`;
   const tenantId = contract.tenant_id, teamBase = `/tenants/${tenantId}/employees/`;
@@ -53,7 +54,10 @@ function adapter(contract, customerContract, adjustmentContract) {
     else if (path === teamBase + 'permissions/') data = contract.choices;
     else if (path === teamBase && method === 'GET') data = { results: [employee], next: null, count: 1 };
     else if (path === teamBase + employee.id + '/' && method === 'PATCH') { Object.assign(employee, body); data = employee; }
-    else if (path === '/sales/counterparties/') data = { results: [customer], next: null, count: 1 };
+    else if (path === '/sales/counterparties/') {
+      if (url.searchParams.get('due_status') === 'today') data = debtFilterContract.today;
+      else data = { results: [customer], next: null, count: 1, summary: { ...debtFilterContract.today.summary, applied_due_status: '', total_debt_uzs: customer.debt_balance_uzs, total_debt_usd: '0.00', total_credit_uzs: '0.00', total_credit_usd: Math.max(0, -Number(customer.debt_balance_usd)).toFixed(2), credit_count: 1 } };
+    }
     else if (path === customerBase + 'sales/') data = customerContract.sales;
     else if (path === customerBase + 'payments/') data = customerContract.payments;
     else if (path === customerBase + 'payments/adjustment-quote/' && method === 'POST') data = quoteFor(body);
@@ -85,7 +89,7 @@ const waitFor = async (expression, label) => {
 const click = async label => {
   await pause(350);
   const point = await browser.evaluate(`(() => {
-    const node = [...document.querySelectorAll('[role="button"],[role="tab"],[role="radio"],button')].find(el => (el.getAttribute('aria-label') === ${JSON.stringify(label)} || el.innerText.trim() === ${JSON.stringify(label)}) && !el.closest('[aria-hidden="true"],[inert]'));
+    const node = [...document.querySelectorAll('[role="button"],[role="tab"],[role="radio"],button')].find(el => (el.getAttribute('aria-label') === ${JSON.stringify(label)} || el.innerText.trim() === ${JSON.stringify(label)}) && !el.closest('[aria-hidden="true"],[inert]') && el.getBoundingClientRect().width > 0 && el.getBoundingClientRect().height > 0);
     if (!node) throw Error('Missing button: ' + ${JSON.stringify(label)});
     node.scrollIntoView({ block: 'center' }); const r = node.getBoundingClientRect();
     return { x: r.x + r.width / 2, y: r.y + r.height / 2 };
@@ -98,9 +102,9 @@ const fill = async (label, value) => {
   await browser.evaluate(`(() => { const el = [...document.querySelectorAll('input,textarea')].find(el => el.getAttribute('aria-label') === ${JSON.stringify(label)}); if (!el) throw Error('Missing input'); el.scrollIntoView({block:'center'}); el.focus(); el.select(); })()`);
   await browser.call('Input.insertText', { text: value });
 };
-const screenshot = async name => { const result = await browser.call('Page.captureScreenshot', { format: 'png' }); await writeFile(resolve(evidence, name + '.png'), Buffer.from(result.data, 'base64')); };
+const screenshot = async name => { await pause(400); const result = await browser.call('Page.captureScreenshot', { format: 'png' }); await writeFile(resolve(evidence, name + '.png'), Buffer.from(result.data, 'base64')); };
 try {
-  await browser.call('Page.addScriptToEvaluateOnNewDocument', { source: '(' + adapter.toString() + ')(' + JSON.stringify(contract) + ',' + JSON.stringify(customerContract) + ',' + JSON.stringify(adjustmentContract) + ')' });
+  await browser.call('Page.addScriptToEvaluateOnNewDocument', { source: '(' + adapter.toString() + ')(' + JSON.stringify(contract) + ',' + JSON.stringify(customerContract) + ',' + JSON.stringify(adjustmentContract) + ',' + JSON.stringify(debtFilterContract) + ')' });
   await browser.call('Page.navigate', { url: base });
   await waitFor(`document.querySelector('input[aria-label="Foydalanuvchi nomi yoki telefon"]')`, 'login');
   await fill('Foydalanuvchi nomi yoki telefon', 'qa-owner'); await fill('Parol', 'Synthetic-qa-password'); await click('Kirish');
@@ -173,6 +177,22 @@ try {
   assert.equal(await browser.evaluate('window.__parityQa.adjustmentWrites'), 2);
   assert.ok(await browser.evaluate('document.documentElement.scrollWidth <= 320'));
   assert.equal(await browser.evaluate(`document.querySelectorAll('[role="tab"]').length`), 5);
+  await click('Qarz'); await waitFor(`document.body.innerText.includes('Qarz filtrlarini ochish')`, 'debts quick tab');
+  await click('Qarz filtrlarini ochish'); await click('Qarz muddati filtri: Bugun');
+  await waitFor(`document.body.innerText.includes('2026-10-29 · Bugun')`, 'actual API-shaped due filter');
+  await browser.resize(390, 844); await screenshot('debt-filters-390');
+  await browser.resize(320, 740);
+  await browser.evaluate(`document.querySelector('input[aria-label="Mijoz qidirish (ism, telefon, izoh)"]').closest('div').scrollIntoView({block:'start'})`);
+  await screenshot('debt-filters-320');
+  assert.ok(await browser.evaluate('document.documentElement.scrollWidth <= 320'));
+  await click('Balans holati: Mijoz haqqi');
+  await waitFor(`document.body.innerText.includes('Statement customer: mijoz haqqini qaytarish')`, 'credit filter refund shortcut');
+  const filtered = await browser.evaluate(`window.__parityQa.requests.filter(row => row.path === '/sales/counterparties/').at(-1)`);
+  assert.equal(filtered.method, 'GET');
+  await click('Statement customer: mijoz haqqini qaytarish');
+  await waitFor(`document.querySelector('input[aria-label="Qaytariladigan summa"]')`, 'refund accessible from debt list');
+  await screenshot('debt-credit-refund-320');
+  await click('Mijoz haqqini qaytarishni yopish');
   await click('Menyu'); await click('Chiqish');
   await waitFor(`document.body.innerText.includes('Taklif orqali hisobni faollashtirish')`, 'logout returns to entry');
   await click('Taklif orqali hisobni faollashtirish');
@@ -190,7 +210,7 @@ try {
   const qa = await browser.evaluate('window.__parityQa');
   assert.deepEqual(qa.unexpected, []);
   assert.deepEqual(browser.errors, []);
-  await writeFile(resolve(evidence, 'browser-result.json'), JSON.stringify({ runtime: 'Isolated Chrome + production React Native Web export + controlled API adapter', nativeDeviceAcceptance: false, liveBackend: false, checks: ['sidebar employee route with exactly five tabs', 'actual contract-shaped directory', 'inline email and password validation', 'server-ID permission preset and safe PATCH payload', 'light390/dark320 UI and no horizontal overflow', 'customer date validation and safe metadata PATCH', 'customer purchases/payments and server70 balance at390/320', 'credit refund quote-before-write without hash disclosure', 'lost refund response freezes draft and replays original key/body once', 'signed correction inline validation and quote invalidation', 'customer balances refreshed and five tabs retained at320', 'logout and invitation-to-Telegram gate'], passed: true, writes: qa.requests.filter(row => row.method === 'PATCH').length, financialWrites: qa.adjustmentWrites, unexpected: qa.unexpected }, null, 2) + '\n');
+  await writeFile(resolve(evidence, 'browser-result.json'), JSON.stringify({ runtime: 'Isolated Chrome + production React Native Web export + controlled API adapter', nativeDeviceAcceptance: false, liveBackend: false, checks: ['sidebar employee route with exactly five tabs', 'actual contract-shaped directory', 'inline email and password validation', 'server-ID permission preset and safe PATCH payload', 'light390/dark320 UI and no horizontal overflow', 'customer date validation and safe metadata PATCH', 'customer purchases/payments and server70 balance at390/320', 'credit refund quote-before-write without hash disclosure', 'lost refund response freezes draft and replays original key/body once', 'signed correction inline validation and quote invalidation', 'customer balances refreshed and five tabs retained at320', 'actual API-shaped due filter acknowledged before displaying rows', 'debt filters and credit-to-refund shortcut at390/320', 'logout and invitation-to-Telegram gate'], passed: true, writes: qa.requests.filter(row => row.method === 'PATCH').length, financialWrites: qa.adjustmentWrites, unexpected: qa.unexpected }, null, 2) + '\n');
   console.log('Employee/invitation browser checks passed (controlled API, no native/live delivery claim).');
 } catch (error) {
   await screenshot('browser-failure');

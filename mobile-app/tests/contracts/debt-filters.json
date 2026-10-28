@@ -1,0 +1,63 @@
+{
+  "source": "Actual isolated PostgreSQL/API; fixed Tashkent business day at UTC date boundary; synthetic identities only",
+  "today": {
+    "count": 3,
+    "next": null,
+    "previous": null,
+    "results": [
+      {
+        "id": 3081,
+        "name": "Mixed",
+        "phone_number": "+998930000020",
+        "target_tenant": null,
+        "debt_balance_uzs": "5.00",
+        "debt_balance_usd": "-4.00",
+        "debt_due_date": "2026-10-29",
+        "note": "",
+        "is_active": true,
+        "created_at": "2026-10-28T03:12:33.816660-07:00",
+        "last_payment": null
+      },
+      {
+        "id": 3080,
+        "name": "USD",
+        "phone_number": "+998930000019",
+        "target_tenant": null,
+        "debt_balance_uzs": "0.00",
+        "debt_balance_usd": "2.50",
+        "debt_due_date": "2026-10-29",
+        "note": "",
+        "is_active": true,
+        "created_at": "2026-10-28T03:12:33.815960-07:00",
+        "last_payment": null
+      },
+      {
+        "id": 3075,
+        "name": "today",
+        "phone_number": "+998930000014",
+        "target_tenant": null,
+        "debt_balance_uzs": "10.25",
+        "debt_balance_usd": "0.00",
+        "debt_due_date": "2026-10-29",
+        "note": "",
+        "is_active": true,
+        "created_at": "2026-10-28T03:12:33.812345-07:00",
+        "last_payment": null
+      }
+    ],
+    "summary": {
+      "total_count": 10,
+      "debtors_count": 8,
+      "credit_count": 2,
+      "settled_count": 1,
+      "total_debt_uzs": 66.5,
+      "total_debt_usd": 2.5,
+      "total_credit_uzs": 3.0,
+      "total_credit_usd": 5.0,
+      "business_date": "2026-10-29",
+      "debt_due_filter_version": 1,
+      "due_soon_days": 7,
+      "applied_due_status": "today"
+    }
+  }
+}

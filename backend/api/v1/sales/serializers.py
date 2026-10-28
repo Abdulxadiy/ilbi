@@ -10,6 +10,7 @@ from apps.sales.models import (
     Sale,
     SaleItem,
 )
+from apps.sales.services.counterparty_queries import DUE_STATUSES
 
 
 class CounterpartyOutputSerializer(serializers.ModelSerializer):
@@ -67,8 +68,14 @@ class CounterpartyOutputSerializer(serializers.ModelSerializer):
             "exchange_rate": str(payment.exchange_rate) if payment.exchange_rate is not None else None,
             "exchange_rate_source": payment.exchange_rate_source,
             "exchange_rate_date": payment.exchange_rate_date.isoformat() if payment.exchange_rate_date else None,
-            "converted_amount_uzs": str(payment.converted_amount_uzs) if payment.converted_amount_uzs is not None else None,
+            "converted_amount_uzs": (
+                str(payment.converted_amount_uzs) if payment.converted_amount_uzs is not None else None
+            ),
         }
+
+
+class CounterpartyDueQuerySerializer(serializers.Serializer):
+    due_status = serializers.ChoiceField(choices=DUE_STATUSES, required=False, allow_blank=True)
 
 
 class CounterpartyCreateSerializer(serializers.Serializer):

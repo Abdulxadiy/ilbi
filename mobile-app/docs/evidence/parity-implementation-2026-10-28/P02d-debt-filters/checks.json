@@ -1,0 +1,18 @@
+{
+  "success": true,
+  "numPassedTests": 647,
+  "numFailedTests": 0,
+  "numPassedTestSuites": 69,
+  "numFailedTestSuites": 0,
+  "numPendingTests": 0,
+  "backend_full_passed": 1217,
+  "typecheck": "passed",
+  "strict_eslint": "passed",
+  "ruff": "passed",
+  "production_expo_export": "Android/iOS/web bundling passed",
+  "post_wording_color_targeted_tests_passed": 36,
+  "native_acceptance": false,
+  "production_deployed": false,
+  "emulator_touched": false,
+  "version_changed": false
+}

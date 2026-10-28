@@ -9,6 +9,7 @@ from api.permissions import HasEmployeePermission
 from api.schema import optional_pagination
 from api.v1.sales.serializers import (
     CounterpartyCreateSerializer,
+    CounterpartyDueQuerySerializer,
     CounterpartyOutputSerializer,
     CounterpartyUpdateSerializer,
     DebtPaymentCorrectionSerializer,
@@ -24,7 +25,7 @@ from apps.sales.services import (
     DebtService,
     DebtServiceError,
 )
-from apps.sales.services.counterparty_queries import filtered_counterparties
+from apps.sales.services.counterparty_queries import DUE_SOON_DAYS, counterparty_business_date, filtered_counterparties
 
 from ._base import SalesAPIView
 
@@ -36,16 +37,22 @@ class CounterpartyListCreateView(SalesAPIView):
         'POST': 'sales.manage_counterparty',
     }
 
-    @extend_schema(request=None, responses={200: optional_pagination(CounterpartyOutputSerializer)})
+    @extend_schema(
+        request=None, parameters=[CounterpartyDueQuerySerializer],
+        responses={200: optional_pagination(CounterpartyOutputSerializer)},
+    )
     def get(self, request):
         from django.db.models import Prefetch
+        query = CounterpartyDueQuerySerializer(data=request.query_params)
+        query.is_valid(raise_exception=True)
+        today = counterparty_business_date()
         payments_prefetch = Prefetch(
             'payments', queryset=DebtPayment.objects.select_related(
                 'recorded_by', 'branch', 'tenant',
             ).order_by('-paid_at', '-pk')[:1],
             to_attr='prefetched_payments',
         )
-        qs = filtered_counterparties(self.tenant, request.query_params).select_related(
+        qs = filtered_counterparties(self.tenant, request.query_params, today=today).select_related(
             'target_tenant',
         ).prefetch_related(payments_prefetch)
         if request.query_params.get('page'):
@@ -62,8 +69,14 @@ class CounterpartyListCreateView(SalesAPIView):
                 total_debt_uzs=Sum('debt_balance_uzs', filter=Q(debt_balance_uzs__gt=0)),
                 total_debt_usd=Sum('debt_balance_usd', filter=Q(debt_balance_usd__gt=0)),
                 total_credit_uzs=Sum('debt_balance_uzs', filter=Q(debt_balance_uzs__lt=0)),
+                total_credit_usd=Sum('debt_balance_usd', filter=Q(debt_balance_usd__lt=0)),
             )
             summary['total_credit_uzs'] = -(summary['total_credit_uzs'] or 0)
+            summary['total_credit_usd'] = -(summary['total_credit_usd'] or 0)
+            summary.update(
+                business_date=today.isoformat(), debt_due_filter_version=1,
+                due_soon_days=DUE_SOON_DAYS, applied_due_status=query.validated_data.get('due_status', ''),
+            )
             response.data['summary'] = summary
             return response
         return Response(CounterpartyOutputSerializer(qs, many=True).data)

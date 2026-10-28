@@ -165,7 +165,12 @@
       "settled_count": 1,
       "total_debt_uzs": null,
       "total_debt_usd": null,
-      "total_credit_uzs": 0
+      "total_credit_uzs": 0,
+      "total_credit_usd": 0,
+      "business_date": "2026-10-28",
+      "debt_due_filter_version": 1,
+      "due_soon_days": 7,
+      "applied_due_status": ""
     }
   },
   "created_sales": [

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { FlatList, Text, View } from 'react-native';
 import * as Crypto from 'expo-crypto';
 import { useAppNavigation } from '../../navigation/useAppNavigation';
@@ -19,6 +19,8 @@ import { parseCustomer, type Customer } from '../customers/model';
 import { acknowledgeDebt, debtPayload, submitDebt, type AcceptedDebt, type DebtPayload } from './commands';
 import { fetchDebtQuote, type DebtQuote } from './quote';
 import { hasPermission } from '../auth/permissions';
+import { DebtAdjustmentSheet } from './DebtAdjustmentSheet';
+import { dueOptions, dueStatus, validateDebtPage, type DebtBalance, type DebtDue } from './filters';
 
 export const DebtsScreen: React.FC = () => {
   const { user, activeTenant } = useAuth();
@@ -28,7 +30,10 @@ function DebtsBody() {
   const { user, activeTenant } = useAuth(), { can } = usePermissions(), { colors } = useTheme(), navigation = useAppNavigation();
   const allowed = can('sales.manage_counterparty') || can('sales.record_debt_payment');
   const [search, setSearch] = useState(''), query = useDebounced(search.trim());
-  const debts = usePagedResource(allowed ? '/sales/counterparties/?' + new URLSearchParams({ balance_status: 'debtors', search: query }).toString() : null, parseCustomer);
+  const [balance, setBalance] = useState<DebtBalance>('debtors'), [due, setDue] = useState<DebtDue>(''), [filtersOpen, setFiltersOpen] = useState(false);
+  const validatePage = useCallback((value: unknown) => validateDebtPage(value, due), [due]);
+  const debts = usePagedResource(allowed ? '/sales/counterparties/?' + new URLSearchParams({ balance_status: balance, search: query, ...(due ? { due_status: due } : {}) }).toString() : null, parseCustomer, undefined, validatePage);
+  const [refunding, setRefunding] = useState<Customer | null>(null);
   const [selected, setSelected] = useState<Customer | null>(null), [amount, setAmount] = useState(''), [currency, setCurrency] = useState<'UZS' | 'USD'>('UZS'), [method, setMethod] = useState<'cash' | 'card'>('cash');
   const [paying, setPaying] = useState(false), [locked, setLocked] = useState(false), [draftId, setDraftId] = useState(''), [error, setError] = useState(''), [message, setMessage] = useState(''), [accepted, setAccepted] = useState<AcceptedDebt | null>(null);
   const [quote, setQuote] = useState<DebtQuote | null>(null), [note, setNote] = useState(''), [branchId, setBranchId] = useState('');
@@ -72,22 +77,31 @@ function DebtsBody() {
       if (!frozen.current && !acceptedRecord.current) setQuote(null);
     } finally { submitting.current = false; setPaying(false); }
   };
-  return <Page title="Qarzlar" onMenu={navigation.openDrawer} scroll={false} insetBottom={false}>
-    <View style={{ padding: 16, gap: 12 }}>
-      <Input label="Mijoz qidirish (ism, telefon, STIR)" value={search} onChangeText={setSearch} placeholder="Ism yoki telefon" />
+  const header = <View style={{ gap: 12 }}>
+      <Input label="Mijoz qidirish (ism, telefon, izoh)" value={search} onChangeText={setSearch} placeholder="Ism yoki telefon" />
       {debts.summary && <><Text style={{ color: colors.text, fontSize: 22, fontWeight: '700' }}>{formatAmount(debts.summary.total_debt_uzs)} UZS</Text><Notice>{formatAmount(debts.summary.total_debt_usd)} USD · Qarzdorlar: {debts.summary.debtors_count ?? '—'}</Notice></>}
+      {debts.summary && <Notice>Mijoz haqqi: {formatAmount(debts.summary.total_credit_uzs)} UZS / {debts.summary.total_credit_usd == null ? '—' : formatAmount(debts.summary.total_credit_usd)} USD · Mijozlar: {debts.summary.credit_count ?? '—'}</Notice>}
+      <Button title={filtersOpen ? 'Filtrlarni yopish' : 'Qarz filtrlarini ochish'} variant="ghost" onPress={() => setFiltersOpen(value => !value)} />
+      {filtersOpen && <><ChoiceField label="Balans holati" value={balance} onChange={value => { setBalance(value); if (['credit', 'settled'].includes(value)) setDue(''); }} options={[{ value: 'debtors', label: 'Qarzdorlar' }, { value: 'all', label: 'Barchasi' }, { value: 'credit', label: 'Mijoz haqqi' }, { value: 'settled', label: 'Hisobi yopilgan' }]} />
+        {['debtors', 'all'].includes(balance) && <><ChoiceField label="Qarz muddati filtri" value={due} onChange={setDue} options={dueOptions} /><Notice>Bugun — serverdagi Toshkent sanasi. 7 kun ichida — ertadan boshlab 7-kungacha.</Notice></>}
+      </>}
+      {due ? <Notice>Faol muddat: {dueOptions.find(row => row.value === due)?.label}</Notice> : null}
+      {(due || balance !== 'debtors') && <Button title="Qarz filtrlarini tozalash" variant="secondary" onPress={() => { setBalance('debtors'); setDue(''); }} />}
       {message ? <Notice>{message}</Notice> : null}
       {!allowed && <Notice error>Qarzlarni ko‘rish uchun vakolat berilmagan.</Notice>}
-    </View>
-    <FlatList data={debts.rows} keyExtractor={item => String(item.id)} contentContainerStyle={{ padding: 16, gap: 12 }} refreshing={debts.loading} onRefresh={debts.reload}
-      ListEmptyComponent={<ListState loading={debts.loading} error={debts.error} empty onRetry={debts.retry} emptyLabel="Qarzdorlar topilmadi." />}
-      ListFooterComponent={<>{debts.rows.length > 0 && debts.error && <ListState error={debts.error} onRetry={debts.retry} />}{debts.hasMore && <Button title="Yana qarzdorlar" variant="secondary" loading={debts.loadingMore} onPress={debts.loadMore} />}</>}
+    </View>;
+  return <Page title="Qarzlar" onMenu={navigation.openDrawer} scroll={false} insetBottom={false}>
+    <FlatList ListHeaderComponent={header} data={debts.rows} keyExtractor={item => String(item.id)} contentContainerStyle={{ padding: 16, gap: 12 }} refreshing={debts.loading} onRefresh={debts.reload}
+      ListEmptyComponent={<ListState loading={debts.loading} error={debts.error} empty onRetry={debts.retry} emptyLabel={balance === 'debtors' ? 'Qarzdorlar topilmadi.' : 'Mijozlar topilmadi.'} />}
+      ListFooterComponent={<>{debts.rows.length > 0 && debts.error && <ListState error={debts.error} onRetry={debts.retry} />}{debts.hasMore && <Button title={balance === 'debtors' ? 'Yana qarzdorlar' : 'Yana mijozlar'} variant="secondary" loading={debts.loadingMore} onPress={debts.loadMore} />}</>}
       renderItem={({ item }) => <View style={{ padding: 16, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surface, borderRadius: 14, gap: 8 }}>
         <Text style={{ color: colors.text, fontSize: 16, fontWeight: '700' }}>{item.name}</Text>
         <Notice>{item.phone_number || 'Telefon ko‘rsatilmagan'}</Notice>
-        <Text style={{ color: colors.danger }}>{formatAmount(item.debt_balance_uzs)} UZS / {formatAmount(item.debt_balance_usd)} USD</Text>
-        {item.debt_due_date ? <Notice>Qarz muddati: {item.debt_due_date}</Notice> : null}
-        {can('sales.record_debt_payment') && <Button title="To‘lov qabul qilish" variant="secondary" onPress={() => open(item)} />}
+        <Text style={{ color: Number(item.debt_balance_uzs) > 0 || Number(item.debt_balance_usd) > 0 ? colors.danger : colors.text }}>{formatAmount(item.debt_balance_uzs)} UZS / {formatAmount(item.debt_balance_usd)} USD</Text>
+        {item.debt_due_date ? <Notice>Qarz muddati: {item.debt_due_date}{(Number(item.debt_balance_uzs) > 0 || Number(item.debt_balance_usd) > 0) && debts.summary?.business_date ? ' · ' + dueOptions.find(row => row.value === dueStatus(item.debt_due_date, debts.summary.business_date))?.label : ''}</Notice> : null}
+        {(Number(item.debt_balance_uzs) > 0 || Number(item.debt_balance_usd) > 0) && can('sales.record_debt_payment') && <Button title="To‘lov qabul qilish" variant="secondary" onPress={() => open(item)} />}
+        {(Number(item.debt_balance_uzs) < 0 || Number(item.debt_balance_usd) < 0) && user?.role === 'owner' && can('sales.correct_debt_payment') && <Button title={item.name + ': mijoz haqqini qaytarish'} variant="secondary" onPress={() => setRefunding(item)} />}
+        <Button title={item.name + ': ko‘chirma'} variant="ghost" onPress={() => navigation.navigate('Customer', { id: String(item.id) })} />
       </View>} />
     <BottomSheet visible={selected !== null} title={selected?.name || 'Qarz to‘lovi'} scrollable onClose={() => { if (!submitting.current && !paying) { currentDialog.current = ''; setSelected(null); } }}>
       <View style={{ gap: 12 }}>
@@ -111,5 +125,6 @@ function DebtsBody() {
         {error ? <Button title="Amallar jurnalini ochish" variant="secondary" disabled={paying} onPress={() => navigation.navigate('Sync')} /> : null}
       </View>
     </BottomSheet>
+    {refunding && <DebtAdjustmentSheet key={refunding.id} customer={refunding} kind="credit_refund" onClose={() => setRefunding(null)} onDone={async () => { setRefunding(null); setMessage('Mijozga haq qaytarish tasdiqlandi.'); await debts.reload(); }} />}
   </Page>;
 }

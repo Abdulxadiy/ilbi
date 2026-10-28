@@ -1,5 +1,5 @@
 import React from 'react';
-import { act, fireEvent, render } from '@testing-library/react-native';
+import { act, fireEvent, render, waitFor } from '@testing-library/react-native';
 import { DebtsScreen } from '../src/features/debts/DebtsScreen';
 import { ThemeProvider } from '../src/theme/ThemeContext';
 import { request, assertAuthScope } from '../src/api/client';
@@ -50,6 +50,43 @@ describe('Authoritative two-step debt payment UI and durable boundaries', () => 
     expect(await screen.findByText('Ali')).toBeTruthy(); expect(screen.getByText('860 000,75 UZS')).toBeTruthy();
     expect(jest.mocked(request).mock.calls[0][0]).toContain('balance_status=debtors');
     expect(jest.mocked(request).mock.calls[0][0]).toContain('page=1&page_size=50');
+  });
+  test('due filters are sent to the server; an older server cannot silently supply unfiltered debtors', async () => {
+    const screen = await render(<ThemeProvider><DebtsScreen /></ThemeProvider>);
+    await screen.findByText('Ali'); await fireEvent.press(screen.getByText('Qarz filtrlarini ochish'));
+    await fireEvent.press(screen.getByLabelText('Qarz muddati filtri: Muddati o‘tgan'));
+    expect(await screen.findByText('Server muddat filtrini tasdiqlamadi. Serverni yangilang yoki muddat filtrini tozalang.')).toBeTruthy();
+    expect(screen.queryByText('Ali')).toBeNull();
+    expect(jest.mocked(request).mock.calls.at(-1)?.[0]).toContain('due_status=overdue');
+    await fireEvent.press(screen.getByText('Qarz filtrlarini tozalash'));
+    expect(await screen.findByText('Ali')).toBeTruthy();
+  });
+  test('credit filter clears an old due filter, renders both credit currencies and offers refund/statement', async () => {
+    jest.mocked(request).mockImplementation(async path => ({ ...list, results: path.includes('balance_status=credit') ? [{ ...customer, debt_balance_uzs: '-12.50', debt_balance_usd: '-2.00' }] : list.results, summary: { ...list.summary, total_credit_uzs: '12.50', total_credit_usd: '2.00', credit_count: 1 } }));
+    const screen = await render(<ThemeProvider><DebtsScreen /></ThemeProvider>);
+    await screen.findByText('Ali'); await fireEvent.press(screen.getByText('Qarz filtrlarini ochish'));
+    await fireEvent.press(screen.getByLabelText('Qarz muddati filtri: Bugun'));
+    await fireEvent.press(screen.getByLabelText('Balans holati: Mijoz haqqi'));
+    expect(await screen.findByText('Mijoz haqqi: 12,5 UZS / 2 USD · Mijozlar: 1')).toBeTruthy();
+    await waitFor(() => expect(screen.getByText('Ali: mijoz haqqini qaytarish')).toBeTruthy());
+    expect(screen.getByText('Ali: ko‘chirma')).toBeTruthy();
+    expect(screen.queryByText('To‘lov qabul qilish')).toBeNull();
+    expect(jest.mocked(request).mock.calls.at(-1)?.[0]).toContain('balance_status=credit');
+    expect(jest.mocked(request).mock.calls.at(-1)?.[0]).not.toContain('due_status');
+    expect(screen.queryByLabelText('Qarz muddati filtri: Bugun')).toBeNull();
+    await fireEvent.press(screen.getByText('Ali: mijoz haqqini qaytarish'));
+    expect(screen.getByLabelText('Qaytariladigan summa').props.value).toBe('12.5');
+    expect(withFinancialIdentity).not.toHaveBeenCalled();
+  });
+  test('a validated second page is requested with the same due filter, never a server next URL', async () => {
+    const summary = { ...list.summary, business_date: '2026-10-29', debt_due_filter_version: 1, due_soon_days: 7, applied_due_status: 'overdue' };
+    jest.mocked(request).mockImplementation(async path => path.includes('due_status=overdue') ? { results: [{ ...customer, ...(path.includes('page=2&') ? { id: 2, name: 'Older debtor' } : {}) }], count: 2, next: path.includes('page=2&') ? null : 'https://evil.invalid/steal', summary } : list);
+    const screen = await render(<ThemeProvider><DebtsScreen /></ThemeProvider>); await screen.findByText('Ali');
+    await fireEvent.press(screen.getByText('Qarz filtrlarini ochish')); await fireEvent.press(screen.getByLabelText('Qarz muddati filtri: Muddati o‘tgan'));
+    await fireEvent.press(await screen.findByText('Yana qarzdorlar'));
+    expect(await screen.findByText('Older debtor')).toBeTruthy();
+    expect(jest.mocked(request).mock.calls.at(-1)?.[0]).toContain('due_status=overdue&page=2');
+    expect(jest.mocked(request).mock.calls.every(([path]) => !path.startsWith('http'))).toBe(true);
   });
   test('initial calculation is a read and does not create an intent or payment', async () => {
     const screen = await open(); await calculate(screen);

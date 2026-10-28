@@ -6,7 +6,7 @@ from rest_framework.exceptions import ValidationError
 from api.mixins import OwnerStaffOnlyAPIView
 from api.permissions import HasEmployeePermission, IsOwner
 from api.v1.inventory.views.stock_views import filtered_stock_queryset
-from api.v1.sales.serializers import SaleListQuerySerializer
+from api.v1.sales.serializers import CounterpartyDueQuerySerializer, SaleListQuerySerializer
 from api.v1.sales.views.sale_views import SaleListCreateView
 from apps.accounts.services.permission_service import PermissionService
 from apps.core.spreadsheets import (
@@ -47,6 +47,8 @@ def export_details(request):
         "payment_type": "To‘lov turi",
         "counterparty_id": "Kontragent ID",
         "balance": "Qarzdorlik filtri",
+        "balance_status": "Balans holati",
+        "due_status": "Qarz muddati filtri",
         "has_debt": "Faqat qarzdorlar",
         "b2b_only": "Faqat B2B",
     }
@@ -181,8 +183,10 @@ class CounterpartyExportView(SelectedExportView):
         entries = self.selected(request, Counterparty.objects.filter(tenant=self.tenant))
         return self.export_rows(request, entries)
 
-    @extend_schema(responses={(200, XLSX_MIME): OpenApiTypes.BINARY})
+    @extend_schema(parameters=[CounterpartyDueQuerySerializer], responses={(200, XLSX_MIME): OpenApiTypes.BINARY})
     def get(self, request):
+        query = CounterpartyDueQuerySerializer(data=request.query_params)
+        query.is_valid(raise_exception=True)
         entries = filtered_counterparties(self.tenant, request.query_params)
         if entries.count() > MAX_EXPORT_ROWS:
             raise ValidationError("Eksport hajmi oshdi. Filtrni toraytiring.")

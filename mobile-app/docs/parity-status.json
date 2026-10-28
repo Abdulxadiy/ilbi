@@ -259,7 +259,8 @@
       "title": "Authoritative customer list and balance summaries",
       "status": "TESTED_CODE",
       "evidence": [
-        "Real paged customer list/search/store-wide debt summaries and basic create/edit;29 core mobile and12 API/ORM cases passed."
+        "Real paged customer list/search/store-wide debt summaries and basic create/edit;29 core mobile and12 API/ORM cases passed.",
+        "2026-10-28 P02d follow-up: missing USD customer-credit aggregate added alongside UZS; store-wide summary remains independent of list/search/page. Actual API and strict mobile filtering/quick access verified with1217 backend and647 mobile checks plus controlled Chrome390/320. Evidence: evidence/parity-implementation-2026-10-28/P02d-debt-filters/. Native/production acceptance open."
       ],
       "notes": ""
     },
@@ -289,11 +290,12 @@
     },
     "DMP-037": {
       "title": "Real debt filters and collection",
-      "status": "IN_PROGRESS",
+      "status": "TESTED_CODE",
       "evidence": [
-        "Actual debtor search/summary and guarded collection/recovery work; overdue/soon/future filters and installed restart acceptance remain."
+        "Actual debtor search/summary and guarded collection/recovery work; overdue/soon/future filters and installed restart acceptance remain.",
+        "2026-10-28 P02d: server-side overdue/today/next7/future/undated filters use configured Tashkent business date before pagination/export; native verifies filter acknowledgement and correct rows. Both-currency credit summaries and credit/refund shortcut added.10 red API checks reproduced;1217 full backend/647 mobile tests, tsc/strict ESLint/Ruff/all-platform export and controlled Chrome390/320 pass. Evidence: evidence/parity-implementation-2026-10-28/P02d-debt-filters/. Real native restart/upgrade/cash and production acceptance remain open."
       ],
-      "notes": ""
+      "notes": "Source verified for real debt filters/collection; installed native restart and production acceptance remain open."
     },
     "DMP-038": {
       "title": "Payment currency, cash/card, branch and note",
