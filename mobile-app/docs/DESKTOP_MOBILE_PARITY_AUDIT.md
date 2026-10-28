@@ -2,7 +2,7 @@
 
 Historical baseline audit: 2026-10-24 (Asia/Tashkent). Baseline Git HEAD: `8ad308a7f755720bb7c4656eec53ef06c69433bb`.
 
-Latest source re-audit: **2026-10-28**, below. Historical baseline comparison finished with 131 records; there are now **132 tracked records**, including fixed/partial/history items, not 132 current uncorrected defects. Native/real-device acceptance remains separate.
+Latest source re-audit: **2026-10-28**, below. Historical baseline comparison finished with 131 records; there are now **133 tracked records**, including fixed/partial/history items, not 132 current uncorrected defects. Native/real-device acceptance remains separate.
 
 <!-- REAUDIT_2026_10_28_START -->
 ## 2026-10-28 — Web ↔ Desktop ↔ Mobile qayta tekshiruvi
@@ -134,6 +134,17 @@ The actual TypeScript function was transpiled and executed with this producer-sh
 
 Barcha dalillar: `evidence/parity-2026-10-28/`. Bu audit **kod va mavjud testlar asosidagi tekshiruv**; yangi native/brаuzer UI acceptance ishlatilmadi. Oldingi emulatorni tekshirish/start/stop/install/reset/ADB amallari bajarilmadi.
 <!-- REAUDIT_2026_10_28_END -->
+
+<a id="dmp-133"></a>
+## DMP-133 — Owner-only debt correction accessible to a debt-entry cashier
+
+Area: **Shared backend authorization / debts** · Priority: **P1** · Found: **2026-10-28 implementation cross-check**. Status: **TESTED_CODE** (not deployed).
+
+`DebtPaymentCorrectionView` required only `sales.record_debt_payment`, the same assignable permission as ordinary collection. `DebtService.record_payment(is_correction=True)` did not check the non-assignable `sales.correct_debt_payment` operation. The central permission service also accepted manually/previously assigned owner-only staff grants despite the assignment UI excluding them. This allowed a restricted cashier to change a customer balance through the correction endpoint (including non-cash bookkeeping).
+
+A real isolated PostgreSQL/API regression reproduced **8 failing denial checks and3 passing controls**: direct API/service calls with/without legacy grants and all four non-assignable permissions. Ordinary cashier collection and actual-owner correction are positive controls; platform administrators retain their existing exclusion from the retail API. No production customer/request was used. Red-phase evidence is retained under `evidence/parity-implementation-2026-10-28/P02b-authority/`.
+
+Fix scope: check the distinct owner-only operation in both API and service; central checks reject legacy staff grants and non-owner memberships; web/desktop refund UI follows active ownership. Verify the denied operation changes no balance/payment row while legitimate quoted collection and owner correction still work. 2026-10-28 P02b: source/API reproduction confirms a debt-entry cashier could invoke owner-only correction, including with legacy owner-only grants. Eight regression failures reproduced before fix; API/service/central-permission guards and shared web/desktop UI restriction added.70 targeted backend tests and88 web tests/build pass; the final full backend suite passes1178 tests after resolving Docker setup errors in a private rootless runtime. Native refund/correction UI remains DMP-039.
 
 <!-- IMPLEMENTATION_LEDGER_START -->
 ## Implementation ledger — live
@@ -277,6 +288,7 @@ Approved rollout checkpoint: backend candidate `f67d770` remains deployed and si
 | [DMP-131](#dmp-131) | TESTED_CODE | Settings danger logout button now renders its icon white against the danger background; tsc/lint and phone navigation regression pass. |
 
 | [DMP-132](#dmp-132) | TESTED_CODE | 2026-10-28 P00: exact producer /b2b alias now opens the native B2B list after mark-read; selected-store permission, denial and external-link regressions pass. 524 tests/62 suites, TypeScript and strict ESLint passed. See evidence/parity-implementation-2026-10-28/P00/. Not deployed or observed on native hardware; push acceptance remains separate. |
+| [DMP-133](#dmp-133) | TESTED_CODE | 2026-10-28 P02b authority: restricted-cashier correction bypass reproduced8 failing denial tests before fix. API and service require sales.correct_debt_payment; central owner-only checks reject legacy staff grants; shared web/desktop UI uses selected ownership.70 targeted and1178 unfiltered backend tests pass;88 web tests, production build, touched-page Oxlint/Ruff pass. Initial Docker setup errors retained; private rootless runtime resolved them without skips. Evidence: evidence/parity-implementation-2026-10-28/P02b-authority/. Source fix not deployed; native refund/correction remains DMP-039. |
 
 <!-- IMPLEMENTATION_LEDGER_END -->
 

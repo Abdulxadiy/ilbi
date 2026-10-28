@@ -1021,6 +1021,15 @@
         "2026-10-28 P00: exact producer /b2b alias now opens the native B2B list after mark-read; selected-store permission, denial and external-link regressions pass. 524 tests/62 suites, TypeScript and strict ESLint passed. See evidence/parity-implementation-2026-10-28/P00/. Not deployed or observed on native hardware; push acceptance remains separate."
       ],
       "notes": "2026-10-28 P00: exact producer /b2b alias now opens the native B2B list after mark-read; selected-store permission, denial and external-link regressions pass. 524 tests/62 suites, TypeScript and strict ESLint passed. See evidence/parity-implementation-2026-10-28/P00/. Not deployed or observed on native hardware; push acceptance remains separate."
+    },
+    "DMP-133": {
+      "title": "Owner-only debt correction accessible to a debt-entry cashier",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "2026-10-28 P02b: source/API reproduction confirms a debt-entry cashier could invoke owner-only correction, including with legacy owner-only grants. Eight regression failures reproduced before fix; API/service/central-permission guards and shared web/desktop UI restriction added.70 targeted backend tests and88 web tests/build pass; full backend Docker integration retry is in progress. Native refund/correction UI remains DMP-039.",
+        "2026-10-28 P02b authority: restricted-cashier correction bypass reproduced8 failing denial tests before fix. API and service require sales.correct_debt_payment; central owner-only checks reject legacy staff grants; shared web/desktop UI uses selected ownership.70 targeted and1178 unfiltered backend tests pass;88 web tests, production build, touched-page Oxlint/Ruff pass. Initial Docker setup errors retained; private rootless runtime resolved them without skips. Evidence: evidence/parity-implementation-2026-10-28/P02b-authority/. Source fix not deployed; native refund/correction remains DMP-039."
+      ],
+      "notes": "2026-10-28 P02b authority: restricted-cashier correction bypass reproduced8 failing denial tests before fix. API and service require sales.correct_debt_payment; central owner-only checks reject legacy staff grants; shared web/desktop UI uses selected ownership.70 targeted and1178 unfiltered backend tests pass;88 web tests, production build, touched-page Oxlint/Ruff pass. Initial Docker setup errors retained; private rootless runtime resolved them without skips. Evidence: evidence/parity-implementation-2026-10-28/P02b-authority/. Source fix not deployed; native refund/correction remains DMP-039."
     }
   },
   "lastSourceAudit": {

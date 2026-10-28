@@ -1,0 +1,50 @@
+{
+  "date": "2026-10-28",
+  "slice": "P02b-authority",
+  "finding": "DMP-133",
+  "red": {
+    "failed": 8,
+    "passed_controls": 3
+  },
+  "targeted_backend": {
+    "passed": 70
+  },
+  "first_full_attempt": {
+    "passed": 1173,
+    "errors": 5,
+    "cause": "Required Docker daemon unavailable; not treated as a pass"
+  },
+  "final_full_backend": {
+    "passed": 1178,
+    "failed": 0,
+    "errors": 0,
+    "warnings": 16,
+    "runtime": "Actual isolated PostgreSQL55447/Redis56447 plus disposable integration containers in a private rootless Docker29.9.0 daemon"
+  },
+  "web": {
+    "passed": 88,
+    "production_build": "passed",
+    "touched_page_oxlint": "passed"
+  },
+  "other": [
+    "Ruff touched backend files passes",
+    "git diff --check passes"
+  ],
+  "private_docker": {
+    "system_service_or_cli_context_changed": false,
+    "security_options": [
+      "seccomp builtin",
+      "rootless",
+      "cgroupns"
+    ],
+    "postgres_image_digest": "sha256:0cefaabd882e42bcb2a2f3dc56d3ce4770560ba62fd7f197f1a2e008fd5731ab",
+    "redis_image_digest": "sha256:6ba19c50b56777f5c11c58eff8ddb69d0d5f27ba131cffb63f180ccfd43c66af",
+    "source": "https://download.docker.com/linux/static/stable/x86_64/docker-rootless-extras-29.9.0.tgz"
+  },
+  "limits": [
+    "Source fix; no production publication",
+    "Shared web/desktop visibility guard compiled; current installed desktop unchanged",
+    "Native refund/correction workflow remains DMP-039",
+    "Existing emulator untouched; no version bump"
+  ]
+}

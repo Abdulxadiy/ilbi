@@ -24,6 +24,7 @@ Role behavior:
 - customer, or anyone with no active employment at all: never allowed.
 """
 from apps.accounts.models import Employee
+from apps.permissions.constants import OWNER_ONLY_PERMISSIONS
 
 
 class PermissionService:
@@ -59,6 +60,11 @@ class PermissionService:
             # customer, or anything else with no employment concept
             return False
 
+        # Old/manual grants cannot turn non-assignable owner actions into staff powers.
+        owner_only = codename in OWNER_ONLY_PERMISSIONS
+        if owner_only and user.role != "owner":
+            return False
+
         if employee is None and tenant is not None:
             employee = Employee.objects.filter(
                 user=user, tenant=tenant, is_active=True
@@ -68,6 +74,9 @@ class PermissionService:
 
         if employee.is_owner and employee.tenant_id == getattr(tenant, "id", None):
             return True
+
+        if owner_only:
+            return False
 
         return employee.permissions.filter(
             category=category, codename=short_codename

@@ -37,6 +37,7 @@ export default function Debts() {
   const toast = useToast();
   const confirm = useConfirm();
   const canManageCp = activeTenant?.is_owner || activeTenant?.permissions?.includes("sales.manage_counterparty");
+  const canCorrectDebt = activeTenant?.is_owner === true;
   const [editingCp, setEditingCp] = useState(null);
   const [importModalOpen, setImportModalOpen] = useState(false);
 
@@ -207,6 +208,7 @@ export default function Debts() {
 
   // Refund / Settle Customer Credit
   const handleOpenRefundCredit = (cp) => {
+    if (!canCorrectDebt) { toast.warning('Mijoz haqqini qaytarish uchun do‘kon egasi vakolati kerak.'); return; }
     setSelectedCp(cp);
     const creditUzs = Math.max(0, -Number(cp.debt_balance_uzs || 0));
     const creditUsd = Math.max(0, -Number(cp.debt_balance_usd || 0));
@@ -229,6 +231,7 @@ export default function Debts() {
 
   const handleConfirmRefundCredit = async (e) => {
     e.preventDefault();
+    if (!canCorrectDebt) { toast.warning('Mijoz haqqini qaytarish uchun do‘kon egasi vakolati kerak.'); return; }
     const amt = parseFloat(refundAmount);
     if (!amt || amt <= 0) {
       showFormErrors(e.currentTarget, { amount: 'Qaytariladigan summa noldan katta bo‘lishi kerak.' });
@@ -799,7 +802,7 @@ export default function Debts() {
                               <CreditCard size={13} />
                               <span>Qarz To‘lash</span>
                             </button>
-                          ) : hasCredit ? (
+                          ) : hasCredit && canCorrectDebt ? (
                             <button
                               type="button"
                               onClick={() => handleOpenRefundCredit(cp)}

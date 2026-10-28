@@ -139,6 +139,10 @@ class DebtService:
         from apps.accounts.services.permission_service import PermissionService
         if not PermissionService.has_permission(recorded_by, 'sales.record_debt_payment', tenant=counterparty.tenant):
             raise DebtServiceError("Qarz to‘lovi uchun ruxsat berilmagan.")
+        if is_correction and not PermissionService.has_permission(
+            recorded_by, 'sales.correct_debt_payment', tenant=counterparty.tenant,
+        ):
+            raise DebtServiceError("Tuzatish uchun faol do‘kon egasi vakolati talab qilinadi.")
         payment_type = payment_type or ('none' if is_correction else 'cash')
         if payment_type not in ('cash', 'card', 'none') or (not is_correction and payment_type == 'none'):
             raise DebtServiceError("To‘lov turi naqd yoki karta bo‘lishi kerak.")

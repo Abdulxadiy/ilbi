@@ -6,7 +6,7 @@ Created: 2026-10-28 (Asia/Tashkent). Baseline: `7d5bf38633477a66f2519f2595f50c28
 
 ## Execution contract
 
-- Scope is every open/partial defect and required acceptance gate in the 132-record audit, plus regressions for previously implemented records. Historical TESTED_CODE is not native/production acceptance. No completion percentage is inferred from source-file or test counts.
+- Scope is every open/partial defect and required acceptance gate in the initial132-record audit plus subsequent findings (currently DMP-133), plus regressions for previously implemented records. Historical TESTED_CODE is not native/production acceptance. No completion percentage is inferred from source-file or test counts.
 - Finish the current slice’s required checks and resolve its failures before dependent work advances. Record the actual command/runtime and evidence, then commit and push that coherent slice. If external hardware/provider input is unavailable, keep that acceptance open and continue only independent authorized preparation.
 - Preserve owner changes, active-user/store/server boundaries, exact money/quantities, idempotency/unknown-result journals, immutable receipts and all permission/fiscal/production safeguards. Never remove a protective gate merely to pass a test.
 - Keep the approved mobile visual language: sidebar support, persistent quick tabs, tiny cart images, prominent negotiated sale price, authentic logo and light/dark colors. Web/desktop login must not receive the mobile 3D redesign.
@@ -176,6 +176,7 @@ Every original audit ID is retained exactly once. Acceptance text below comes fr
 | DMP-130 | P10 | Synthetic data and mutations diverge across mobile screens (OPEN) | TODO | Use one synthetic source for shared identities and mutations; after checkout/payment/create-customer, verify Home, customer details, debt list, receipt and documents agree or clearly label an intentionally static storyboard. |
 | DMP-131 | P11 | Logout icon uses the same color as its button background (TESTED_CODE) | PRIOR_CODE_EVIDENCE | Inspect destructive buttons in both themes and disabled/loading states; use the intended contrasting foreground for icons and preserve an accessible action name. |
 | DMP-132 | P00 | Legacy B2B notification link has no mobile destination (TESTED_CODE) | CODE_VERIFIED | Explicit safe /b2b alias/canonical destination, producer-shaped regression, allowed recipient/store/role, and continued rejection of arbitrary URLs; inspect actual open action. |
+| DMP-133 | P02 | Shared backend owner-only debt correction bypass (TESTED_CODE) | CODE_VERIFIED | Deny cashier API/service correction and legacy owner-only grants without financial effects; retain ordinary collection, actual-owner correction and platform-admin retail separation; verify shared web/desktop controls. |
 
 ## External acceptance inputs — do not invent or bypass
 
@@ -197,6 +198,8 @@ Every original audit ID is retained exactly once. Acceptance text below comes fr
 | P01b | CODE_VERIFIED | DMP-002 source:564 mobile tests/64 suites,33 actual backend reset/invitation tests, tsc/strict lint, all-platform Expo export and isolated controlled-API Chrome UI pass. evidence/parity-implementation-2026-10-28/P01b/. Native linking/domain/mail acceptance open. | P02 customer statements/metadata/debt flows. |
 
 | P02a | CODE_VERIFIED | DMP-034/035 source:582 mobile tests/65 suites,21 actual backend customer/service tests, tsc/strict lint/Ruff, all-platform Expo export and controlled Chrome390/320 pass. evidence/parity-implementation-2026-10-28/P02a/. Native acceptance open. | Continue P02: security review/refund-correction, due filters and customer import; do not mark the phase complete. |
+
+| P02b authority | CODE_VERIFIED | DMP-133:8 red denial checks reproduced;70 targeted/1178 full backend tests,88 web tests/build, touched Oxlint/Ruff pass. Private rootless runtime resolved5 actual Docker setup errors without skips. Evidence: evidence/parity-implementation-2026-10-28/P02b-authority/. Source fix not deployed. | Continue DMP-039 protocol/UI and remaining P02 work; no phase-wide completion claim. |
 
 ## Final-only cleanup gate
 

@@ -1,4 +1,4 @@
-from django.db.models import Q, Count, Sum, F
+from django.db.models import Count, F, Q, Sum
 from django.shortcuts import get_object_or_404
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema
@@ -13,8 +13,8 @@ from api.v1.sales.serializers import (
     CounterpartyUpdateSerializer,
     DebtPaymentCorrectionSerializer,
     DebtPaymentCreateSerializer,
-    DebtPaymentQuoteSerializer,
     DebtPaymentOutputSerializer,
+    DebtPaymentQuoteSerializer,
     SaleOutputSerializer,
 )
 from apps.sales.models import Counterparty, DebtPayment, Sale
@@ -24,8 +24,8 @@ from apps.sales.services import (
     DebtService,
     DebtServiceError,
 )
-
 from apps.sales.services.counterparty_queries import filtered_counterparties
+
 from ._base import SalesAPIView
 
 
@@ -40,10 +40,14 @@ class CounterpartyListCreateView(SalesAPIView):
     def get(self, request):
         from django.db.models import Prefetch
         payments_prefetch = Prefetch(
-            'payments', queryset=DebtPayment.objects.select_related('recorded_by', 'branch', 'tenant').order_by('-paid_at', '-pk')[:1],
+            'payments', queryset=DebtPayment.objects.select_related(
+                'recorded_by', 'branch', 'tenant',
+            ).order_by('-paid_at', '-pk')[:1],
             to_attr='prefetched_payments',
         )
-        qs = filtered_counterparties(self.tenant, request.query_params).select_related('target_tenant').prefetch_related(payments_prefetch)
+        qs = filtered_counterparties(self.tenant, request.query_params).select_related(
+            'target_tenant',
+        ).prefetch_related(payments_prefetch)
         if request.query_params.get('page'):
             from api.pagination import StandardResultsSetPagination
             paginator = StandardResultsSetPagination()
@@ -88,7 +92,9 @@ class CounterpartyDetailView(SalesAPIView):
         from django.db.models import Prefetch
         payments_prefetch = Prefetch(
             'payments',
-            queryset=DebtPayment.objects.select_related('recorded_by', 'branch', 'tenant').order_by('-paid_at', '-pk')[:1],
+            queryset=DebtPayment.objects.select_related(
+                'recorded_by', 'branch', 'tenant',
+            ).order_by('-paid_at', '-pk')[:1],
             to_attr='prefetched_payments'
         )
         cp = get_object_or_404(
@@ -129,7 +135,9 @@ class DebtPaymentListCreateView(SalesAPIView):
     @extend_schema(request=None, responses={200: DebtPaymentOutputSerializer(many=True)})
     def get(self, request, counterparty_id):
         cp = get_object_or_404(Counterparty, pk=counterparty_id, tenant=self.tenant)
-        payments = DebtPayment.objects.filter(counterparty=cp).select_related('recorded_by', 'branch', 'tenant').order_by('-paid_at', '-pk')
+        payments = DebtPayment.objects.filter(counterparty=cp).select_related(
+            'recorded_by', 'branch', 'tenant',
+        ).order_by('-paid_at', '-pk')
         if request.query_params.get('page'):
             from api.pagination import StandardResultsSetPagination
             paginator = StandardResultsSetPagination()
@@ -210,7 +218,7 @@ class DebtPaymentQuoteView(SalesAPIView):
 
 class DebtPaymentCorrectionView(SalesAPIView):
     permission_classes = [HasEmployeePermission]
-    permission_map = {'POST': 'sales.record_debt_payment'}
+    permission_map = {'POST': 'sales.correct_debt_payment'}
 
     @extend_schema(request=DebtPaymentCorrectionSerializer, responses={201: DebtPaymentOutputSerializer})
     def post(self, request, counterparty_id):
@@ -289,7 +297,9 @@ class CounterpartySalesListView(SalesAPIView):
             from api.pagination import StandardResultsSetPagination
             paginator = StandardResultsSetPagination()
             rows = paginator.paginate_queryset(qs, request)
-            response = paginator.get_paginated_response(SaleOutputSerializer(rows, many=True, context={'request': request}).data)
+            response = paginator.get_paginated_response(
+                SaleOutputSerializer(rows, many=True, context={'request': request}).data,
+            )
             response.data['summary'] = summary
             return response
         return Response({
