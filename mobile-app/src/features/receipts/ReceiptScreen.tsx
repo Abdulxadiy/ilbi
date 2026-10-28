@@ -231,8 +231,9 @@ const ReceiptBody: React.FC<{ params: { saleId?: string; mode?: string } }> = ({
 
               {!savedReceipt.hasSnapshot ? <Text style={styles.receiptTimestamp}>Eski hujjat: sotuv paytidagi do‘kon rekvizitlari saqlanmagan.</Text> : null}
               {format === 'a4' ? <Text style={styles.receiptTimestamp}>Hali imzolanmagan · asl qatorlar va qaytarish alohida ko‘rsatilgan.</Text> : null}
-              {savedReceipt.showCashier ? <Text style={styles.receiptTimestamp}>Sotuvchi: {sale.sold_by_name || '—'}</Text> : null}
-              {savedReceipt.showCustomer ? <Text style={styles.receiptTimestamp}>Mijoz: {sale.counterparty_name || 'Umumiy mijoz'}</Text> : null}
+              {!savedReceipt.hasParties && (savedReceipt.showCashier || savedReceipt.showCustomer) ? <Text style={styles.receiptTimestamp}>Eski hujjat: mijoz va kassirning sotuv paytidagi ma’lumotlari saqlanmagan; joriy ma’lumot ko‘rsatilgan.</Text> : null}
+              {savedReceipt.showCashier ? <Text style={styles.receiptTimestamp}>Sotuvchi: {savedReceipt.cashierName || '—'}</Text> : null}
+              {savedReceipt.showCustomer ? <Text style={styles.receiptTimestamp}>Mijoz: {savedReceipt.customerName || 'Umumiy mijoz'}</Text> : null}
 
               <View style={styles.receiptDashedLine} />
 
@@ -242,6 +243,7 @@ const ReceiptBody: React.FC<{ params: { saleId?: string; mode?: string } }> = ({
                   <View key={index} style={styles.receiptItemRow}>
                     <View style={{ flex: 1, paddingRight: 8 }}>
                       <Text style={styles.receiptItemName}>{item.productName}</Text>
+                      {!item.hasProductSnapshot ? <Text style={styles.receiptItemCalc}>Eski qator: nom va kodlar joriy katalogdan bo‘lishi mumkin.</Text> : null}
                       {[item.variantName, item.code && 'Kod: ' + item.code, item.sku && 'SKU: ' + item.sku, item.barcode && 'Shtrix-kod: ' + item.barcode, item.mxik && 'MXIK: ' + item.mxik, item.packageCode && 'Qadoq: ' + item.packageCode].filter(Boolean).map((line, key) => <Text key={key} style={styles.receiptItemCalc}>{line}</Text>)}
                       {Number(item.returnedQuantity) > 0 ? <Text style={styles.receiptItemCalc}>Qaytarilgan miqdor: {item.returnedQuantity}</Text> : null}
                       <Text style={styles.receiptItemCalc}>

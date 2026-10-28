@@ -71,4 +71,28 @@ describe('Saved document contract and export content', () => {
     expect(documentDate('2026-10-28T23:30:00Z')).toContain('04:30');
     expect(documentDate('2026-10-28T23:30:00Z')).toContain('Toshkent');
   });
+  test('frozen parties win over changed related records in the screen model and printable document', () => {
+    const raw = contract.sales.cash;
+    const sale = parseDocumentSale({ ...raw, sold_by_name: 'Changed cashier', counterparty_name: 'Changed buyer' }, raw.id);
+    const view = receiptView(sale);
+    expect(view.hasParties).toBe(true); expect(view.cashierName).toBe(raw.receipt_snapshot.document_parties.cashier_name);
+    expect(view.customerName).toBe('Document customer'); expect(view.items[0].hasProductSnapshot).toBe(true);
+    const html = documentHtml(sale, 'a4');
+    expect(html).not.toContain('Changed cashier'); expect(html).not.toContain('Changed buyer');
+    expect(html).not.toContain('joriy katalogdan'); expect(html).not.toContain('joriy ma’lumot');
+  });
+  test('legacy parties and product names are labeled current/unknown without changing the source', () => {
+    const raw = { ...contract.sales.cash, receipt_snapshot: {}, items: contract.sales.cash.items.map(item => ({ ...item, receipt_product_snapshot_version: null })) };
+    const before = JSON.stringify(raw), sale = parseDocumentSale(raw, raw.id);
+    const html = documentHtml(sale, 'receipt');
+    expect(html).toContain('joriy ma’lumot ko‘rsatilgan'); expect(html).toContain('joriy katalogdan bo‘lishi mumkin');
+    expect(receiptView(sale).hasParties).toBe(false); expect(JSON.stringify(raw)).toBe(before);
+  });
+  test('known empty saved party names never borrow a current account name', () => {
+    const raw = contract.sales.cash;
+    const sale = parseDocumentSale({ ...raw, sold_by_name: 'Changed cashier', counterparty_name: 'Changed buyer', receipt_snapshot: { ...raw.receipt_snapshot, document_parties: { version: 1, cashier_name: '', customer_name: null } } }, raw.id);
+    const html = documentHtml(sale, 'a4');
+    expect(html).not.toContain('Changed cashier'); expect(html).not.toContain('Changed buyer');
+    expect(receiptView(sale).cashierName).toBe(''); expect(receiptView(sale).customerName).toBe('');
+  });
 });

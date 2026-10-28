@@ -1,0 +1,7 @@
+{
+  "record_count": 135,
+  "unique_record_count": 135,
+  "matches_live_ledger": true,
+  "cleanup_allowed": false,
+  "reason": "Required later implementation phases and native/provider/deployment/security/fiscal acceptance remain open."
+}

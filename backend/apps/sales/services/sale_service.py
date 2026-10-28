@@ -1,21 +1,23 @@
-from decimal import Decimal
-from datetime import timedelta
-from collections import defaultdict
 import hashlib
 import json
-from django.db import transaction
-from apps.core import event_clock as timezone
+from collections import defaultdict
+from datetime import timedelta
+from decimal import Decimal
+
 from django.conf import settings
+from django.db import transaction
 
 from apps.catalog.models import ProductVariant
+from apps.core import event_clock as timezone
 from apps.inventory.services import StockService, StockServiceError
-from apps.sales.models import Sale, SaleItem, Counterparty, Notification
-from apps.sales.services.debt_service import DebtService
+from apps.sales.document_identity import document_snapshot
+from apps.sales.models import Counterparty, Notification, Sale, SaleItem
+from apps.sales.receipt_items import product_snapshot
 from apps.sales.services.debt_reminder_service import UNSET, set_debt_due_date
+from apps.sales.services.debt_service import DebtService
+from apps.sales.taxes import calculate_line
 from apps.tenants.models import SellerProfile
 from apps.tenants.receipt_settings import receipt_settings
-from apps.sales.taxes import calculate_line
-from apps.sales.receipt_items import product_snapshot
 
 
 class SaleServiceError(Exception):
@@ -231,7 +233,7 @@ class SaleService:
                 b2b_expires_at=b2b_expires_at,
                 idempotency_key=idempotency_key,
                 request_fingerprint=fingerprint,
-                receipt_snapshot=receipt_settings(tenant),
+                receipt_snapshot=document_snapshot(tenant, user, counterparty),
             )
 
             total_amount = Decimal('0.00')

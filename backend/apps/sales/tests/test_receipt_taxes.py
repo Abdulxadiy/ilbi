@@ -95,7 +95,10 @@ def test_snapshot_and_replay_ignore_later_settings_changes(tenant, owner, stocke
     assert original["vat_rate"] == "12.00"
     assert original["receipt_header"] == "Original header"
     assert create(tenant, owner, stocked, idempotency_key="tax-replay", expected_tax_settings=expectation).pk == sale.pk
-    assert PublicReceiptSerializer(sale).data["receipt_snapshot"] == original
+    assert PublicReceiptSerializer(sale).data["receipt_snapshot"] == {
+        key: value for key, value in original.items() if key != "document_parties"
+    }
+    assert "document_parties" not in PublicReceiptSerializer(sale).data["receipt_snapshot"]
     assert SaleOutputSerializer(sale).data["tax_amount"] == "21428.57"
     with pytest.raises(SaleServiceError, match="Soliq sozlamalari o‘zgardi"):
         create(tenant, owner, stocked, expected_tax_settings=expectation)

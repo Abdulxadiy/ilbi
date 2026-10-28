@@ -1,0 +1,1 @@
+PASS document sharing: public links, pending/offline receipts, clipboard failure, canceled native share, direct web PDF downloads (58/80 mm, signed A4, multiple pages, public receipt), tax/QR preservation and mobile layout.

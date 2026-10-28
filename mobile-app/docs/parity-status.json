@@ -70,9 +70,10 @@
       "title": "Dedicated sales list, server filters and pagination",
       "status": "TESTED_CODE",
       "evidence": [
-        "Dedicated sales/customer/date/status/payment filters, pagination/detail:28 mobile and33 PostgreSQL cases; SALES_HISTORY_READINESS_2026_10_27.md. Native/deploy gate remains."
+        "Dedicated sales/customer/date/status/payment filters, pagination/detail:28 mobile and33 PostgreSQL cases; SALES_HISTORY_READINESS_2026_10_27.md. Native/deploy gate remains.",
+        "docs/evidence/parity-implementation-2026-10-28/P03b-document-identity/README.md"
       ],
-      "notes": ""
+      "notes": "Fixed QueryDict absent b2b_only default hiding B2B from general sales/documents; explicit true/false and original/current party search tested in full1224 backend pass. Existing native/deployment acceptance remains."
     },
     "DMP-010": {
       "title": "Full sale cancellation and reason",
@@ -278,9 +279,10 @@
       "status": "TESTED_CODE",
       "evidence": [
         "2026-10-28 P02a: native scoped customer statement includes paged all/debt purchases, returns/net/aggregate counts, and payment channel/actor/branch/note/conversion plus signed corrections. Actual API contract reconciles100-sale minus20-return minus10-payment to70 balance. Foreign-customer rows and stale scopes rejected; debt-only access and safe pagination tested. 582 mobile/21 backend tests plus controlled Chrome390/320 pass. Evidence: evidence/parity-implementation-2026-10-28/P02a/. Native acceptance open.",
-        "2026-10-28 P02c follow-up: actual controlled browser re-entry reproduced a cached customer balance; focus refetch and scrollable statement header fix it.627 mobile tests including refocus/staff-denial regressions and Chrome390/320 pass. Evidence: evidence/parity-implementation-2026-10-28/P02c-native-adjustments/. Physical/native and deployment acceptance remain open."
+        "2026-10-28 P02c follow-up: actual controlled browser re-entry reproduced a cached customer balance; focus refetch and scrollable statement header fix it.627 mobile tests including refocus/staff-denial regressions and Chrome390/320 pass. Evidence: evidence/parity-implementation-2026-10-28/P02c-native-adjustments/. Physical/native and deployment acceptance remain open.",
+        "docs/evidence/parity-implementation-2026-10-28/P03b-document-identity/README.md"
       ],
-      "notes": "2026-10-28 P02a: native scoped customer statement includes paged all/debt purchases, returns/net/aggregate counts, and payment channel/actor/branch/note/conversion plus signed corrections. Actual API contract reconciles100-sale minus20-return minus10-payment to70 balance. Foreign-customer rows and stale scopes rejected; debt-only access and safe pagination tested. 582 mobile/21 backend tests plus controlled Chrome390/320 pass. Evidence: evidence/parity-implementation-2026-10-28/P02a/. Native acceptance open."
+      "notes": "Customer purchase statements also search stored product/variant names after catalog changes; final actual API/full backend1224 checks pass. Existing native ledger/restart/financial acceptance remains."
     },
     "DMP-036": {
       "title": "Spreadsheet customer import",
@@ -516,9 +518,10 @@
       "title": "Sale-linked A4 invoice with authoritative rows",
       "status": "TESTED_CODE",
       "evidence": [
-        "docs/evidence/parity-implementation-2026-10-28/P03a-saved-documents/README.md"
+        "docs/evidence/parity-implementation-2026-10-28/P03a-saved-documents/README.md",
+        "docs/evidence/parity-implementation-2026-10-28/P03b-document-identity/README.md"
       ],
-      "notes": "Sale-linked A4 source and saved detail refresh verified:721 mobile tests,15 related backend tests, actual Chrome PDF widths/multipage content. Android/iOS file/printer/signed-copy acceptance remains."
+      "notes": "Sale-linked A4 source now includes frozen party identities and general-list B2B visibility; actual API fixtures/shared and native-model Chrome PDFs. Signature/file/device acceptance still separate."
     },
     "DMP-066": {
       "title": "Sender and receiver signatures with persisted document identity",
@@ -534,12 +537,13 @@
     },
     "DMP-068": {
       "title": "Saved receipt snapshot, taxes and product identifiers",
-      "status": "IN_PROGRESS",
+      "status": "TESTED_CODE",
       "evidence": [
         "Saved identity/address/header/footer/legal data/display flags,58/80mm PDFs and server line totals implemented; native print/fiscal provider acceptance remains.",
-        "docs/evidence/parity-implementation-2026-10-28/P03a-saved-documents/README.md"
+        "docs/evidence/parity-implementation-2026-10-28/P03a-saved-documents/README.md",
+        "docs/evidence/parity-implementation-2026-10-28/P03b-document-identity/README.md"
       ],
-      "notes": "Saved receipt/tax/product IDs and status verified against actual changed-store/catalog API fixture; stale cached document defect fixed. Legacy pre-snapshot product and related customer/cashier identity provenance still needs defined handling; native/fiscal acceptance open."
+      "notes": "Frozen private sale parties/store, nullable product provenance, legacy notices and anonymous public redaction verified:1224 backend,724 mobile,96 web tests; actual shared/native-model Chrome PDF regression. Native/production/fiscal acceptance still open."
     },
     "DMP-069": {
       "title": "Thermal 58/80 mm format and configurable printer output",

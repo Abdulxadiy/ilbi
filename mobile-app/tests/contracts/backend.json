@@ -6,10 +6,10 @@
     "previous": null,
     "results": [
       {
-        "id": 24234,
-        "product": 9274,
+        "id": 9977,
+        "product": 3989,
         "product_name": "Mobile contract rice",
-        "category_id": 6395,
+        "category_id": 2818,
         "category_name": "Category 0",
         "name": "Standart",
         "sku": "000000",
@@ -32,11 +32,11 @@
     ]
   },
   "tenant": {
-    "id": 14935,
+    "id": 7363,
     "name": "Tenant 0",
-    "owner": 38085,
+    "owner": 18639,
     "owner_details": {
-      "id": 38085,
+      "id": 18639,
       "phone_number": "+998900000000",
       "contact_phone": null,
       "email": null,
@@ -64,15 +64,15 @@
     "receipt_header": "",
     "receipt_footer": "Xaridingiz uchun rahmat!",
     "receipt_phone": "",
-    "created_at": "2026-10-24T20:43:51.528766+05:00",
+    "created_at": "2026-10-28T20:13:42.371167+05:00",
     "address": "",
     "receipt_settings": {
       "version": 1,
       "store_name": "Tenant 0",
       "store_address": "",
-      "store_code": "830081F9",
-      "seller_name": "Test seller 38085",
-      "seller_tax_identifier": "TEST-38085",
+      "store_code": "05BA05A7",
+      "seller_name": "Test seller 18639",
+      "seller_tax_identifier": "TEST-18639",
       "receipt_header": "",
       "receipt_footer": "Xaridingiz uchun rahmat!",
       "receipt_phone": "",
@@ -105,10 +105,10 @@
     "manual_usd_rate": "12800.00",
     "usd_rate_source": "manual",
     "cbu_rates": {},
-    "settings_revision": "808d5200487d22757a676a6d3617d645d81ca457fb8b3ccf52906fd33177c27c"
+    "settings_revision": "157f242ddda84c319288a0d27edf38b8851b848bd10206ba4728b83132b458ec"
   },
   "profile": {
-    "id": 38085,
+    "id": 18639,
     "phone_number": "+998900000000",
     "contact_phone": null,
     "username": "owner0",
@@ -120,7 +120,7 @@
     "role_display": "Do'kon egasi",
     "tenants": [
       {
-        "id": 14935,
+        "id": 7363,
         "name": "Tenant 0",
         "is_owner": true,
         "permissions": [
@@ -137,7 +137,7 @@
     "terms_accepted": false,
     "terms_accepted_at": null,
     "terms_accepted_ip": null,
-    "created_at": "2026-10-24T20:43:51.506644+05:00"
+    "created_at": "2026-10-28T20:13:42.355523+05:00"
   },
   "customers": {
     "count": 1,
@@ -145,7 +145,7 @@
     "previous": null,
     "results": [
       {
-        "id": 8589,
+        "id": 4642,
         "name": "Contract customer",
         "phone_number": "+998930000000",
         "target_tenant": null,
@@ -154,7 +154,7 @@
         "debt_due_date": null,
         "note": "",
         "is_active": true,
-        "created_at": "2026-10-24T20:43:51.575075+05:00",
+        "created_at": "2026-10-28T20:13:42.424483+05:00",
         "last_payment": null
       }
     ],
@@ -175,15 +175,17 @@
   },
   "created_sales": [
     {
-      "id": 5396,
-      "receipt_number": "POS-20261024-0001",
-      "public_token": "dBi6e0JH3qh0p2A1IvxAHWOXpPk7p_l0tvBjiLDkSqE",
+      "id": 2469,
+      "receipt_number": "POS-20261028-0001",
+      "public_token": "kbsiZCL_PHV4ncO1RAC53SvCFak9FchFCx6SAUSkgd4",
       "tenant_name": "Tenant 0",
       "tenant_address": "",
       "tenant_phone": "",
-      "sold_by": 38085,
+      "sold_by": 18639,
       "sold_by_name": "owner0",
       "counterparty": null,
+      "counterparty_name": null,
+      "counterparty_phone": null,
       "currency": "UZS",
       "is_partner_sale": false,
       "total_amount": "1.44",
@@ -192,10 +194,10 @@
       "receipt_snapshot": {
         "version": 1,
         "vat_rate": "12.00",
-        "store_code": "830081F9",
+        "store_code": "05BA05A7",
         "store_name": "Tenant 0",
         "tax_regime": "unspecified",
-        "seller_name": "Test seller 38085",
+        "seller_name": "Test seller 18639",
         "is_vat_payer": false,
         "receipt_phone": "",
         "store_address": "",
@@ -203,6 +205,13 @@
         "receipt_header": "",
         "profit_tax_rate": "0.00",
         "tax_regime_name": "",
+        "document_parties": {
+          "version": 1,
+          "cashier_name": "owner0",
+          "customer_name": null,
+          "customer_phone": null,
+          "recipient_store_name": null
+        },
         "turnover_tax_rate": "0.00",
         "price_includes_vat": true,
         "profit_tax_enabled": false,
@@ -210,13 +219,14 @@
         "receipt_show_cashier": true,
         "receipt_show_customer": true,
         "receipt_show_item_tax": true,
-        "seller_tax_identifier": "TEST-38085"
+        "seller_tax_identifier": "TEST-18639"
       },
       "refunded_amount": "0.00",
       "net_amount": 1.44,
       "payment_type": "cash",
       "status": "completed",
       "b2b_target_tenant": null,
+      "b2b_target_tenant_name": null,
       "b2b_expires_at": null,
       "b2b_reject_reason": "",
       "voided_at": null,
@@ -224,13 +234,14 @@
       "void_reason": "",
       "items": [
         {
-          "id": 1848,
-          "product_variant": 24234,
+          "id": 999,
+          "product_variant": 9977,
           "product_name": "Mobile contract rice",
           "product_variant_name": "Standart",
           "product_code": "",
           "product_sku": "000000",
           "product_barcode": null,
+          "receipt_product_snapshot_version": 1,
           "unit": "dona",
           "mxik": null,
           "package_code": null,
@@ -250,19 +261,21 @@
           "b2b_discrepancy_closed_quantity": "0.000"
         }
       ],
-      "created_at": "2026-10-24T20:43:51.954357+05:00"
+      "created_at": "2026-10-28T20:13:42.826487+05:00"
     }
   ],
   "sale_detail": {
-    "id": 5396,
-    "receipt_number": "POS-20261024-0001",
-    "public_token": "dBi6e0JH3qh0p2A1IvxAHWOXpPk7p_l0tvBjiLDkSqE",
+    "id": 2469,
+    "receipt_number": "POS-20261028-0001",
+    "public_token": "kbsiZCL_PHV4ncO1RAC53SvCFak9FchFCx6SAUSkgd4",
     "tenant_name": "Tenant 0",
     "tenant_address": "",
     "tenant_phone": "",
-    "sold_by": 38085,
+    "sold_by": 18639,
     "sold_by_name": "owner0",
     "counterparty": null,
+    "counterparty_name": null,
+    "counterparty_phone": null,
     "currency": "UZS",
     "is_partner_sale": false,
     "total_amount": "1.44",
@@ -271,10 +284,10 @@
     "receipt_snapshot": {
       "version": 1,
       "vat_rate": "12.00",
-      "store_code": "830081F9",
+      "store_code": "05BA05A7",
       "store_name": "Tenant 0",
       "tax_regime": "unspecified",
-      "seller_name": "Test seller 38085",
+      "seller_name": "Test seller 18639",
       "is_vat_payer": false,
       "receipt_phone": "",
       "store_address": "",
@@ -282,6 +295,13 @@
       "receipt_header": "",
       "profit_tax_rate": "0.00",
       "tax_regime_name": "",
+      "document_parties": {
+        "version": 1,
+        "cashier_name": "owner0",
+        "customer_name": null,
+        "customer_phone": null,
+        "recipient_store_name": null
+      },
       "turnover_tax_rate": "0.00",
       "price_includes_vat": true,
       "profit_tax_enabled": false,
@@ -289,13 +309,14 @@
       "receipt_show_cashier": true,
       "receipt_show_customer": true,
       "receipt_show_item_tax": true,
-      "seller_tax_identifier": "TEST-38085"
+      "seller_tax_identifier": "TEST-18639"
     },
     "refunded_amount": "0.00",
     "net_amount": 1.44,
     "payment_type": "cash",
     "status": "completed",
     "b2b_target_tenant": null,
+    "b2b_target_tenant_name": null,
     "b2b_expires_at": null,
     "b2b_reject_reason": "",
     "voided_at": null,
@@ -303,13 +324,14 @@
     "void_reason": "",
     "items": [
       {
-        "id": 1848,
-        "product_variant": 24234,
+        "id": 999,
+        "product_variant": 9977,
         "product_name": "Mobile contract rice",
         "product_variant_name": "Standart",
         "product_code": "",
         "product_sku": "000000",
         "product_barcode": null,
+        "receipt_product_snapshot_version": 1,
         "unit": "dona",
         "mxik": null,
         "package_code": null,
@@ -329,6 +351,6 @@
         "b2b_discrepancy_closed_quantity": "0.000"
       }
     ],
-    "created_at": "2026-10-24T20:43:51.954357+05:00"
+    "created_at": "2026-10-28T20:13:42.826487+05:00"
   }
 }

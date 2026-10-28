@@ -1,0 +1,36 @@
+{
+  "boundary": "Existing legacy-file diagnostics are retained and reported. New helper/serializer/tests pass full strict Ruff; added source lines introduce no Ruff diagnostic. Shared Oxlint exits0 with six existing component warnings. This is not a repository-wide clean-lint claim.",
+  "files": [
+    {
+      "file": "apps/sales/services/sale_service.py",
+      "baseline": {
+        "E501": 7,
+        "I001": 1,
+        "S110": 1
+      },
+      "current": {
+        "E501": 7,
+        "S110": 1
+      },
+      "new_diagnostics_on_added_lines": []
+    },
+    {
+      "file": "api/v1/sales/views/sale_views.py",
+      "baseline": {
+        "E501": 5,
+        "I001": 1
+      },
+      "current": {
+        "E501": 5,
+        "I001": 1
+      },
+      "new_diagnostics_on_added_lines": []
+    },
+    {
+      "file": "api/v1/sales/views/counterparty_views.py",
+      "baseline": {},
+      "current": {},
+      "new_diagnostics_on_added_lines": []
+    }
+  ]
+}

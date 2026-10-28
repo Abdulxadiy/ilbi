@@ -1,3 +1,4 @@
+import { savedReceiptIdentity } from '../../utils/receiptIdentity.js';
 import { localStore } from '../../utils/brandStorage.js';
 import React, { useState, useEffect } from 'react';
 import QRCode from 'qrcode';
@@ -446,7 +447,8 @@ export default function ReceiptSlip({
         const receiptNo = sale?.receipt_number || sale?.id || `POS-${Date.now()}`;
         const items = sale?.items || [];
         const totalAmount = Number(sale?.total_amount || 0);
-        const counterparty = sale?.counterparty_name || sale?.counterparty?.name;
+        const identity = savedReceiptIdentity(sale, { store, cashier });
+        const counterparty = identity.customer;
 
         return (
           <div
@@ -473,7 +475,7 @@ export default function ReceiptSlip({
                     letterSpacing: '0.02em',
                   }}
                 >
-                  {config.store_name || sale?.tenant_name || store}
+                  {identity.store || '—'}
                 </div>
               )}
               {config.seller_name && <div style={{ fontSize: 10, marginTop: 3 }}>Sotuvchi: {config.seller_name}</div>}
@@ -508,10 +510,11 @@ export default function ReceiptSlip({
                 <span>Sana:</span>
                 <span>{formatDate(sale?.created_at)}</span>
               </div>
+              {identity.legacyMessage && (config.receipt_show_cashier !== false || config.receipt_show_customer !== false) && <div style={{ fontSize: 9, marginTop: 5 }}>{identity.legacyMessage}</div>}
               {config.receipt_show_cashier !== false && <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
                 <span>Kassir:</span>
                 <span style={{ fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '65%' }}>
-                  {sale?.sold_by_name || cashier}
+                  {identity.cashier || '—'}
                 </span>
               </div>}
               {counterparty && config.receipt_show_customer !== false && (

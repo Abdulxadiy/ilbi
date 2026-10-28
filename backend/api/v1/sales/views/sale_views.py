@@ -62,13 +62,19 @@ class SaleListCreateView(SalesAPIView):
         if payment_type:
             qs = qs.filter(payment_type=payment_type)
 
-        if params.get("b2b_only") is not None:
+        # QueryDict/HTML BooleanField treats an omitted optional checkbox as false.
+        # Omission means all sales; only an explicitly supplied filter may exclude B2B.
+        if "b2b_only" in request.query_params:
             qs = qs.filter(b2b_target_tenant__isnull=not params["b2b_only"])
         search = request.query_params.get('search')
         if search:
             search = search.strip()
             qs = qs.filter(
                 Q(receipt_number__icontains=search)
+                | Q(receipt_snapshot__document_parties__customer_name__icontains=search)
+                | Q(receipt_snapshot__document_parties__customer_phone__icontains=search)
+                | Q(receipt_snapshot__document_parties__cashier_name__icontains=search)
+                | Q(receipt_snapshot__document_parties__recipient_store_name__icontains=search)
                 | Q(b2b_target_tenant__name__icontains=search)
                 | Q(counterparty__name__icontains=search)
                 | Q(counterparty__phone_number__icontains=search)

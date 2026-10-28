@@ -296,6 +296,8 @@ class CounterpartySalesListView(SalesAPIView):
             search = search.strip()
             qs = qs.filter(
                 Q(receipt_number__icontains=search)
+                | Q(items__product_snapshot__product_name__icontains=search)
+                | Q(items__product_snapshot__product_variant_name__icontains=search)
                 | Q(items__product_variant__product__name__icontains=search)
                 | Q(items__product_variant__name__icontains=search)
             ).distinct()

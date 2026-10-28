@@ -3,6 +3,7 @@ from decimal import Decimal
 from rest_framework import serializers
 
 from api.serializers import SensitiveCostSerializerMixin
+from apps.sales.document_identity import document_party, document_store, public_receipt_snapshot
 from apps.sales.models import (
     Counterparty,
     DebtPayment,
@@ -182,6 +183,9 @@ class ReceiptProductSerializer(serializers.ModelSerializer):
 
 
 class SaleItemOutputSerializer(SensitiveCostSerializerMixin, ReceiptProductSerializer):
+    receipt_product_snapshot_version = serializers.IntegerField(
+        source="product_snapshot.version", read_only=True, default=None, allow_null=True
+    )
 
     class Meta:
         model = SaleItem
@@ -193,6 +197,7 @@ class SaleItemOutputSerializer(SensitiveCostSerializerMixin, ReceiptProductSeria
             "product_code",
             "product_sku",
             "product_barcode",
+            "receipt_product_snapshot_version",
             "unit",
             "mxik", "package_code",
             "quantity",
@@ -212,13 +217,13 @@ class SaleItemOutputSerializer(SensitiveCostSerializerMixin, ReceiptProductSeria
 
 
 class SaleOutputSerializer(serializers.ModelSerializer):
-    tenant_name = serializers.CharField(source="tenant.name", read_only=True)
-    tenant_address = serializers.CharField(source="tenant.address", read_only=True)
-    tenant_phone = serializers.CharField(source="tenant.receipt_phone", read_only=True)
-    sold_by_name = serializers.CharField(source="sold_by.get_full_name", read_only=True)
-    counterparty_name = serializers.CharField(source="counterparty.name", read_only=True)
-    counterparty_phone = serializers.CharField(source="counterparty.phone_number", read_only=True)
-    b2b_target_tenant_name = serializers.CharField(source="b2b_target_tenant.name", read_only=True)
+    tenant_name = serializers.SerializerMethodField()
+    tenant_address = serializers.SerializerMethodField()
+    tenant_phone = serializers.SerializerMethodField()
+    sold_by_name = serializers.SerializerMethodField()
+    counterparty_name = serializers.SerializerMethodField()
+    counterparty_phone = serializers.SerializerMethodField()
+    b2b_target_tenant_name = serializers.SerializerMethodField()
     items = SaleItemOutputSerializer(many=True, read_only=True)
 
     class Meta:
@@ -254,6 +259,36 @@ class SaleOutputSerializer(serializers.ModelSerializer):
             "created_at",
         ]
         read_only_fields = fields
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["items"] = sorted(data["items"], key=lambda item: item["id"])
+        return data
+
+    def get_tenant_name(self, obj) -> str:
+        return document_store(obj, "store_name", lambda: obj.tenant.name)
+
+    def get_tenant_address(self, obj) -> str:
+        return document_store(obj, "store_address", lambda: obj.tenant.address)
+
+    def get_tenant_phone(self, obj) -> str:
+        return document_store(obj, "receipt_phone", lambda: obj.tenant.receipt_phone)
+
+    def get_sold_by_name(self, obj) -> str | None:
+        return document_party(obj, "cashier_name", lambda: obj.sold_by.get_full_name() if obj.sold_by else None)
+
+    def get_counterparty_name(self, obj) -> str | None:
+        return document_party(obj, "customer_name", lambda: obj.counterparty.name if obj.counterparty else None)
+
+    def get_counterparty_phone(self, obj) -> str | None:
+        return document_party(
+            obj, "customer_phone", lambda: obj.counterparty.phone_number if obj.counterparty else None
+        )
+
+    def get_b2b_target_tenant_name(self, obj) -> str | None:
+        return document_party(
+            obj, "recipient_store_name", lambda: obj.b2b_target_tenant.name if obj.b2b_target_tenant else None
+        )
 
 
 class SaleCreateItemInputSerializer(serializers.Serializer):
@@ -399,9 +434,10 @@ class PublicReceiptItemSerializer(ReceiptProductSerializer):
 
 
 class PublicReceiptSerializer(serializers.ModelSerializer):
-    store_name = serializers.CharField(source="tenant.name", read_only=True)
-    store_address = serializers.CharField(source="tenant.address", read_only=True)
-    store_phone = serializers.CharField(source="tenant.receipt_phone", read_only=True)
+    store_name = serializers.SerializerMethodField()
+    store_address = serializers.SerializerMethodField()
+    store_phone = serializers.SerializerMethodField()
+    receipt_snapshot = serializers.SerializerMethodField()
     payment_type_display = serializers.CharField(source="get_payment_type_display", read_only=True)
     status_display = serializers.CharField(source="get_status_display", read_only=True)
     items = serializers.SerializerMethodField()
@@ -428,7 +464,19 @@ class PublicReceiptSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
     def get_items(self, obj) -> list[dict]:
-        return PublicReceiptItemSerializer(obj.items.all(), many=True).data
+        return sorted(PublicReceiptItemSerializer(obj.items.all(), many=True).data, key=lambda item: item["id"])
+
+    def get_receipt_snapshot(self, obj) -> dict:
+        return public_receipt_snapshot(obj)
+
+    def get_store_name(self, obj) -> str:
+        return document_store(obj, "store_name", lambda: obj.tenant.name)
+
+    def get_store_address(self, obj) -> str:
+        return document_store(obj, "store_address", lambda: obj.tenant.address)
+
+    def get_store_phone(self, obj) -> str:
+        return document_store(obj, "receipt_phone", lambda: obj.tenant.receipt_phone)
 
 
 class SaleListQuerySerializer(serializers.Serializer):

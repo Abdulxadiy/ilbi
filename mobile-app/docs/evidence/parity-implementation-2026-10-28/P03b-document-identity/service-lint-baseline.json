@@ -1,0 +1,13 @@
+{
+  "boundary": "Existing sale_service.py baseline lint remains; newly added identity helper/serializer/tests pass strict Ruff separately. Imports cleaned; no new diagnostic category/count.",
+  "before": {
+    "I001": 1,
+    "E501": 7,
+    "S110": 1
+  },
+  "after": {
+    "E501": 7,
+    "S110": 1
+  },
+  "no_new_diagnostics": true
+}

@@ -85,6 +85,10 @@ def test_native_saved_document_contract(owner, tenant):
         assert row["items"][0]["mxik"] == "03816001001000000"
         assert row["items"][0]["product_code"].startswith("DOC/")
         assert row["items"][0]["tax_rate"] == "12.00"
+        purchases = client.get(
+            f"/api/v1/sales/counterparties/{row['counterparty']}/sales/", {"search": "Saved <product 1>", "page": 1}
+        )
+        assert purchases.status_code == 200 and row["id"] in [item["id"] for item in purchases.data["results"]]
         assert Decimal(str(row["net_amount"])) == Decimal(row["total_amount"]) - Decimal(row["refunded_amount"])
         if name == "debt_returned":
             assert row["status"] == "partially_voided" and row["refunded_amount"] == "28.00"

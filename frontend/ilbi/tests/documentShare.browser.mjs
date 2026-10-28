@@ -80,10 +80,11 @@ try {
   await close();await browser.evaluate(`shareQA.setWidth('58mm')`);await openReceipt();await click('PDF faylini yuklab olish');
   assert.match(await downloadedPDF(receipt.filename,'web-receipt-58.pdf'),/Page size:\s+164\.4/);
   await assertPDFQRCode('web-receipt-58.pdf');
-  await close();await browser.resize(1200,1000);await browser.evaluate('shareQA.desktop();document.querySelector("#qa-open-invoice").click()');
+  await close();await browser.resize(1200,1000);await browser.evaluate('shareQA.renameCurrentIdentity();shareQA.desktop();document.querySelector("#qa-open-invoice").click()');
   await wait(`document.querySelectorAll('#printable-invoice-a4 .invoice-signatures-block img').length===2`);
   await click('Ulashish');await click('PDF faylini saqlash');await wait('shareQA.exports.length===5');
   const invoice = await browser.evaluate('shareQA.exports[4]');
+  assert.match(invoice.html,/Sinov kassir/);assert.match(invoice.html,/Sinov mijoz/);assert.match(invoice.html,/Sinov do‘koni/);assert.doesNotMatch(invoice.html,/Changed current/);
   assert.equal(invoice.format,'invoice');assert.equal(invoice.widthMm,210);assert.match(invoice.html,/INV-1043/);assert.equal((invoice.html.match(/<img/g)||[]).length,2);assert.doesNotMatch(invoice.html,/<button|<script/);
   await close();await browser.evaluate('shareQA.web()');await click('Ulashish');await click('PDF faylini yuklab olish');
   const webInvoiceInfo = await downloadedPDF(invoice.filename,'web-invoice-a4.pdf');

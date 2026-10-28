@@ -1,0 +1,66 @@
+........................................................................ [  5%]
+........................................................................ [ 11%]
+........................................................................ [ 17%]
+........................................................................ [ 23%]
+........................................................................ [ 29%]
+........................................................................ [ 35%]
+........................................................................ [ 41%]
+........................................................................ [ 47%]
+........................................................................ [ 52%]
+........................................................................ [ 58%]
+........................................................................ [ 64%]
+........................................................................ [ 70%]
+........................................................................ [ 76%]
+........................................................................ [ 82%]
+........................................................................ [ 88%]
+........................................................................ [ 94%]
+........................................................................ [100%]
+=============================== warnings summary ===============================
+../../../../../.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394
+  /mnt/storage/.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394: RemovedInDjango2028Warning: The EMAIL_USE_TLS setting is deprecated. Migrate to MAILERS before Django 2028.
+    dj_settings.DATABASES  # noqa: B018
+
+../../../../../.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394
+  /mnt/storage/.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394: RemovedInDjango2028Warning: The EMAIL_HOST_USER setting is deprecated. Migrate to MAILERS before Django 2028.
+    dj_settings.DATABASES  # noqa: B018
+
+../../../../../.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394
+  /mnt/storage/.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394: RemovedInDjango2028Warning: The EMAIL_BACKEND setting is deprecated. Migrate to MAILERS before Django 2028.
+    dj_settings.DATABASES  # noqa: B018
+
+../../../../../.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394
+  /mnt/storage/.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394: RemovedInDjango2028Warning: The EMAIL_PORT setting is deprecated. Migrate to MAILERS before Django 2028.
+    dj_settings.DATABASES  # noqa: B018
+
+../../../../../.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394
+  /mnt/storage/.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394: RemovedInDjango2028Warning: The EMAIL_USE_SSL setting is deprecated. Migrate to MAILERS before Django 2028.
+    dj_settings.DATABASES  # noqa: B018
+
+../../../../../.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394
+  /mnt/storage/.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394: RemovedInDjango2028Warning: The EMAIL_TIMEOUT setting is deprecated. Migrate to MAILERS before Django 2028.
+    dj_settings.DATABASES  # noqa: B018
+
+../../../../../.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394
+  /mnt/storage/.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394: RemovedInDjango2028Warning: The EMAIL_HOST_PASSWORD setting is deprecated. Migrate to MAILERS before Django 2028.
+    dj_settings.DATABASES  # noqa: B018
+
+../../../../../.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394
+  /mnt/storage/.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394: RemovedInDjango2028Warning: The EMAIL_HOST setting is deprecated. Migrate to MAILERS before Django 2028.
+    dj_settings.DATABASES  # noqa: B018
+
+apps/accounts/tests/test_branding.py::test_transactional_email_has_ilbi_copy_and_embedded_logo[new_owner]
+apps/accounts/tests/test_branding.py::test_transactional_email_has_ilbi_copy_and_embedded_logo[new_employee]
+apps/accounts/tests/test_branding.py::test_transactional_email_has_ilbi_copy_and_embedded_logo[transfer_owner]
+apps/accounts/tests/test_branding.py::test_transactional_email_has_ilbi_copy_and_embedded_logo[reset_password]
+  /mnt/storage/.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/fixtures.py:580: RemovedInDjango2028Warning: The EMAIL_BACKEND setting is deprecated. Migrate to MAILERS before Django 2028.
+    override.enable()
+
+apps/accounts/tests/test_branding.py::test_transactional_email_has_ilbi_copy_and_embedded_logo[new_owner]
+apps/accounts/tests/test_branding.py::test_transactional_email_has_ilbi_copy_and_embedded_logo[new_employee]
+apps/accounts/tests/test_branding.py::test_transactional_email_has_ilbi_copy_and_embedded_logo[transfer_owner]
+apps/accounts/tests/test_branding.py::test_transactional_email_has_ilbi_copy_and_embedded_logo[reset_password]
+  /mnt/storage/.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/fixtures.py:590: RemovedInDjango2028Warning: The EMAIL_BACKEND setting is deprecated. Migrate to MAILERS before Django 2028.
+    override.disable()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+1224 passed, 16 warnings in 138.41s (0:02:18)
