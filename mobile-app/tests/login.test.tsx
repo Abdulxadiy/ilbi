@@ -4,14 +4,14 @@ import { LoginScreen } from '../src/features/auth/LoginScreen';
 import { ThemeProvider } from '../src/theme/ThemeContext';
 import * as Linking from 'expo-linking';
 import { ApiError } from '../src/api/errors';
-const mockCheck = jest.fn(async () => {}), mockSend = jest.fn(async () => {}), mockVerify = jest.fn(async () => {}), mockReset = jest.fn();
+const mockCheck = jest.fn(async () => {}), mockSend = jest.fn(async () => {}), mockVerify = jest.fn(async () => {}), mockReset = jest.fn(), mockLogin = jest.fn();
 let mockStep = 'telegram', mockDeadline = 0;
 const mockRequest = jest.fn();
 jest.mock('../src/api/client', () => ({ ...jest.requireActual('../src/api/client'), request: (...args: unknown[]) => mockRequest(...args) }));
-jest.mock('../src/features/auth/AuthContext', () => ({ useAuth: () => ({ login: jest.fn(), sendOtp: mockSend, verifyOtp: mockVerify, loginStep: mockStep, loginTicket: 'ticket', phoneHint: '+99890***1234', checkTelegram: mockCheck, resetLogin: mockReset, otpResendAt: mockDeadline }) }));
+jest.mock('../src/features/auth/AuthContext', () => ({ useAuth: () => ({ login: mockLogin, sendOtp: mockSend, verifyOtp: mockVerify, loginStep: mockStep, loginTicket: 'ticket', phoneHint: '+99890***1234', checkTelegram: mockCheck, resetLogin: mockReset, otpResendAt: mockDeadline }) }));
 jest.mock('expo-linking', () => ({ openURL: jest.fn(async () => {}) }));
 describe('Telegram login interface', () => {
-  beforeEach(() => { jest.clearAllMocks(); mockRequest.mockReset(); mockStep = 'telegram'; mockDeadline = 0; });
+  beforeEach(() => { jest.clearAllMocks(); mockRequest.mockReset(); mockLogin.mockReset(); mockStep = 'telegram'; mockDeadline = 0; });
   test('bot onboarding offers the actual bot link and a connection check', async () => {
     const screen = await render(<ThemeProvider><LoginScreen /></ThemeProvider>);
     await fireEvent.press(screen.getByText('Telegram botni ochish'));
@@ -173,5 +173,32 @@ describe('Telegram login interface', () => {
     await fireEvent.press(screen.getByText('Kodni kiritish'));
     expect(screen.getByLabelText('Tiklash kodi / token').props.value).toBe('');
     expect(screen.getByLabelText('Yangi parol').props.value).toBe('');
+  });
+
+  test('incorrect credentials display a single error message under the password field', async () => {
+    mockStep = 'credentials';
+    mockLogin.mockRejectedValueOnce(Object.assign(new Error('Username or password incorrect!'), { status: 401 }));
+    const screen = await render(<ThemeProvider><LoginScreen /></ThemeProvider>);
+    await fireEvent.changeText(screen.getByLabelText('Foydalanuvchi nomi yoki telefon'), 'synthetic-login-test');
+    await fireEvent.changeText(screen.getByLabelText('Parol'), 'Synthetic-Test-Password-Only!');
+    await fireEvent.press(screen.getByText('Kirish'));
+    await waitFor(() => expect(screen.getByText('Login yoki parol noto‘g‘ri')).toBeTruthy());
+    expect(screen.getAllByText('Login yoki parol noto‘g‘ri')).toHaveLength(1);
+    expect(screen.queryByText('Username or password incorrect!')).toBeNull();
+    expect(screen.queryByText('Login yoki parolni tekshiring.')).toBeNull();
+    expect(screen.getByLabelText('Foydalanuvchi nomi yoki telefon').props['aria-invalid']).toBe(false);
+    expect(screen.getByLabelText('Parol').props['aria-invalid']).toBe(true);
+  });
+  test('server validation still marks the actual username field instead of replacing it with a password error', async () => {
+    mockStep = 'credentials';
+    mockLogin.mockRejectedValueOnce(new ApiError('Belgilangan maydonni tekshiring.', 400, { username: ['Login formati noto‘g‘ri.'] }));
+    const screen = await render(<ThemeProvider><LoginScreen /></ThemeProvider>);
+    await fireEvent.changeText(screen.getByLabelText('Foydalanuvchi nomi yoki telefon'), 'synthetic-login-test');
+    await fireEvent.changeText(screen.getByLabelText('Parol'), 'Synthetic-Test-Password-Only!');
+    await fireEvent.press(screen.getByText('Kirish'));
+    expect(await screen.findByText('Login formati noto‘g‘ri.')).toBeTruthy();
+    expect(screen.getByLabelText('Foydalanuvchi nomi yoki telefon').props['aria-invalid']).toBe(true);
+    expect(screen.getByLabelText('Parol').props['aria-invalid']).toBe(false);
+    expect(screen.queryByText('Belgilangan maydonni tekshiring.')).toBeNull();
   });
 });

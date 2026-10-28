@@ -1,0 +1,15 @@
+{
+  "scope": "Combined integration workingtree; dependency/toolchain and login slices are committed separately, then verified again by PR/main CI. Native adapters are component tests; desktop bridge is a controlled browser fixture.",
+  "mobile_tests": 726,
+  "mobile_suites": 74,
+  "web_tests": 96,
+  "credential_fixture": "synthetic values only",
+  "checks": [
+    "single localized credential error in web/desktop renderer",
+    "no raw English credential message",
+    "mobile401 marks password once",
+    "mobile400 retains actual username field validation",
+    "existing sixth-digit OTP/correction/duplicate-submit behavior preserved"
+  ],
+  "emulator_touched": false
+}

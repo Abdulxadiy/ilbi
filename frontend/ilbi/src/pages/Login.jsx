@@ -186,8 +186,12 @@ export default function Login() {
       // FAQAT hali botga ulanmagan bo'lsagina Step 2 ("Telegram botni ulang") ko'rsatiladi
       setStep(2);
     } catch (err) {
-      setErrorMsg(err.message || 'Login yoki parol noto‘g‘ri');
-      if (err.status === 401) setCredentialError(err.message || 'Login yoki parolni tekshiring.');
+      if (err.status === 401) {
+        setErrorMsg('');
+        setCredentialError('Login yoki parol noto‘g‘ri');
+      } else {
+        setErrorMsg(err.message || 'Kirishda xatolik yuz berdi');
+      }
     } finally {
       setSubmittingStep1(false);
     }

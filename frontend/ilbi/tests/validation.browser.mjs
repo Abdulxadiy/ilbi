@@ -30,7 +30,7 @@ try {
   }
   async function release(browser) {
     // These tests intentionally exercise 400/401 responses from isolated fixtures.
-    const unexpected = browser.errors.filter(error => !error.includes('ERR_BLOCKED_BY_CLIENT') && !/^Failed to load resource: the server responded with a status of (400|401) /.test(error) && !/^(400|401) http:\/\/127\.0\.0\.1:\d+\/api\/v1\/(validation-fixture\/|auth\/admin-login\/verify-otp\/)/.test(error));
+    const unexpected = browser.errors.filter(error => !error.includes('ERR_BLOCKED_BY_CLIENT') && !/^Failed to load resource: the server responded with a status of (400|401) /.test(error) && !/^(400|401) http:\/\/127\.0\.0\.1:\d+\/api\/v1\/(validation-fixture\/|auth\/admin-login\/(verify-otp\/)?)/.test(error));
     assert.deepEqual(unexpected, []);
     await browser.close(); browsers.splice(browsers.indexOf(browser), 1);
   }
@@ -118,6 +118,13 @@ try {
     assert.equal(await browser.evaluate('document.querySelector("#username").getAttribute("aria-invalid")'), 'true');
     assert.equal(await browser.evaluate('authQA.requests.some(row=>row.path.endsWith("/admin-login/"))'), false);
     await fill(browser, '#username', 'session_test'); await fill(browser, '#password', 'synthetic-password');
+    await browser.evaluate('authQA.rejectCredentials=true;document.querySelector("#login-form").requestSubmit()');
+    await wait(browser, 'Boolean(document.querySelector("#credential-error"))');
+    assert.equal(await browser.evaluate('document.querySelector("#credential-error").textContent'), 'Login yoki parol noto‘g‘ri');
+    assert.equal(await browser.evaluate('document.body.innerText.includes("Username or password incorrect!")'), false);
+    assert.equal(await browser.evaluate('[...document.querySelectorAll(".field-error")].filter(node=>node.textContent==="Login yoki parol noto‘g‘ri").length'), 1);
+    assert.equal(await browser.evaluate('Boolean(document.querySelector("#otp-code"))'), false);
+    await browser.evaluate('authQA.rejectCredentials=false');
     await browser.evaluate('document.querySelector("#login-form").requestSubmit()');
     await wait(browser, 'Boolean(document.querySelector("#otp-code"))');
     await fill(browser, '#otp-code', '111111');

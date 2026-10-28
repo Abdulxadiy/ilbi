@@ -104,7 +104,7 @@ export const LoginScreen: React.FC = () => {
     form.clear();
     if (!username.trim() || !password) {
       form.setErrors({ ...(!username.trim() ? { username: 'Login yoki telefonni kiriting.' } : {}), ...(!password ? { password: 'Parolni kiriting.' } : {}) });
-      setError('Login va parolni kiriting');
+      setError(null);
       return;
     }
     setError(null);
@@ -113,8 +113,17 @@ export const LoginScreen: React.FC = () => {
     try {
       await login(username.trim(), password);
     } catch (err: any) {
-      form.capture(err, [400, 401].includes(err.status) ? { username: 'Login yoki parolni tekshiring.', password: err.message || 'Parolni tekshiring.' } : {});
-      setError(err.message || 'Kirishda xatolik yuz berdi');
+      if ([400, 401].includes(err.status)) {
+        const msg = (err.message && !/username or password incorrect/i.test(err.message))
+          ? err.message
+          : 'Login yoki parol noto‘g‘ri';
+        if (err.status === 400) form.capture(err, { password: msg });
+        else form.setErrors({ password: msg });
+        setError(null);
+      } else {
+        form.capture(err);
+        setError(err.message || 'Kirishda xatolik yuz berdi');
+      }
     } finally {
       authSubmission.current = false;
       setLoading(false);
@@ -332,7 +341,7 @@ export const LoginScreen: React.FC = () => {
                 }
               />
 
-              {error ? <Text style={[styles.error, { color: colors.danger }]}>{safeDisplayText(error)}</Text> : null}
+              {error && !form.errors.password ? <Text style={[styles.error, { color: colors.danger }]}>{safeDisplayText(error)}</Text> : null}
 
               <Button
                 title="Kirish"
