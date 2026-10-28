@@ -8,12 +8,16 @@ import fcntl
 import importlib.util
 import io
 import json
+import os
+import shutil
+import subprocess
 import tarfile
 import tempfile
 import time
 import unittest
 import uuid
 from pathlib import Path
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[2]
 spec = importlib.util.spec_from_file_location("data_backup", ROOT / "scripts/data_backup.py")
@@ -55,6 +59,41 @@ class BackupSafetyTests(unittest.TestCase):
         with self.assertRaisesRegex(backup.BackupError, "yangi"):
             backup.restore_backup("missing.gpg", self.root, self.key)
         self.assertEqual(marker.read_text(), "unchanged")
+
+    def test_container_version_metadata_rejects_links_special_files_and_invalid_contents(self):
+        cases = {
+            "link": None,
+            "directory": None,
+            "fifo": None,
+            "oversize": b"x" * (backup.MAX_APP_METADATA_BYTES + 1),
+            "invalid-toml": b"[",
+            "invalid-utf8": b"\xff",
+            "missing": b"[project]\nname='synthetic'\n",
+            "wrong-type": b"project='not-a-table'\n",
+            "invalid-version": b"[project]\nversion='not-a-version'\n",
+            "long-version": b"[project]\nversion='1.4.0+" + b"x" * 64 + b"'\n",
+        }
+        for kind, contents in cases.items():
+            work = self.root / kind
+            work.mkdir(mode=0o700)
+
+            def copy_metadata(*args, **kwargs):
+                destination = Path(args[2])
+                if kind == "link":
+                    destination.symlink_to(self.root / "keep-private")
+                elif kind == "directory":
+                    destination.mkdir()
+                elif kind == "fifo":
+                    os.mkfifo(destination)
+                else:
+                    destination.write_bytes(contents)
+
+            with (
+                self.subTest(kind=kind),
+                patch.object(backup, "docker", copy_metadata),
+                self.assertRaises(backup.BackupError),
+            ):
+                backup.source_app_version("synthetic-container", work)
 
     def test_archive_traversal_links_duplicates_and_size_are_rejected(self):
         for kind in (
@@ -166,6 +205,13 @@ class RealRecoveryTests(unittest.TestCase):
                 "USE_MINIO=False",
             )
             backup.docker("cp", str(cls.files), f"{cls.media}:/tmp/")
+            cls.application_version = "0.9.7"
+            application = cls.root / "app"
+            application.mkdir(mode=0o700)
+            (application / "pyproject.toml").write_text(
+                f'[project]\nname = "synthetic-backup-source"\nversion = "{cls.application_version}"\n'
+            )
+            backup.docker("cp", str(application), f"{cls.media}:/")
             cls.config = {
                 "version": 1,
                 "compose_project": cls.project,
@@ -254,7 +300,27 @@ class RealRecoveryTests(unittest.TestCase):
                 (self.docs / "rules.md").read_text(),
             )
             self.assertIn("database.dump", manifest["files"])
+            self.assertEqual(manifest["app_version"], self.application_version)
             self.assertTrue((payload / "media/empty").is_dir())
+
+    def test_standalone_deployment_needs_no_host_application_checkout(self):
+        standalone = self.root / "standalone"
+        (standalone / "scripts").mkdir(parents=True)
+        script = standalone / "scripts/data_backup.py"
+        shutil.copyfile(ROOT / "scripts/data_backup.py", script)
+        output = self.root / "standalone-backups"
+        result = subprocess.run(
+            ["python3", str(script), "create", "--config", str(self.config_path),
+             "--output-dir", str(output), "--passphrase-file", str(self.key), "--writers-stopped"],
+            capture_output=True, text=True, check=False,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertFalse((standalone / "backend").exists())
+        self.assertFalse((standalone / "ilbi").exists())
+        archive = Path(json.loads(result.stdout)["archive"])
+        with backup.opened_backup(archive, backup.read_passphrase(self.key)) as (_, manifest):
+            self.assertEqual(manifest["app_version"], self.application_version)
+        self.assertEqual(self.sql("SELECT count(*) FROM products;"), "1")
 
     def test_restore_recovers_database_files_constraints_and_sequences_without_touching_source(
         self,

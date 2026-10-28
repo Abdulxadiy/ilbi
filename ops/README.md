@@ -196,6 +196,8 @@ cd /srv/ilbi
 Bu yozuvchi xizmatlarni qisqa muddat to‘xtatib, DB, mahalliy media va hujjatlarni shifrlaydi;
 oldin ishlagan xizmatlar xatoda ham qayta yoqiladi. PostgreSQL va Redis to‘xtatilmaydi.
 Backup/deploy parallel ishlashiga `.operations.lock` yo‘l qo‘ymaydi.
+Zaxira manifestidagi ilova versiyasi nusxa olinayotgan konteynerning `/app/pyproject.toml`
+faylidan olinadi; serverda backend kodi yoki Git checkout bo‘lishi talab qilinmaydi.
 
 - Serverdagi arxivlar: `/srv/ilbi-backups/`, faqat egasiga ochiq.
 - Serverdagi sozlama va kalit: `/etc/ilbi-backup/`, faqat egasiga ochiq.
@@ -215,7 +217,9 @@ sxema va bo‘sh foydalanuvchilar bazasi tasdiqlandi, sinov resurslari tozalandi
 ## CI/CD holati
 
 CI backend va frontend testlariga qo‘shimcha ravishda HTTPS chegarasi, aktivatsiya xatolari
-va backupdan keyingi qayta ishga tushirishni tekshiradi.
+va backupdan keyingi qayta ishga tushirishni tekshiradi. Shifrlangan zaxira va tiklash sinovi
+haqiqiy, alohida PostgreSQL 16 konteynerlarida, host portlari va ilova ma’lumotlarisiz ishlaydi;
+hostda backend kodi yo‘q standalone server holati ham tekshiriladi.
 
 `deploy.yml` muvaffaqiyatli **main CI** natijasidan keyin uchta `linux/amd64` production imagelarini
 GitHub’da yig‘ib, GHCR’ga `sha-<commit>` bilan joylaydi. Serverda pull → shifrlangan backup →

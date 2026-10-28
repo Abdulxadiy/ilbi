@@ -1,0 +1,63 @@
+{
+  "failed_deploy": "https://github.com/Abdulxadiy/ilbi/actions/runs/40746369226",
+  "cause": "Standalone production retained ilbi/pyproject.toml, but copied backup script tried to read backend/pyproject.toml from a nonexistent host source checkout. Backup failure stopped deployment before image selection changed; writer resumption trap restored prior healthy services.",
+  "fix": "Read a bounded ordinary /app/pyproject.toml from the exact stopped application container being backed up. Reject links, directories/FIFO, oversized or invalid metadata and versions. Keep stopped-writer, encryption, checksum, isolation, parallel lock and resumption safeguards. No fallback to misleading host metadata.",
+  "actual_reproduction": "Old code failed2 real Docker/GPG regressions: wrong host version1.4.0 versus synthetic source0.9.7, and standalone no-checkout CLI backup failure.",
+  "verified": [
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests/deployment",
+        "-p",
+        "test_data_backup.py",
+        "-v"
+      ],
+      "exit": 0,
+      "log": "check-0.txt",
+      "executed_tests": 13
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests/deployment",
+        "-p",
+        "test_operations.py",
+        "-v"
+      ],
+      "exit": 0,
+      "executed_tests": 1,
+      "log": "check-1.txt"
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests/deployment",
+        "-p",
+        "test_ci_handoff.py",
+        "-v"
+      ],
+      "exit": 0,
+      "executed_tests": 3,
+      "log": "check-2.txt"
+    }
+  ],
+  "automation_tests": 4,
+  "lint": "Critical Ruff checks pass",
+  "production_preflight": "Read-only metadata helper reads existing container version1.4.0 while backend host manifest is absent. No backup, data mutation or service restart in this probe.",
+  "ci_addition": "production-edge now pulls postgres:16-alpine and runs the actual encrypted backup/isolated restore suite before deploy.",
+  "production_acceptance": "Full CI and automatic production deployment must rerun; not yet passed for this commit.",
+  "versions_changed": false,
+  "emulator_touched": false
+}

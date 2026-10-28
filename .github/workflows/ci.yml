@@ -65,6 +65,9 @@ jobs:
         run: |
           docker pull nginx:alpine
           docker pull python:3.12-slim
+          docker pull postgres:16-alpine
+      - name: Verify real encrypted backup and isolated PostgreSQL recovery
+        run: python3 -m unittest discover -s tests/deployment -p 'test_data_backup.py' -v
       - name: Test HTTPS boundary and activation failure recovery
         run: python3 -m unittest discover -s tests/deployment -p 'test_https*.py' -v
   backend:

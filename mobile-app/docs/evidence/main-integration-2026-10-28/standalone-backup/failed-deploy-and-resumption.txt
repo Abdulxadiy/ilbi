@@ -1,0 +1,68 @@
+2026-10-28T18:41:40.2622651Z 646d37df0c53: Download complete
+2026-10-28T18:41:40.3842246Z 646d37df0c53: Pull complete
+2026-10-28T18:41:40.6619410Z 40a79f5805ed: Download complete
+2026-10-28T18:41:41.1019695Z 1e328880b5c8: Download complete
+2026-10-28T18:41:41.1023290Z 44fa254ecf2e: Download complete
+2026-10-28T18:41:41.2633273Z 57257d6d8137: Download complete
+2026-10-28T18:41:41.3620257Z dc3e82f95ee7: Download complete
+2026-10-28T18:41:41.5625580Z dc7aba6db81c: Download complete
+2026-10-28T18:41:41.6624485Z 54b0f6009d0c: Download complete
+2026-10-28T18:41:41.7656879Z bd3f2a596506: Download complete
+2026-10-28T18:41:41.9847720Z 40a79f5805ed: Pull complete
+2026-10-28T18:41:42.0003809Z 57257d6d8137: Pull complete
+2026-10-28T18:41:42.6950805Z 44fa254ecf2e: Pull complete
+2026-10-28T18:41:42.7954571Z 1e328880b5c8: Pull complete
+2026-10-28T18:41:42.8181547Z dc7aba6db81c: Pull complete
+2026-10-28T18:41:43.3842103Z 5830fc7b3439: Pull complete
+2026-10-28T18:41:43.4746392Z 2273ddd39e4a: Pull complete
+2026-10-28T18:41:43.4824619Z dc3e82f95ee7: Pull complete
+2026-10-28T18:41:43.4941912Z 54b0f6009d0c: Pull complete
+2026-10-28T18:41:43.5108370Z Digest: sha256:35fdbb8032373ebe676507997225ea7468937b6382d9430d815805b075b781aa
+2026-10-28T18:41:43.5108965Z Status: Downloaded newer image for ghcr.io/abdulxadiy/ilbi/bot:sha-1afc9c2c3bcc1946cec0d510be4282a07969ca37
+2026-10-28T18:41:43.5124031Z ghcr.io/abdulxadiy/ilbi/bot:sha-1afc9c2c3bcc1946cec0d510be4282a07969ca37
+2026-10-28T18:41:43.8738236Z  Container ilbi-platform-celery_beat-1 Stopping
+2026-10-28T18:41:43.8738628Z  Container ilbi-platform-bot-1 Stopping
+2026-10-28T18:41:43.8741815Z  Container ilbi-platform-celery_worker-1 Stopping
+2026-10-28T18:41:45.5532131Z  Container ilbi-platform-celery_beat-1 Stopped
+2026-10-28T18:41:45.5532659Z  Container ilbi-platform-bot-1 Stopped
+2026-10-28T18:41:46.6292201Z  Container ilbi-platform-celery_worker-1 Stopped
+2026-10-28T18:41:46.6292677Z  Container ilbi-platform-ilbi-1 Stopping
+2026-10-28T18:41:48.0244389Z  Container ilbi-platform-ilbi-1 Stopped
+2026-10-28T18:41:48.7406783Z Zaxira amali bajarilmadi; sozlama va resurslarni tekshiring.
+2026-10-28T18:41:48.8956640Z  Container ilbi-platform-postgres-1 Waiting
+2026-10-28T18:41:48.8957022Z  Container ilbi-platform-redis-1 Waiting
+2026-10-28T18:41:49.3986047Z  Container ilbi-platform-redis-1 Healthy
+2026-10-28T18:41:49.3986449Z  Container ilbi-platform-postgres-1 Healthy
+2026-10-28T18:41:49.3986764Z  Container ilbi-platform-ilbi-1 Starting
+2026-10-28T18:41:49.5785587Z  Container ilbi-platform-ilbi-1 Started
+2026-10-28T18:41:49.5785955Z  Container ilbi-platform-ilbi-1 Waiting
+2026-10-28T18:41:49.5786242Z  Container ilbi-platform-ilbi-1 Waiting
+2026-10-28T18:41:49.5786513Z  Container ilbi-platform-ilbi-1 Waiting
+2026-10-28T18:42:15.0812996Z  Container ilbi-platform-ilbi-1 Healthy
+2026-10-28T18:42:15.0813434Z  Container ilbi-platform-bot-1 Starting
+2026-10-28T18:42:15.0813720Z  Container ilbi-platform-ilbi-1 Healthy
+2026-10-28T18:42:15.0814101Z  Container ilbi-platform-ilbi-1 Healthy
+2026-10-28T18:42:15.0814503Z  Container ilbi-platform-celery_beat-1 Starting
+2026-10-28T18:42:15.0814988Z  Container ilbi-platform-celery_worker-1 Starting
+2026-10-28T18:42:15.2746134Z  Container ilbi-platform-bot-1 Started
+2026-10-28T18:42:15.4969722Z  Container ilbi-platform-celery_beat-1 Started
+2026-10-28T18:42:15.8030310Z  Container ilbi-platform-celery_worker-1 Started
+2026-10-28T18:42:15.8030702Z  Container ilbi-platform-postgres-1 Waiting
+2026-10-28T18:42:15.8031014Z  Container ilbi-platform-ilbi-1 Waiting
+2026-10-28T18:42:15.8031292Z  Container ilbi-platform-bot-1 Waiting
+2026-10-28T18:42:15.8031786Z  Container ilbi-platform-redis-1 Waiting
+2026-10-28T18:42:15.8032086Z  Container ilbi-platform-celery_worker-1 Waiting
+2026-10-28T18:42:15.8032393Z  Container ilbi-platform-celery_beat-1 Waiting
+2026-10-28T18:42:16.3204104Z  Container ilbi-platform-celery_beat-1 Healthy
+2026-10-28T18:42:16.3221306Z  Container ilbi-platform-bot-1 Healthy
+2026-10-28T18:42:16.3227689Z  Container ilbi-platform-postgres-1 Healthy
+2026-10-28T18:42:16.3228088Z  Container ilbi-platform-celery_worker-1 Healthy
+2026-10-28T18:42:16.3230353Z  Container ilbi-platform-ilbi-1 Healthy
+2026-10-28T18:42:16.3263557Z  Container ilbi-platform-redis-1 Healthy
+2026-10-28T18:42:16.3410916Z ##[error]Process completed with exit code 1.
+2026-10-28T18:42:16.3520347Z Post job cleanup.
+2026-10-28T18:42:16.5522679Z ##[group]Generating build summary
+2026-10-28T18:42:16.5527336Z exporting build record to /home/runner/work/_temp/docker-actions-toolkit-aaruqO/export
+2026-10-28T18:42:16.5540051Z (node:5410) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-28T18:42:16.5541199Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-28T18:42:16.7773331Z [command]/usr/bin/docker buildx history export --builder builder-1ea3c1eb-036f-4c68-b7ea-3fb4cbd2a1ee --output /home/runner/work/_temp/docker-actions-toolkit-aaruqO/export/Abdulxadiy~ilbi~QI3TYU.dockerbuild qi3tyubr8te9opfsey8swv6c3 --finalize

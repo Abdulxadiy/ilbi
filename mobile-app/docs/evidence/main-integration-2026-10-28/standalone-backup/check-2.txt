@@ -1,0 +1,8 @@
+test_current_tested_main_can_deploy (test_ci_handoff.CiHandoffTests.test_current_tested_main_can_deploy) ... ok
+test_failed_or_invalid_api_response_never_allows_deploy (test_ci_handoff.CiHandoffTests.test_failed_or_invalid_api_response_never_allows_deploy) ... ok
+test_superseded_ci_commit_cannot_deploy (test_ci_handoff.CiHandoffTests.test_superseded_ci_commit_cannot_deploy) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.016s
+
+OK

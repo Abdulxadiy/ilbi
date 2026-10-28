@@ -1,0 +1,18 @@
+test_archive_traversal_links_duplicates_and_size_are_rejected (test_data_backup.BackupSafetyTests.test_archive_traversal_links_duplicates_and_size_are_rejected) ... ok
+test_backup_requires_explicit_writer_acknowledgement (test_data_backup.BackupSafetyTests.test_backup_requires_explicit_writer_acknowledgement) ... ok
+test_container_version_metadata_rejects_links_special_files_and_invalid_contents (test_data_backup.BackupSafetyTests.test_container_version_metadata_rejects_links_special_files_and_invalid_contents) ... ok
+test_data_cannot_be_written_inside_repo (test_data_backup.BackupSafetyTests.test_data_cannot_be_written_inside_repo) ... ok
+test_passphrase_requires_private_file_and_sufficient_length (test_data_backup.BackupSafetyTests.test_passphrase_requires_private_file_and_sufficient_length) ... ok
+test_restore_refuses_existing_destination_without_touching_it (test_data_backup.BackupSafetyTests.test_restore_refuses_existing_destination_without_touching_it) ... ok
+test_checksum_mismatch_is_rejected_before_restore (test_data_backup.RealRecoveryTests.test_checksum_mismatch_is_rejected_before_restore) ... ok
+test_dump_failure_and_parallel_run_do_not_publish_partial_backup (test_data_backup.RealRecoveryTests.test_dump_failure_and_parallel_run_do_not_publish_partial_backup) ... ok
+test_encrypted_backup_is_private_and_complete (test_data_backup.RealRecoveryTests.test_encrypted_backup_is_private_and_complete) ... ok
+test_live_writer_and_minio_are_rejected (test_data_backup.RealRecoveryTests.test_live_writer_and_minio_are_rejected) ... ok
+test_restore_recovers_database_files_constraints_and_sequences_without_touching_source (test_data_backup.RealRecoveryTests.test_restore_recovers_database_files_constraints_and_sequences_without_touching_source) ... ok
+test_standalone_deployment_needs_no_host_application_checkout (test_data_backup.RealRecoveryTests.test_standalone_deployment_needs_no_host_application_checkout) ... ok
+test_wrong_password_and_damaged_archive_do_not_start_restore (test_data_backup.RealRecoveryTests.test_wrong_password_and_damaged_archive_do_not_start_restore) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 10.894s
+
+OK

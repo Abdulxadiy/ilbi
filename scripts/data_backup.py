@@ -28,6 +28,7 @@ WRITER_SERVICES = {"ilbi", "celery_worker", "celery_beat", "bot"}
 POSTGRES_IMAGE = "postgres:16-alpine"
 MAX_FILES = 100_000
 MAX_MANIFEST_BYTES = 32 * 1024 * 1024
+MAX_APP_METADATA_BYTES = 64 * 1024
 DEFAULT_MAX_BYTES = 100 * 1024**3
 
 
@@ -311,6 +312,31 @@ def pg_args(config, *args):
     ]
 
 
+def source_app_version(container, work):
+    """Use the backed-up image's metadata; production has no source checkout."""
+    destination = work / "application-metadata.toml"
+    docker("cp", f"{container}:/app/pyproject.toml", str(destination), timeout=60)
+    try:
+        fd = os.open(destination, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+        with os.fdopen(fd, "rb") as source:
+            info = os.fstat(source.fileno())
+            if not stat.S_ISREG(info.st_mode) or info.st_size > MAX_APP_METADATA_BYTES:
+                raise BackupError("Ilova versiyasi manifesti oddiy va kichik fayl bo‘lishi kerak.")
+            contents = source.read(MAX_APP_METADATA_BYTES + 1)
+        if len(contents) > MAX_APP_METADATA_BYTES:
+            raise BackupError("Ilova versiyasi manifesti belgilangan hajmdan katta.")
+        metadata = tomllib.loads(contents.decode("utf-8"))
+        project = metadata.get("project")
+        version = project.get("version") if isinstance(project, dict) else None
+        if not isinstance(version, str) or len(version) > 64 or not re.fullmatch(
+            r"\d+\.\d+\.\d+(?:[-+][A-Za-z0-9.-]+)?", version
+        ):
+            raise BackupError("Konteynerdagi ilova versiyasi tasdiqlanmadi.")
+        return version
+    except (OSError, ValueError, TypeError) as exc:
+        raise BackupError("Konteynerdagi ilova versiyasi manifesti xavfsiz o‘qilmadi.") from exc
+
+
 def validate_manifest(directory):
     try:
         manifest = json.loads((directory / "manifest.json").read_text())
@@ -368,6 +394,7 @@ def create_backup(config_path, output_dir, passphrase_path, *, writers_stopped=F
             raise BackupError("PostgreSQL 16 dump vositasi talab qilinadi.")
         with tempfile.TemporaryDirectory(prefix="ilbi-data-create-") as folder:
             work = Path(folder)
+            app_version = source_app_version(state["media_id"], work)
             payload = work / "contents"
             payload.mkdir(mode=0o700)
             with private_file(payload / "database.dump") as stream:
@@ -402,7 +429,7 @@ def create_backup(config_path, output_dir, passphrase_path, *, writers_stopped=F
                 "created_at": datetime.now(UTC).isoformat(),
                 "source_project": config["compose_project"],
                 "source_database": config["database"],
-                "app_version": tomllib.loads((ROOT / "backend/pyproject.toml").read_text())["project"]["version"],
+                "app_version": app_version,
                 "files": inventory(payload),
             }
             with private_file(payload / "manifest.json") as stream:
