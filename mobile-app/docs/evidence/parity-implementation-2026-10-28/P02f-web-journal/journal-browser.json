@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "runtime": "Isolated Chrome; actual IndexedDB transactions across two database connections; no API/provider/native calls",
+  "checks": 19,
+  "scopeIsolation": true,
+  "atomicPrepare": true,
+  "immutablePendingAndConfirmed": true,
+  "storageFailureRollback": true,
+  "corruptionPreserved": true
+}
