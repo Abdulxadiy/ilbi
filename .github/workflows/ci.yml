@@ -109,6 +109,7 @@ jobs:
       - run: npm test
       - name: Check optional offline setup and remembered login
         run: |
+          npm run test:browser-launcher
           npm run test:sync
           npm run test:auth-session
           npm run test:validation

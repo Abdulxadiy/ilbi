@@ -1,0 +1,107 @@
+{
+  "failed_ci": "https://github.com/Abdulxadiy/ilbi/actions/runs/40738560646",
+  "failure": "Chrome did not produce a DevToolsActivePort within30seconds; no page assertion had run.",
+  "fix": "At most2 browser startup attempts, each with its own profile; reap failed process and remove profile before retry. Actual page assertions are not retried. Persistent startup/spawn errors fail with both diagnostics.",
+  "reproduction": "Original launcher rejects controlled first process exit31; fixed helper also verifies controlled timeout recovery and persistent failures against real installed Chrome.",
+  "native_emulator_touched": false,
+  "checks": [
+    {
+      "command": [
+        "npm",
+        "run",
+        "test:browser-launcher"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 31.03,
+      "log": "check-0.txt"
+    },
+    {
+      "command": [
+        "npm",
+        "test"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 1.02,
+      "log": "check-1.txt"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "test:sync"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 9.84,
+      "log": "check-2.txt"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "test:auth-session"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 13.49,
+      "log": "check-3.txt"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "test:validation"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 5.42,
+      "log": "check-4.txt"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "test:downloads"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 6.0,
+      "log": "check-5.txt"
+    },
+    {
+      "command": [
+        "node",
+        "tests/updates.browser.mjs"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 1.51,
+      "log": "check-6.txt"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 0.63,
+      "log": "check-7.txt"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "test:desktop-guide"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 10.69,
+      "log": "check-8.txt"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "lint"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 0.38,
+      "log": "check-9.txt"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+file:///mnt/storage/.cache/ilbi-native-tools/main-chrome-before.mjs:20
+    if (child.exitCode !== null) throw new Error(`Chrome exited: ${child.exitCode}: ${startupLog}`);
+                                       ^
+
+Error: Chrome exited: 31: synthetic Chrome startup failure
+
+    at launchBrowser (file:///mnt/storage/.cache/ilbi-native-tools/main-chrome-before.mjs:20:40)
+    at async file:///mnt/storage/.cache/ilbi-native-tools/main-integration-20261028/frontend/ilbi/tests/browserLauncher.browser.mjs:40:17
+
+Node.js v26.11.1
