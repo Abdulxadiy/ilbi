@@ -18,7 +18,7 @@ class ReleaseVersionTests(unittest.TestCase):
         self.addCleanup(scratch.cleanup)
         self.root = Path(scratch.name)
         for name in ("desktop/ilbi/package.json", "desktop/ilbi/package-lock.json", "frontend/ilbi/package.json",
-                     "frontend/ilbi/package-lock.json", "ilbi/pyproject.toml", "ilbi/uv.lock", "desktop/ilbi/preload.cjs", "README.md"):
+                     "frontend/ilbi/package-lock.json", "backend/pyproject.toml", "backend/uv.lock", "desktop/ilbi/preload.cjs", "README.md"):
             target = self.root / name
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(ROOT / name, target)

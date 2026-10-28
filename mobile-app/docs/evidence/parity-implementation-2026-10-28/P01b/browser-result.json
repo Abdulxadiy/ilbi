@@ -1,0 +1,16 @@
+{
+  "runtime": "Isolated Chrome + production React Native Web export + controlled API adapter",
+  "nativeDeviceAcceptance": false,
+  "liveBackend": false,
+  "checks": [
+    "sidebar employee route with exactly five tabs",
+    "actual contract-shaped directory",
+    "inline email and password validation",
+    "server-ID permission preset and safe PATCH payload",
+    "light390/dark320 UI and no horizontal overflow",
+    "logout and invitation-to-Telegram gate"
+  ],
+  "passed": true,
+  "writes": 1,
+  "unexpected": []
+}

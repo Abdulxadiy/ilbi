@@ -1,0 +1,4 @@
+npm notice run ilbi-frontend@1.4.0 test:catalog-fiscal
+npm notice run node tests/catalogFiscal.browser.mjs
+PASS real catalog create/edit forms: JSON/multipart, leading zeroes, explicit clearing, old drafts, validation and mobile fields.
+PASS thermal 58/80mm and public receipts: saved codes displayed; legacy rows omit unknown codes; non-fiscal labels remain.

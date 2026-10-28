@@ -39,11 +39,11 @@ services:
     cap_drop: [ALL]
     image: '${ILBI_BACKEND_IMAGE:-ilbi-backend:local}'
     build:
-      context: ./ilbi
+      context: ./backend
       target: production
     logging: *bounded_logging
     restart: unless-stopped
-    env_file: ./ilbi/.env.production
+    env_file: ./backend/.env.production
     environment: &backend_environment
       DJANGO_SETTINGS_MODULE: config.settings_production
       DJANGO_DEBUG: 'False'
@@ -77,14 +77,14 @@ services:
     cap_drop: [ALL]
     image: '${ILBI_BACKEND_IMAGE:-ilbi-backend:local}'
     build:
-      context: ./ilbi
+      context: ./backend
       target: production
     logging: *bounded_logging
     restart: unless-stopped
     command: celery -A config worker -l info --concurrency=1 --prefetch-multiplier=1 --max-tasks-per-child=100
     volumes:
       - media_data:/app/media
-    env_file: ./ilbi/.env.production
+    env_file: ./backend/.env.production
     environment: *backend_environment
     depends_on:
       ilbi: {condition: service_healthy}
@@ -93,14 +93,14 @@ services:
     cap_drop: [ALL]
     image: '${ILBI_BACKEND_IMAGE:-ilbi-backend:local}'
     build:
-      context: ./ilbi
+      context: ./backend
       target: production
     logging: *bounded_logging
     restart: unless-stopped
     command: celery -A config beat -l info --schedule=/app/state/celerybeat-schedule
     volumes:
       - celery_beat_data:/app/state
-    env_file: ./ilbi/.env.production
+    env_file: ./backend/.env.production
     environment: *backend_environment
     depends_on:
       ilbi: {condition: service_healthy}

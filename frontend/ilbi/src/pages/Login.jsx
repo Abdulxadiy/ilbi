@@ -13,6 +13,7 @@ import IlbiIntroAnimation from '../components/common/IlbiIntroAnimation';
 import TelegramConnectionGate from '../components/auth/TelegramConnectionGate';
 import DesktopAccess from '../components/sync/DesktopAccess';
 import { readRememberedLogin, rememberLogin, forgetRememberedLogin } from '../utils/rememberedLogin';
+import { showFormErrors } from '../utils/formValidation.js';
 
 const OTP_EXPIRY_SECONDS = 180; // 3 daqiqa
 
@@ -51,6 +52,11 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [requiresPassword, setRequiresPassword] = useState(false);
   const [otpCode, setOtpCode] = useState('');
+  const [otpError, setOtpError] = useState('');
+  const [credentialError, setCredentialError] = useState('');
+  const [verifyingOtp, setVerifyingOtp] = useState(false);
+  const otpInFlight = useRef(false);
+  const lastAutomaticOtp = useRef('');
   const [phoneHint, setPhoneHint] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const [otpTimeLeft, setOtpTimeLeft] = useState(OTP_EXPIRY_SECONDS);
@@ -134,6 +140,7 @@ export default function Login() {
   const handleStep1 = async (e) => {
     e.preventDefault();
     setErrorMsg('');
+    setCredentialError('');
     setSubmittingStep1(true);
     try {
       if (rememberMe) {
@@ -153,6 +160,8 @@ export default function Login() {
       setLoginTicket(res.login_ticket);
       setPhoneHint(res.phone_hint || '');
       setOtpCode('');
+      setOtpError('');
+      lastAutomaticOtp.current = '';
 
       // Agar Telegram botga allaqachon bog'langan bo'lsa, "Telegram botni ulash" (step 2)
       // bosqichini ko'rsatish shart emas. To'g'ridan-to'g'ri kodni botga yuborib Step 3 (OTP kiritish)ga o'tamiz.
@@ -177,7 +186,12 @@ export default function Login() {
       // FAQAT hali botga ulanmagan bo'lsagina Step 2 ("Telegram botni ulang") ko'rsatiladi
       setStep(2);
     } catch (err) {
-      setErrorMsg(err.message || 'Login yoki parol noto‘g‘ri');
+      if (err.status === 401) {
+        setErrorMsg('');
+        setCredentialError('Login yoki parol noto‘g‘ri');
+      } else {
+        setErrorMsg(err.message || 'Kirishda xatolik yuz berdi');
+      }
     } finally {
       setSubmittingStep1(false);
     }
@@ -187,9 +201,11 @@ export default function Login() {
     if (otpTimeLeft > 0 || resending) return;
     setResending(true);
     setErrorMsg('');
+    setOtpError('');
     try {
       await authApi.sendTelegramOtp(loginTicket);
       setOtpCode('');
+      lastAutomaticOtp.current = '';
       setOtpTimeLeft(OTP_EXPIRY_SECONDS);
       toast.success('Yangi tasdiqlash kodi Telegram orqali yuborildi');
     } catch (err) {
@@ -208,15 +224,23 @@ export default function Login() {
     }
   };
 
-  const handleStep2 = async (e) => {
-    e.preventDefault();
+  const submitOtp = async (code) => {
+    if (otpInFlight.current) return;
     setErrorMsg('');
+    setOtpError('');
 
-    if (otpTimeLeft === 0) {
-      setErrorMsg('Tasdiqlash kodi muddati tugagan (3 daqiqa o‘tdi). Iltimos, pastdagi "Kodni qayta yuborish" tugmasini bosing.');
+    if (!/^\d{6}$/.test(code)) {
+      setOtpError('6 xonali tasdiqlash kodini to‘liq kiriting.');
       return;
     }
 
+    if (otpTimeLeft === 0) {
+      setOtpError('Tasdiqlash kodi muddati tugagan. Kodni qayta yuboring.');
+      return;
+    }
+
+    otpInFlight.current = true;
+    setVerifyingOtp(true);
     try {
       if (rememberMe) {
         localStore.setItem('ilbi_remember_login', username.trim());
@@ -224,7 +248,7 @@ export default function Login() {
       } else {
         void forgetRememberedLogin('online').catch(() => {});
       }
-      const result = await loginStep2(username.trim(), loginTicket, otpCode, rememberMe, password);
+      const result = await loginStep2(username.trim(), loginTicket, code, rememberMe, password);
       await saveRememberedLogin();
       if (result?.desktopNotice) toast.warning(result.desktopNotice);
       toast.success('Xush kelibsiz!');
@@ -235,8 +259,25 @@ export default function Login() {
         setStep(1);
         setErrorMsg('Kirish muddati tugagan. Login va parolni qayta kiriting.');
       } else {
-        setErrorMsg(err.message || 'Tasdiqlash kodi noto‘g‘ri yoki muddati o‘tgan');
+        const message = err.message || 'Tasdiqlash kodi noto‘g‘ri yoki muddati o‘tgan';
+        if ([400, 401, 422].includes(err.status)) setOtpError(message);
+        else setErrorMsg(message);
       }
+    } finally {
+      otpInFlight.current = false;
+      setVerifyingOtp(false);
+    }
+  };
+
+  const handleStep2 = (event) => { event.preventDefault(); void submitOtp(otpCode); };
+  const handleOtpChange = (event) => {
+    const code = event.target.value.replace(/\D/g, '').slice(0, 6);
+    setOtpCode(code); setOtpError(''); setErrorMsg('');
+    if (code.length < 6) lastAutomaticOtp.current = '';
+    const attempt = loginTicket + ':' + code;
+    if (code.length === 6 && lastAutomaticOtp.current !== attempt && !otpInFlight.current) {
+      lastAutomaticOtp.current = attempt;
+      void submitOtp(code);
     }
   };
 
@@ -293,6 +334,7 @@ export default function Login() {
       return;
     }
     if (newPassword !== confirmPassword) {
+      showFormErrors(e.currentTarget, { confirm_password: 'Yangi parollar bir-biriga mos kelmadi.' });
       toast.error('Yangi parollar bir-biriga mos kelmadi');
       return;
     }
@@ -481,7 +523,9 @@ export default function Login() {
                   type="text"
                   placeholder="admin, +998901234567 yoki email"
                   value={username}
-                  onChange={(e) => { credentialEdits.current += 1; setUsername(e.target.value); }}
+                  onChange={(e) => { credentialEdits.current += 1; setUsername(e.target.value); setCredentialError(''); }}
+                  aria-invalid={credentialError ? true : undefined}
+                  aria-describedby={credentialError ? 'credential-error' : undefined}
                   required
                   className="input-field"
                   style={{ paddingLeft: 42 }}
@@ -511,7 +555,9 @@ export default function Login() {
                   type={showPassword ? 'text' : 'password'}
                   placeholder="••••••••"
                   value={password}
-                  onChange={(e) => { credentialEdits.current += 1; setPassword(e.target.value); }}
+                  onChange={(e) => { credentialEdits.current += 1; setPassword(e.target.value); setCredentialError(''); }}
+                  aria-invalid={credentialError ? true : undefined}
+                  aria-describedby={credentialError ? 'credential-error' : undefined}
                   required
                   className="input-field"
                   style={{ paddingLeft: 42, paddingRight: 42 }}
@@ -590,6 +636,7 @@ export default function Login() {
               </div>
             </div>
 
+            {credentialError && <div id="credential-error" className="field-error" role="alert">{credentialError}</div>}
             <button
               type="submit"
               disabled={loading || submittingStep1}
@@ -609,6 +656,8 @@ export default function Login() {
             onOtpSent={() => {
               setErrorMsg('');
               setOtpCode('');
+              setOtpError('');
+              lastAutomaticOtp.current = '';
               setOtpTimeLeft(OTP_EXPIRY_SECONDS);
               setStep(3);
               toast.success('Tasdiqlash kodi Telegram orqali yuborildi');
@@ -666,15 +715,20 @@ export default function Login() {
                 />
                 <input
                   id="otp-code"
+                  data-api-field="verification_code"
                   name="one-time-code"
                   autoComplete="one-time-code"
                   inputMode="numeric"
                   type="text"
                   placeholder={otpTimeLeft === 0 ? "Muddati tugagan" : "123456"}
                   maxLength={6}
+                  pattern="[0-9]{6}"
+                  title="6 xonali tasdiqlash kodini kiriting."
                   value={otpCode}
-                  onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ''))}
-                  disabled={otpTimeLeft === 0}
+                  onChange={handleOtpChange}
+                  aria-invalid={otpError ? true : undefined}
+                  aria-describedby={otpError ? 'otp-error' : undefined}
+                  disabled={otpTimeLeft === 0 || verifyingOtp}
                   autoFocus
                   required
                   className="input-field"
@@ -687,6 +741,7 @@ export default function Login() {
                   }}
                 />
               </div>
+              {otpError && <div id="otp-error" className="field-error" role="alert">{otpError}</div>}
             </div>
 
             {/* Resend OTP button — faqat 3 daqiqa to'liq tugagandan so'ng ochiladi */}
@@ -744,22 +799,25 @@ export default function Login() {
               </button>
               <button
                 type="submit"
-                disabled={loading || otpTimeLeft === 0}
+                disabled={loading || verifyingOtp || otpTimeLeft === 0}
                 className="btn btn-primary"
                 style={{ flex: 2 }}
               >
                 {loading && <IlbiLoader size={24} inline decorative />}
-                {loading ? 'Kutilyapti...' : otpTimeLeft === 0 ? 'Kodni Yangilang' : 'Tizimga Kirish'}
+                {loading || verifyingOtp ? 'Kutilyapti...' : otpTimeLeft === 0 ? 'Kodni Yangilang' : 'Tizimga Kirish'}
               </button>
             </div>
 
             <div style={{ textAlign: 'center', marginTop: 4 }}>
               <button
                 type="button"
+                disabled={loading || verifyingOtp}
                 onClick={() => {
                   setLoginTicket('');
                   setErrorMsg('');
                   setOtpCode('');
+                  setOtpError('');
+                  lastAutomaticOtp.current = '';
                   setStep(1);
                 }}
                 style={{
@@ -1040,6 +1098,7 @@ export default function Login() {
               <input
                 type="text"
                 value={resetIdentifier || username}
+                data-api-field="login"
                 disabled
                 className="input-field"
                 style={{ opacity: 0.75, cursor: 'not-allowed' }}
@@ -1055,6 +1114,7 @@ export default function Login() {
                   type={showOldPassword ? 'text' : 'password'}
                   placeholder="••••••••"
                   value={oldPassword}
+                  data-api-field="old_password"
                   onChange={(e) => setOldPassword(e.target.value)}
                   className="input-field"
                   style={{ paddingRight: 40 }}
@@ -1087,6 +1147,7 @@ export default function Login() {
                   type={showNewPassword ? 'text' : 'password'}
                   placeholder="Kamida 8 ta belgi"
                   value={newPassword}
+                  data-api-field="new_password"
                   onChange={(e) => setNewPassword(e.target.value)}
                   className="input-field"
                   style={{ paddingRight: 40 }}
@@ -1118,6 +1179,7 @@ export default function Login() {
                 type="password"
                 placeholder="••••••••"
                 value={confirmPassword}
+                data-api-field="confirm_password"
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 className="input-field"
                 required

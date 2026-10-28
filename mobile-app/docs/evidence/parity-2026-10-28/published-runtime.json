@@ -1,0 +1,12 @@
+{
+  "mobile_android_build": "5",
+  "mobile_source": "4ec8f4647fc5f9ed5bc789b7a60bb0f625c0b84c",
+  "windows_source": "2d799dd5596a92fb6a0e3be6cf51a2a018c88e2d",
+  "linux_source": "2d799dd5596a92fb6a0e3be6cf51a2a018c88e2d",
+  "ios_published": false,
+  "server_runtime_checked": true,
+  "push_enabled": false,
+  "push_project_configured": false,
+  "push_sender_file_configured": false,
+  "debug_enabled": false
+}

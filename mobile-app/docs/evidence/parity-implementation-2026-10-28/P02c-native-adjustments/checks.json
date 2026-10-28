@@ -1,0 +1,16 @@
+{
+  "success": true,
+  "numPassedTests": 627,
+  "numFailedTests": 0,
+  "numPassedTestSuites": 68,
+  "numFailedTestSuites": 0,
+  "numPendingTests": 0,
+  "typecheck": "passed",
+  "strict_source_and_test_eslint": "passed",
+  "production_expo_export": "Android/iOS/web passed; bundling only",
+  "backend": "Unchanged since P02b:1206 passed; not rerun for native-only slice",
+  "native_acceptance": false,
+  "production_deployed": false,
+  "emulator_touched": false,
+  "release_version_changed": false
+}

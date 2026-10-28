@@ -1,0 +1,85 @@
+{
+  "boundary": "Actual Chrome HTML/PDF rendering of scoped API fixtures plus explicitly synthetic stress rows; not Android/iOS file, printer, signature or fiscal acceptance",
+  "results": [
+    {
+      "name": "cash-a4",
+      "format": "a4",
+      "width_mm": 210,
+      "pdf_width_points": 594.96,
+      "pages": 1,
+      "contains_saved_identity": true,
+      "fiscal_label": "nonfiscal",
+      "no_overflow": true
+    },
+    {
+      "name": "card-a4",
+      "format": "a4",
+      "width_mm": 210,
+      "pdf_width_points": 594.96,
+      "pages": 1,
+      "contains_saved_identity": true,
+      "fiscal_label": "nonfiscal",
+      "no_overflow": true
+    },
+    {
+      "name": "debt_returned-a4",
+      "format": "a4",
+      "width_mm": 210,
+      "pdf_width_points": 594.96,
+      "pages": 1,
+      "contains_saved_identity": true,
+      "fiscal_label": "nonfiscal",
+      "no_overflow": true
+    },
+    {
+      "name": "partner-a4",
+      "format": "a4",
+      "width_mm": 210,
+      "pdf_width_points": 594.96,
+      "pages": 1,
+      "contains_saved_identity": true,
+      "fiscal_label": "nonfiscal",
+      "no_overflow": true
+    },
+    {
+      "name": "b2b-a4",
+      "format": "a4",
+      "width_mm": 210,
+      "pdf_width_points": 594.96,
+      "pages": 1,
+      "contains_saved_identity": true,
+      "fiscal_label": "nonfiscal",
+      "no_overflow": true
+    },
+    {
+      "name": "thermal-58",
+      "format": "receipt",
+      "width_mm": 58,
+      "pdf_width_points": 165.12,
+      "pages": 1,
+      "contains_saved_identity": true,
+      "fiscal_label": "nonfiscal",
+      "no_overflow": true
+    },
+    {
+      "name": "thermal-80",
+      "format": "receipt",
+      "width_mm": 80,
+      "pdf_width_points": 227.04,
+      "pages": 1,
+      "contains_saved_identity": true,
+      "fiscal_label": "nonfiscal",
+      "no_overflow": true
+    },
+    {
+      "name": "synthetic-400-lines-a4",
+      "format": "a4",
+      "width_mm": 210,
+      "pdf_width_points": 594.96,
+      "pages": 37,
+      "contains_saved_identity": true,
+      "fiscal_label": "nonfiscal",
+      "no_overflow": true
+    }
+  ]
+}

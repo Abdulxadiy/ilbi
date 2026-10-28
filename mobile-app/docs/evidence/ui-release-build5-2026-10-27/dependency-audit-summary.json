@@ -1,0 +1,18 @@
+{
+  "exit_code": 1,
+  "counts": {
+    "info": 0,
+    "low": 0,
+    "moderate": 0,
+    "high": 3,
+    "critical": 0,
+    "total": 3
+  },
+  "unchanged_advisory_packages": [
+    "@expo/cli",
+    "expo",
+    "zod"
+  ],
+  "suppressed": false,
+  "forced_sdk_downgrade": false
+}

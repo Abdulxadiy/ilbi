@@ -1,0 +1,18 @@
+{
+  "candidate_commit": "a91777a0b7908898d9359b5e24c3f1df5e1cb1b7",
+  "parent_candidate": "5719bc10d1978a9b2a1eba8ed7240fc19a20ea84",
+  "backend_source": "38aa63dccce8831ecf32b296f3a7e913980ec7cd",
+  "unchanged_reviewed_backend_tree": "8a499ff8d9d2a9ee741287c37621bb8e9006759e",
+  "only_changed_path": ".github/workflows/ci.yml",
+  "workflow_sha256": "18e14be316704d024f441d4e0aca6ddd850da7b3a6f1a336b4db6e310b27999e",
+  "official_checksum_verified_actionlint": "1.7.12",
+  "actionlint_exit": 0,
+  "dispatch_policy_cases_passed": 48,
+  "existing_ci_handoff_tests_passed": 3,
+  "actual_backend_tree_and_manifest_gate_exit": 0,
+  "manual_run_id": 40509782773,
+  "dispatched_by": "root after review",
+  "publisher": "Ephemeral GITHUB_TOKEN packages:write in isolated GitHub-hosted job",
+  "server_mutations_by_this_agent": false,
+  "registry_token_saved_on_host": false
+}

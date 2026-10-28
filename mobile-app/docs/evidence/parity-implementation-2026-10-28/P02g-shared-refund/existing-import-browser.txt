@@ -1,0 +1,3 @@
+npm notice run ilbi-frontend@1.4.0 test:counterparty-import
+npm notice run node tests/counterpartyImport.browser.mjs
+PASS isolated UI: template, invalid rows, preview, light/dark mobile layouts, save, refreshed list, duplicate rejection, pagination and catalog regression. Screenshots: /tmp/ilbi-import-browser-QouRFu

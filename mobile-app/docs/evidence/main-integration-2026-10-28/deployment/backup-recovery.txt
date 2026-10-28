@@ -1,0 +1,6 @@
+test_failed_backup_resumes_only_previously_running_writers (test_operations.BackupRecoveryTests.test_failed_backup_resumes_only_previously_running_writers) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.016s
+
+OK

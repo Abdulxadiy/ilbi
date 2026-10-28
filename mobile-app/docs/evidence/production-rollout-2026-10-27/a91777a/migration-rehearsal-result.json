@@ -1,0 +1,16 @@
+{
+  "migrations_verified": true,
+  "applied_migrations": [
+    "cashbox.0006_cashboxmutationreceipt",
+    "core.0017_workspacereminder_due_notified_at",
+    "inventory.0014_inventorymutationreceipt",
+    "sales.0020_sale_void_request",
+    "notifications.0001_initial",
+    "notifications.0002_pushevent_push_event_expand_idx",
+    "sales.0021_b2bmutationreceipt",
+    "sales.0022_alter_notification_type"
+  ],
+  "pending_migrations": [],
+  "financial_row_counts_and_decimal_totals_preserved": true,
+  "scope": "isolated restored database only"
+}

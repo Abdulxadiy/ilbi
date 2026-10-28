@@ -1,0 +1,42 @@
+{
+  "dispatch_scheduled": false,
+  "django": "6.1.2",
+  "gid": 1000,
+  "latest_migrations": {
+    "accounts": "0011_ilbi_demo_group",
+    "admin": "0003_logentry_add_action_flag_choices",
+    "auth": "0012_alter_user_first_name_max_length",
+    "cashbox": "0006_cashboxmutationreceipt",
+    "catalog": "0006_productvariant_mxik_productvariant_package_code",
+    "contenttypes": "0002_remove_content_type_name",
+    "core": "0017_workspacereminder_due_notified_at",
+    "desktop_sync": "0006_syncactor_credential_digest",
+    "inventory": "0014_inventorymutationreceipt",
+    "notifications": "0002_pushevent_push_event_expand_idx",
+    "permissions": "0004_tenant_settings_permission",
+    "sales": "0022_alter_notification_type",
+    "sessions": "0001_initial",
+    "support": "0003_supporttelegramsettings",
+    "tenants": "0014_cbu_exchange_rates",
+    "tg_bot": "0002_telegramcontact_bot_id"
+  },
+  "mobile_backend_routes_ready": false,
+  "notification_app_installed": false,
+  "pending_migrations": [],
+  "push_enabled": false,
+  "push_file_configured": false,
+  "push_file_readable": false,
+  "push_project_configured": false,
+  "required_route_handlers": {
+    "/api/v1/auth/push/installations/": false,
+    "/api/v1/auth/push/revoke/": false,
+    "/api/v1/cashbox/capabilities/": false,
+    "/api/v1/inventory/operations/capabilities/": false,
+    "/api/v1/sales/b2b/capabilities/": false,
+    "/api/v1/sales/capabilities/": false,
+    "/api/v1/sales/counterparties/1/payments/quote/": false,
+    "/api/v1/sales/notifications/1/": false
+  },
+  "tenant_settings_revision_supported": false,
+  "uid": 1000
+}

@@ -1,0 +1,13 @@
+✔ shared renderer validates the same actual API fixture as native, without exposing opaque fields (4.137304ms)
+✔ money is exact at model limit; signed corrections and comma input remain supported (0.941724ms)
+✔ refund needs a real amount, branch, currency/channel and explicit reason (0.448041ms)
+✔ foreign actor/store/customer/branch and incorrect arithmetic or credit bounds cannot become a quote (0.660575ms)
+✔ wrong receipt key/context, amount, channel, reason, FX, or status stays unaccepted (0.345893ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 99.785949

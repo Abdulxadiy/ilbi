@@ -1,0 +1,52 @@
+✔ authenticated backup restores stopped database, media, queue and drafts; tampering never touches live files (190.098269ms)
+✔ a crash between restore renames recovers original data before startup (1.586958ms)
+✔ public links are exposed only after the receipt exists in the cloud (44.280771ms)
+✔ invalid export requests and canceled save dialogs do not create windows or write files (2.946779ms)
+✔ PDF rendering is isolated, uses receipt dimensions and cleans up after write failure (2.028494ms)
+﹣ bundled Linux runtime migrates, isolates its database and preserves data on restart (1.318432ms) # SKIP
+✔ login and offline passwords stay encrypted and survive reopening independently (25.598648ms)
+✔ no plaintext fallback is possible when the OS vault is unavailable or basic_text (5.924369ms)
+✔ ordinary locked login restores both fields; idle login requires typing without deleting remembered password (5.021681ms)
+✔ forgetting during a pending save wins and later saves recover from an earlier failure (4.437328ms)
+﹣ installed native account unlock, durable locks and encrypted PostgreSQL restore preserve pending work (1.624335ms) # SKIP
+✔ owner approval provisions a unique LAN register and requires matching fingerprints (16.734529ms)
+✔ only the requesting register can decrypt owner-approved provisioning (14.903912ms)
+✔ invalid or all-zero peer keys never provision a register (1.687552ms)
+✔ closing a renderer drains the response and preserves its submitted operation (59.235532ms)
+✔ an aborted incomplete upload releases the outstanding request (35.713207ms)
+✔ native errors preserve useful user guidance and pairing comparison codes (3.844973ms)
+✔ native process details, hashes and credentials never become user-facing errors (1.602567ms)
+✔ IPC protection preserves arguments, authorization failures and successful result ownership (1.685453ms)
+✔ updater status redacts unexpected native errors and preserves progress guidance (0.792338ms)
+✔ cloud destinations are restricted to the official release origin (2.474938ms)
+✔ a changed persisted server is refused before creating a database or starting a process (3.148545ms)
+✔ the previous encrypted setting migrates locally but cannot be a request destination (0.485132ms)
+✔ the sandboxed setup bridge does not forward a renderer-supplied server (7.86168ms)
+✔ LAN pairing requires a private address, pinned certificate and strong key (1.002079ms)
+✔ local asset serving rejects encoded traversal (1.458552ms)
+✔ native errors are presented without Electron transport wrappers (2.354433ms)
+✔ Linux default launch uses Secret Service on Hyprland without changing KDE or explicit selections (3.407702ms)
+✔ public releases use only the fixed official URL and omit credentials and redirects (42.145182ms)
+✔ release failures distinguish unavailable transport, server failure and malformed metadata (1.956262ms)
+✔ the unconfigured public HTTP endpoint cannot forward a request token or body (0.812071ms)
+✔ idle locks persist across restart, saved tokens and polling cannot unlock (15.92529ms)
+✔ recent activity resets the full ten minutes; refresh cannot extend the daily second factor (6.364321ms)
+✔ same version receives new builds; identical, older and missing builds are ignored (4.271209ms)
+✔ reminders identify the installed version and exact offered build without changing package versions (36.847138ms)
+✔ only immutable official packages of bounded size and valid hashes can be installed (0.86441ms)
+✔ verified download reports progress and applies exactly once even after repeated clicks (8.165019ms)
+✔ truncated and tampered downloads cannot reach the installer (5.007503ms)
+✔ a failed install can retry a verified cache without downloading again (3.964206ms)
+✔ offline checks preserve a known update and do not launch an installer (1.171774ms)
+✔ a corrupt cached file is verified again and replaced before installation (1.977029ms)
+﹣ bundled Windows Python and PostgreSQL start the isolated offline service (1.331142ms) # SKIP
+﹣ failed Linux secure storage stays retryable and public downloads still work (1.297393ms) # SKIP
+﹣ default installed launch opens downloads before setup, recovers a failed request and starts the encrypted store (0.330363ms) # SKIP
+ℹ tests 44
+ℹ suites 0
+ℹ pass 39
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 5
+ℹ todo 0
+ℹ duration_ms 285.011155

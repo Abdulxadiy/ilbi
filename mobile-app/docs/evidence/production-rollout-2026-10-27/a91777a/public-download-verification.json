@@ -1,0 +1,14 @@
+{
+  "public_feed_build4": true,
+  "legacy_android_alias_build4": true,
+  "public_https_full_apk_download_matches_verified_bytes": true,
+  "downloaded_bytes": 77531797,
+  "download_seconds": 49.8,
+  "sha256": "f3fcebd930b06a8e529fa2e55ffaf6493a44a58db401bc46ac16ffb040b051c9",
+  "headers": {
+    "content_type": "application/octet-stream",
+    "content_length": "77531797"
+  },
+  "previous_build3_link_and_size_preserved": true,
+  "native_emulator_changed": false
+}

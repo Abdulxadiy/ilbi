@@ -1,0 +1,17 @@
+{
+  "workflow_groups": 72,
+  "source_status_counts": {
+    "BOR": 29,
+    "YO‘Q": 17,
+    "QISMAN": 20,
+    "RUNTIME": 4,
+    "DESKTOPGA_XOS": 1,
+    "UMUMIY_CHEKLOV": 1
+  },
+  "tracked_findings": 132,
+  "ledger_json_status_mismatches_repaired": 30,
+  "new_source_reproduced_findings": [
+    "DMP-132"
+  ],
+  "files_changed_are_documentation_only": true
+}

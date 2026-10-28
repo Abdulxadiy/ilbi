@@ -1,0 +1,33 @@
+npm notice run mobile-app@1.0.0 npx
+npm notice run 'expo' export --platform ios --output-dir /tmp/ilbi-mobile-ios-bundle --max-workers 2
+Using src/app as the root directory for Expo Router.
+Starting Metro Bundler
+
+| (node:2882637) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:2882637) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+iOS Bundled 28031ms node_modules/expo-router/entry.js (3782 modules)
+
+› Assets (27):
+node_modules/expo-router/assets/arrow_down.png (9.5KB)
+node_modules/expo-router/assets/error.png (469B)
+node_modules/expo-router/assets/file.png (138B)
+node_modules/expo-router/assets/forward.png (188B)
+node_modules/expo-router/assets/pkg.png (364B)
+node_modules/expo-router/assets/react-navigation/drawer/toggle-drawer-icon.png (4 variations | 176B)
+node_modules/expo-router/assets/react-navigation/elements/back-icon-mask.png (653B)
+node_modules/expo-router/assets/react-navigation/elements/back-icon.png (4 variations | 566B)
+node_modules/expo-router/assets/react-navigation/elements/clear-icon.png (4 variations | 425B)
+node_modules/expo-router/assets/react-navigation/elements/close-icon.png (4 variations | 235B)
+node_modules/expo-router/assets/react-navigation/elements/search-icon.png (3 variations | 582B)
+node_modules/expo-router/assets/sitemap.png (465B)
+node_modules/expo-router/assets/unmatched.png (4.8KB)
+
+› ios bundles (1):
+_expo/static/js/ios/entry-f477030513f697a71baa363be27ada35.hbc (6.5MB)
+
+› Files (1):
+metadata.json (1.8KB)
+
+Exported: /tmp/ilbi-mobile-ios-bundle

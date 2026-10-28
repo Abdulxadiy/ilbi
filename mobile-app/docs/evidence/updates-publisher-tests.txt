@@ -1,0 +1,13 @@
+test_different_existing_signing_configuration_is_not_overwritten (test_mobile_build_setup.MobileBuildSetupTests.test_different_existing_signing_configuration_is_not_overwritten) ... ok
+test_isolated_cng_source_excludes_local_credentials_env_and_generated_native_folders (test_mobile_build_setup.MobileBuildSetupTests.test_isolated_cng_source_excludes_local_credentials_env_and_generated_native_folders) ... ok
+test_protected_eas_mapping_is_idempotent_and_preserves_ios_credentials (test_mobile_build_setup.MobileBuildSetupTests.test_protected_eas_mapping_is_idempotent_and_preserves_ios_credentials) ... ok
+test_corrupt_or_wrong_commit_preserves_current_feed (test_mobile_downloads.MobileDownloadsTests.test_corrupt_or_wrong_commit_preserves_current_feed) ... ok
+test_debug_and_foreign_signatures_are_rejected_before_export (test_mobile_downloads.MobileDownloadsTests.test_debug_and_foreign_signatures_are_rejected_before_export) ... ok
+test_desktop_activation_and_retention_keep_mobile_artifacts_and_feed (test_mobile_downloads.MobileDownloadsTests.test_desktop_activation_and_retention_keep_mobile_artifacts_and_feed) ... ok
+test_existing_build_and_signer_cannot_be_silently_replaced (test_mobile_downloads.MobileDownloadsTests.test_existing_build_and_signer_cannot_be_silently_replaced) ... ok
+test_mobile_activation_preserves_both_desktop_platforms_and_ios (test_mobile_downloads.MobileDownloadsTests.test_mobile_activation_preserves_both_desktop_platforms_and_ios) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.006s
+
+OK

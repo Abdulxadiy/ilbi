@@ -1,0 +1,36 @@
+npm notice run mobile-app@1.0.0 npx
+npm notice run 'expo' export --platform android --output-dir /mnt/storage/.cache/ilbi-push-tests/export-android-final --max-workers 2
+Using src/app as the root directory for Expo Router.
+Starting Metro Bundler
+
+| (node:56699) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:56699) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+Android Bundled 18080ms node_modules/expo-router/entry.js (3968 modules)
+
+› Assets (31):
+assets/login-hero-3d.png (1.3MB)
+node_modules/expo-router/assets/arrow_down.png (9.5KB)
+node_modules/expo-router/assets/arrow_right.xml (307B)
+node_modules/expo-router/assets/checkmark.xml (312B)
+node_modules/expo-router/assets/error.png (469B)
+node_modules/expo-router/assets/file.png (138B)
+node_modules/expo-router/assets/forward.png (188B)
+node_modules/expo-router/assets/pkg.png (364B)
+node_modules/expo-router/assets/react-navigation/drawer/toggle-drawer-icon.png (4 variations | 107B)
+node_modules/expo-router/assets/react-navigation/elements/back-icon-mask.png (653B)
+node_modules/expo-router/assets/react-navigation/elements/back-icon.png (4 variations | 152B)
+node_modules/expo-router/assets/react-navigation/elements/clear-icon.png (4 variations | 425B)
+node_modules/expo-router/assets/react-navigation/elements/close-icon.png (4 variations | 235B)
+node_modules/expo-router/assets/react-navigation/elements/search-icon.png (4 variations | 599B)
+node_modules/expo-router/assets/sitemap.png (465B)
+node_modules/expo-router/assets/unmatched.png (4.8KB)
+
+› android bundles (1):
+_expo/static/js/android/entry-bb34754e816c343be612d3833eacc44f.hbc (7.1MB)
+
+› Files (1):
+metadata.json (2.1KB)
+
+Exported: /mnt/storage/.cache/ilbi-push-tests/export-android-final

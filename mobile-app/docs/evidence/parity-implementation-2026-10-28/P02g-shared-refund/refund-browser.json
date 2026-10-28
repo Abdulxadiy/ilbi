@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "runtime": "Isolated Chrome + shared real Debts/Modal/API client + actual IndexedDB + controlled actual-contract adapter",
+  "nativeElectronAcceptance": false,
+  "productionBackend": false,
+  "checks": [
+    "amount red validation before request",
+    "quote before write and invalidation on edit",
+    "changed server quote blocks journal/write and turns amount red",
+    "mixed UZS debt/USD credit offers collection and refund separately",
+    "opaque quote/key not shown",
+    "lost accepted response freezes fields",
+    "close/reload restores original journal",
+    "exact original key/body replay causes one effect",
+    "fresh server balance and truthful partial-refund message",
+    "unsupported server does not use legacy fallback",
+    "card refund and accepted/local quota failure use storage-only acknowledgement retry",
+    "late quote from previous store cannot reopen the modal or write",
+    "staff/legacy owner-only grant denied in UI",
+    "1280/390/320 layout"
+  ],
+  "serverEffects": 2
+}

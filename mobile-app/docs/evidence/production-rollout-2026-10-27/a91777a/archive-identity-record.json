@@ -1,0 +1,75 @@
+{
+  "candidate_commit": "a91777a0b7908898d9359b5e24c3f1df5e1cb1b7",
+  "backend_source": "38aa63dccce8831ecf32b296f3a7e913980ec7cd",
+  "archive_name": "mobile-backend-image.tar.gz",
+  "archive_sha256": "f316474722248194cfea2f4dc68bebfd68434982ba2d03f4aefc8a41ea09fd28",
+  "archive_bytes": 264560138,
+  "published_registry_digest": "sha256:ca79ec7fa46180425dbca29aaf19a8b7e68edb79127572eb016c4342a8f8f31b",
+  "archive_oci_index_sha256": "a330550e06c6a098ff1957e00dbe482b6dc7f520620fe86263d49f9660ee50d5",
+  "archive_oci_manifest": {
+    "digest": "sha256:62102671c771f78d0f4499ec422f4efb1d5b79dd74030b5a72b4b0e3563c1249",
+    "media_type": "application/vnd.oci.image.manifest.v1+json",
+    "bytes": 2229,
+    "config_digest": "sha256:d707f2133280fec7fe329e2cd0d23512467adb2e276873f1535a7a3faa56f111",
+    "config_bytes": 9410
+  },
+  "classic_config_image_id": "sha256:d707f2133280fec7fe329e2cd0d23512467adb2e276873f1535a7a3faa56f111",
+  "containerd_expected_image_id": "sha256:62102671c771f78d0f4499ec422f4efb1d5b79dd74030b5a72b4b0e3563c1249",
+  "config": {
+    "user": "1000:1000",
+    "os": "linux",
+    "architecture": "amd64",
+    "labels": {
+      "org.opencontainers.image.revision": "a91777a0b7908898d9359b5e24c3f1df5e1cb1b7",
+      "org.opencontainers.image.source": "https://github.com/Abdulxadiy/ilbi"
+    },
+    "rootfs_diff_ids": [
+      "sha256:a70f6272827f64e1427d048ced77491aab5d64ab95725e56920802ff391197d7",
+      "sha256:4471abbb93788ec93b3c4985c6552787a6a2e20c416becf3504b454e2ed16684",
+      "sha256:d0240b53eb0169db59a6fc2e9b65823e17ee303ce553be997d001569fb849369",
+      "sha256:7d2c3f5d47a367987053141e12ed994fcbdf164831589314b0c2bf6b89a34408",
+      "sha256:247ce5fff7f71e9bd954e43aa6bd952ff23670ca31ffd6342426d548a6d975f0",
+      "sha256:1969bafa00781887a3cd5395e8f6f8e60cc09342749080ed1b24f6d1c1dc6c81",
+      "sha256:b2a1659f03ee9dfa9318d080067c365e8df99aeab203f3a9f56bde7e3dae8ae5",
+      "sha256:8bff1547f045e3006de9b5092b9b8107d4f57d0a8b760a120946637a746f31fa",
+      "sha256:7ae942b0fd90ce32ab154b4bb83deb4f2d869eee3c911f971609772baec7c03c",
+      "sha256:8c02cd6e78ef2df83fd71989566c653fd33d8819ea84b6ffec1d4ac2aafad594",
+      "sha256:f0a72cf47c752ce3ab768f6d73bb33fca20c5b98405f3345215ea2d31cc82846",
+      "sha256:c788c337814c5938d7e3cf98611c22634198c1ade35896c52ca278767a192f8d",
+      "sha256:ec36a7a8e63bb53644e885f8c845076f7601e03524fb3123377bb81fb7942fd4"
+    ],
+    "history_entries": 25
+  },
+  "proof": {
+    "all_28_archive_blob_content_hashes_verified": true,
+    "all_13_uncompressed_layers_match_config_diff_ids": true,
+    "archive_index_points_to_exact_oci_manifest": true,
+    "archive_oci_manifest_points_to_exact_config": true,
+    "legacy_docker_manifest_and_oci_manifest_agree": true,
+    "archive_extracted": false,
+    "server_changed_by_this_agent": false
+  },
+  "strict_loaded_host_matching_method": [
+    "Check transferred archive SHA256 and bytes against trusted CI artifact metadata.",
+    "On containerd image store require loaded Id and Descriptor.digest to equal the independently hashed archive OCI manifest62102671; require Descriptor.mediaType to be OCI image manifest.",
+    "Require loaded RootFS.Layers to equal every ordered config diff_id above; require complete loaded Config equality to the archive config in the root verifier (this sanitized record omits environment values).",
+    "Require exact OCI revision/source labels, User1000:1000 and linux/amd64.",
+    "Keep original registry index digest, archive OCI manifest digest and config digest distinct; do not retag or bypass mismatches."
+  ],
+  "host_observation_provenance": "Root independently reported Docker29.9.1 containerd Descriptor/Id62102671 and matching13RootFS layers; root owns final completeConfig comparison and deployment guard.",
+  "primary_sources": [
+    {
+      "url": "https://docs.docker.com/engine/storage/containerd/",
+      "support": "Docker29 defaults to containerd image store on fresh installations; upgraded classic stores may remain classic."
+    },
+    {
+      "url": "https://github.com/moby/moby/blob/master/daemon/containerd/image_inspect.go",
+      "support": "The containerd ImageInspect implementation assigns ID from target.Digest and Descriptor from target, then separately reads the best manifest config and copies config RootFS DiffIDs."
+    },
+    {
+      "url": "https://github.com/moby/docker-image-spec/blob/main/spec.md",
+      "support": "The classic image ID is the digest of configuration JSON; its rootfs references uncompressed layer DiffIDs."
+    }
+  ],
+  "conclusion": "The two observed engine IDs identify different verified nodes of the same immutable archive identity graph. The discrepancy is proved by archive bytes, not accepted from a newly observed host ID."
+}

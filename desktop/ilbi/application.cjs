@@ -6,6 +6,8 @@ const { join, extname, dirname } = require('node:path');
 const { spawn, execFile } = require('node:child_process');
 const { promisify } = require('node:util');
 const { DesktopUpdater } = require('./updater.cjs');
+const { publicErrorMessage, protectIpcHandler } = require('./public-errors.cjs');
+const handle = (channel, listener) => ipcMain.handle(channel, protectIpcHandler(listener));
 const { LoginCredentials } = require('./login-credentials.cjs');
 const { forwardRequest } = require('./proxy.cjs');
 const { PairingManager } = require('./pairing-manager.cjs');
@@ -265,7 +267,7 @@ app.on('before-quit', event => {
     if (!maintenance) await prepareUpdate();
     clearInterval(idleTimer);clearInterval(backupTimer);updater?.stop(); webServer?.close(); await stopRuntime(); quitting = true; app.quit();
   })
-    .catch(async error => { console.error('ILBI yopilishi:', error.message); closing = false; await resumeUpdate(); dialog.showErrorBox('ILBI yopilishi', error.message); });
+    .catch(async error => { console.error('ILBI yopilishi:', publicErrorMessage(error)); closing = false; await resumeUpdate(); dialog.showErrorBox('ILBI yopilishi', publicErrorMessage(error)); });
 });
 if (!app.requestSingleInstanceLock() || process.argv.includes('--ilbi-quit-for-update')) app.quit();
 else {
@@ -357,9 +359,9 @@ else {
           },
         });return backups;
       }
-      ipcMain.handle('ilbi:backup-status',async(event,token)=>{mainSender(event);await localRequest('/desktop/owner-authorize/',token,{});return getBackups().status();});
-      ipcMain.handle('ilbi:backup-create',async(event,token)=>{mainSender(event);await localRequest('/desktop/owner-authorize/',token,{event:'backup_created'});await getBackups().create();return getBackups().status();});
-      ipcMain.handle('ilbi:backup-restore',async(event,token,id,password)=>{
+      handle('ilbi:backup-status',async(event,token)=>{mainSender(event);await localRequest('/desktop/owner-authorize/',token,{});return getBackups().status();});
+      handle('ilbi:backup-create',async(event,token)=>{mainSender(event);await localRequest('/desktop/owner-authorize/',token,{event:'backup_created'});await getBackups().create();return getBackups().status();});
+      handle('ilbi:backup-restore',async(event,token,id,password)=>{
         mainSender(event);await localRequest('/desktop/owner-authorize/',token,{reauth_password:password,event:'backup_restore_requested'});
         if(typeof password!=='string'||!password)throw Error('Odatiy hisob parolingiz bilan tasdiqlang.');
         const choice=await dialog.showMessageBox(window,{type:'warning',title:'Zaxiradan tiklash',
@@ -375,7 +377,7 @@ else {
           if(!rows.length||Date.now()-rows[0].created>86400000)await manager.create();
         }).catch(()=>{});
       },60000);backupTimer.unref();
-      ipcMain.handle('ilbi:setup', async event => {
+      handle('ilbi:setup', async event => {
         validSender(event, true);
         if (setupBusy) throw Error('Kassa tayyorlanmoqda. Biroz kuting.');
         if (configuration && (configuration.mode !== 'host' || localHost)) throw Error('Qurilma allaqachon sozlangan.');
@@ -394,53 +396,53 @@ else {
           await window.loadURL(origin + '/login');
         } finally { setupBusy = false; }
       });
-      ipcMain.handle('ilbi:join', async (event, code) => {
+      handle('ilbi:join', async (event, code) => {
         mainSender(event,true);
         return pairingManager.join(code);
       });
-      ipcMain.handle('ilbi:join-state', event=>{mainSender(event,true);return pairingManager.joinState();});
-      ipcMain.handle('ilbi:setup-state',event=>{mainSender(event);return {mode:configuration?.mode||null,requiresRejoin};});
-      ipcMain.handle('ilbi:pair-create',(event,token)=>{mainSender(event);return pairingManager.create(token);});
-      ipcMain.handle('ilbi:pair-state',(event,token,id)=>{mainSender(event);return pairingManager.state(token,id);});
-      ipcMain.handle('ilbi:pair-approve',(event,token,id,expected)=>{mainSender(event);return pairingManager.approve(token,id,expected);});
-      ipcMain.handle('ilbi:pair-cancel',(event,token,id)=>{mainSender(event);return pairingManager.cancel(token,id);});
-      ipcMain.handle('ilbi:registers',async(event,token)=>{
+      handle('ilbi:join-state', event=>{mainSender(event,true);return pairingManager.joinState();});
+      handle('ilbi:setup-state',event=>{mainSender(event);return {mode:configuration?.mode||null,requiresRejoin};});
+      handle('ilbi:pair-create',(event,token)=>{mainSender(event);return pairingManager.create(token);});
+      handle('ilbi:pair-state',(event,token,id)=>{mainSender(event);return pairingManager.state(token,id);});
+      handle('ilbi:pair-approve',(event,token,id,expected)=>{mainSender(event);return pairingManager.approve(token,id,expected);});
+      handle('ilbi:pair-cancel',(event,token,id)=>{mainSender(event);return pairingManager.cancel(token,id);});
+      handle('ilbi:registers',async(event,token)=>{
         mainSender(event);await localRequest('/desktop/owner-authorize/',token,{});
         return (configuration?.registers||[]).map(({id,name,createdAt,lastSeen})=>({id,name,createdAt,lastSeen}));
       });
-      ipcMain.handle('ilbi:register-revoke',async(event,token,id)=>{
+      handle('ilbi:register-revoke',async(event,token,id)=>{
         mainSender(event);await localRequest('/desktop/owner-authorize/',token,{event:'register_revoked'});
         if(configuration?.mode!=='host')throw Error('Kassani asosiy kompyuterda uzing.');
         await commitConfiguration({...configuration,registers:(configuration.registers||[]).filter(row=>row.id!==id)});
         await configureLAN();return true;
       });
-      ipcMain.handle('ilbi:pairing',event=>{mainSender(event);window.webContents.send('ilbi:open-security');return true;});
-      ipcMain.handle('ilbi:guide', openGuide);
-      ipcMain.handle('ilbi:downloads', event => { validSender(event); return shell.openExternal(OFFICIAL_SERVER + '/download'); });
-      ipcMain.handle('ilbi:update-status', event => { validSender(event); return updater.status(); });
-      ipcMain.handle('ilbi:update-check', event => { validSender(event); return updater.check(); });
-      ipcMain.handle('ilbi:update-window', showUpdates);
-      ipcMain.handle('ilbi:update-run', async event => { validSender(event); await showUpdates(); return updater.update(); });
+      handle('ilbi:pairing',event=>{mainSender(event);window.webContents.send('ilbi:open-security');return true;});
+      handle('ilbi:guide', openGuide);
+      handle('ilbi:downloads', event => { validSender(event); return shell.openExternal(OFFICIAL_SERVER + '/download'); });
+      handle('ilbi:update-status', event => { validSender(event); return updater.status(); });
+      handle('ilbi:update-check', event => { validSender(event); return updater.check(); });
+      handle('ilbi:update-window', showUpdates);
+      handle('ilbi:update-run', async event => { validSender(event); await showUpdates(); return updater.update(); });
       const loginSender = event => {
         validSender(event);
         if (event.sender !== window?.webContents || event.senderFrame !== window.webContents.mainFrame || new URL(event.senderFrame.url).pathname !== '/login') throw Error('Kirish ma’lumotlari faqat kirish oynasida ochiladi.');
       };
-      ipcMain.handle('ilbi:login-read', async (event, kind) => {
+      handle('ilbi:login-read', async (event, kind) => {
         loginSender(event);
         return savedLogins.forLogin(kind, sessionLock);
       });
-      ipcMain.handle('ilbi:login-save', (event, kind, value) => { loginSender(event); return savedLogins.save(kind, value); });
-      ipcMain.handle('ilbi:login-forget', (event, kind) => { loginSender(event); return savedLogins.forget(kind); });
-      ipcMain.handle('ilbi:session-lock', async (event, token, reason) => {
+      handle('ilbi:login-save', (event, kind, value) => { loginSender(event); return savedLogins.save(kind, value); });
+      handle('ilbi:login-forget', (event, kind) => { loginSender(event); return savedLogins.forget(kind); });
+      handle('ilbi:session-lock', async (event, token, reason) => {
         validSender(event);
         if (event.sender !== window?.webContents || event.senderFrame !== window.webContents.mainFrame) throw Error('So‘rov manbasi tasdiqlanmadi.');
         if (typeof token !== 'string' || token.length > 8192) return false;
         return sessionLock.lock(token,reason==='explicit'?'explicit':'manual');
       });
-      ipcMain.handle('ilbi:session-activate',(event,token)=>{mainSender(event);return sessionLock.activate(token);});
-      ipcMain.handle('ilbi:session-activity',event=>{mainSender(event);sessionLock.touch();return true;});
-      ipcMain.handle('ilbi:session-state',event=>{mainSender(event);return {locked:sessionLock.locked,reason:sessionLock.reason};});
-      ipcMain.handle('ilbi:session-timeout',async(event,token,minutes)=>{
+      handle('ilbi:session-activate',(event,token)=>{mainSender(event);return sessionLock.activate(token);});
+      handle('ilbi:session-activity',event=>{mainSender(event);sessionLock.touch();return true;});
+      handle('ilbi:session-state',event=>{mainSender(event);return {locked:sessionLock.locked,reason:sessionLock.reason};});
+      handle('ilbi:session-timeout',async(event,token,minutes)=>{
         mainSender(event);await localRequest('/desktop/owner-authorize/',token,{});
         if(!Number.isInteger(minutes)||minutes<1||minutes>60)throw Error('Qulflash vaqti 1–60 daqiqa bo‘lsin.');
         await localRequest('/desktop/security-settings/',token,{idle_minutes:minutes});
@@ -450,11 +452,11 @@ else {
         validSender(event);
         if (event.sender !== window?.webContents || event.senderFrame !== window.webContents.mainFrame) throw Error('So‘rov manbasi tasdiqlanmadi.');
       };
-      ipcMain.handle('ilbi:receipt-share-links', (event, tokens) => {
+      handle('ilbi:receipt-share-links', (event, tokens) => {
         validDocumentSender(event);
         return receiptShareLinks(tokens, (...args) => net.fetch(...args));
       });
-      ipcMain.handle('ilbi:document-pdf', async (event, document) => {
+      handle('ilbi:document-pdf', async (event, document) => {
         validDocumentSender(event);
         if (documentExportBusy) throw Error('Boshqa PDF tayyorlanmoqda. Biroz kuting.');
         documentExportBusy = true;
@@ -476,7 +478,7 @@ else {
         return { action: 'deny' };
       });
       Menu.setApplicationMenu(Menu.buildFromTemplate([{ label: 'ILBI', submenu: [
-        { label: 'Ilovani sozlash (rasmli qo‘llanma)', click: () => openGuide().catch(error => dialog.showErrorBox('ILBI', error.message)) },
+        { label: 'Ilovani sozlash (rasmli qo‘llanma)', click: () => openGuide().catch(error => dialog.showErrorBox('ILBI', publicErrorMessage(error))) },
         { label: 'Kassalar va xavfsizlik', click: () => {
           if(['/login','/setup'].includes(new URL(window.webContents.getURL()).pathname))void dialog.showMessageBox(window,{message:'Avval hisobingizga kiring.',detail:'Kassalar va xavfsizlik sozlamalari hisobingiz ochilgach ishlaydi.'});
           else window.webContents.send('ilbi:open-security');
@@ -495,6 +497,6 @@ else {
       if (process.argv.includes('--ilbi-updated')) updater.set({ phase: 'updated', message: 'ILBI muvaffaqiyatli yangilandi.' });
       if (process.argv.includes('--ilbi-update-failed')) updater.set({ phase: 'error', message: 'Yangilanish o‘rnatilmadi. Avvalgi ILBI qayta ochildi.' });
       updater.start();
-    } catch (error) { if (!closing && !quitting) dialog.showErrorBox('ILBI ishga tushmadi', error.message); app.quit(); }
+    } catch (error) { if (!closing && !quitting) dialog.showErrorBox('ILBI ishga tushmadi', publicErrorMessage(error)); app.quit(); }
   });
 }

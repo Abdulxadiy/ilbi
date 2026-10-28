@@ -1,0 +1,9 @@
+{
+  "historical_finding_bodies_preserved": 131,
+  "new_finding_details": [
+    "DMP-132"
+  ],
+  "capability_rows": 72,
+  "no_current_mobile_cashbook_actor_date_filter_claim": true,
+  "scope": "Only the fresh overview and live tracker are updated; original baseline evidence is retained."
+}

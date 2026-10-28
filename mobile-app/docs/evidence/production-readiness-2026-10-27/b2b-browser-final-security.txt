@@ -1,0 +1,1 @@
+PASS: isolated B2B list/detail, red validation, mapped fractional acceptance, physical receipt, currency totals and 320px layout. Synthetic preview only; no native/production transaction acceptance claimed.

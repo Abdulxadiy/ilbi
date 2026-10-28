@@ -1,0 +1,15 @@
+{
+  "production_base": "2d799dd5596a92fb6a0e3be6cf51a2a018c88e2d",
+  "backend_source": "9a025e0c5a475a8b9d667b7a768b6d457fe1852a",
+  "method": "Local migration graph; applied ancestors reconstructed from read-only observed production migration heads. No database altered.",
+  "forward_migrations": [
+    "cashbox.0006_cashboxmutationreceipt",
+    "core.0017_workspacereminder_due_notified_at",
+    "inventory.0014_inventorymutationreceipt",
+    "sales.0020_sale_void_request",
+    "notifications.0001_initial",
+    "notifications.0002_pushevent_push_event_expand_idx",
+    "sales.0021_b2bmutationreceipt",
+    "sales.0022_alter_notification_type"
+  ]
+}

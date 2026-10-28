@@ -1,0 +1,2 @@
+PASS: actual API 36 Android sidebar, owner and guest text acknowledgements, consent, close/reopen, logout/login isolation, composer/send above IME; keyboard top 658 controls {'Yordamga xabar': [42, 559, 494, 632], 'Xabar yuborish': [536, 554, 704, 642]}
+Explicit synthetic API only; native SecureStore is real. No live operator delivery or iOS claim.

@@ -5,8 +5,10 @@ import {ThemeProvider} from '/src/context/ThemeContext.jsx';
 import DesktopUpdateNotice from '/src/components/sync/DesktopUpdateNotice.jsx';
 import '/src/index.css';
 const listeners=new Set();
-window.updateQA={calls:0,send(value){for(const listener of listeners)listener(value);},listeners};
-window.ilbiDesktop={getUpdateStatus:async()=>({phase:'available',message:'ILBI uchun yangi yangilanish bor.',bytes:200000000}),onUpdateStatus(callback){listeners.add(callback);return()=>listeners.delete(callback)},checkForUpdates:async()=>{},updateApp:async()=>{updateQA.calls++;updateQA.send({phase:'downloading',progress:42,message:'Yangilanish yuklanmoqda…'});}};
+window.updateQA={calls:0,now:Date.parse('2026-10-25T06:00:00Z'),send(value){for(const listener of listeners)listener(value);},listeners};
+Date.now=()=>updateQA.now;
+window.ilbiDesktop={version:'1.4.0',getUpdateStatus:async()=>({phase:'available',installedVersion:'1.4.0',installedBuild:'a'.repeat(40),version:'1.4.0',availableBuild:'b'.repeat(40),message:'Sizda ILBI v1.4.0. Yangi tuzatish mavjud.',bytes:200000000}),onUpdateStatus(callback){listeners.add(callback);return()=>listeners.delete(callback)},checkForUpdates:async()=>{},updateApp:async()=>{updateQA.calls++;updateQA.send({phase:'downloading',progress:42,message:'Yangilanish yuklanmoqda…'});}};
 const root=createRoot(document.getElementById('root'));updateQA.unmount=()=>root.unmount();
-root.render(React.createElement(ThemeProvider,null,React.createElement(DesktopUpdateNotice)));
+let instance=0;updateQA.render=(accountId=1)=>root.render(React.createElement(ThemeProvider,null,React.createElement(DesktopUpdateNotice,{key:++instance,accountId,sessionId:instance})));
+updateQA.render();
 </script></body></html>

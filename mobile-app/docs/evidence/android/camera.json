@@ -1,0 +1,14 @@
+{
+  "permission_deny_and_grant": "actual Android OS dialogs",
+  "active_camera_before_background": true,
+  "active_camera_after_background": false,
+  "active_camera_after_resume": true,
+  "active_camera_after_dismiss": false,
+  "observed_wait_seconds": {
+    "open": 0.49,
+    "background_release": 1.99,
+    "resume": 0.15,
+    "dismiss_release": 1.45
+  },
+  "source": "Android media.camera active client registry; dedicated virtual camera; no physical barcode decode claim"
+}

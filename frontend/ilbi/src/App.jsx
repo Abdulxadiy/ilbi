@@ -96,16 +96,15 @@ function RoutePresentation() {
 }
 
 function SessionUI({ children }) {
-  const { sessionId, user } = useAuth();
+  const { sessionId, user, isAuthenticated } = useAuth();
   // Toasts and open confirmations can contain private names, amounts or drafts.
-  return <ToastProvider key={`${sessionId}:${user?.id || 'guest'}`}><ConfirmProvider>{children}</ConfirmProvider></ToastProvider>;
+  return <ToastProvider key={`${sessionId}:${user?.id || 'guest'}`}><ConfirmProvider><DesktopUpdateNotice accountId={isAuthenticated ? user?.id : null} sessionId={sessionId} />{children}</ConfirmProvider></ToastProvider>;
 }
 
 export default function App() {
   return (
     <BrowserRouter useTransitions={false}>
       <ThemeProvider>
-        <DesktopUpdateNotice />
         <AppLoadingProvider>
         <AuthProvider>
           <DesktopSessionGuard />

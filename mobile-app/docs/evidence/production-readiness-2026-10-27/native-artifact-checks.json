@@ -1,0 +1,12 @@
+{
+  "android_notification_permission": true,
+  "internet_permission": true,
+  "firebase_messaging_component": true,
+  "expo_notifications_component": true,
+  "firebase_project_matches": true,
+  "firebase_android_app_matches": true,
+  "no_private_key_or_keystore_named_files": true,
+  "source_unmodified": true,
+  "real_mode": true,
+  "pinned_source_commit": true
+}

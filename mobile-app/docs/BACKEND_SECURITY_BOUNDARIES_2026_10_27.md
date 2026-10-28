@@ -1,0 +1,34 @@
+# Backend credential presentation and support boundaries — 2026-10-27
+
+Status: source changes tested; production rollout is separate. The download SHA256 clarified by the owner is a legitimate public file checksum. This review did not establish that ordinary account/profile APIs disclosed a stored user password or password hash.
+
+## Confirmed findings and fixes
+
+1. **Support guest verifier appeared in the operator profile response.** `CustomerProfileView` returned the guest browser credential's SHA256 verifier in `guest.guest_hash`. The frontend could display it. The response now exposes only the guest's name/language; internal matching and conversation counts still use the private verifier server-side.
+2. **Generic support profile editing bypassed protected account workflows.** That PATCH could directly change role (including platform administrator), account status and login/recovery email without the dedicated account controls. It now accepts only `first_name`, `last_name`, `contact_phone`, `tenant_name`, and `tenant_address`. Other fields receive field-specific HTTP400 errors before any partial change. Existing protected identity/status workflows retain their credential checks, session-version changes and audit behavior. Current-user profile editing is outside this change.
+3. **Unexpected document/storage exception text could reach the UI.** Public document reads, admin document writes and gallery image uploads now return actionable generic messages for unexpected failures and log the operation/type without exception arguments. Known product business validation remains meaningful.
+4. **Audit JSON and historical presentation lacked a credential boundary.** New normal/bulk audit writes recursively redact credential keys and recognizable password hashes, private keys, authentication headers and JWTs. The audit/history APIs also redact historical records on output without rewriting immutable historical rows. Historical change rows that identify a credential using `key`, `field`, or `label` also hide their `value`/`old`/`new` payload cells. Public artifact checksums, certificate fingerprints, financial IDs, idempotency keys, ordinary business marker rows and benign security-version/password-set flags remain intact. Bulk upserts cannot rewrite the append-only audit ledger.
+
+Support contact saves update only changed contact/store columns and record the operation/field names. They cannot overwrite a concurrent account block or session-version update with a stale loaded object. The operator permission boundary remains in place; ordinary users cannot use these profile endpoints.
+
+## Executed verification
+
+**106 actual PostgreSQL ORM/API tests passed**, including 23 new security checks and the existing support, immutable audit/history and protected platform-account suites. They exercise guest verifier removal, self/other-account security-field rejection, allowed contact edits, concurrent security-state preservation, password-free account serializers, recursive new/historical audit redaction, public checksum preservation, immutable upsert rejection and synthetic internal exception containment.
+
+The first run exposed a missing isolated Redis service for three existing account-recovery/status tests and a bare test owner lacking an active membership. The test infrastructure was pinned to its own loopback Redis instance and the foreign owner was given a real active membership; the strict isolation assertion and actual protected workflows were rerun successfully. No permission or test assertion was weakened to turn those failures into passes.
+
+An independent review first ran an expanded actual PostgreSQL suite (142 passed), then identified a historical change-row shape requiring its own backend boundary: `{field: "password", old: ..., new: ...}` and equivalent `key`/`label` markers. Marker-aware redaction and three actual ORM/API regressions now cover normal writes and legacy read output while preserving public checksums and financial/business IDs. The final expanded suite, including protected platform-account and document endpoints, returned **145 passed in 5.27s** (eight existing Django mail-settings deprecation warnings). The original 106-test evidence remains preserved; the final command/result is recorded separately in `reviewer-verification.txt`.
+
+Backend CI fatal-error Ruff rules passed. Django migration drift check returned `No changes detected`; this slice requires no schema migration. Evidence is in [backend-security-2026-10-27](evidence/backend-security-2026-10-27/).
+
+All secret strings in the regression fixtures are synthetic. No production credentials/configuration values, historical production audit contents, live account changes or native/emulator state were inspected or changed by this slice. The historical read-boundary regression deliberately inserts a synthetic pre-fix record; it is not evidence that a real historical record contained those secrets.
+
+## Deployed legacy editor compatibility follow-up
+
+Source inspection of the deployed base commit `2d799dd5596a92fb6a0e3be6cf51a2a018c88e2d` showed that its support contact editor always sends `email` and `role` alongside contact values. Rejecting even unchanged echoes blocked legitimate contact edits when only the backend was updated.
+
+The backend now ignores only those two read-only echoes when they exactly equal the trusted conversation user's current public-profile identity and the payload contains at least one allowed contact field. An unset email is compared with the API's existing empty-string representation, matching the deployed editor. This is exact comparison without case folding, trimming or accepting changed identity. The view supplies the user context; missing context and guest profiles do not receive the allowance. Echoes are stripped before serializer validation and never appear in writable validated data.
+
+Changed email/role, any status/password/unknown field, and identity-only payloads still receive field-specific HTTP400 before contact changes. Contact-only `update_fields` continues to preserve concurrent protected identity, block and session-version changes. The secured account workflows remain the only path to identity/status changes. No frontend or desktop deployment is required for this compatibility fix.
+
+**158 actual PostgreSQL tests passed in 5.08s**, including 13 new compatibility regressions and the previous security/support/audit/history/protected-account/document suites. Fatal Ruff passed and migration drift returned `No changes detected`. The new cases cover nonempty/null/blank email echoes, mixed attacks, missing context/contact, guests and concurrent identity/security changes. Evidence: `evidence/backend-security-2026-10-27/legacy-support-compatibility.txt`. This subsection records local tested source; publication/deployment evidence belongs to the separate root rollout record.

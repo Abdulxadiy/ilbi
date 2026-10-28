@@ -1,0 +1,57 @@
+Build handoff verification — 2026-10-25
+No new native build/device test or remote publication in this slice.
+
+handoff-preflight.log
+npm notice run mobile-app@1.0.0 build:apk:check
+npm notice run python3 scripts/build_apk.py --check
+PASS: installed dependencies, SDK/build-tools, Java, mobile versions and established signing identity. No build, upload, version change or secret output.
+
+handoff-apk-verification.log
+npm notice run mobile-app@1.0.0 verify:apk:local
+npm notice run python3 scripts/verify_apk.py
+{
+  "status": "verified",
+  "apk": "/mnt/storage/Codes/Projects/Backend/ilbi/mobile-app/dist/android/ILBI-1.0.0-android-1.apk",
+  "applicationId": "uz.ilbi.mobile",
+  "version": "1.0.0",
+  "buildNumber": "1",
+  "signerSha256": "09fc04394dfd3d8e63abe97a0b71f066ced06a90cd7e94773705f1efae2cd756",
+  "sha256": "772d4de6795c6abbf5e758eae4d6a5e06e0a4e7f88c2e8143c7af8137f110ee0",
+  "bytes": 75719733,
+  "architectures": [
+    "arm64-v8a",
+    "x86_64"
+  ],
+  "sourceCommit": "6ac80b1b5b955587837ec5f58cd4ab690a90cca2",
+  "currentRuntimeMatches": true,
+  "scope": "artifact and source verification; native device acceptance is separate"
+}
+
+handoff-python-checks.log
+test_dependency_changes_require_a_new_package_even_if_app_version_stays_the_same (test_mobile_apk_verification.MobileApkSourceVerificationTests.test_dependency_changes_require_a_new_package_even_if_app_version_stays_the_same) ... ok
+test_docs_and_host_helper_scripts_do_not_make_an_unchanged_runtime_stale (test_mobile_apk_verification.MobileApkSourceVerificationTests.test_docs_and_host_helper_scripts_do_not_make_an_unchanged_runtime_stale) ... ok
+test_install_and_build_hooks_cannot_be_ignored_as_check_helpers (test_mobile_apk_verification.MobileApkSourceVerificationTests.test_install_and_build_hooks_cannot_be_ignored_as_check_helpers) ... ok
+test_runtime_edits_and_new_untracked_routes_invalidate_the_existing_apk (test_mobile_apk_verification.MobileApkSourceVerificationTests.test_runtime_edits_and_new_untracked_routes_invalidate_the_existing_apk) ... ok
+test_complete_stable_build_tools_are_selected_over_partial_downloads (test_mobile_build_setup.MobileBuildSetupTests.test_complete_stable_build_tools_are_selected_over_partial_downloads) ... ok
+test_different_existing_signing_configuration_is_not_overwritten (test_mobile_build_setup.MobileBuildSetupTests.test_different_existing_signing_configuration_is_not_overwritten) ... ok
+test_isolated_cng_source_excludes_local_credentials_env_and_generated_native_folders (test_mobile_build_setup.MobileBuildSetupTests.test_isolated_cng_source_excludes_local_credentials_env_and_generated_native_folders) ... ok
+test_protected_eas_mapping_is_idempotent_and_preserves_ios_credentials (test_mobile_build_setup.MobileBuildSetupTests.test_protected_eas_mapping_is_idempotent_and_preserves_ios_credentials) ... ok
+test_signer_pin_rejects_accidental_replacement_before_build (test_mobile_build_setup.MobileBuildSetupTests.test_signer_pin_rejects_accidental_replacement_before_build) ... ok
+test_corrupt_or_wrong_commit_preserves_current_feed (test_mobile_downloads.MobileDownloadsTests.test_corrupt_or_wrong_commit_preserves_current_feed) ... ok
+test_debug_and_foreign_signatures_are_rejected_before_export (test_mobile_downloads.MobileDownloadsTests.test_debug_and_foreign_signatures_are_rejected_before_export) ... ok
+test_desktop_activation_and_retention_keep_mobile_artifacts_and_feed (test_mobile_downloads.MobileDownloadsTests.test_desktop_activation_and_retention_keep_mobile_artifacts_and_feed) ... ok
+test_existing_build_and_signer_cannot_be_silently_replaced (test_mobile_downloads.MobileDownloadsTests.test_existing_build_and_signer_cannot_be_silently_replaced) ... ok
+test_mobile_activation_preserves_both_desktop_platforms_and_ios (test_mobile_downloads.MobileDownloadsTests.test_mobile_activation_preserves_both_desktop_platforms_and_ios) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 0.066s
+
+OK
+
+handoff-typecheck.log
+npm notice run mobile-app@1.0.0 typecheck
+npm notice run tsc --noEmit
+
+handoff-lint.log
+npm notice run mobile-app@1.0.0 npx
+npm notice run 'eslint' . --max-warnings 0

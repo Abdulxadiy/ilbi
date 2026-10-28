@@ -1,0 +1,68 @@
+{
+  "conclusion": "failure",
+  "headSha": "364017038bedcbe20b0974a86fa75aeec29cd5ea",
+  "status": "completed",
+  "url": "https://github.com/Abdulxadiy/ilbi/actions/runs/40506249101",
+  "jobs": [
+    {
+      "name": "frontend",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Abdulxadiy/ilbi/actions/runs/40506249101/job/122196173530"
+    },
+    {
+      "name": "automation",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Abdulxadiy/ilbi/actions/runs/40506249101/job/122196173866"
+    },
+    {
+      "name": "dependency-security",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Abdulxadiy/ilbi/actions/runs/40506249101/job/122196173898"
+    },
+    {
+      "name": "mobile",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Abdulxadiy/ilbi/actions/runs/40506249101/job/122196174031"
+    },
+    {
+      "name": "backend",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Abdulxadiy/ilbi/actions/runs/40506249101/job/122196174096"
+    },
+    {
+      "name": "production-edge",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Abdulxadiy/ilbi/actions/runs/40506249101/job/122196174103"
+    },
+    {
+      "name": "bot",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Abdulxadiy/ilbi/actions/runs/40506249101/job/122196174166"
+    },
+    {
+      "name": "mobile-dependency-security",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/Abdulxadiy/ilbi/actions/runs/40506249101/job/122196174289"
+    },
+    {
+      "name": "desktop",
+      "status": "completed",
+      "conclusion": "skipped",
+      "url": "https://github.com/Abdulxadiy/ilbi/actions/runs/40506249101/job/122197608071"
+    },
+    {
+      "name": "desktop-linux",
+      "status": "completed",
+      "conclusion": "skipped",
+      "url": "https://github.com/Abdulxadiy/ilbi/actions/runs/40506249101/job/122197609411"
+    }
+  ]
+}

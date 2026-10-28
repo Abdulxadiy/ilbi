@@ -6,6 +6,7 @@ import { ShieldCheck, Eye } from 'lucide-react';
 import { auditApi } from '../api/client';
 import Modal from '../components/common/Modal';
 import { useAuth } from '../hooks/useAuth';
+import { redactSensitiveData, safeDisplayText } from '../utils/safePresentation.js';
 
 export default function Audit() {
   const { isAdmin } = useAuth();
@@ -205,7 +206,7 @@ export default function Audit() {
                     {log.actor_name || log.actor?.username || `Foydalanuvchi #${log.actor || 'Tizim'}`}
                   </td>
                   <td style={{ padding: '14px 16px', color: 'var(--text-secondary)', fontSize: 13 }}>
-                    {log.description || `${log.target_model || ''} #${log.target_id || ''}`}
+                    {safeDisplayText(log.description || `${log.target_model || ''} #${log.target_id || ''}`)}
                   </td>
                   <td style={{ padding: '14px 16px', color: 'var(--text-muted)', fontSize: 12, fontFamily: 'monospace' }}>
                     {log.ip_address || '—'}
@@ -277,7 +278,7 @@ export default function Audit() {
                 maxHeight: 300,
               }}
             >
-              {JSON.stringify(viewLog.changes, null, 2)}
+              {JSON.stringify(redactSensitiveData(viewLog.changes), null, 2)}
             </pre>
             <div style={{ textAlign: 'right', marginTop: 16 }}>
               <button

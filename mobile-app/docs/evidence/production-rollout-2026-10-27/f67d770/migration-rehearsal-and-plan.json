@@ -1,0 +1,20 @@
+{
+  "rehearsal": {
+    "migrations_verified": true,
+    "pending_migrations": [],
+    "new_schema_changes": false,
+    "scope": "previously restored network-none database"
+  },
+  "plan": {
+    "activated": false,
+    "image": "ghcr.io/abdulxadiy/ilbi/backend:sha-f67d770fd404721d6117db1d7729cf0d09a771e7",
+    "image_id": "sha256:967cd800a4fcbe9a0ea87bc23338935356ab9e08a200f029d8383dd78923fbd5",
+    "previous_image": "ghcr.io/abdulxadiy/ilbi/backend:sha-a91777a0b7908898d9359b5e24c3f1df5e1cb1b7",
+    "running_writers": [
+      "ilbi",
+      "celery_worker",
+      "celery_beat",
+      "bot"
+    ]
+  }
+}

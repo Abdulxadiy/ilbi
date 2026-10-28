@@ -22,7 +22,7 @@ try {
         if(downloadsQA.mode==='offline')throw new TypeError('Offline');
         if(downloadsQA.mode==='missing')return new Response('',{status:404});
         if(downloadsQA.delay)await new Promise(resolve=>setTimeout(resolve,downloadsQA.delay));
-        return new Response(JSON.stringify({schema:1,windows:{version:'1.2.0',url:'/downloads/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/ILBI-Setup-1.2.0-x64.exe',bytes:196124625,channel:'preview',sha256:'a'.repeat(64)},linux:downloadsQA.mode==='legacy'?null:{version:'1.2.0',url:'/downloads/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/ILBI-1.2.0-linux-x64.tar.gz',bytes:210000000,channel:'preview',sha256:'b'.repeat(64)},mobile:null}),{status:200,headers:{'Content-Type':'application/json'}});
+        return new Response(JSON.stringify({schema:1,windows:{version:'1.2.0',url:'/downloads/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/ILBI-Setup-1.2.0-x64.exe',bytes:196124625,channel:'preview',sha256:'a'.repeat(64)},linux:downloadsQA.mode==='legacy'?null:{version:'1.2.0',url:'/downloads/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/ILBI-1.2.0-linux-x64.tar.gz',bytes:210000000,channel:'preview',sha256:'b'.repeat(64)},mobile:downloadsQA.mode==='mobile'?{android:{version:'1.0.0',buildNumber:'2',url:'/downloads/mobile/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/ILBI-1.0.0-android-2.apk',bytes:42000000,sha256:'c'.repeat(64),channel:'preview'},ios:{version:'1.0.0',buildNumber:'1',url:'https://apps.apple.com/uz/app/ilbi/id123456789',channel:'preview'}}:null}),{status:200,headers:{'Content-Type':'application/json'}});
       }
       if(sessionStorage.getItem('download-auth')==='true'){
         if(path==='/api/v1/auth/me/'){
@@ -54,12 +54,14 @@ try {
   assert.equal(await browser.evaluate('location.pathname'), '/download');
   assert.equal(await browser.evaluate('document.querySelector(".downloads-button[href]").href'), origin + '/downloads/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/ILBI-Setup-1.2.0-x64.exe');
   assert.equal(await browser.evaluate('document.querySelector(".downloads-preview").textContent'), 'Sinov nusxasi');
-  assert.equal(await browser.evaluate('document.querySelectorAll(".downloads-card button:disabled").length'), 1);
+  assert.equal(await browser.evaluate('document.querySelectorAll(".downloads-card button:disabled").length'), 2);
   assert.equal(await browser.evaluate('document.querySelector("[data-platform=linux] a.downloads-button").href'), origin + '/downloads/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/ILBI-1.2.0-linux-x64.tar.gz');
   assert.equal(await browser.evaluate('document.querySelector(".downloads-linux-install").textContent.includes("bash install.sh")'), true);
   assert.equal(await browser.evaluate('document.querySelector(".downloads-linux-install").lastElementChild.matches("a.downloads-linux-guide")'), true);
   assert.equal(await browser.evaluate('document.querySelector(".downloads-linux-guide").getAttribute("href")'), '/desktop-guide#7-linux-uchun-batafsil-qollanma');
   await writeFile(join(artifacts, 'downloads-desktop.png'), Buffer.from((await browser.call('Page.captureScreenshot', { format: 'png' })).data, 'base64'));
+  assert.equal(await browser.evaluate('Boolean(document.querySelector(".downloads-checksum"))'), false);
+  assert.equal(await browser.evaluate('document.body.innerText.includes("a".repeat(64)) || document.body.innerText.includes("b".repeat(64))'), false);
   await browser.resize(390, 844);
   assert.equal(await browser.evaluate('document.documentElement.scrollWidth<=innerWidth'), true);
   await writeFile(join(artifacts, 'downloads-mobile.png'), Buffer.from((await browser.call('Page.captureScreenshot', { format: 'png' })).data, 'base64'));
@@ -89,6 +91,15 @@ try {
   await browser.call('Page.reload');
   await wait('!window.downloadBeforeReload&&Boolean(document.querySelector("[data-platform=linux] button:disabled"))');
   assert.equal(await browser.evaluate('document.querySelectorAll(".downloads-button[href]").length'), 1);
+
+  await browser.evaluate('sessionStorage.setItem("download-mode","mobile");window.downloadBeforeReload=true');
+  await browser.call('Page.reload');
+  await wait('!window.downloadBeforeReload && Boolean(document.querySelector("[data-platform=android] a.downloads-button"))');
+  assert.equal(await browser.evaluate('document.querySelector("[data-platform=android] a.downloads-button").getAttribute("href")'), origin + '/downloads/mobile/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/ILBI-1.0.0-android-2.apk');
+  assert.equal(await browser.evaluate('document.querySelector("[data-platform=ios] a.downloads-button").href'), 'https://apps.apple.com/uz/app/ilbi/id123456789');
+  assert.equal(await browser.evaluate('document.querySelector("[data-platform=android]").textContent.includes("Yig‘ilma 2")'), true);
+  assert.equal(await browser.evaluate('document.documentElement.scrollWidth<=innerWidth'), true);
+  assert.equal(await browser.evaluate('document.querySelectorAll(".downloads-button[href]").length'), 4);
 
   // Authenticated in-app scenario: tabs navigation, check for updates, and tab switching
   await browser.evaluate(`
@@ -124,7 +135,7 @@ try {
   await browser.evaluate('document.querySelector(".updates-check-btn").click()');
   await wait('Boolean(document.querySelector(".updates-status-desc"))');
 
-  console.log(JSON.stringify({ passed: true, scenarios: ['landing download link', 'anonymous download page', 'versioned Windows and Linux links', 'Linux installation guide', 'preview label', 'future mobile slot', 'mobile layout', 'missing release', 'offline and retry', 'retry controls in light/dark desktop/mobile themes', 'disabled retry during request', 'older feed without Linux', 'authenticated in-app update checks', 'authenticated tab switching'], artifacts }));
+  console.log(JSON.stringify({ passed: true, scenarios: ['landing download link', 'anonymous download page', 'versioned Windows and Linux links', 'Linux installation guide', 'preview label', 'unpublished Android/iOS states', 'separate published Android/iOS links and mobile build', 'mobile layout', 'missing release', 'offline and retry', 'retry controls in light/dark desktop/mobile themes', 'disabled retry during request', 'older feed without Linux', 'authenticated in-app update checks', 'authenticated tab switching'], artifacts }));
 
 } catch (error) {
   console.error('Browser errors:', browser?.errors);

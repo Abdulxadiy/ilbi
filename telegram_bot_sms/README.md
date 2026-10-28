@@ -350,7 +350,7 @@ From the repository root, using the bot's Python environment:
 telegram_bot_sms/.venv/bin/python -m unittest discover -s telegram_bot_sms/tests -p "test_contact_handler.py" -v
 ```
 
-The 13 tests use synthetic messages, credentials and mocked requests; they never contact Telegram or the backend. They cover private-chat checks, progress of another command/contact during a slow request, duplicate-contact throttling and connection/HTTP failures. Backend registration, legacy contact and OTP tests are documented in `ilbi/README_TESTS.md`.
+The 13 tests use synthetic messages, credentials and mocked requests; they never contact Telegram or the backend. They cover private-chat checks, progress of another command/contact during a slow request, duplicate-contact throttling and connection/HTTP failures. Backend registration, legacy contact and OTP tests are documented in `backend/README_TESTS.md`.
 
 ## 🧪 Future Improvements
 

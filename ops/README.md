@@ -34,7 +34,9 @@ cd /srv/ilbi
 ./ops/compose.sh logs --tail 100 ilbi
 ```
 
-Maxfiy fayllar: `.env.production`, `ilbi/.env.production`, `telegram_bot_sms/.env.production`.
+Main avtomatik deploy jarayoni Compose faylini almashtirishdan oldin `ops/prepare_backend_layout.py /srv/ilbi --apply`ni bajaradi. U eski `/srv/ilbi/ilbi/.env.production` faylidan `/srv/ilbi/backend/.env.production`ga aynan nusxa oladi, yangi faylni600 ruxsatida saqlaydi va eski nusxani saqlab qoladi. Faqat mavjud yopiq fayllar o‘qiladi; symbolic link, ochiq ruxsat yoki ikki xil mavjud konfiguratsiya bo‘lsa, fayllarni o‘zgartirmasdan to‘xtaydi. Takroriy deploy bir xil nusxani qayta yozmaydi. `--apply`siz buyruq faqat holatni tekshiradi. Compose servis nomlari va ma’lumotlar volume’lari saqlanadi. `docker-compose.mobile-push.yml` oldin alohida faollashtirilgan bo‘lsa, `ops/compose.sh` uni keyingi deploylarda ham qo‘llaydi; bu ish pushni o‘z-o‘zidan yoqmaydi.
+
+Maxfiy fayllar: `.env.production`, `backend/.env.production`, `telegram_bot_sms/.env.production`.
 Ularning mazmunini Git, issue yoki chatga yubormang. Parollar yangi yaratilgan;
 mavjud Telegram bot va SMTP ulanishi saqlangan.
 
@@ -152,7 +154,7 @@ Ahost DNS yozuvlari:
 qiymatlarida saqlanadi. Oldindan noma’lum bo‘lgan o‘chirilgan MX/TXT/CNAME yozuvlari
 taxmin bilan tiklanmaydi; pochta qabul qilish ishlatilsa, uning provayderi yozuvlari alohida tekshiriladi.
 
-`ilbi/.env.production`da `DEFAULT_FROM_EMAIL="ILBI <noreply@ilbi.uz>"` belgilangan.
+`backend/.env.production`da `DEFAULT_FROM_EMAIL="ILBI <noreply@ilbi.uz>"` belgilangan.
 Mavjud SMTP host `smtp.resend.com`, port `587`, username `resend`, STARTTLS va kalit
 saqlanadi. Email havolalari Compose’dagi `PUBLIC_HOST` orqali hosil bo‘ladi;
 backend bilan birga Celery worker va beat ham qayta yaratilishi kerak.

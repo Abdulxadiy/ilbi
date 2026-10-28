@@ -7,7 +7,7 @@ Updated: 2026-10-14. The module provides guest and authenticated operator conver
 Apply migrations with the normal backend deployment. `apps.support` and `/api/v1/support/` are registered in settings and the API router. No extra Python or runtime frontend dependencies are required.
 
 ```bash
-cd ilbi
+cd backend
 uv run python manage.py migrate
 ```
 
@@ -22,7 +22,7 @@ A missing support table returns `503` with `error.code = support_not_ready` and 
 
 The existing Redis service is used for shared support rate limits. Celery worker delivers Telegram notifications; chat persistence does not depend on successful notification delivery.
 
-Environment variables in `ilbi/.env`:
+Environment variables in `backend/.env`:
 
 ```dotenv
 SUPPORT_PHONE=+998770212149
@@ -76,8 +76,8 @@ Focused synthetic screenshots are in `docs/rasmlar/focused`. `/api/v1/docs/image
 ## Validation
 
 ```bash
-docker compose -f ilbi/docker-compose.test.yml up -d
-cd ilbi
+docker compose -f backend/docker-compose.test.yml up -d
+cd backend
 uv run pytest apps/support/tests apps/accounts/tests/test_terms_and_docs_views.py
 cd ../frontend/ilbi
 npm run build

@@ -1,0 +1,10 @@
+{
+  "restore_succeeded": true,
+  "archive": "/srv/ilbi-backups/ilbi-data-20261027T131308Z-242888cf4c64.tar.gpg",
+  "archive_sha256": "fb1d787a7e3cd4f1263c26c263480e6631d34f1d8c08712e406c8e7d67106deb",
+  "restoration_report": "/home/ubuntu/.local/share/ilbi-release-staging/mobile-backend-a91777a/restore-rehearsal/restore.json",
+  "isolated_network": "none",
+  "source_created_at": "2026-10-27T13:13:07.991327+00:00",
+  "live_database_changed": false,
+  "finished_at_utc": "2026-10-27T13:14:35Z"
+}

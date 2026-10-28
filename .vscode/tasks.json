@@ -1,0 +1,47 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "ILBI mobile: live preview (computer)",
+      "detail": "Docker talab qilmaydi. Telefon oynasi: http://localhost:8082/preview. Faqat sun’iy sinov ma’lumotlari.",
+      "type": "process",
+      "command": "node",
+      "args": ["scripts/dev-server.mjs"],
+      "options": {
+        "cwd": "${workspaceFolder}/mobile-app",
+        "env": {
+          "EXPO_PUBLIC_DESIGN_PREVIEW": "1",
+          "EXPO_PUBLIC_UPDATE_PREVIEW": "0",
+          "CI": ""
+        }
+      },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "dedicated" }
+    },
+    {
+      "label": "ILBI mobile: start preview",
+      "type": "process",
+      "command": "docker",
+      "args": ["compose", "--profile", "mobile", "up", "-d", "--build", "--no-deps", "mobile"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    },
+    {
+      "label": "ILBI mobile: logs",
+      "type": "process",
+      "command": "docker",
+      "args": ["compose", "--profile", "mobile", "logs", "-f", "mobile"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    },
+    {
+      "label": "ILBI mobile: stop preview",
+      "type": "process",
+      "command": "docker",
+      "args": ["compose", "--profile", "mobile", "stop", "mobile"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    }
+  ]
+}

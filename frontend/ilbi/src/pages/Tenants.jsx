@@ -517,7 +517,7 @@ export default function Tenants() {
             <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>
               Do‘kon Nomi <span style={{ color: 'var(--accent-rose)' }}>*</span>
             </label>
-            <input
+            <input data-api-field="name"
               id="tenant-name"
               name="organization"
               autoComplete="organization"
@@ -534,7 +534,7 @@ export default function Tenants() {
             <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>
               Egasi (Owner) Telefon Raqami <span style={{ color: 'var(--accent-rose)' }}>*</span>
             </label>
-            <PhoneInput
+            <PhoneInput data-api-field="owner_phone_number"
               id="owner-phone"
               name="tel"
               className="input-field"
@@ -551,7 +551,7 @@ export default function Tenants() {
             <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>
               Egasi Email Manzili <span style={{ color: 'var(--accent-rose)' }}>*</span>
             </label>
-            <input
+            <input data-api-field="owner_email"
               id="owner-email"
               name="email"
               type="email"
@@ -572,7 +572,7 @@ export default function Tenants() {
             <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>
               Do‘kon Tavsifi / Manzil (Ixtiyoriy)
             </label>
-            <textarea
+            <textarea data-api-field="description"
               className="input-field"
               rows={2}
               placeholder="Filial yoki faoliyat turi haqida qisqacha ma’lumot..."
@@ -614,7 +614,7 @@ export default function Tenants() {
             <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>
               Do‘kon Nomi <span style={{ color: 'var(--accent-rose)' }}>*</span>
             </label>
-            <input
+            <input data-api-field="name"
               type="text"
               className="input-field"
               value={editForm.name}
@@ -627,7 +627,7 @@ export default function Tenants() {
             <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>
               Ichki Dollar Kursi (USD Rate, UZS)
             </label>
-            <PriceInput
+            <PriceInput data-api-field="usd_rate"
               className="input-field"
               placeholder="12 800"
               value={editForm.usd_rate}
@@ -646,7 +646,7 @@ export default function Tenants() {
             <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>
               Do‘kon Tavsifi / Manzil (Ixtiyoriy)
             </label>
-            <textarea
+            <textarea data-api-field="description"
               className="input-field"
               rows={3}
               placeholder="Filial yoki faoliyat turi haqida qisqacha ma’lumot..."
@@ -736,7 +736,7 @@ export default function Tenants() {
                   <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4 }}>
                     Yangi Egasining Telefon Raqami <span style={{ color: 'var(--accent-rose)' }}>*</span>
                   </label>
-                  <PhoneInput
+                  <PhoneInput data-api-field="new_owner_phone_number"
                     id="new-owner-phone"
                     name="tel"
                     className="input-field"
@@ -750,7 +750,7 @@ export default function Tenants() {
                   <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4 }}>
                     Yangi Egasining Email Manzili <span style={{ color: 'var(--accent-rose)' }}>*</span>
                   </label>
-                  <input
+                  <input data-api-field="new_owner_email"
                     id="new-owner-email"
                     name="email"
                     type="email"

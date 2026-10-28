@@ -1,0 +1,94 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+____ test_saved_parties_survive_changes_without_becoming_public[False-True] ____
+
+owner = <User: owner0>, tenant = <Tenant: Changed shop>
+variant = <ProductVariant: Product 0 (Standart)>, linked = True, visible = False
+
+    @pytest.mark.parametrize("linked", [False, True])
+    @pytest.mark.parametrize("visible", [False, True])
+    def test_saved_parties_survive_changes_without_becoming_public(owner, tenant, variant, linked, visible):
+        owner.first_name, owner.last_name = "Original", "Cashier"
+        owner.save(update_fields=["first_name", "last_name"])
+        tenant.name, tenant.address = "Original shop", "Saved address"
+        tenant.receipt_show_cashier = tenant.receipt_show_customer = visible
+        tenant.save()
+        destination = TenantFactory(name="Original destination") if linked else None
+        cp = CounterpartyFactory(
+            tenant=tenant, name="Original buyer", phone_number="+998991234881", target_tenant=destination
+        )
+        client = APIClient()
+        client.force_authenticate(owner)
+        client.credentials(HTTP_X_TENANT_ID=str(tenant.pk))
+        body = {"items": [{"product_variant_id": variant.pk, "quantity": "2", "unit_price": "100.00"}],
+                "payment_type": "debt", "counterparty_id": cp.pk, "idempotency_key": "frozen-parties"}
+        with patch("apps.sales.services.debt_service.DebtService._notify_owner_telegram"):
+            result = client.post("/api/v1/sales/", body, format="json")
+        assert result.status_code == 201, result.data
+        sale = Sale.objects.get(pk=result.data[0]["id"])
+        original = deepcopy(sale.receipt_snapshot)
+        owner.first_name, owner.last_name = "Changed", "Cashier"
+        owner.save(update_fields=["first_name", "last_name"])
+        cp.name, cp.phone_number = "Changed buyer", "+998991234882"
+        cp.save(update_fields=["name", "phone_number"])
+        tenant.name, tenant.address = "Changed shop", "Changed address"
+        tenant.save(update_fields=["name", "address"])
+        if destination:
+            destination.name = "Changed destination"
+            destination.save(update_fields=["name"])
+        detail = client.get(f"/api/v1/sales/{sale.pk}/")
+        assert detail.status_code == 200
+        assert detail.data["sold_by_name"] == "Original Cashier"
+        assert detail.data["counterparty_name"] == "Original buyer"
+        assert detail.data["counterparty_phone"] == "+998991234881"
+        assert detail.data["tenant_name"] == "Original shop" and detail.data["tenant_address"] == "Saved address"
+        assert detail.data["items"][0]["receipt_product_snapshot_version"] == 1
+        assert detail.data.get("b2b_target_tenant_name") == ("Original destination" if linked else None)
+        for term in ("Original buyer", "Original Cashier", "+998991234881", "Changed buyer"):
+            found = client.get("/api/v1/sales/", {"search": term, "page": 1})
+>           assert found.status_code == 200 and [row["id"] for row in found.data["results"]] == [sale.pk], term
+E           AssertionError: Original buyer
+E           assert (200 == 200 and [] == [3298]
+E            +  where 200 = <Response status_code=200, "application/json">.status_code
+E
+E             Right contains one more item: 3298
+E             Use -v to get more diff)
+
+apps/sales/tests/test_document_identity.py:64: AssertionError
+=============================== warnings summary ===============================
+../../../../../.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394
+  /mnt/storage/.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394: RemovedInDjango2028Warning: The EMAIL_BACKEND setting is deprecated. Migrate to MAILERS before Django 2028.
+    dj_settings.DATABASES  # noqa: B018
+
+../../../../../.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394
+  /mnt/storage/.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394: RemovedInDjango2028Warning: The EMAIL_HOST_PASSWORD setting is deprecated. Migrate to MAILERS before Django 2028.
+    dj_settings.DATABASES  # noqa: B018
+
+../../../../../.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394
+  /mnt/storage/.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394: RemovedInDjango2028Warning: The EMAIL_HOST_USER setting is deprecated. Migrate to MAILERS before Django 2028.
+    dj_settings.DATABASES  # noqa: B018
+
+../../../../../.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394
+  /mnt/storage/.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394: RemovedInDjango2028Warning: The EMAIL_USE_SSL setting is deprecated. Migrate to MAILERS before Django 2028.
+    dj_settings.DATABASES  # noqa: B018
+
+../../../../../.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394
+  /mnt/storage/.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394: RemovedInDjango2028Warning: The EMAIL_PORT setting is deprecated. Migrate to MAILERS before Django 2028.
+    dj_settings.DATABASES  # noqa: B018
+
+../../../../../.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394
+  /mnt/storage/.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394: RemovedInDjango2028Warning: The EMAIL_USE_TLS setting is deprecated. Migrate to MAILERS before Django 2028.
+    dj_settings.DATABASES  # noqa: B018
+
+../../../../../.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394
+  /mnt/storage/.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394: RemovedInDjango2028Warning: The EMAIL_TIMEOUT setting is deprecated. Migrate to MAILERS before Django 2028.
+    dj_settings.DATABASES  # noqa: B018
+
+../../../../../.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394
+  /mnt/storage/.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394: RemovedInDjango2028Warning: The EMAIL_HOST setting is deprecated. Migrate to MAILERS before Django 2028.
+    dj_settings.DATABASES  # noqa: B018
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED apps/sales/tests/test_document_identity.py::test_saved_parties_survive_changes_without_becoming_public[False-True]
+1 failed, 8 warnings in 0.92s

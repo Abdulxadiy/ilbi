@@ -1,0 +1,11 @@
+node_modules
+.expo
+dist
+coverage
+android
+ios
+.env
+.env.*
+!.env.example
+docs/evidence
+npm-debug.log*

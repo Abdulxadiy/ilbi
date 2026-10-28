@@ -1,0 +1,12 @@
+{
+  "activated": false,
+  "image": "ghcr.io/abdulxadiy/ilbi/backend:sha-a91777a0b7908898d9359b5e24c3f1df5e1cb1b7",
+  "image_id": "sha256:62102671c771f78d0f4499ec422f4efb1d5b79dd74030b5a72b4b0e3563c1249",
+  "previous_image": "ghcr.io/abdulxadiy/sales-platform/backend:sha-2d799dd5596a92fb6a0e3be6cf51a2a018c88e2d",
+  "running_writers": [
+    "ilbi",
+    "celery_worker",
+    "celery_beat",
+    "bot"
+  ]
+}

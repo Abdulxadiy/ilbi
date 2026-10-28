@@ -402,7 +402,7 @@ def create_backup(config_path, output_dir, passphrase_path, *, writers_stopped=F
                 "created_at": datetime.now(UTC).isoformat(),
                 "source_project": config["compose_project"],
                 "source_database": config["database"],
-                "app_version": tomllib.loads((ROOT / "ilbi/pyproject.toml").read_text())["project"]["version"],
+                "app_version": tomllib.loads((ROOT / "backend/pyproject.toml").read_text())["project"]["version"],
                 "files": inventory(payload),
             }
             with private_file(payload / "manifest.json") as stream:

@@ -1,3 +1,4 @@
+import { savedReceiptIdentity } from '../../utils/receiptIdentity.js';
 import { localStore } from '../../utils/brandStorage.js';
 import React, { useState, useEffect, useRef } from 'react';
 import {
@@ -435,21 +436,15 @@ export default function InvoiceA4Modal({
 
   if (!isOpen || !sale) return null;
 
-  const store =
-    tenantName ||
-    user?.tenant_name ||
-    user?.tenant?.name ||
-    'ILBI SAVDO TIZIMI';
-
-  const storePhone = user?.contact_phone || user?.phone_number || '';
-  const cashier = sale.sold_by_name || (user?.first_name ? `${user.first_name} ${user.last_name || ''}`.trim() : 'Sotuvchi');
-
-  const buyerName =
-    sale.counterparty_name ||
-    sale.b2b_target_tenant_name ||
-    'Chakana xaridor';
-
-  const buyerPhone = sale.counterparty_phone || '—';
+  const identity = savedReceiptIdentity(sale, {
+    store: tenantName || user?.tenant_name || user?.tenant?.name || 'ILBI SAVDO TIZIMI',
+    phone: user?.contact_phone || user?.phone_number || '',
+    cashier: user?.first_name ? `${user.first_name} ${user.last_name || ''}`.trim() : 'Sotuvchi',
+  });
+  const store = identity.store || '—', storePhone = identity.phone;
+  const cashier = identity.cashier || '—';
+  const buyerName = identity.customer || identity.recipient || 'Chakana xaridor';
+  const buyerPhone = identity.customerPhone || '—';
 
   const receiptNum = sale.receipt_number || String(sale.id || '');
   const invoiceNumber = receiptNum.startsWith('REC-') ? receiptNum.replace('REC-', 'INV-') : `INV-${receiptNum}`;
@@ -792,6 +787,7 @@ export default function InvoiceA4Modal({
                 <div style={{ fontSize: 12, color: '#374151', marginTop: 2 }}>
                   Mas’ul xodim: <strong>{cashier}</strong>
                 </div>
+                {identity.legacyMessage && <div style={{ fontSize: 10, marginTop: 6 }}>{identity.legacyMessage}</div>}
               </div>
 
               {/* Buyer / Customer */}

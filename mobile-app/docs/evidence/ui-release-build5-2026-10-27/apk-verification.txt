@@ -1,0 +1,19 @@
+npm notice run mobile-app@1.0.0 verify:apk:local
+npm notice run python3 scripts/verify_apk.py
+{
+  "status": "verified",
+  "apk": "/mnt/storage/Codes/Projects/Backend/ilbi/mobile-app/dist/android/ILBI-1.0.0-android-5.apk",
+  "applicationId": "uz.ilbi.mobile",
+  "version": "1.0.0",
+  "buildNumber": "5",
+  "signerSha256": "09fc04394dfd3d8e63abe97a0b71f066ced06a90cd7e94773705f1efae2cd756",
+  "sha256": "0380da45c7da22a9b90f5ddc4a75a1380e4215bf1eb352090116cee98a40b175",
+  "bytes": 77749484,
+  "architectures": [
+    "arm64-v8a",
+    "x86_64"
+  ],
+  "sourceCommit": "4ec8f4647fc5f9ed5bc789b7a60bb0f625c0b84c",
+  "currentRuntimeMatches": true,
+  "scope": "artifact and source verification; native device acceptance is separate"
+}

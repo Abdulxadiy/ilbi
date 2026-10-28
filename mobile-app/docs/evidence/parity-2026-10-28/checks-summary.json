@@ -1,0 +1,28 @@
+{
+  "audit_date": "2026-10-28",
+  "timezone": "Asia/Tashkent",
+  "baseline_commit": "888ed76f1a67ae2bbf2a9ca09ffcf5d3be9366f7",
+  "mobile": {
+    "passed": 518,
+    "failed": 0,
+    "suites_passed": 62,
+    "skipped": 0,
+    "typecheck_passed": true,
+    "strict_eslint_passed": true
+  },
+  "web": {
+    "passed": 88,
+    "failed": 0,
+    "skipped": 0
+  },
+  "desktop": {
+    "passed": 39,
+    "failed": 0,
+    "skipped": 5
+  },
+  "native_emulator_or_device_driven": false,
+  "browser_ui_driven_this_audit": false,
+  "production_writes": false,
+  "scope": "Actual automated source-level test suites; passing tests do not establish complete business parity.",
+  "mobile_runtime_matches_published_build_5_source": true
+}

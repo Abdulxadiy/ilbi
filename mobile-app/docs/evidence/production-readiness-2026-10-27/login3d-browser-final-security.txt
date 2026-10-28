@@ -1,0 +1,1 @@
+PASS: mobile-only transparent 3D login, completed entrance animation, empty-field validation and independent error clearing. No real login or emulator interaction.

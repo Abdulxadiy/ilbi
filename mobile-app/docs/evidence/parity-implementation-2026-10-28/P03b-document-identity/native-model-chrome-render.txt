@@ -1,0 +1,1 @@
+PASS: selected-sale A4, 58/80mm PDF widths, escaped saved identities, tax/returns/codes and 400-row multipage totals in isolated Chrome.

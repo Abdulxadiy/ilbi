@@ -1,0 +1,46 @@
+import assert from 'node:assert/strict';
+import { startPreview } from './previewHarness.mjs';
+
+const { browser, doc, waitFor, click, fill, screenshot } = await startPreview('b2b-api-2026-10-27');
+try {
+  await click('Menyu', 'tab');
+  await click('B2B savdolar');
+  await waitFor(`${doc}.body.innerText.includes('DEMO-B2B-6101')`, 'incoming saved B2B transaction');
+  assert.equal(await browser.evaluate(`${doc}.querySelectorAll('[role=tab]').length`), 5);
+  await click('Hujjatni ochish: DEMO-B2B-6101');
+  await waitFor(`${doc}.body.innerText.includes('Demo guruch · Standart')`, 'scoped incoming detail');
+  await screenshot('incoming-detail');
+  await click('Tovarlarni qabul qilish');
+  await fill('Miqdor: Demo guruch', '8');
+  await click('Amalni tasdiqlash');
+  await waitFor(`${doc}.querySelector('input[aria-label="Miqdor: Demo guruch"]')?.getAttribute('aria-invalid')==='true'`, 'over-quantity field red');
+  await screenshot('acceptance-field-error');
+  await fill('Miqdor: Demo guruch', '1.250');
+  await click('Yangi tovar kategoriyasi: Demo guruch: Tanlang');
+  await waitFor(`${doc}.body.innerText.includes('Demo oziq-ovqat')`, 'destination categories loaded');
+  await click('Demo oziq-ovqat');
+  await click('Amalni tasdiqlash');
+  await waitFor(`${doc}.body.innerText.includes('B2B amali serverda tasdiqlandi.')`, 'fractional mapped acceptance acknowledgement');
+  await click('Hujjatni ochish: DEMO-B2B-6101');
+  await waitFor(`${doc}.body.innerText.includes('Qisman qabul qilingan')`, 'saved partial state reread');
+  await screenshot('partial-acceptance');
+  await click('B2B hujjatini yopish');
+  await click('Yo‘nalish: Chiquvchi', 'radio');
+  await waitFor(`${doc}.body.innerText.includes('DEMO-B2B-6201')`, 'outgoing transactions');
+  await click('Hujjatni ochish: DEMO-B2B-6201');
+  await waitFor(`${doc}.body.innerText.includes('Jismoniy qaytish kutilmoqda')`, 'source pending physical return');
+  await click('Jismonan qaytgan tovarni qabul qilish');
+  await fill('Miqdor: Demo guruch', '1.250');
+  await fill('Amal sababi', 'Isolated browser QA physical receipt');
+  await click('Amalni tasdiqlash');
+  await waitFor(`${doc}.body.innerText.includes('B2B amali serverda tasdiqlandi.')`, 'physical return acknowledged');
+  await click('Hujjatni ochish: DEMO-B2B-6201');
+  await waitFor(`${doc}.body.innerText.includes('Qaytarilgan: 250')`, 'original document refund reread');
+  await screenshot('physical-return');
+  await click('B2B hujjatini yopish');
+  await browser.evaluate("document.querySelector('#device').value='320,640';document.querySelector('#device').dispatchEvent(new Event('change'));true");
+  await waitFor(`${doc}.documentElement.clientWidth===320`, 'small preview width');
+  assert.ok(await browser.evaluate(`${doc}.documentElement.scrollWidth<=320`), 'B2B screen must fit a narrow phone');
+  assert.deepEqual(browser.errors, []);
+  console.log('PASS: isolated B2B list/detail, red validation, mapped fractional acceptance, physical receipt, currency totals and 320px layout. Synthetic preview only; no native/production transaction acceptance claimed.');
+} finally { await browser.close(); }

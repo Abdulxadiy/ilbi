@@ -1,0 +1,92 @@
+npm notice run mobile-app@1.0.0 lint
+npm notice run expo lint
+npm notice run mobile-app@1.0.0 npx
+npm notice run 'eslint' /mnt/storage/Codes/Projects/Backend/ilbi/mobile-app/src --fix=false --cache=true --cache-location=/mnt/storage/Codes/Projects/Backend/ilbi/mobile-app/.expo/cache/eslint/
+
+/mnt/storage/Codes/Projects/Backend/ilbi/mobile-app/src/features/cart/CartScreen.tsx
+   5:3   warning  'Image' is defined but never used            @typescript-eslint/no-unused-vars
+  15:3   warning  'Check' is defined but never used            @typescript-eslint/no-unused-vars
+  16:3   warning  'Edit2' is defined but never used            @typescript-eslint/no-unused-vars
+  21:3   warning  'QrCode' is defined but never used           @typescript-eslint/no-unused-vars
+  39:19  warning  'isDark' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/mnt/storage/Codes/Projects/Backend/ilbi/mobile-app/src/features/catalog/CatalogScreen.tsx
+  12:10  warning  'Barcode' is defined but never used      @typescript-eslint/no-unused-vars
+  12:25  warning  'Scan' is defined but never used         @typescript-eslint/no-unused-vars
+  12:39  warning  'ShoppingBag' is defined but never used  @typescript-eslint/no-unused-vars
+  14:10  warning  'Button' is defined but never used       @typescript-eslint/no-unused-vars
+
+/mnt/storage/Codes/Projects/Backend/ilbi/mobile-app/src/features/checkout/CheckoutScreen.tsx
+  17:3   warning  'CheckCircle2' is defined but never used     @typescript-eslint/no-unused-vars
+  21:3   warning  'FileText' is defined but never used         @typescript-eslint/no-unused-vars
+  25:3   warning  'User' is defined but never used             @typescript-eslint/no-unused-vars
+  43:19  warning  'isDark' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/mnt/storage/Codes/Projects/Backend/ilbi/mobile-app/src/features/checkout/CustomerPickerSheet.tsx
+  10:45  warning  'User' is defined but never used  @typescript-eslint/no-unused-vars
+
+/mnt/storage/Codes/Projects/Backend/ilbi/mobile-app/src/features/customers/CustomersScreen.tsx
+  16:3   warning  'Plus' is defined but never used             @typescript-eslint/no-unused-vars
+  18:3   warning  'UserCheck' is defined but never used        @typescript-eslint/no-unused-vars
+  50:19  warning  'isDark' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/mnt/storage/Codes/Projects/Backend/ilbi/mobile-app/src/features/debts/DebtsScreen.tsx
+   2:17  warning  'useEffect' is defined but never used               @typescript-eslint/no-unused-vars
+   5:3   warning  'RefreshControl' is defined but never used          @typescript-eslint/no-unused-vars
+  13:10  warning  'Check' is defined but never used                   @typescript-eslint/no-unused-vars
+  13:17  warning  'ChevronRight' is defined but never used            @typescript-eslint/no-unused-vars
+  13:31  warning  'Clock' is defined but never used                   @typescript-eslint/no-unused-vars
+  13:38  warning  'DollarSign' is defined but never used              @typescript-eslint/no-unused-vars
+  13:58  warning  'X' is defined but never used                       @typescript-eslint/no-unused-vars
+  49:10  warning  'refreshing' is assigned a value but never used     @typescript-eslint/no-unused-vars
+  49:22  warning  'setRefreshing' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/mnt/storage/Codes/Projects/Backend/ilbi/mobile-app/src/features/documents/DocumentsScreen.tsx
+  26:3   warning  'ZoomIn' is defined but never used           @typescript-eslint/no-unused-vars
+  27:3   warning  'ZoomOut' is defined but never used          @typescript-eslint/no-unused-vars
+  58:19  warning  'isDark' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/mnt/storage/Codes/Projects/Backend/ilbi/mobile-app/src/features/home/HomeScreen.tsx
+  29:19  warning  'isDark' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/mnt/storage/Codes/Projects/Backend/ilbi/mobile-app/src/features/inventory/InventoryScreen.tsx
+  15:3   warning  'ArrowUpDown' is defined but never used      @typescript-eslint/no-unused-vars
+  16:3   warning  'CheckCircle2' is defined but never used     @typescript-eslint/no-unused-vars
+  17:3   warning  'Package' is defined but never used          @typescript-eslint/no-unused-vars
+  18:3   warning  'Plus' is defined but never used             @typescript-eslint/no-unused-vars
+  56:19  warning  'isDark' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/mnt/storage/Codes/Projects/Backend/ilbi/mobile-app/src/features/receipts/ReceiptScreen.tsx
+    9:51  warning  '/mnt/storage/Codes/Projects/Backend/ilbi/mobile-app/src/navigation/useAppNavigation.ts' imported multiple times  import/no-duplicates
+   19:3   warning  'QrCode' is defined but never used                                                                                @typescript-eslint/no-unused-vars
+   21:3   warning  'X' is defined but never used                                                                                     @typescript-eslint/no-unused-vars
+   31:36  warning  '/mnt/storage/Codes/Projects/Backend/ilbi/mobile-app/src/navigation/useAppNavigation.ts' imported multiple times  import/no-duplicates
+   37:19  warning  'isDark' is assigned a value but never used                                                                       @typescript-eslint/no-unused-vars
+  132:14  warning  'err' is defined but never used                                                                                   @typescript-eslint/no-unused-vars
+
+/mnt/storage/Codes/Projects/Backend/ilbi/mobile-app/src/features/reports/ReportsScreen.tsx
+  14:3   warning  'ArrowDownRight' is defined but never used   @typescript-eslint/no-unused-vars
+  15:3   warning  'ArrowUpRight' is defined but never used     @typescript-eslint/no-unused-vars
+  16:3   warning  'BarChart3' is defined but never used        @typescript-eslint/no-unused-vars
+  17:3   warning  'Calendar' is defined but never used         @typescript-eslint/no-unused-vars
+  20:3   warning  'Download' is defined but never used         @typescript-eslint/no-unused-vars
+  21:3   warning  'FileSpreadsheet' is defined but never used  @typescript-eslint/no-unused-vars
+  24:3   warning  'Share2' is defined but never used           @typescript-eslint/no-unused-vars
+  35:19  warning  'isDark' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/mnt/storage/Codes/Projects/Backend/ilbi/mobile-app/src/features/settings/SettingsScreen.tsx
+   3:3  warning  'Alert' is defined but never used      @typescript-eslint/no-unused-vars
+   6:3  warning  'Switch' is defined but never used     @typescript-eslint/no-unused-vars
+  13:3  warning  'Check' is defined but never used      @typescript-eslint/no-unused-vars
+  15:3  warning  'Globe' is defined but never used      @typescript-eslint/no-unused-vars
+  19:3  warning  'RefreshCw' is defined but never used  @typescript-eslint/no-unused-vars
+  20:3  warning  'Server' is defined but never used     @typescript-eslint/no-unused-vars
+
+/mnt/storage/Codes/Projects/Backend/ilbi/mobile-app/src/navigation/DrawerContent.tsx
+  22:3  warning  'ShoppingBag' is defined but never used  @typescript-eslint/no-unused-vars
+
+/mnt/storage/Codes/Projects/Backend/ilbi/mobile-app/src/navigation/useAppNavigation.ts
+  16:34  warning  'T' is defined but never used  @typescript-eslint/no-unused-vars
+
+✖ 57 problems (0 errors, 57 warnings)
+  0 errors and 1 warning potentially fixable with the `--fix` option.

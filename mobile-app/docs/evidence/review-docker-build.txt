@@ -1,0 +1,48 @@
+time="2026-10-24T15:07:13+05:00" level=warning msg="buildx Docker CLI plugin not found: falling back to the classic builder. BuildKit-only build features (multi-arch, secrets, ssh, additional contexts, ...) will not be available"
+ Image sales-platform-mobile Building
+ Image sales-platform-mobile Building
+Sending build context to Docker daemon  524.3kB
+Sending build context to Docker daemon  752.1kB
+
+Step 1/12 : FROM node:24-bookworm-slim AS development
+ ---> 55fb5f5a527e
+Step 2/12 : ENV NODE_ENV=development EXPO_NO_TELEMETRY=1 BROWSER=none
+ ---> Using cache
+ ---> bf229da4c74d
+Step 3/12 : WORKDIR /app
+ ---> Using cache
+ ---> 85f7c3ec76ee
+Step 4/12 : RUN chown node:node /app
+ ---> Using cache
+ ---> cbfa6e137968
+Step 5/12 : USER node
+ ---> Using cache
+ ---> 05e335fbed9f
+Step 6/12 : COPY --chown=node:node package.json package-lock.json ./
+ ---> Using cache
+ ---> bbd2f7cf5a97
+Step 7/12 : RUN npm ci --no-audit --no-fund && sha256sum package.json package-lock.json > node_modules/.ilbi-dependencies.sha256
+ ---> Using cache
+ ---> 273996017f04
+Step 8/12 : COPY --chown=node:node . .
+ ---> 78a49f48068e
+Step 9/12 : EXPOSE 8081 8082
+ ---> Running in 1c6b4db19c24
+ ---> Removed intermediate container 1c6b4db19c24
+ ---> b377b0865d9d
+Step 10/12 : HEALTHCHECK --interval=15s --timeout=5s --start-period=120s   CMD node -e "fetch('http://127.0.0.1:8082/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+ ---> Running in 964c3ad15f77
+ ---> Removed intermediate container 964c3ad15f77
+ ---> 1fde50f8acba
+Step 11/12 : ENTRYPOINT ["sh", "./dev-entrypoint.sh"]
+ ---> Running in 9a7d0ac55d1a
+ ---> Removed intermediate container 9a7d0ac55d1a
+ ---> e5c91e8016dc
+Step 12/12 : LABEL com.docker.compose.image.builder=classic
+ ---> Running in 3c035863e235
+ ---> Removed intermediate container 3c035863e235
+ ---> 9bf51e7577aa
+Successfully built 9bf51e7577aa
+Successfully tagged sales-platform-mobile:latest
+ Image sales-platform-mobile Built
+ Image sales-platform-mobile Built

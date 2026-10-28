@@ -31,7 +31,7 @@ Yangilangan: **2026-10-21**. Qo‘llanmalar hozirgi kod va interfeysga moslashti
 
 ## Muhandislik hujjatlari
 
-[README](../README.md) — ishga tushirish; [testlar](../ilbi/README_TESTS.md) — tekshirish; [yordam moduli](SUPPORT.md) — chat API va operator sozlamalari.
+[README](../README.md) — ishga tushirish; [testlar](../backend/README_TESTS.md) — tekshirish; [yordam moduli](SUPPORT.md) — chat API va operator sozlamalari.
 
 [Fiskal xizmat va Uzum orqali ulanish](FISKAL_UZUM_QOLLANMA_UZ.md) — terminaldan farqi, tashkilotchi va dasturchi vazifalari, rasmiy manbalar, ochiq savollar va keyinchalik ishga tushirish rejasi. Ushbu integratsiya foydalanuvchi qarori bilan hozircha keyinga qoldirilgan.
 

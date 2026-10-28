@@ -1,0 +1,19 @@
+{
+  "server_artifact_verified": true,
+  "zip_digest_matches_github_api": true,
+  "archive_sha_matches_ci": true,
+  "record": {
+    "candidate_commit": "f67d770fd404721d6117db1d7729cf0d09a771e7",
+    "backend_source": "d35ea11043affab1671172f42e27d367033232a1",
+    "image": "ghcr.io/abdulxadiy/ilbi/backend:sha-f67d770fd404721d6117db1d7729cf0d09a771e7",
+    "digest": "sha256:0dcf2209366b85d45d09d6ec18d066585432e59176306d1bf6b17aeeab1fb50c",
+    "digest_reference": "ghcr.io/abdulxadiy/ilbi/backend@sha256:0dcf2209366b85d45d09d6ec18d066585432e59176306d1bf6b17aeeab1fb50c",
+    "docker_image_id": "sha256:7d55ff705f7d8d86cdd68ee7c9546d6ca69f58b9b582c50bfda990b56a6590c0",
+    "archive": "mobile-backend-image.tar.gz",
+    "archive_sha256": "8c3a3f4fd919c0c5e2a34bf98c034b4621b0b76313aba57dac0bf2d8ecfcd246",
+    "archive_bytes": 264650038,
+    "run_url": "https://github.com/Abdulxadiy/ilbi/actions/runs/40531758799",
+    "deployed": false
+  },
+  "credential_copied": false
+}

@@ -1,0 +1,26 @@
+{
+  "status": "unresolved",
+  "nodeForgeVersion": "1.4.1",
+  "vulnerabilities": {
+    "info": 0,
+    "low": 0,
+    "moderate": 0,
+    "high": 3,
+    "critical": 0,
+    "total": 3
+  },
+  "packages": [
+    {
+      "name": "@expo/cli",
+      "severity": "high"
+    },
+    {
+      "name": "expo",
+      "severity": "high"
+    },
+    {
+      "name": "zod",
+      "severity": "high"
+    }
+  ]
+}

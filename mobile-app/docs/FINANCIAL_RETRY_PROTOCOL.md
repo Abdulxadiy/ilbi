@@ -1,0 +1,11 @@
+# Durable mobile operation identity
+
+For each server/account/store, sale, inventory, sale-return, cashbox and B2B operations have separate durable pending locks. A second unresolved operation in the same family is blocked. A lock is released only by an acknowledgement matching the stored key, or an authoritative rejection of the original first attempt. Network failure and a rejection of a later unknown-result retry do not prove that the original write failed.
+
+Each new dialog/draft gets its own operation identity. Confirmed unique drafts permanently retain their original key: duplicate callbacks and restarts cannot acquire a new key for the same completed draft. Legacy resource identities and legacy sale review remain compatible. A genuinely new partial return uses a new dialog UUID.
+
+New inventory, return, cashbox and B2B write paths prove server support before sending keyed requests; an older server might otherwise silently ignore new idempotency fields. Reconciliation reads the persisted original payload/key and validates the acknowledgement, account, store, server and permission. It never fabricates a replacement key. If the server accepted a write but local acknowledgement failed, the active form offers a local storage retry.
+
+2026-10-27 actual source checks: **37 tests passed** across `financialIdentity.test.ts`, `cashbox.test.ts`, `cashboxScreen.test.tsx` using the real IndexedDB journal adapter and isolated synthetic network responses. These are journal/component tests; domain ORM tests separately verify one stock/refund/cash effect under concurrency and rollback. This does not assert production deployment or native-device acceptance.
+
+Actor/store follow-up: financial entry points now bind their scope to the caller's expected user and selected store, in addition to generation and server. A queued callback cannot adopt a newly signed-in account merely because both accounts use the same numeric store ID. The decoded JWT identity is only a stale-context comparison; authorization remains on the server. A direct two-account session regression and the assembled484-test mobile suite passed, with whole TypeScript and zero-warning ESLint. Native/server acceptance remains separate.

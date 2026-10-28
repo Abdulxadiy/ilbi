@@ -1,0 +1,8 @@
+npm notice run mobile-app@1.0.0 test
+npm notice run jest --runInBand --runTestsByPath tests/supportFoundation.test.ts tests/supportScreen.test.tsx tests/supportFeed.test.tsx tests/supportContracts.test.ts tests/notifications.test.tsx tests/activityNotificationTargets.test.ts
+
+Test Suites: 6 passed, 6 total
+Tests:       30 passed, 30 total
+Snapshots:   0 total
+Time:        2.221 s
+Ran all test suites within paths "tests/supportFoundation.test.ts", "tests/supportScreen.test.tsx", "tests/supportFeed.test.tsx", "tests/supportContracts.test.ts", "tests/notifications.test.tsx", "tests/activityNotificationTargets.test.ts".

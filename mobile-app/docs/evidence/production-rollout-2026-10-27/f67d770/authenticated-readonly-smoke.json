@@ -1,0 +1,83 @@
+{
+  "authenticated_public_https_readonly_checks_passed": true,
+  "checks": [
+    {
+      "endpoint": "/auth/profile/",
+      "status": 200,
+      "contract_valid": true
+    },
+    {
+      "endpoint": "/tenants/my/",
+      "status": 200,
+      "contract_valid": true
+    },
+    {
+      "endpoint": "/tenants/current/",
+      "status": 200,
+      "contract_valid": true
+    },
+    {
+      "endpoint": "/analytics/dashboard/?period=today",
+      "status": 200,
+      "contract_valid": true
+    },
+    {
+      "endpoint": "/analytics/dashboard/?period=this_week",
+      "status": 200,
+      "contract_valid": true
+    },
+    {
+      "endpoint": "/analytics/dashboard/?period=this_month",
+      "status": 200,
+      "contract_valid": true
+    },
+    {
+      "endpoint": "/analytics/dashboard/?period=this_year",
+      "status": 200,
+      "contract_valid": true
+    },
+    {
+      "endpoint": "/audit/history/?page=1&page_size=2",
+      "status": 200,
+      "contract_valid": true
+    },
+    {
+      "endpoint": "/sales/?page=1&page_size=1",
+      "status": 200,
+      "contract_valid": true
+    },
+    {
+      "endpoint": "/sales/notifications/?page=1&page_size=2",
+      "status": 200,
+      "contract_valid": true
+    },
+    {
+      "endpoint": "/cashbox/shift/current/?compact=true",
+      "status": 200,
+      "contract_valid": true
+    },
+    {
+      "endpoint": "/sales/capabilities/",
+      "status": 200,
+      "contract_valid": true
+    },
+    {
+      "endpoint": "/inventory/operations/capabilities/",
+      "status": 200,
+      "contract_valid": true
+    },
+    {
+      "endpoint": "/cashbox/capabilities/",
+      "status": 200,
+      "contract_valid": true
+    },
+    {
+      "endpoint": "/sales/b2b/capabilities/",
+      "status": 200,
+      "contract_valid": true
+    }
+  ],
+  "financial_write_requests": 0,
+  "credential_or_customer_data_printed": false,
+  "native_device_acceptance": false
+}

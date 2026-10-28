@@ -1,0 +1,16 @@
+{
+  "command": "npm audit --json (unfiltered)",
+  "exit_code": 1,
+  "counts": {
+    "info": 0,
+    "low": 15,
+    "moderate": 0,
+    "high": 0,
+    "critical": 0,
+    "total": 15
+  },
+  "suppressed": false,
+  "root_fixed_zod": "4.6.7",
+  "remaining_advisory": "GHSA-gcqx-w48m-w2h4 (deepmerge; no upstream patched release)",
+  "local_deepmerge_mitigation": "Hash-verified source/CJS/UMD prototype guard; original version/advisory retained"
+}

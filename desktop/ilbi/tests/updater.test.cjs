@@ -34,6 +34,13 @@ test('same version receives new builds; identical, older and missing builds are 
   assert.equal(candidate({}, current, 'linux'), null);
   assert(candidate({ windows: release('win32') }, current, 'win32'));
 });
+test('reminders identify the installed version and exact offered build without changing package versions', async t => {
+  const { updater, published } = await fixture(t);
+  await updater.check();
+  assert.equal(updater.status().installedVersion, current.version);
+  assert.equal(updater.status().availableBuild, published.sourceCommit);
+  assert.match(updater.status().message, /yangi tuzatishlar/);
+});
 test('only immutable official packages of bounded size and valid hashes can be installed', () => {
   for (const changes of [{ url: 'https://evil.example/ILBI.exe' }, { url: release().url+'?token=secret' }, { sourceCommit: '../bad' }, { sha256: 'bad' }, { bytes: -1 }, { bytes: 2**40 }, { version: '1;rm' }]) {
     assert.throws(() => candidate({ linux: release('linux', changes) }, current, 'linux'));

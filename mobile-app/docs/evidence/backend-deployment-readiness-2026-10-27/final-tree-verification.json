@@ -1,0 +1,14 @@
+{
+  "source_commit": "9a025e0c5a475a8b9d667b7a768b6d457fe1852a",
+  "production_base": "2d799dd5596a92fb6a0e3be6cf51a2a018c88e2d",
+  "compared_committed_backend_files": 536,
+  "backend_files_byte_identical": true,
+  "preserved_frontend_desktop_bot_base_compose": true,
+  "excluded_nonruntime_files": [
+    ".env.production.example",
+    "README_TESTS.md",
+    "docker-compose.test.yml"
+  ],
+  "candidate_git_head": "Original production base with reviewed uncommitted overlay. Do not tag/build it as if HEAD were a new release commit.",
+  "manifest_sha256": "ccf9c4269aa4089dfca7b59e2d33c1947e19ba85c41d2d42bd68897c86cfa3e3"
+}

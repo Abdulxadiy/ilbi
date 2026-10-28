@@ -1,0 +1,6 @@
+{
+  "version": "4.3.1",
+  "returnedObjectInherited": "unexpected",
+  "globalPrototypeUnchanged": true,
+  "source": "Unchanged original dependency; synthetic returned-object poisoning reproduction only"
+}

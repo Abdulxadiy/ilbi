@@ -1,0 +1,111 @@
+click: Menyu
+click: Qo‘llab-quvvatlash
+click: ILBI bo‘yicha yordam: yozishmalarni ochish
+click: Xabar yuborish
+click: Suhbatni yopish
+click: Tasdiqlash
+click: Suhbatni qayta ochish
+click: Tasdiqlash
+click: Orqaga
+click: Yangi murojaat
+click: Yordam uchun ma’lumotlarni yuborishga roziman
+click: Murojaat yuborish
+click: Menyu
+click: Yuklab olish
+click: Yuklamalar bo‘limi: Yangilanish
+click: Bosh
+click: Tovar
+click: Kameradan skanerlash
+click: Kodni qo‘lda kiritish
+click: Aniq shtrix-kod bo‘yicha
+click: Aniq shtrix-kod: yoqilgan
+click: Kategoriyalar
+click: Yangi kategoriya
+click: Valyuta: USD
+click: Kategoriyani saqlash
+click: QA category: ichki kategoriyalar
+click: Yangi kategoriya
+click: Kategoriyani saqlash
+click: QA child: tovarlarni ko‘rish
+click: QA child: filtrni tozalash
+click: Kategoriyalar
+click: QA child: tahrirlash
+click: Kategoriyani o‘chirish
+click: O‘chirishni tasdiqlash
+click: ← Bosh kategoriyalar / QA category
+click: QA category: tahrirlash
+click: Kategoriyani o‘chirish
+click: O‘chirishni tasdiqlash
+click: Tovar
+click: Yangi mahsulot
+click: Mahsulot kategoriyasi: Tanlang
+click: Oziq-ovqat
+click: Mahsulotni saqlash
+click: QA product: batafsil
+click: Yangi variant
+click: O‘lchov birligi: Kg
+click: Variantni saqlash
+click: Large: arxivlash
+click: Arxivlashni tasdiqlash
+click: Large: tiklash
+click: Tiklashni tasdiqlash
+click: Mahsulotni arxivlash
+click: Arxivlashni tasdiqlash
+click: Tovar
+click: Arxivlangan tovarlar
+click: QA product: batafsil
+click: Mahsulotni tiklash
+click: Tiklashni tasdiqlash
+click: Mahsulotni o‘chirish
+click: O‘chirishni tasdiqlash
+click: Faol tovarlarni ko‘rish
+click: Savdo
+click: Sut 1 L: sotuv narxi
+click: Qo'llash
+click: Tovar
+click: Sut 1 L: batafsil
+click: Standart: tahrirlash
+click: Variantni saqlash
+click: Savdo
+click: Tovar
+click: Sut 1 L: batafsil
+click: Standart: tahrirlash
+click: Variantni saqlash
+click: Savdo
+click: Sut 1 L: miqdorni o‘zgartirish
+click: Miqdorni qo‘llash
+click: Sut 1 L: miqdorni o‘zgartirish
+click: Miqdorni qo‘llash
+click: Menyu
+click: Tun
+click: Bosh sahifa
+click: Menyu
+click: Hujjatlar
+click: Menyu
+click: Ombor
+click: Menyu
+click: Mijozlar
+click: Menyu
+click: Hisobotlar
+click: Menyu
+click: Sozlamalar
+click: Bosh
+click: Savdo
+click: To'lovga o'tish
+click: Savdoni yakunlash
+click: Chekni ochish
+click: Orqaga
+click: Orqaga
+click: Bosh
+click: Menyu
+click: Chiqish
+click: Qo‘llab-quvvatlash
+click: Yangi murojaat
+click: Yordam uchun ma’lumotlarni yuborishga roziman
+click: Murojaat yuborish
+click: Orqaga
+click: Orqaga
+click: Demo ko‘rinishga kirish
+click: Menyu
+click: Qo‘llab-quvvatlash
+PASS: Interactive phone preview (isolated-host-copy), sidebar support with persistent tabs, consented ticket, message acknowledgement, close/reopen, logout/login and guest/account isolation, camera manual fallback/unknown exact code, parent/child category CRUD, product/variant creation, archive/restore/delete, persistent catalog prices isolated from negotiated cart price, Router filter, price negotiation, sidebar, persistent tabs across five secondary modules, dark theme, 320px viewport, live source refresh, demo checkout/change and saved receipt. Native Android/iOS are separate checks.

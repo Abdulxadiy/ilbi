@@ -1,0 +1,62 @@
+# npm audit report
+
+deepmerge  >=4.2.0
+deepmerge mergeObject() allows prototype poisoning of returned objects - https://github.com/advisories/GHSA-gcqx-w48m-w2h4
+fix available via `npm audit fix --force`
+Will install expo@51.0.39, which is a breaking change
+node_modules/deepmerge
+  @expo/config  >=9.1.0-canary-20240628-1ba8152
+  Depends on vulnerable versions of deepmerge
+  node_modules/@expo/config
+    @expo/cli  >=0.19.0-canary-20240625-2333e70
+    Depends on vulnerable versions of @expo/config
+    Depends on vulnerable versions of @expo/metro-config
+    Depends on vulnerable versions of @expo/prebuild-config
+    node_modules/@expo/cli
+      expo  >=52.0.0-canary-20240625-2333e70
+      Depends on vulnerable versions of @expo/cli
+      Depends on vulnerable versions of @expo/config
+      Depends on vulnerable versions of @expo/local-build-cache-provider
+      Depends on vulnerable versions of @expo/metro-config
+      node_modules/expo
+    @expo/local-build-cache-provider  *
+    Depends on vulnerable versions of @expo/config
+    node_modules/@expo/local-build-cache-provider
+    @expo/metro-config  >=0.19.0-canary-20240625-2333e70
+    Depends on vulnerable versions of @expo/config
+    node_modules/@expo/metro-config
+    @expo/prebuild-config  >=7.1.0-canary-20240904-69100c1
+    Depends on vulnerable versions of @expo/config
+    node_modules/@expo/prebuild-config
+  jest-config  >=25.2.0-alpha.86
+  Depends on vulnerable versions of deepmerge
+  node_modules/jest-config
+    @jest/core  >=25.2.0-alpha.86
+    Depends on vulnerable versions of jest-config
+    node_modules/@jest/core
+      jest  >=25.2.0-alpha.86
+      Depends on vulnerable versions of @jest/core
+      Depends on vulnerable versions of jest-cli
+      node_modules/jest
+        @testing-library/react-native  >=11.1.0
+        Depends on vulnerable versions of jest
+        node_modules/@testing-library/react-native
+          expo-router  >=5.2.0-canary-20250611-f0afe80
+          Depends on vulnerable versions of @testing-library/react-native
+          node_modules/expo-router
+        jest-expo  >=38.0.0
+        Depends on vulnerable versions of jest
+        Depends on vulnerable versions of jest-watch-typeahead
+        node_modules/jest-expo
+        jest-watch-typeahead  >=0.6.0
+        Depends on vulnerable versions of jest
+        node_modules/jest-watch-typeahead
+      jest-cli  >=25.2.0-alpha.86
+      Depends on vulnerable versions of @jest/core
+      Depends on vulnerable versions of jest-config
+      node_modules/jest-cli
+
+15 low severity vulnerabilities
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force

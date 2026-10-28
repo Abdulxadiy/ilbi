@@ -1,0 +1,8 @@
+npm notice run mobile-app@1.0.0 test
+npm notice run jest --runInBand --runTestsByPath tests/supportScreen.test.tsx tests/supportFoundation.test.ts tests/client.test.ts tests/serverScope.test.tsx
+
+Test Suites: 4 passed, 4 total
+Tests:       28 passed, 28 total
+Snapshots:   0 total
+Time:        2.043 s
+Ran all test suites within paths "tests/supportScreen.test.tsx", "tests/supportFoundation.test.ts", "tests/client.test.ts", "tests/serverScope.test.tsx".

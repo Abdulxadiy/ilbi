@@ -1,0 +1,22 @@
+Actual clean-source build from364017038bedcbe20b0974a86fa75aeec29cd5ea; full local log: /mnt/storage/.cache/ilbi-native-tools/production-apk-4-final/build.txt
+Generating native project outside the repository: /mnt/storage/.cache/ilbi-native-tools/build/standalone-avc80s1k
+> Task :expo:lintVitalAnalyzeRelease SKIPPED
+> Task :expo-constants:lintVitalAnalyzeRelease SKIPPED
+> Task :expo-dom-webview:lintVitalAnalyzeRelease SKIPPED
+> Task :expo-log-box:lintVitalAnalyzeRelease SKIPPED
+> Task :expo-modules-core:lintVitalAnalyzeRelease SKIPPED
+> Task :react-native-async-storage_async-storage:lintVitalAnalyzeRelease SKIPPED
+> Task :react-native-gesture-handler:lintVitalAnalyzeRelease SKIPPED
+> Task :react-native-masked-view_masked-view:lintVitalAnalyzeRelease SKIPPED
+> Task :react-native-reanimated:lintVitalAnalyzeRelease SKIPPED
+> Task :react-native-safe-area-context:lintVitalAnalyzeRelease SKIPPED
+> Task :react-native-screens:lintVitalAnalyzeRelease SKIPPED
+> Task :react-native-svg:lintVitalAnalyzeRelease SKIPPED
+> Task :react-native-worklets:lintVitalAnalyzeRelease SKIPPED
+> Task :app:lintVitalAnalyzeRelease
+> Task :app:lintVitalReportRelease
+> Task :app:lintVitalRelease
+BUILD SUCCESSFUL in 8m 40s
+617 actionable tasks: 589 executed, 28 up-to-date
+Standalone owner-signed APK: /mnt/storage/Codes/Projects/Backend/ilbi/mobile-app/dist/android/ILBI-1.0.0-android-4.apk
+Mobile version/build unchanged: 1.0.0 4

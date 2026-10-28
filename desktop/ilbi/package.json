@@ -37,6 +37,7 @@
       "icon.ico",
       "application.cjs",
       "updater.cjs",
+      "public-errors.cjs",
       "login-credentials.cjs",
       "proxy.cjs",
       "pairing.cjs",

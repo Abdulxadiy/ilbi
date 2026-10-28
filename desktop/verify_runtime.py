@@ -1,7 +1,7 @@
 """Exercise real offline/restart/reconnect against TWO disposable PostgreSQL DBs.
 
 Uses only the isolated test PostgreSQL (default 127.0.0.1:5433). Never loads the
-deployment database. Requires `uv sync --group desktop` in ilbi first.
+deployment database. Requires `uv sync --group desktop` in backend first.
 """
 
 import json
@@ -21,9 +21,9 @@ import requests
 from cryptography.fernet import Fernet
 
 ROOT = Path(__file__).resolve().parents[1]
-PYTHON = ROOT / "ilbi/.venv/bin/python"
+PYTHON = ROOT / "backend/.venv/bin/python"
 if os.name == "nt":
-    PYTHON = ROOT / "ilbi/.venv/Scripts/python.exe"
+    PYTHON = ROOT / "backend/.venv/Scripts/python.exe"
 
 
 def port():
@@ -47,7 +47,7 @@ def main():
     processes = []
     environment = {
         **os.environ,
-        "PYTHONPATH": str(temporary) + os.pathsep + str(ROOT / "ilbi"),
+        "PYTHONPATH": str(temporary) + os.pathsep + str(ROOT / "backend"),
         "ILBI_DESKTOP_DATA": str(temporary / "data"),
         "ILBI_DESKTOP_SECRET": secrets.token_hex(48),
         "ILBI_DESKTOP_VAULT_KEY": Fernet.generate_key().decode(),
@@ -68,11 +68,11 @@ def main():
         return subprocess.run(
             [
                 str(PYTHON),
-                str(ROOT / "ilbi/manage.py"),
+                str(ROOT / "backend/manage.py"),
                 *arguments,
                 "--settings=" + settings,
             ],
-            cwd=ROOT / "ilbi",
+            cwd=ROOT / "backend",
             env=environment,
             check=True,
             capture_output=True,
@@ -84,7 +84,7 @@ def main():
         logs.append(log)
         process = subprocess.Popen(
             [str(PYTHON), str(temporary / "serve.py"), settings, str(server_port)],
-            cwd=ROOT / "ilbi",
+            cwd=ROOT / "backend",
             env=environment,
             stdout=log,
             stderr=log,

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "125946674157",
+    "project_id": "ilbi-80eb1",
+    "storage_bucket": "ilbi-80eb1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:125946674157:android:de346b98b6d5396295c5e4",
+        "android_client_info": {
+          "package_name": "uz.ilbi.mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCH19Zl3EgIH7d5urIw0uKDoeK4UAsVZbo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

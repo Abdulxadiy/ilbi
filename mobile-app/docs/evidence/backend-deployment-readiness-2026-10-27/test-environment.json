@@ -1,0 +1,11 @@
+{
+  "source_commit": "9a025e0c5a475a8b9d667b7a768b6d457fe1852a",
+  "python": "3.12.14",
+  "django": "6.1.2",
+  "postgres": "Isolated localhost:55443, dedicated test database",
+  "redis": "Isolated Redis 7.4.11 localhost:56444, volatile 128MB, protected-mode",
+  "redis_source_sha256": "3c266ece0abd54ed3b1c912c6eb86b7508cf382cb690ee6649d3843f018f6357",
+  "redis_source_integrity": "Matched official redis/redis-hashes SHA256 before private-cache compilation. No host installation.",
+  "real_production_transactions": false,
+  "native_emulator_modified": false
+}

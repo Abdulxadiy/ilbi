@@ -1,0 +1,381 @@
+{
+  "source": "Actual Django APIClient/PostgreSQL, synthetic accounts, locmem email; no native/provider acceptance",
+  "tenant_id": 1,
+  "choices": [
+    {
+      "id": 25,
+      "category": "analytics",
+      "codename": "view_dashboard",
+      "name": "Dashboard va analitikani ko‘rish"
+    },
+    {
+      "id": 26,
+      "category": "analytics",
+      "codename": "view_reports",
+      "name": "Hisobotlarni ko‘rish"
+    },
+    {
+      "id": 23,
+      "category": "cashbox",
+      "codename": "manage_shift",
+      "name": "Smena ochish va yopish"
+    },
+    {
+      "id": 21,
+      "category": "cashbox",
+      "codename": "record_expense",
+      "name": "Kassadan chiqim kiritish"
+    },
+    {
+      "id": 22,
+      "category": "cashbox",
+      "codename": "record_income",
+      "name": "Kassaga kirim kiritish"
+    },
+    {
+      "id": 20,
+      "category": "cashbox",
+      "codename": "view_cashbox",
+      "name": "Kassa va smena hisobotlarini ko‘rish"
+    },
+    {
+      "id": 2,
+      "category": "catalog",
+      "codename": "add_category",
+      "name": "Kategoriya qo'shish"
+    },
+    {
+      "id": 6,
+      "category": "catalog",
+      "codename": "add_product",
+      "name": "Mahsulot qo'shish"
+    },
+    {
+      "id": 4,
+      "category": "catalog",
+      "codename": "archive_category",
+      "name": "Kategoriyani arxivlash"
+    },
+    {
+      "id": 8,
+      "category": "catalog",
+      "codename": "archive_product",
+      "name": "Mahsulotni arxivlash"
+    },
+    {
+      "id": 3,
+      "category": "catalog",
+      "codename": "change_category",
+      "name": "Kategoriyani tahrirlash"
+    },
+    {
+      "id": 7,
+      "category": "catalog",
+      "codename": "change_product",
+      "name": "Mahsulotni tahrirlash"
+    },
+    {
+      "id": 1,
+      "category": "catalog",
+      "codename": "view_category",
+      "name": "Kategoriyalarni ko'rish"
+    },
+    {
+      "id": 24,
+      "category": "catalog",
+      "codename": "view_cost_price",
+      "name": "Mahsulot tannarxini ko‘rish"
+    },
+    {
+      "id": 5,
+      "category": "catalog",
+      "codename": "view_product",
+      "name": "Mahsulotlarni ko'rish"
+    },
+    {
+      "id": 16,
+      "category": "inventory",
+      "codename": "add_stock_intake",
+      "name": "Kirim qilish"
+    },
+    {
+      "id": 17,
+      "category": "inventory",
+      "codename": "adjust_stock",
+      "name": "Zaxirani tuzatish"
+    },
+    {
+      "id": 18,
+      "category": "inventory",
+      "codename": "transfer_stock",
+      "name": "Do‘konlararo transfer"
+    },
+    {
+      "id": 15,
+      "category": "inventory",
+      "codename": "view_stock",
+      "name": "Zaxirani ko'rish"
+    },
+    {
+      "id": 19,
+      "category": "inventory",
+      "codename": "view_supplier",
+      "name": "Ta’minotchi ma’lumotlarini ko‘rish"
+    },
+    {
+      "id": 10,
+      "category": "sales",
+      "codename": "add_sale",
+      "name": "Yangi sotuv"
+    },
+    {
+      "id": 13,
+      "category": "sales",
+      "codename": "manage_b2b",
+      "name": "B2B transferlarni boshqarish"
+    },
+    {
+      "id": 12,
+      "category": "sales",
+      "codename": "manage_counterparty",
+      "name": "Kontragentlarni boshqarish"
+    },
+    {
+      "id": 14,
+      "category": "sales",
+      "codename": "record_debt_payment",
+      "name": "Qarz to'lovlarini kiritish"
+    },
+    {
+      "id": 9,
+      "category": "sales",
+      "codename": "view_sale",
+      "name": "Sotuvlarni ko'rish"
+    },
+    {
+      "id": 11,
+      "category": "sales",
+      "codename": "void_sale",
+      "name": "Sotuvni bekor qilish"
+    },
+    {
+      "id": 27,
+      "category": "tenants",
+      "codename": "manage_settings",
+      "name": "Do‘kon sozlamalarini boshqarish"
+    }
+  ],
+  "hired": {
+    "id": 2,
+    "user": 3,
+    "phone_number": "+998991231234",
+    "contact_phone": null,
+    "tenant": 1,
+    "position": "Kassir",
+    "is_active": true,
+    "hired_at": "2026-10-28T10:32:55.436128+05:00",
+    "fired_at": null,
+    "onboarding_invitation": {
+      "sent": true,
+      "reason": "sent"
+    }
+  },
+  "directory": {
+    "count": 1,
+    "next": null,
+    "previous": null,
+    "results": [
+      {
+        "id": 2,
+        "user": 3,
+        "phone_number": "+998991231234",
+        "contact_phone": null,
+        "tenant": 1,
+        "position": "Kassir",
+        "is_active": true,
+        "hired_at": "2026-10-28T10:32:55.436128+05:00",
+        "fired_at": null,
+        "first_name": "Native",
+        "last_name": "Contract",
+        "username": null,
+        "email": "native-team@example.invalid",
+        "role": "staff",
+        "is_owner": false,
+        "account_active": true,
+        "password_set": false,
+        "archived_at": null,
+        "actions": {
+          "edit": true,
+          "block": true,
+          "invite": true,
+          "archive": true,
+          "restore": false
+        },
+        "permission_ids": [
+          10
+        ]
+      }
+    ]
+  },
+  "edited": {
+    "id": 2,
+    "user": 3,
+    "phone_number": "+998991231234",
+    "contact_phone": "+998991239999",
+    "tenant": 1,
+    "position": "Kassir",
+    "is_active": true,
+    "hired_at": "2026-10-28T10:32:55.436128+05:00",
+    "fired_at": null,
+    "first_name": "Updated",
+    "last_name": "Contract",
+    "username": null,
+    "email": "native-team@example.invalid",
+    "role": "staff",
+    "is_owner": false,
+    "account_active": true,
+    "password_set": false,
+    "archived_at": null,
+    "actions": {
+      "edit": true,
+      "block": true,
+      "invite": true,
+      "archive": true,
+      "restore": false
+    },
+    "permission_ids": [
+      10
+    ]
+  },
+  "blocked": {
+    "id": 2,
+    "user": 3,
+    "phone_number": "+998991231234",
+    "contact_phone": "+998991239999",
+    "tenant": 1,
+    "position": "Kassir",
+    "is_active": true,
+    "hired_at": "2026-10-28T10:32:55.436128+05:00",
+    "fired_at": null,
+    "first_name": "Updated",
+    "last_name": "Contract",
+    "username": null,
+    "email": "native-team@example.invalid",
+    "role": "staff",
+    "is_owner": false,
+    "account_active": false,
+    "password_set": false,
+    "archived_at": null,
+    "actions": {
+      "edit": true,
+      "block": true,
+      "invite": false,
+      "archive": true,
+      "restore": false
+    },
+    "permission_ids": [
+      10
+    ]
+  },
+  "unblocked": {
+    "id": 2,
+    "user": 3,
+    "phone_number": "+998991231234",
+    "contact_phone": "+998991239999",
+    "tenant": 1,
+    "position": "Kassir",
+    "is_active": true,
+    "hired_at": "2026-10-28T10:32:55.436128+05:00",
+    "fired_at": null,
+    "first_name": "Updated",
+    "last_name": "Contract",
+    "username": null,
+    "email": "native-team@example.invalid",
+    "role": "staff",
+    "is_owner": false,
+    "account_active": true,
+    "password_set": false,
+    "archived_at": null,
+    "actions": {
+      "edit": true,
+      "block": true,
+      "invite": true,
+      "archive": true,
+      "restore": false
+    },
+    "permission_ids": [
+      10
+    ]
+  },
+  "fired": {
+    "id": 2,
+    "user": 3,
+    "phone_number": "+998991231234",
+    "contact_phone": "+998991239999",
+    "tenant": 1,
+    "position": "Kassir",
+    "is_active": false,
+    "hired_at": "2026-10-28T10:32:55.436128+05:00",
+    "fired_at": "2026-10-28T10:32:55.520542+05:00"
+  },
+  "archived": {
+    "id": 2,
+    "user": 3,
+    "phone_number": "+998991231234",
+    "contact_phone": "+998991239999",
+    "tenant": 1,
+    "position": "Kassir",
+    "is_active": false,
+    "hired_at": "2026-10-28T10:32:55.436128+05:00",
+    "fired_at": "2026-10-28T10:32:55.520542+05:00",
+    "first_name": "Updated",
+    "last_name": "Contract",
+    "username": null,
+    "email": "native-team@example.invalid",
+    "role": "staff",
+    "is_owner": false,
+    "account_active": true,
+    "password_set": false,
+    "archived_at": "2026-10-28T10:32:55.538720+05:00",
+    "actions": {
+      "edit": false,
+      "block": false,
+      "invite": false,
+      "archive": false,
+      "restore": true
+    },
+    "permission_ids": [
+      10
+    ]
+  },
+  "restored": {
+    "id": 2,
+    "user": 3,
+    "phone_number": "+998991231234",
+    "contact_phone": "+998991239999",
+    "tenant": 1,
+    "position": "Kassir",
+    "is_active": false,
+    "hired_at": "2026-10-28T10:32:55.436128+05:00",
+    "fired_at": "2026-10-28T10:32:55.520542+05:00",
+    "first_name": "Updated",
+    "last_name": "Contract",
+    "username": null,
+    "email": "native-team@example.invalid",
+    "role": "staff",
+    "is_owner": false,
+    "account_active": true,
+    "password_set": false,
+    "archived_at": null,
+    "actions": {
+      "edit": true,
+      "block": true,
+      "invite": false,
+      "archive": true,
+      "restore": false
+    },
+    "permission_ids": [
+      10
+    ]
+  }
+}

@@ -1,0 +1,43 @@
+npm notice run mobile-app@1.0.0 test
+npm notice run jest --runInBand --verbose
+PASS tests/debts.test.tsx (12.21 s)
+  Debts Domain & Canonical Financial Rules (Board 27A & Master Spec)
+    ✓ Canonical 4 debts sum to exactly 860 000 UZS (2 ms)
+    ✓ Status filtering correctly identifies overdue and due-soon counterparties (11 ms)
+    ✓ Partial payment reduces balance without removing debtor
+    ✓ Full payment reduces debt to 0 and clears debtor from active list (1 ms)
+    ✓ DebtsScreen renders canonical total and debtor names (2012 ms)
+
+PASS tests/outbox.test.ts
+  Offline Persistence & Outbox Queue (Phase 10 & Board 27B)
+    ✓ Enqueue persists intent into storage with idempotent tracking (2 ms)
+    ✓ Processing queue successfully transmits pending operations and purges completed ones (1 ms)
+    ✓ Failing requests increment attempts and retain pending state for retry (1 ms)
+    ✓ Explicit remove purges specific intent from queue
+
+PASS tests/components.test.tsx
+  Base UI Components
+    ✓ Button renders title correctly and respects disabled state (17 ms)
+    ✓ Badge renders label and handles variants (2 ms)
+    ✓ Input renders with placeholder and label (4 ms)
+    ✓ Toast displays message when visible (4 ms)
+
+PASS tests/cart.test.tsx
+  Cart Domain & Canonical Price Negotiation (Board 22 & Master Spec)
+    ✓ Scenario C01: Initial 10 canonical items sum to exactly 161 000 UZS (3 ms)
+    ✓ Scenario C02: Customer price change (Sut 1 L from 12 000 to 11 500) reduces total to 160 000 UZS (2 ms)
+    ✓ Scenario C04: Quantity adjustment after price negotiation retains the custom unit price (2 ms)
+    ✓ Scenario C05: Emptying cart results in 0 items and 0 UZS (1 ms)
+    ✓ Customer selection attaches counterparty to the cart session (2 ms)
+
+PASS tests/theme.test.tsx
+  Theme and Design Tokens
+    ✓ Light theme tokens match monochrome design specifications (1 ms)
+    ✓ Dark theme tokens match graphite/dark specifications
+    ✓ Typography scale and spacing scale are consistent (1 ms)
+
+Test Suites: 5 passed, 5 total
+Tests:       21 passed, 21 total
+Snapshots:   0 total
+Time:        12.697 s
+Ran all test suites.

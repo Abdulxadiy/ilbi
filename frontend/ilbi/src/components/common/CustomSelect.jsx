@@ -1,8 +1,9 @@
 import IlbiLoader from './IlbiLoader';
-import React, { useState, useRef, useEffect, useMemo } from 'react';
+import React, { useState, useRef, useEffect, useMemo, useId } from 'react';
 import { createPortal } from 'react-dom';
 import { ChevronDown, Check, Search, X } from 'lucide-react';
 import { useSelectPopover } from '../../hooks/useSelectPopover';
+import { fieldChanged } from '../../utils/formValidation.js';
 
 const normalizeSearch = value => String(value ?? '')
   .normalize('NFKC')
@@ -37,6 +38,8 @@ export default function CustomSelect({
   placeholder = 'Tanlang...',
   icon: Icon = null,
   disabled = false,
+  required = false,
+  'data-api-field': apiField,
   className = '',
   style = {},
   menuStyle = {},
@@ -61,6 +64,9 @@ export default function CustomSelect({
   const triggerRef = useRef(null);
   const menuRef = useRef(null);
   const searchInputRef = useRef(null);
+  const nativeRef = useRef(null);
+  const validationId = useId();
+  useEffect(() => { if (nativeRef.current) fieldChanged(nativeRef.current); }, [value]);
   const popover = useSelectPopover({
     isOpen, anchorRef: triggerRef, menuRef, onClose: () => setIsOpen(false),
     searchable, hasFooter: Boolean(footer), menuStyle,
@@ -230,6 +236,7 @@ export default function CustomSelect({
   return (
     <div
       ref={containerRef}
+      data-validation-container="true"
       id={id ? `${id}-container` : undefined}
       className={`custom-select-wrapper ${className}`}
       data-open={isOpen ? 'true' : 'false'}
@@ -257,6 +264,10 @@ export default function CustomSelect({
 
       {/* Hidden native select for form serialization and automated test compatibility */}
       <select
+        ref={nativeRef}
+        required={required}
+        data-api-field={apiField}
+        data-validation-target={validationId}
         aria-hidden="true"
         tabIndex={-1}
         name={name ? `${name}_select` : undefined}
@@ -279,6 +290,7 @@ export default function CustomSelect({
           clip: 'rect(0 0 0 0)',
         }}
       >
+        {!normalizedOptions.some(opt => String(opt.value) === '') && <option value="">{placeholder}</option>}
         {normalizedOptions.map((opt) => (
           <option key={String(opt.value)} value={opt.value}>
             {opt.label}
@@ -289,6 +301,7 @@ export default function CustomSelect({
       {/* Main Trigger */}
       <div
         ref={triggerRef}
+        id={validationId}
         role="button"
         tabIndex={disabled ? -1 : 0}
         aria-disabled={disabled}

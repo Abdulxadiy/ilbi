@@ -1,26 +1,16 @@
 import IlbiLoader from '../common/IlbiLoader';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   X,
   User,
   Store,
-  BarChart3,
-  CheckCircle,
   AlertTriangle,
   ExternalLink,
   Edit2,
   Save,
-  ShieldAlert,
-  ShieldCheck,
-  Phone,
-  Mail,
-  Calendar,
-  Clock,
-  MapPin,
-  Building2,
 } from 'lucide-react';
-import CustomSelect from '../common/CustomSelect';
+import { safeDisplayText } from '../../utils/safePresentation.js';
 
 export default function CustomerProfileModal({ conversationId, api, onClose, onCustomerUpdated }) {
   const navigate = useNavigate();
@@ -30,118 +20,72 @@ export default function CustomerProfileModal({ conversationId, api, onClose, onC
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState('');
+  const [loadedConversation, setLoadedConversation] = useState(null);
+  const generation = useRef(0);
+  const cancelPending = useCallback(() => { generation.current++; }, []);
 
   const [form, setForm] = useState({
     first_name: '',
     last_name: '',
-    email: '',
     contact_phone: '',
-    role: 'owner',
     tenant_name: '',
     tenant_address: '',
   });
 
-  const loadData = async () => {
-    if (!conversationId) return;
-    setLoading(true);
-    setError('');
-    try {
-      const data = await api.customerProfile(conversationId);
-      setProfile(data);
-      if (data.user) {
-        setForm({
-          first_name: data.user.first_name || '',
-          last_name: data.user.last_name || '',
-          email: data.user.email || '',
-          contact_phone: data.user.contact_phone || '',
-          role: data.user.role || 'owner',
-          tenant_name: data.tenant?.name || '',
-          tenant_address: data.tenant?.address || '',
-        });
-      }
-    } catch (err) {
-      setError(err.message || 'Mijoz ma‘lumotlarini yuklab bo‘lmadi.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    loadData();
-  }, [conversationId]);
+    generation.current++;
+    let active = true;
+    void Promise.resolve().then(async () => {
+      if (!active || !conversationId) return;
+      setLoading(true); setError(''); setEditing(false); setSaving(false); setToast(''); setProfile(null);
+      try {
+        const data = await api.customerProfile(conversationId);
+        if (!active) return;
+        setProfile(data);
+        if (data.user) setForm({ first_name: data.user.first_name || '', last_name: data.user.last_name || '', contact_phone: data.user.contact_phone || '', tenant_name: data.tenant?.name || '', tenant_address: data.tenant?.address || '' });
+      } catch (err) {
+        if (active) setError(safeDisplayText(err.message, 'Mijoz ma‘lumotlarini yuklab bo‘lmadi.'));
+      } finally {
+        if (active) { setLoadedConversation(conversationId); setLoading(false); }
+      }
+    });
+    return () => { active = false; cancelPending(); };
+  }, [conversationId, api, cancelPending]);
 
   const showToast = (msg) => {
-    setToast(msg);
+    setToast(safeDisplayText(msg));
     setTimeout(() => setToast(''), 3500);
   };
 
   const handleSave = async () => {
+    if (loadedConversation !== conversationId || loading || saving) return;
+    const current = generation.current;
     setSaving(true);
     try {
       const payload = {
         first_name: form.first_name,
         last_name: form.last_name,
-        email: form.email,
         contact_phone: form.contact_phone,
-        role: form.role,
       };
       if (profile?.tenant) {
         payload.tenant_name = form.tenant_name;
         payload.tenant_address = form.tenant_address;
       }
       const updated = await api.updateCustomerProfile(conversationId, payload);
+      if (generation.current !== current) return;
       setProfile(updated);
       setEditing(false);
       showToast('O‘zgarishlar muvaffaqiyatli saqlandi!');
       if (onCustomerUpdated) onCustomerUpdated(updated);
     } catch (err) {
-      showToast(err.message || 'Saqlashda xatolik yuz berdi');
+      if (generation.current === current) showToast(err.message || 'Saqlashda xatolik yuz berdi');
     } finally {
-      setSaving(false);
+      if (generation.current === current) setSaving(false);
     }
   };
 
-  const handleToggleUserActive = async () => {
-    if (!profile?.user) return;
-    const nextState = !profile.user.is_active;
-    const actionName = nextState ? 'faollashtirilsinmi' : 'bloklansinmi';
-    if (!window.confirm(`Haqiqatan ham ushbu hisob ${actionName}?`)) return;
-
-    setSaving(true);
-    try {
-      const updated = await api.updateCustomerProfile(conversationId, {
-        is_active: nextState,
-      });
-      setProfile(updated);
-      showToast(nextState ? 'Akkaunt faollashtirildi' : 'Akkaunt bloklandi');
-      if (onCustomerUpdated) onCustomerUpdated(updated);
-    } catch (err) {
-      showToast(err.message || 'Xatolik yuz berdi');
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleToggleTenantActive = async () => {
-    if (!profile?.tenant) return;
-    const nextState = !profile.tenant.is_active;
-    const actionName = nextState ? 'faollashtirilsinmi' : 'to‘xtatilsinmi';
-    if (!window.confirm(`Do‘kon faoliyati ${actionName}?`)) return;
-
-    setSaving(true);
-    try {
-      const updated = await api.updateCustomerProfile(conversationId, {
-        tenant_is_active: nextState,
-      });
-      setProfile(updated);
-      showToast(nextState ? 'Do‘kon faollashtirildi' : 'Do‘kon faoliyati to‘xtatildi');
-      if (onCustomerUpdated) onCustomerUpdated(updated);
-    } catch (err) {
-      showToast(err.message || 'Xatolik yuz berdi');
-    } finally {
-      setSaving(false);
-    }
-  };
+  const openAccounts = () => { onClose(); navigate('/accounts?' + new URLSearchParams({ search: profile?.user?.phone_number || profile?.user?.username || '' })); };
+  const openStores = () => { onClose(); navigate('/tenants'); };
 
   const formatDate = (dateStr) => {
     if (!dateStr) return 'Mavjud emas';
@@ -153,7 +97,7 @@ export default function CustomerProfileModal({ conversationId, api, onClose, onC
         hour: '2-digit',
         minute: '2-digit',
       });
-    } catch (_) {
+    } catch {
       return dateStr;
     }
   };
@@ -227,7 +171,7 @@ export default function CustomerProfileModal({ conversationId, api, onClose, onC
 
         {/* Content Body */}
         <div className="customer-profile-body">
-          {loading ? (
+          {loading || loadedConversation !== conversationId ? (
             <div style={{ textAlign: 'center', padding: '60px 0', color: 'var(--text-muted)' }}>
               <IlbiLoader label="Mijoz ma‘lumotlari yuklanmoqda..." />
             </div>
@@ -285,7 +229,7 @@ export default function CustomerProfileModal({ conversationId, api, onClose, onC
                     <div className="customer-profile-item">
                       <span className="customer-profile-label">Ismi</span>
                       {editing ? (
-                        <input
+                        <input data-api-field="first_name"
                           type="text"
                           className="customer-profile-input"
                           value={form.first_name}
@@ -299,7 +243,7 @@ export default function CustomerProfileModal({ conversationId, api, onClose, onC
                     <div className="customer-profile-item">
                       <span className="customer-profile-label">Familiyasi</span>
                       {editing ? (
-                        <input
+                        <input data-api-field="last_name"
                           type="text"
                           className="customer-profile-input"
                           value={form.last_name}
@@ -320,7 +264,7 @@ export default function CustomerProfileModal({ conversationId, api, onClose, onC
                     <div className="customer-profile-item">
                       <span className="customer-profile-label">Qo‘shimcha aloqa</span>
                       {editing ? (
-                        <input
+                        <input data-api-field="contact_phone"
                           type="text"
                           className="customer-profile-input"
                           placeholder="+998..."
@@ -336,35 +280,12 @@ export default function CustomerProfileModal({ conversationId, api, onClose, onC
 
                     <div className="customer-profile-item full-width">
                       <span className="customer-profile-label">Email manzili</span>
-                      {editing ? (
-                        <input
-                          type="email"
-                          className="customer-profile-input"
-                          value={form.email}
-                          onChange={(e) => setForm({ ...form, email: e.target.value })}
-                        />
-                      ) : (
-                        <span className="customer-profile-value">{profile.user.email || 'Kiritilmagan'}</span>
-                      )}
+                      <span className="customer-profile-value">{profile.user.email || 'Kiritilmagan'}</span>
                     </div>
 
                     <div className="customer-profile-item">
                       <span className="customer-profile-label">Tizimdagi roli</span>
-                      {editing ? (
-                        <CustomSelect
-                          value={form.role}
-                          onChange={(val) => setForm({ ...form, role: val })}
-                          options={[
-                            { value: 'owner', label: 'Do‘kon egasi (owner)' },
-                            { value: 'staff', label: 'Sotuvchi (staff)' },
-                            { value: 'platform_admin', label: 'Administrator' },
-                          ]}
-                          size="sm"
-                          fullWidth
-                        />
-                      ) : (
-                        <span className="customer-profile-value">{profile.user.role_display}</span>
-                      )}
+                      <span className="customer-profile-value">{profile.user.role_display}</span>
                     </div>
 
                     <div className="customer-profile-item">
@@ -390,12 +311,6 @@ export default function CustomerProfileModal({ conversationId, api, onClose, onC
                     <div className="customer-profile-item">
                       <span className="customer-profile-label">Tanlagan tili</span>
                       <span className="customer-profile-value">O‘zbekcha</span>
-                    </div>
-                    <div className="customer-profile-item full-width">
-                      <span className="customer-profile-label">Mehmon kaliti (hash)</span>
-                      <span className="customer-profile-value" style={{ fontSize: 11, fontFamily: 'monospace' }}>
-                        {profile.guest?.guest_hash}
-                      </span>
                     </div>
                   </div>
                 )}
@@ -435,7 +350,7 @@ export default function CustomerProfileModal({ conversationId, api, onClose, onC
                     <div className="customer-profile-item">
                       <span className="customer-profile-label">Do‘kon nomi</span>
                       {editing ? (
-                        <input
+                        <input data-api-field="tenant_name"
                           type="text"
                           className="customer-profile-input"
                           value={form.tenant_name}
@@ -458,7 +373,7 @@ export default function CustomerProfileModal({ conversationId, api, onClose, onC
                     <div className="customer-profile-item full-width">
                       <span className="customer-profile-label">Manzil</span>
                       {editing ? (
-                        <input
+                        <input data-api-field="tenant_address"
                           type="text"
                           className="customer-profile-input"
                           value={form.tenant_address}
@@ -510,13 +425,12 @@ export default function CustomerProfileModal({ conversationId, api, onClose, onC
               {profile.user && (
                 <button
                   type="button"
-                  className={`btn btn-sm ${profile.user.is_active ? 'btn-danger' : 'btn-success'}`}
-                  onClick={handleToggleUserActive}
+                  className="btn btn-secondary btn-sm"
+                  onClick={openAccounts}
                   disabled={saving}
                   style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12 }}
                 >
-                  {profile.user.is_active ? <ShieldAlert size={14} /> : <ShieldCheck size={14} />}
-                  {profile.user.is_active ? 'Bloklash' : 'Faollashtirish'}
+                  Hisobni xavfsiz boshqarish
                 </button>
               )}
 
@@ -524,11 +438,11 @@ export default function CustomerProfileModal({ conversationId, api, onClose, onC
                 <button
                   type="button"
                   className="btn btn-secondary btn-sm"
-                  onClick={handleToggleTenantActive}
+                  onClick={openStores}
                   disabled={saving}
                   style={{ fontSize: 12 }}
                 >
-                  {profile.tenant.is_active ? 'Do‘konni to‘xtatish' : 'Do‘konni yoqish'}
+                  Do‘konni boshqarish
                 </button>
               )}
             </div>

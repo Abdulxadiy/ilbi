@@ -1,0 +1,3150 @@
+{
+  "audit_date": "2026-10-28",
+  "timezone": "Asia/Tashkent",
+  "baseline_commit": "888ed76f1a67ae2bbf2a9ca09ffcf5d3be9366f7",
+  "source_file_count": 461,
+  "files": [
+    {
+      "path": "backend/api/v1/__init__.py",
+      "lines": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "backend/api/v1/accounts/__init__.py",
+      "lines": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "backend/api/v1/accounts/serializers.py",
+      "lines": 316,
+      "sha256": "8b5f68884bcf00a40d62c595fdf4e4433e71e0a76547df556efe25b1fbc35227"
+    },
+    {
+      "path": "backend/api/v1/accounts/urls.py",
+      "lines": 71,
+      "sha256": "976ee9afc4fb0577467a395275a640555da6fbcba7c2bdc6f1f5b8094b782906"
+    },
+    {
+      "path": "backend/api/v1/accounts/views/__init__.py",
+      "lines": 9,
+      "sha256": "06ac6186d7053f418f87aade8e7919552e5e6086fb53fc421759d22c20367287"
+    },
+    {
+      "path": "backend/api/v1/accounts/views/admin_login.py",
+      "lines": 227,
+      "sha256": "2b40733b12770009570e16956352989a4584ac79f31e92a37ee3ba51e25680e2"
+    },
+    {
+      "path": "backend/api/v1/accounts/views/complete_profile.py",
+      "lines": 39,
+      "sha256": "eeee98f4ef769c909e5618f00998055fab6f9a4eae33a3c2b964bc9de28a1a12"
+    },
+    {
+      "path": "backend/api/v1/accounts/views/docs_views.py",
+      "lines": 238,
+      "sha256": "99c69d2e67df5ad1f3a4a942c725695d3d22600fc68c80af0d3c5cabf0cca96e"
+    },
+    {
+      "path": "backend/api/v1/accounts/views/employee_management_views.py",
+      "lines": 132,
+      "sha256": "41bf496451ca6131b8cb30ca460144339385e71e1fbfb0b38083726332f0c7b3"
+    },
+    {
+      "path": "backend/api/v1/accounts/views/employee_views.py",
+      "lines": 154,
+      "sha256": "3e59618b7a2687ad9005853904826c4f7992a32c69749cfbb0fad474eeb59e5e"
+    },
+    {
+      "path": "backend/api/v1/accounts/views/misc.py",
+      "lines": 119,
+      "sha256": "942d47f654f339ba37e1249bb28a3310d3b807c23d0d21234bba5d13e91b62a1"
+    },
+    {
+      "path": "backend/api/v1/accounts/views/password_reset.py",
+      "lines": 276,
+      "sha256": "c4560709c1ddf433da3aae6f6e0efdad37fc29700f429dc5e16a59609d21f434"
+    },
+    {
+      "path": "backend/api/v1/accounts/views/platform_views.py",
+      "lines": 228,
+      "sha256": "3262c66b8d9c4320192f57e2e38f594fb53deddfef88283ea66def061af92d20"
+    },
+    {
+      "path": "backend/api/v1/accounts/views/profile_views.py",
+      "lines": 161,
+      "sha256": "0973817b992db4bd77b020aaa8dd614b7a36d36848ce4999ae5b27d75e751877"
+    },
+    {
+      "path": "backend/api/v1/accounts/views/terms_views.py",
+      "lines": 44,
+      "sha256": "64ea188a58fc5c8171ac67ca4daeb32226d6a5e0a9734e9b6a221cdc28ed3030"
+    },
+    {
+      "path": "backend/api/v1/accounts/views/token_refresh.py",
+      "lines": 29,
+      "sha256": "2fef64149a24125dcd1554a1f49a714862615b29c4c9e767451c33a66167cb02"
+    },
+    {
+      "path": "backend/api/v1/accounts/views/unban.py",
+      "lines": 61,
+      "sha256": "c647e30186b60dbf680900d981f42603211cd879900a048babaacf74744228e8"
+    },
+    {
+      "path": "backend/api/v1/analytics/__init__.py",
+      "lines": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "backend/api/v1/analytics/urls.py",
+      "lines": 7,
+      "sha256": "d0427ea98c42574f59d0931ccae522293e9441bd3651d44cf7e52fa82c725a9a"
+    },
+    {
+      "path": "backend/api/v1/analytics/views/__init__.py",
+      "lines": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "backend/api/v1/analytics/views/dashboard_views.py",
+      "lines": 63,
+      "sha256": "f765430ae63cf56911a644735a5f028a4f1b22284e1779a1b0b603a67ec1862a"
+    },
+    {
+      "path": "backend/api/v1/audit/__init__.py",
+      "lines": 1,
+      "sha256": "0536bab467e67a1e4dae705c347908267f8169bfd204b1bad9dab7cb964581ea"
+    },
+    {
+      "path": "backend/api/v1/audit/history_views.py",
+      "lines": 135,
+      "sha256": "f53b1dcdd5be42bb51cfe357e02252c4889f716e8e294355f74e126ac1f32be5"
+    },
+    {
+      "path": "backend/api/v1/audit/serializers.py",
+      "lines": 44,
+      "sha256": "ee81262b5ec7644069a69d7396da819f4ef394179b8a5964b0222d70ac9e9471"
+    },
+    {
+      "path": "backend/api/v1/audit/urls.py",
+      "lines": 10,
+      "sha256": "eb97b0b459ccbda8b515f8b6e12723ba4928784780af792e964c8ecf063ae11f"
+    },
+    {
+      "path": "backend/api/v1/audit/views.py",
+      "lines": 86,
+      "sha256": "bbd440683e703272bb01c24baedb169dd493e47a3539e94cb510b9bbf8c05bd7"
+    },
+    {
+      "path": "backend/api/v1/cashbox/serializers.py",
+      "lines": 136,
+      "sha256": "7799600b9cc6e20e7e80a94f2008694efc7a5f1d15cf1f999b5ecd824001e31b"
+    },
+    {
+      "path": "backend/api/v1/cashbox/urls.py",
+      "lines": 23,
+      "sha256": "22788c3587113425bacb4c8ba810ac202ccce82b12f31e979ee298b1ac5749d8"
+    },
+    {
+      "path": "backend/api/v1/cashbox/views/cashbox_views.py",
+      "lines": 236,
+      "sha256": "b31ed3b210124784a00fabea4461ca331294f9b66f89c791ab32ed362870720a"
+    },
+    {
+      "path": "backend/api/v1/catalog/__init__.py",
+      "lines": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "backend/api/v1/catalog/serializers.py",
+      "lines": 250,
+      "sha256": "ce3d3c656fcd1a6ec4644b3a48de3247e55050317fea5e5e50899fb7cd6dc67e"
+    },
+    {
+      "path": "backend/api/v1/catalog/urls.py",
+      "lines": 43,
+      "sha256": "f2a1a91ba3c27dd161a9514537bb11dc15c8d964bd50dc246830090501b2cd68"
+    },
+    {
+      "path": "backend/api/v1/catalog/views/__init__.py",
+      "lines": 14,
+      "sha256": "360055df5766b1a56c228991fb28f1b956866dccb61b6cbd59a1e0b6aef53820"
+    },
+    {
+      "path": "backend/api/v1/catalog/views/_base.py",
+      "lines": 47,
+      "sha256": "51a81f57f594f144f30fbb466f4d3fad6a88b08d10423cc48212b4f80ada0254"
+    },
+    {
+      "path": "backend/api/v1/catalog/views/category_views.py",
+      "lines": 120,
+      "sha256": "32c0d6144e2b5148ca2ceab0b7981729dc86dbcfcfea606d2159a1990b33cd6e"
+    },
+    {
+      "path": "backend/api/v1/catalog/views/import_views.py",
+      "lines": 114,
+      "sha256": "ba4e9bbee88a69c7ca1291ff7a942fbd004e93e75304c4e602ac1e2ef318e074"
+    },
+    {
+      "path": "backend/api/v1/catalog/views/label_views.py",
+      "lines": 60,
+      "sha256": "f2f8f7f80b6e6c6c4bf7e8e9ab8970b6fcce06dd6bde87b7325a4d6bf2678217"
+    },
+    {
+      "path": "backend/api/v1/catalog/views/product_views.py",
+      "lines": 573,
+      "sha256": "cff9ac1c80db675070b746b13da7d72583bb0f4d6aff6a153ac0b5afb1f07719"
+    },
+    {
+      "path": "backend/api/v1/exports.py",
+      "lines": 279,
+      "sha256": "f30f9751ff901f70fe7b3943d80faf567b3e8b32d85647a7bca7704607bd11c6"
+    },
+    {
+      "path": "backend/api/v1/internal/__init__.py",
+      "lines": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "backend/api/v1/internal/shop/__init__.py",
+      "lines": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "backend/api/v1/internal/shop/serializers.py",
+      "lines": 59,
+      "sha256": "f6caaf8cf8e01ce99ec2cf39012913b6894167195aa106ac12f531e7bac80fba"
+    },
+    {
+      "path": "backend/api/v1/internal/shop/urls.py",
+      "lines": 19,
+      "sha256": "202de44aca0d1b632fabfae86adf81c40c0aeb3c193925c11cec526fe5cbfa38"
+    },
+    {
+      "path": "backend/api/v1/internal/shop/views.py",
+      "lines": 63,
+      "sha256": "f15021d875cc868c1de38c7e531916b0608fd18d1453c53853e812491f553406"
+    },
+    {
+      "path": "backend/api/v1/inventory/__init__.py",
+      "lines": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "backend/api/v1/inventory/idempotency.py",
+      "lines": 101,
+      "sha256": "0149ef22dca0aa57bec43f368ab5d5ca83afdbb5985a064b326f14336fb78a14"
+    },
+    {
+      "path": "backend/api/v1/inventory/serializers.py",
+      "lines": 249,
+      "sha256": "18724334e4c326750c282628ec8d074362d98d1f2e47eb0dc48b47282fffbad6"
+    },
+    {
+      "path": "backend/api/v1/inventory/urls.py",
+      "lines": 45,
+      "sha256": "6c2ce5c16847d394dffca7306cd2be4d3839177e0eabda1b7043aac06ad9b2c5"
+    },
+    {
+      "path": "backend/api/v1/inventory/views/__init__.py",
+      "lines": 9,
+      "sha256": "ba426fad77d9d90e979a8c590e990c6c7ed9037c7b9901e7dd8876a7f72e34bf"
+    },
+    {
+      "path": "backend/api/v1/inventory/views/_base.py",
+      "lines": 9,
+      "sha256": "c9f068b61b04aa98934d58cdfb58fff805358faa7185299518fe71b257cc5f6f"
+    },
+    {
+      "path": "backend/api/v1/inventory/views/batch_views.py",
+      "lines": 130,
+      "sha256": "1401d5dd6b474c4e13351a166848f7616908ce92f5336e56e6aa50ed8439ef62"
+    },
+    {
+      "path": "backend/api/v1/inventory/views/movement_views.py",
+      "lines": 169,
+      "sha256": "53e1af04660a4e4ebcd415dc061ba03a4c7356ec1528acb7b3c7550f04443ca4"
+    },
+    {
+      "path": "backend/api/v1/inventory/views/operation_views.py",
+      "lines": 39,
+      "sha256": "954de7116d1befb5945ce3f90c0ec69a46b47a2129b250d93fb6588d95f59466"
+    },
+    {
+      "path": "backend/api/v1/inventory/views/stock_views.py",
+      "lines": 132,
+      "sha256": "77737a304fc9cd69396490d9e2a36f4ff64e846d6976c97f6a7491cb11cabb44"
+    },
+    {
+      "path": "backend/api/v1/inventory/views/transfer_views.py",
+      "lines": 134,
+      "sha256": "0437058a5e74218957f645cd2174ee74e75f1e55fd236c50d52e839e22828cb4"
+    },
+    {
+      "path": "backend/api/v1/sales/__init__.py",
+      "lines": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "backend/api/v1/sales/b2b_idempotency.py",
+      "lines": 106,
+      "sha256": "9a64a7058dfb2d6cea86da60e89713c61c8012f3254eacb1800dcbb4d0219192"
+    },
+    {
+      "path": "backend/api/v1/sales/serializers.py",
+      "lines": 439,
+      "sha256": "9de0c8c2e6fade20ba5a2bd01b3e66557737ffb5589d2eee4c0a79b3efb480c7"
+    },
+    {
+      "path": "backend/api/v1/sales/urls.py",
+      "lines": 100,
+      "sha256": "8d48be3a78e94adff259ee6ae0ea7809979f5739281150a758c605799a6c54ab"
+    },
+    {
+      "path": "backend/api/v1/sales/views/_base.py",
+      "lines": 5,
+      "sha256": "fcf3204fb7a851cfbf782dfd24463fda5dfc2846d7204d12f3e041454d7af6fa"
+    },
+    {
+      "path": "backend/api/v1/sales/views/b2b_views.py",
+      "lines": 260,
+      "sha256": "c697197f5cdc11addef3d7772c49372109f4f067be5ec5e12d45ee48fcbdcc46"
+    },
+    {
+      "path": "backend/api/v1/sales/views/counterparty_views.py",
+      "lines": 298,
+      "sha256": "552f8a06cd4eebdc90496d53478e30fe3493eda6cea2204a31195bcb862b4eae"
+    },
+    {
+      "path": "backend/api/v1/sales/views/import_views.py",
+      "lines": 111,
+      "sha256": "fb6284cd96ca291cd601c11b7d2f31cf5e2fd0d136d4675d0ad1a2bbef544d58"
+    },
+    {
+      "path": "backend/api/v1/sales/views/notification_views.py",
+      "lines": 116,
+      "sha256": "2ef9f29057ff9b15087ac37db91ef38b6d94a294535532bac9b74b0fed5523cd"
+    },
+    {
+      "path": "backend/api/v1/sales/views/sale_views.py",
+      "lines": 258,
+      "sha256": "7a10ce7c37fb0a4e9c0ca064bf0eb3805a1e5c34c76e58229e2cda4bb7a4d47e"
+    },
+    {
+      "path": "backend/api/v1/support/__init__.py",
+      "lines": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "path": "backend/api/v1/support/serializers.py",
+      "lines": 229,
+      "sha256": "dd9a2c0fdc51a0cabc59dc160a6978f822a8a2634d8bb361532d8671878b45e5"
+    },
+    {
+      "path": "backend/api/v1/support/settings_views.py",
+      "lines": 99,
+      "sha256": "30389f1722469ab4322445e6f7d5e461f3c1b348093f9534f91492471d43c98d"
+    },
+    {
+      "path": "backend/api/v1/support/urls.py",
+      "lines": 47,
+      "sha256": "f4648483e05b82a26354f266ae46895b0e11a5ac8f5216bc2f789df5ff376af3"
+    },
+    {
+      "path": "backend/api/v1/support/views.py",
+      "lines": 625,
+      "sha256": "2b00d7b79b1e1ce3637c9d8a1e392b86b824db0bda0e1d7ea05f4794407ae418"
+    },
+    {
+      "path": "backend/api/v1/tenants/__init__.py",
+      "lines": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "backend/api/v1/tenants/currency_serializers.py",
+      "lines": 54,
+      "sha256": "3157e4aa4ae81a8c026f46bb04335b5a6e4119948750a35696e54281a51ff93d"
+    },
+    {
+      "path": "backend/api/v1/tenants/serializers.py",
+      "lines": 384,
+      "sha256": "c9e9a77ba3c6eb021077e3ead93bd2c4ff3c01726e4f24149d5ef5dfead22af7"
+    },
+    {
+      "path": "backend/api/v1/tenants/urls.py",
+      "lines": 64,
+      "sha256": "4b02ea2af4ccc1b8ac58f8bb8b1c3f3ba46d63595d9b7d66a95ce279fd236566"
+    },
+    {
+      "path": "backend/api/v1/tenants/views.py",
+      "lines": 665,
+      "sha256": "a1911b38b7c3b72019f1af16d926a8fdcb41dab25e56f3d93a22a761c22cb088"
+    },
+    {
+      "path": "backend/api/v1/tg_bot/__init__.py",
+      "lines": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "backend/api/v1/tg_bot/serializers.py",
+      "lines": 45,
+      "sha256": "c8266e3d24a4ee5dafa0cfd818d608737931ffee2944452e4ae2c0ea5fcff5d5"
+    },
+    {
+      "path": "backend/api/v1/tg_bot/urls.py",
+      "lines": 7,
+      "sha256": "af52e3bebd27e208a5dae1c8512f3d29c98f94576f5df73d9ea2c6b90e6c9443"
+    },
+    {
+      "path": "backend/api/v1/tg_bot/views.py",
+      "lines": 20,
+      "sha256": "a8f537f091e20753bf1001a4478d50ce54c02474bd7c682139eccd982da73c89"
+    },
+    {
+      "path": "backend/api/v1/urls.py",
+      "lines": 20,
+      "sha256": "6b3265374d451bb3137b3b968c9ebc9eaa3134edf3dbb418edef73072d3ca743"
+    },
+    {
+      "path": "backend/api/v1/workspace.py",
+      "lines": 285,
+      "sha256": "c7acf61f3a483844a4cd418b7cde5a4cb97eebd217409e3c83c027fed2614d77"
+    },
+    {
+      "path": "backend/apps/desktop_sync/__init__.py",
+      "lines": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "backend/apps/desktop_sync/account_access.py",
+      "lines": 400,
+      "sha256": "d7badd4884ed213a957a7e0b0022386ac598de3f34d81254997fcd552300338e"
+    },
+    {
+      "path": "backend/apps/desktop_sync/apps.py",
+      "lines": 14,
+      "sha256": "93961e92be45de24df24925142e572245bbf437823a8b6bf7d5828021b5bfe87"
+    },
+    {
+      "path": "backend/apps/desktop_sync/authentication.py",
+      "lines": 47,
+      "sha256": "c85d7627de6faf3d6040f7bd0003e7b1bf6cf45654a23efa7bc6ae838b62d687"
+    },
+    {
+      "path": "backend/apps/desktop_sync/cloud.py",
+      "lines": 212,
+      "sha256": "8966c1624a3d7f55a524b2671ac2e01916c3f707416e65a0e54c34fe78323cf7"
+    },
+    {
+      "path": "backend/apps/desktop_sync/desktop_api.py",
+      "lines": 103,
+      "sha256": "c486d9a1fbab58c719735e948506e62e76743c957652744476e766f3ed2f8f80"
+    },
+    {
+      "path": "backend/apps/desktop_sync/device_credentials.py",
+      "lines": 107,
+      "sha256": "7d5f933b5f221097e6d5d3f2499b1b870670c1c9e9cdfbb25bd36b1491a7d8b3"
+    },
+    {
+      "path": "backend/apps/desktop_sync/files.py",
+      "lines": 105,
+      "sha256": "2a1d4906aa22bee641ff6ecaffefc3c14521cad121648ab599cd7fc90ddbe66c"
+    },
+    {
+      "path": "backend/apps/desktop_sync/grants.py",
+      "lines": 100,
+      "sha256": "652b3a49920efd2d4513a63b41dca031684fa690c1114860dd9ffec5b64a5209"
+    },
+    {
+      "path": "backend/apps/desktop_sync/local.py",
+      "lines": 160,
+      "sha256": "2ca7f29d108bd7a1853fb114b87a1ab35632c4ae6de1616c723f28d07d568b7a"
+    },
+    {
+      "path": "backend/apps/desktop_sync/middleware.py",
+      "lines": 273,
+      "sha256": "b01f1a66ed5fe9c5a4489493921fcbfdfa7fa055280bcbe7e7591567cac034cd"
+    },
+    {
+      "path": "backend/apps/desktop_sync/migrations/0001_initial.py",
+      "lines": 78,
+      "sha256": "b4ee9c1fbc40416ef3a690a5499d3a316d7be1516142875c00668b21cba11da0"
+    },
+    {
+      "path": "backend/apps/desktop_sync/migrations/0002_syncactor.py",
+      "lines": 28,
+      "sha256": "72cb7e77c380195a5f5821657120cce5f3779b9f34f549561f656d66b1a1e001"
+    },
+    {
+      "path": "backend/apps/desktop_sync/migrations/0003_tenantsyncrevision.py",
+      "lines": 19,
+      "sha256": "e95c0505053fe0238a3d74a34ef10bb469ad6a9fd661c32a792c2b16f9f4c764"
+    },
+    {
+      "path": "backend/apps/desktop_sync/migrations/0004_localalias_syncobjectmap.py",
+      "lines": 39,
+      "sha256": "fd317d6b402e642fc6574d9c3bb867892f388e86ccac2e6a61bc4766dad42a25"
+    },
+    {
+      "path": "backend/apps/desktop_sync/migrations/0005_temporary_pairing.py",
+      "lines": 34,
+      "sha256": "10feae88cc0fbc1b4b8e5bf8c26f226f8931dcd12adff5098debe5ab14008fc2"
+    },
+    {
+      "path": "backend/apps/desktop_sync/migrations/0006_syncactor_credential_digest.py",
+      "lines": 17,
+      "sha256": "67b5c464f15083b45264ab1251b737de7c50f901c0a8c44bc83e8df029208227"
+    },
+    {
+      "path": "backend/apps/desktop_sync/migrations/__init__.py",
+      "lines": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "backend/apps/desktop_sync/models.py",
+      "lines": 97,
+      "sha256": "5dbbe937dc1620be55ecb49bb9ee3abbbd1aa386a08dd73a85cb586bad3eb44c"
+    },
+    {
+      "path": "backend/apps/desktop_sync/pairing.py",
+      "lines": 188,
+      "sha256": "cf20a50be6e6e94ed6ceadf4393a4b4791447e1910170be63cc5f5c026eebf68"
+    },
+    {
+      "path": "backend/apps/desktop_sync/protocol.py",
+      "lines": 210,
+      "sha256": "826394b812cecbefff07b362412223c33d2ccf593a7c1c68aca4528a86269c70"
+    },
+    {
+      "path": "backend/apps/desktop_sync/revisions.py",
+      "lines": 41,
+      "sha256": "4e59e744af39d746f1e915955666f5fb585ed28f52f3446e2ab9479531d4bb0d"
+    },
+    {
+      "path": "backend/apps/desktop_sync/security.py",
+      "lines": 310,
+      "sha256": "4c7232befb61362ee2379fb7eb849c3cd86cbafb13b24bae1d25bf3be8c26911"
+    },
+    {
+      "path": "backend/apps/desktop_sync/serializers.py",
+      "lines": 48,
+      "sha256": "8a9efad3fc7bccef1d1b7882f4c08fa4f2a29ab72219a242e9bde1c48fa6e251"
+    },
+    {
+      "path": "backend/apps/desktop_sync/server_policy.py",
+      "lines": 23,
+      "sha256": "6e73bf483059d5e4dfacbb171eccaac90c3f40df715ec4415b1f1ff177c4950a"
+    },
+    {
+      "path": "backend/apps/desktop_sync/snapshots.py",
+      "lines": 204,
+      "sha256": "821d644d895896d7cafebafebccb9205912db9543d81f42c56388841c040bf13"
+    },
+    {
+      "path": "backend/apps/desktop_sync/transport.py",
+      "lines": 145,
+      "sha256": "9861da016b928391aa38e6d9fd1dca5531b98c71f3db4fc1ccf15d32e8a47083"
+    },
+    {
+      "path": "backend/apps/desktop_sync/urls.py",
+      "lines": 31,
+      "sha256": "66b49c6f8e20a489bf4c09f7c69f6f9eb172e8d615bb388b8a7d32e57faff282"
+    },
+    {
+      "path": "backend/apps/desktop_sync/views.py",
+      "lines": 267,
+      "sha256": "075b58b84a3845d3d50b5693b5af976ee6a62b9ebbb7d3597369d1d389921a1b"
+    },
+    {
+      "path": "backend/apps/desktop_sync/worker.py",
+      "lines": 213,
+      "sha256": "a3ab8f2e8e58107643bd45c7398cfe19ef1e6d7c1929f0d31fb42670ea643ff1"
+    },
+    {
+      "path": "desktop/ilbi/application.cjs",
+      "lines": 502,
+      "sha256": "b9fab9bdd26a58b5669d0cf7cc001f5e0cb7267ec19ad9219de84927d1e89c40"
+    },
+    {
+      "path": "desktop/ilbi/apply-linux-update.py",
+      "lines": 32,
+      "sha256": "d5cdbca606a6d68ac0f6ff62d3a61953a0e08b9eb3a3cba66dfe11408c5a155f"
+    },
+    {
+      "path": "desktop/ilbi/backups.cjs",
+      "lines": 136,
+      "sha256": "1a65317835c815a380bf06baf70f4bbaa6a945956b1d85ea7a39fdcb20ca287f"
+    },
+    {
+      "path": "desktop/ilbi/build-info.cjs",
+      "lines": 12,
+      "sha256": "2972260a1b0af7388de50c58ea68f92108d068be914a0d35590c389da239883e"
+    },
+    {
+      "path": "desktop/ilbi/build-linux.cjs",
+      "lines": 43,
+      "sha256": "08eaeddc0ef05b79cc8a8de80446656f52be2c4937fd9b61929d2fd3a2e6ea71"
+    },
+    {
+      "path": "desktop/ilbi/build.cjs",
+      "lines": 55,
+      "sha256": "41e32f6d6545010e93520b347c3c6177048f689f4bfaa4691ea5c9eaec6db15c"
+    },
+    {
+      "path": "desktop/ilbi/document-sharing.cjs",
+      "lines": 57,
+      "sha256": "d7d1176b7abeec197440b0bcb9d9fd91ae7d62b5d0a263336479f2dc90ce0e63"
+    },
+    {
+      "path": "desktop/ilbi/draft-backup.cjs",
+      "lines": 16,
+      "sha256": "f31807c1e6250780f6ab94011b39a30a6b5b2fec7c51c3088c823ec5f8d5110e"
+    },
+    {
+      "path": "desktop/ilbi/linux-update-helper.cjs",
+      "lines": 54,
+      "sha256": "8259546e58979c3376e429ae851e57cf2c2528ed8ec22bbc692c7dd9e8c48ee9"
+    },
+    {
+      "path": "desktop/ilbi/login-credentials.cjs",
+      "lines": 53,
+      "sha256": "5869bab89014977f7b9b2c7c3ca3aa2eda00468f097b21150ffa3f8c0a23a29f"
+    },
+    {
+      "path": "desktop/ilbi/main.cjs",
+      "lines": 4,
+      "sha256": "1f6774b9dd9f340f57420edfa13177fdc953e44dcecf1281213bb6207b83f16f"
+    },
+    {
+      "path": "desktop/ilbi/pairing-manager.cjs",
+      "lines": 94,
+      "sha256": "cc81e2c4004903b408dfdf3739b05e2e3efad78f70733f8ac6af57f89e18ba0c"
+    },
+    {
+      "path": "desktop/ilbi/pairing.cjs",
+      "lines": 38,
+      "sha256": "f630b459156fbc4ff67d3c692b805bca4ca29c130d6e7e738aea59338ab1b0b3"
+    },
+    {
+      "path": "desktop/ilbi/preload.cjs",
+      "lines": 44,
+      "sha256": "f3809ca220644ecf896e822a603b7567900541c092b121c10cd4436716930dfa"
+    },
+    {
+      "path": "desktop/ilbi/proxy.cjs",
+      "lines": 29,
+      "sha256": "00cf2443f5b9668974da6a7c660acd39bf89123118a9140b84e4299bd794b909"
+    },
+    {
+      "path": "desktop/ilbi/public-errors.cjs",
+      "lines": 16,
+      "sha256": "4356c272f551db41e5dc7d5570d63dac80da60c391408432ce062359408828a0"
+    },
+    {
+      "path": "desktop/ilbi/runtime.cjs",
+      "lines": 110,
+      "sha256": "fa2fffa0525926e6549a6df9e3f2dfcd5896836c54d7fac56f4d2d6032bd6e97"
+    },
+    {
+      "path": "desktop/ilbi/services.cjs",
+      "lines": 49,
+      "sha256": "f5bb4c7f14eef324c8a283d17968319f92c41afe5b2957d29be3615c179a188d"
+    },
+    {
+      "path": "desktop/ilbi/session-lock.cjs",
+      "lines": 42,
+      "sha256": "fdd3a12ae28ff775136d8d01d9d8cbc1a2c69ce0d8367e6d95a1f7f4ce844587"
+    },
+    {
+      "path": "desktop/ilbi/setup.js",
+      "lines": 49,
+      "sha256": "a620f84f5162967b08f9c84947e77691d2163c518d6e4eaef62a5c4aeed6bc06"
+    },
+    {
+      "path": "desktop/ilbi/update-helper-preload.cjs",
+      "lines": 5,
+      "sha256": "c1277f151ed091aee496a14c3e667e2cc5907509e6c73dd6aa6a223704047603"
+    },
+    {
+      "path": "desktop/ilbi/update-window.js",
+      "lines": 22,
+      "sha256": "450aaaf52b25d8513e7a6cdbacdffbdd81a65247b0f809043197ae3e503e6fad"
+    },
+    {
+      "path": "desktop/ilbi/updater.cjs",
+      "lines": 106,
+      "sha256": "c7aaa5ef6974f5052c471970e363fe4beb211e1349464e7e4eb4f5730c322b83"
+    },
+    {
+      "path": "frontend/ilbi/src/App.jsx",
+      "lines": 207,
+      "sha256": "9bc24f55d01c457f82b856bea696c9afbd8dcf979e16f9dac637079fc6815617"
+    },
+    {
+      "path": "frontend/ilbi/src/api/client.js",
+      "lines": 816,
+      "sha256": "77746a3810a0661ef8b26fbb66dd93fbd5e335e74f877b0a826b612381fe54f7"
+    },
+    {
+      "path": "frontend/ilbi/src/api/platform.js",
+      "lines": 13,
+      "sha256": "7eaba6cc2a88150b5e00560efedffc5dbcc7ca86627360454e036ec257a799c5"
+    },
+    {
+      "path": "frontend/ilbi/src/api/support.js",
+      "lines": 60,
+      "sha256": "f8bc1850d3f35d288d924b4399e03d0c1608018b46b65fd1b5d2e98bb6a9b69d"
+    },
+    {
+      "path": "frontend/ilbi/src/api/workspace.js",
+      "lines": 11,
+      "sha256": "8ff4394aa91c7787fee68c881db002d37c2089becebdde6bcd2e2df8b921e8ad"
+    },
+    {
+      "path": "frontend/ilbi/src/components/auth/SessionRecovery.jsx",
+      "lines": 21,
+      "sha256": "1d924a97e3a219ea8b00db3fbd6ef2e34917b49fac5d147733dfc66617ecc11d"
+    },
+    {
+      "path": "frontend/ilbi/src/components/auth/TelegramConnectionGate.jsx",
+      "lines": 154,
+      "sha256": "c84d5a634e058fa5f1313210e7ef8e33c9690d7e8ee16e44e0ba37b9a773cf60"
+    },
+    {
+      "path": "frontend/ilbi/src/components/common/AppLoadingScreen.jsx",
+      "lines": 65,
+      "sha256": "fed15e7471a2c2acddfda7f9dedb3b23761bdf3bac9c7349bd6eb582d99ab5d0"
+    },
+    {
+      "path": "frontend/ilbi/src/components/common/CameraBarcodeScanner.jsx",
+      "lines": 218,
+      "sha256": "0a2977a583135b8f5f25285a70180b415fe95696a556f6d2c426fb980ae64db8"
+    },
+    {
+      "path": "frontend/ilbi/src/components/common/CatalogImportModal.jsx",
+      "lines": 26,
+      "sha256": "e674ba9c27c346063a12f1a3db77a36c8671550b101df13243e21a26e9774cb9"
+    },
+    {
+      "path": "frontend/ilbi/src/components/common/ConfirmDialog.jsx",
+      "lines": 371,
+      "sha256": "6272ee311d45768b8bf6347fe66aa55cc4ebcd123e678d7e90349de0594251e8"
+    },
+    {
+      "path": "frontend/ilbi/src/components/common/CounterpartyImportModal.jsx",
+      "lines": 29,
+      "sha256": "9da5f12c43b04b78baa46a28a9a4592840d80b4a5b12228deaac981e2b1477d3"
+    },
+    {
+      "path": "frontend/ilbi/src/components/common/CustomDatePicker.jsx",
+      "lines": 718,
+      "sha256": "492704e6b0d05854409a14efd3082471dfc58ff5886faaca11a2c1d3c4efd846"
+    },
+    {
+      "path": "frontend/ilbi/src/components/common/CustomSelect.jsx",
+      "lines": 645,
+      "sha256": "84d3caf99f08c24a2c7c152540de1855f60e0906cc817fa1723e6b6eca649b13"
+    },
+    {
+      "path": "frontend/ilbi/src/components/common/DebtDueDateField.jsx",
+      "lines": 17,
+      "sha256": "ab0000c1b00f8f3b0bf50ea863f97d0964c359733268b29427c16870b22dfe5e"
+    },
+    {
+      "path": "frontend/ilbi/src/components/common/ErrorBoundary.jsx",
+      "lines": 55,
+      "sha256": "315898e76feeba0cfe8ddb103ade78140adaed4903c4c6c0db5a89ebdceed598"
+    },
+    {
+      "path": "frontend/ilbi/src/components/common/ExcelExportButton.jsx",
+      "lines": 36,
+      "sha256": "df6c5ed7c2361cc13b027c3745b78730aac547d6db7c4062c24cb02daf4c4095"
+    },
+    {
+      "path": "frontend/ilbi/src/components/common/FiscalMetadataFields.jsx",
+      "lines": 42,
+      "sha256": "9556ed8855d806ad38883a6e306cefc544e03124a309e6c21f9a9aa8ad8be230"
+    },
+    {
+      "path": "frontend/ilbi/src/components/common/IdentityRecoveryModal.jsx",
+      "lines": 52,
+      "sha256": "a16b627ff59513df615c00d4d47ce52c2ccddcd260c5bc6b88e8561c71045236"
+    },
+    {
+      "path": "frontend/ilbi/src/components/common/IlbiIntroAnimation.jsx",
+      "lines": 88,
+      "sha256": "d005c3dadc82b736ef5f46394dd384584b4b7b0c5b1dffff7d6d476fdb110ad3"
+    },
+    {
+      "path": "frontend/ilbi/src/components/common/IlbiLoader.jsx",
+      "lines": 18,
+      "sha256": "dbc2714ef928026ea84196366b3c7be49b9e614aead97045a53c544ce40b45e5"
+    },
+    {
+      "path": "frontend/ilbi/src/components/common/IlbiLogo.jsx",
+      "lines": 61,
+      "sha256": "27063fc023ac6b742972e89fbe4d3abb532bd3d431f3ed973d1139d6d631435d"
+    },
+    {
+      "path": "frontend/ilbi/src/components/common/InvoiceA4Modal.jsx",
+      "lines": 1027,
+      "sha256": "561dfb0105be74dbcfdd27eb1fc1ed3bc11fedf77d470238c200aeb12fd76571"
+    },
+    {
+      "path": "frontend/ilbi/src/components/common/Modal.jsx",
+      "lines": 153,
+      "sha256": "d2c494f7a842ffaa900758f0ed026788776412281a20a4a7008c758982bcd93c"
+    },
+    {
+      "path": "frontend/ilbi/src/components/common/Pagination.jsx",
+      "lines": 185,
+      "sha256": "851df4e0aba14a44883b00874f998b8d9e295d1c1e323eda845874d98efb85ee"
+    },
+    {
+      "path": "frontend/ilbi/src/components/common/PhoneInput.jsx",
+      "lines": 194,
+      "sha256": "431488979907896282357119f4735b3cf1783ae9bf2ec92a8ae0933d2c0b4131"
+    },
+    {
+      "path": "frontend/ilbi/src/components/common/PriceInput.jsx",
+      "lines": 202,
+      "sha256": "6327bb233339132579d2c22f6f6ea3dbf0fa3bd54846ce2c5e70a627c161df0e"
+    },
+    {
+      "path": "frontend/ilbi/src/components/common/ProductLabelsModal.jsx",
+      "lines": 292,
+      "sha256": "ac898b4063eadbed07f0bf29960d917a45bdf88742db939ce043453b3a02ad76"
+    },
+    {
+      "path": "frontend/ilbi/src/components/common/ProductToolsModal.jsx",
+      "lines": 295,
+      "sha256": "85d709a0c48b27e56c0485df52efb11c48e27f3d0d3615c4162af8d1e5647931"
+    },
+    {
+      "path": "frontend/ilbi/src/components/common/ReceiptItemCodes.jsx",
+      "lines": 9,
+      "sha256": "a1ef69b54f8f7190b9524f5f9d3ef3fdc6782369827aa5cbe244be241be11755"
+    },
+    {
+      "path": "frontend/ilbi/src/components/common/ReceiptSettingsPanel.jsx",
+      "lines": 421,
+      "sha256": "612c86611de5df6dde1d3f1105afb6208dc3ab832561b9d9d67dc134c71a9f39"
+    },
+    {
+      "path": "frontend/ilbi/src/components/common/ReceiptSlip.jsx",
+      "lines": 696,
+      "sha256": "c80f18983ea4098e94d6935083fe040d90843263c0cb616a9c7f35aa7c243b01"
+    },
+    {
+      "path": "frontend/ilbi/src/components/common/ReceiptTaxSummary.jsx",
+      "lines": 22,
+      "sha256": "bfed4d5b8a985569733a8f7a8635a5f957739cdb669600d328a4904c81b809dd"
+    },
+    {
+      "path": "frontend/ilbi/src/components/common/RecoveryNotice.jsx",
+      "lines": 18,
+      "sha256": "8319514a2cce317da1885f54e94727dfdaea8d9b556868f762dcd75b10731c97"
+    },
+    {
+      "path": "frontend/ilbi/src/components/common/RemoteTenantSelect.jsx",
+      "lines": 42,
+      "sha256": "49519370eb50d82921c4431e9b6336784f68c0a81d903fee84711899b6c82e40"
+    },
+    {
+      "path": "frontend/ilbi/src/components/common/RemoteVariantSelect.jsx",
+      "lines": 50,
+      "sha256": "2fab7f36f37fa51ca8d82de0b88bc9e236b1348509e5e5080d9b8ccc4f63d713"
+    },
+    {
+      "path": "frontend/ilbi/src/components/common/ShareDocumentButton.jsx",
+      "lines": 92,
+      "sha256": "7a5d80c72217d7786002bf3780231b5a79744cba6e0854016a50d04958024100"
+    },
+    {
+      "path": "frontend/ilbi/src/components/common/ShiftReportSlip.jsx",
+      "lines": 356,
+      "sha256": "a29ce432aec14dd6b1b93b076f3805e24b2348a369aed1240849e4e320eeb233"
+    },
+    {
+      "path": "frontend/ilbi/src/components/common/SpreadsheetImportModal.jsx",
+      "lines": 486,
+      "sha256": "d6b33ad2f4bcabb23c1ccc05e4aae7918731e3d4ee3b6d9df03569aa541d70cc"
+    },
+    {
+      "path": "frontend/ilbi/src/components/common/ZReportModernView.jsx",
+      "lines": 626,
+      "sha256": "75ed2d904874256fc708a646e66f8d2da1a7ef6e9e18b45c0b41c9c844ecd9e3"
+    },
+    {
+      "path": "frontend/ilbi/src/components/common/ilbi/dotBounce.js",
+      "lines": 47,
+      "sha256": "949ab6f80b505005331cef1614faa29ad501f08deadf4bed8b01fc1cd1ab2cb5"
+    },
+    {
+      "path": "frontend/ilbi/src/components/common/ilbi/dotMotion.js",
+      "lines": 45,
+      "sha256": "66e769eb5b2680a0b25fba002b1ade1423ffbf75b9a297226e6e1374f946d4e6"
+    },
+    {
+      "path": "frontend/ilbi/src/components/common/ilbi/loader.js",
+      "lines": 24,
+      "sha256": "7d863c4b36f217f735b931b641e9e4d13ea371c67c72c1aac19be2baf477feb3"
+    },
+    {
+      "path": "frontend/ilbi/src/components/common/ilbi/logo.js",
+      "lines": 91,
+      "sha256": "50dbfb0cd1694eab66dea75563b6cab170aac3ddc9c75375583a243728394ec2"
+    },
+    {
+      "path": "frontend/ilbi/src/components/common/ilbi/math.js",
+      "lines": 29,
+      "sha256": "d02cdbebb88f722b3782869c5459f363e11a17234a3c89ca85934c3176281199"
+    },
+    {
+      "path": "frontend/ilbi/src/components/dashboard/MiniVisualizers.jsx",
+      "lines": 508,
+      "sha256": "77ae01d1695e7388a8523f57e06ebc0a497472c0c7446937091c87c5994e7337"
+    },
+    {
+      "path": "frontend/ilbi/src/components/dashboard/RevenueCostAnalyticsChart.jsx",
+      "lines": 1334,
+      "sha256": "8e832d84401c71846704a57b927bc2a4a7029ea2cefbf7dd6b45e0da23572457"
+    },
+    {
+      "path": "frontend/ilbi/src/components/docs/DocImage.jsx",
+      "lines": 100,
+      "sha256": "7a0f5dbbe14085b1eed2c6735757a1f89aec02a94f4f1103165c06b8423d2b49"
+    },
+    {
+      "path": "frontend/ilbi/src/components/docs/MarkdownViewer.jsx",
+      "lines": 500,
+      "sha256": "e5b12f209145c7534ad6ae0c2cd7450664daf31ec1945d44dc91509dc074ae36"
+    },
+    {
+      "path": "frontend/ilbi/src/components/employees/EmployeePermissionsSelector.jsx",
+      "lines": 994,
+      "sha256": "09b8c5b55ee3b40ae51725397f290841a203799739896a3975c42fa7b1d2b3d6"
+    },
+    {
+      "path": "frontend/ilbi/src/components/employees/rolePresets.js",
+      "lines": 207,
+      "sha256": "f0d9f0c3ded7324205884df66fe37f53cdd785d248e678b3d1f56fc5d76968fa"
+    },
+    {
+      "path": "frontend/ilbi/src/components/inventory/BatchSelector.jsx",
+      "lines": 47,
+      "sha256": "5f9b66addf61f76f35aac5c7057ea61c35f9d56b52ed1b1a61b8e66ae7a6e74c"
+    },
+    {
+      "path": "frontend/ilbi/src/components/inventory/RapidStockIntakeModal.jsx",
+      "lines": 1535,
+      "sha256": "70ce1fa2d7dfbabf90ffbdc6030e84b954b53e80727b4c07e70a9567a9af5f01"
+    },
+    {
+      "path": "frontend/ilbi/src/components/inventory/StockBatchesPanel.jsx",
+      "lines": 99,
+      "sha256": "585dc68d57249c36475002b02d2c2c124514033b9eb48470fec626b19d3f1a7e"
+    },
+    {
+      "path": "frontend/ilbi/src/components/inventory/TenantTransfersPanel.jsx",
+      "lines": 463,
+      "sha256": "8996d0a7e10d76520b3dafaa89455ad9b102b47b92b2e34ba335136b314ad777"
+    },
+    {
+      "path": "frontend/ilbi/src/components/landing/ProductCarousel.jsx",
+      "lines": 632,
+      "sha256": "d34017fc9ce66f8122f9c0f9549b9a0a6ce041c12de3bbcf8b9f7b7ec99b114b"
+    },
+    {
+      "path": "frontend/ilbi/src/components/landing/carouselScenes.js",
+      "lines": 88,
+      "sha256": "773b5c86b5299874c34862f8a1aaf67944ce8717f502a85863e10ab69845fb89"
+    },
+    {
+      "path": "frontend/ilbi/src/components/layout/Header.jsx",
+      "lines": 385,
+      "sha256": "04a51756b897ec14b75c32dc879fd39583135e5a31d454a4a5948ea6d3eb712b"
+    },
+    {
+      "path": "frontend/ilbi/src/components/layout/Layout.jsx",
+      "lines": 689,
+      "sha256": "406b133fcf3a440216487444d161108a0688d65249f0d5e0e1d1a9aaf3b3fce1"
+    },
+    {
+      "path": "frontend/ilbi/src/components/layout/Sidebar.jsx",
+      "lines": 390,
+      "sha256": "39afe8c8a3bf266a23204c3ad433ecf50610eef01a2b2cacf0caecc4a5f76833"
+    },
+    {
+      "path": "frontend/ilbi/src/components/layout/TenantSwitcher.jsx",
+      "lines": 55,
+      "sha256": "fbf8266550dd8fb2e7f4c4ed68ea974c76601dfd7d4d84b55ec02e617b9877e3"
+    },
+    {
+      "path": "frontend/ilbi/src/components/layout/WorkspaceNavbar.jsx",
+      "lines": 469,
+      "sha256": "53b594636e7023200077697bdc82e1dfb0b8fe73d2bcba636c97c857a3b4cc36"
+    },
+    {
+      "path": "frontend/ilbi/src/components/layout/WorkspaceSwitch.jsx",
+      "lines": 15,
+      "sha256": "41e34a709b9f552d957d7fcbf9ea273a6ebc754f608fac0003e7d2d1ac1476bf"
+    },
+    {
+      "path": "frontend/ilbi/src/components/layout/navigation.js",
+      "lines": 137,
+      "sha256": "bda7a9d4eb7dd5f2d43d349a0366c21af291ddc91d7bd8539b35910dab3c033e"
+    },
+    {
+      "path": "frontend/ilbi/src/components/notifications/FloatingNotificationToast.jsx",
+      "lines": 311,
+      "sha256": "52628389f531c2f1aac653b78aeaee130902d2fe61fa78f1b4150d7f9d5e14a9"
+    },
+    {
+      "path": "frontend/ilbi/src/components/notifications/NotificationCard.jsx",
+      "lines": 541,
+      "sha256": "57277e13fddc274074a84f6b789a7b64116c259f82c9dfbb2c7b26994cf3f6a5"
+    },
+    {
+      "path": "frontend/ilbi/src/components/notifications/NotificationParser.js",
+      "lines": 223,
+      "sha256": "f1fce04155d4fc9d9e02651a9f549b801b8ea0c75146d0a13a4d0812a6b35c89"
+    },
+    {
+      "path": "frontend/ilbi/src/components/platform/PlatformSettings.jsx",
+      "lines": 61,
+      "sha256": "ef6e53a216d421df7b2adb69898bff9375443fb95c761a914202840f378ee7c8"
+    },
+    {
+      "path": "frontend/ilbi/src/components/support/CustomerProfileModal.jsx",
+      "lines": 487,
+      "sha256": "7afd28b79f3d6591b7f03abce3ab709f78ed21b5412f4bb9b726e15d2bb028c3"
+    },
+    {
+      "path": "frontend/ilbi/src/components/support/HelpLauncher.jsx",
+      "lines": 793,
+      "sha256": "37ca5fc1995fb2d222581871ec02a82252aa2ff9f9efe1245360bcca8e271671"
+    },
+    {
+      "path": "frontend/ilbi/src/components/support/StickerPicker.jsx",
+      "lines": 107,
+      "sha256": "9ef01f1012aed57cc6630cc009577c7c7abe4b9dd7696367ae0a38b4fb557da3"
+    },
+    {
+      "path": "frontend/ilbi/src/components/support/VoicePlayer.jsx",
+      "lines": 226,
+      "sha256": "9bf56e95cc2f03b248e3f889ad44db228351131cf525cda438bd27fadfddee4e"
+    },
+    {
+      "path": "frontend/ilbi/src/components/support/VoiceRecorder.jsx",
+      "lines": 241,
+      "sha256": "425d7ba87f12e57bdcc64ab8e0965744cd90850773ba00b88885076f4a17cd09"
+    },
+    {
+      "path": "frontend/ilbi/src/components/support/polling.js",
+      "lines": 64,
+      "sha256": "a0bbd09736dececd9c52fafd7124af30f125766a2a5a180cfb666a95a9c31a28"
+    },
+    {
+      "path": "frontend/ilbi/src/components/support/translations.js",
+      "lines": 63,
+      "sha256": "0d2dc98f3ccebe5d60708bd2690a5a9e04046f54f194d92d59adcca06433715d"
+    },
+    {
+      "path": "frontend/ilbi/src/components/sync/DesktopAccess.jsx",
+      "lines": 18,
+      "sha256": "95c591c071cc42990a6126cf4db34e441f524cd1f11d77d7cd7781815c44402f"
+    },
+    {
+      "path": "frontend/ilbi/src/components/sync/DesktopSecurityPanel.jsx",
+      "lines": 68,
+      "sha256": "4d427adfe6e46f7cd3298587f9766802c07dc8b39e7090b7f170c460f1e4cbcc"
+    },
+    {
+      "path": "frontend/ilbi/src/components/sync/DesktopSessionGuard.jsx",
+      "lines": 47,
+      "sha256": "ea64db94d35f7f300398df9da3fb6fbc5ccc2e62a56bd0069195fae7d4d80824"
+    },
+    {
+      "path": "frontend/ilbi/src/components/sync/DesktopUpdateNotice.jsx",
+      "lines": 58,
+      "sha256": "a127ece186c5438df422e816deff4c5d7cccc9a96db0b6acad8dd83c97c8bc3f"
+    },
+    {
+      "path": "frontend/ilbi/src/components/sync/SyncCenter.jsx",
+      "lines": 182,
+      "sha256": "7ec1a7c032861e64953fab6704889e776c1975e2e1bca4cc120dc96363ddeed5"
+    },
+    {
+      "path": "frontend/ilbi/src/components/sync/desktopApi.js",
+      "lines": 18,
+      "sha256": "8499317c4b29ceea043597b09142d5913adf6c1dc6f6afc75e9248493bc9117d"
+    },
+    {
+      "path": "frontend/ilbi/src/components/workspace/CompactSalesChart.jsx",
+      "lines": 41,
+      "sha256": "8b5d277d1ba475f09192b37e7b5a364077b69aba6ead32776f03a8c29c3448fb"
+    },
+    {
+      "path": "frontend/ilbi/src/components/workspace/Reminders.jsx",
+      "lines": 199,
+      "sha256": "ca1b51cbe9abce1dad2b32e4cb9cc59280b1b0215ff098e3bc08a3766cc47570"
+    },
+    {
+      "path": "frontend/ilbi/src/components/workspace/WorkDesktop.jsx",
+      "lines": 634,
+      "sha256": "8cd3a2dfa8192dd873a3885b2cd3228029133b50e1a8666c6fac6deed0b08584"
+    },
+    {
+      "path": "frontend/ilbi/src/components/workspace/WorkspaceSearch.jsx",
+      "lines": 155,
+      "sha256": "c029a8cc067bd25e1fb47ee14004231029f1839914f1d785720b0789cbd00674"
+    },
+    {
+      "path": "frontend/ilbi/src/components/workspace/WorkspaceTools.jsx",
+      "lines": 93,
+      "sha256": "6a5bca8461db30bbee88e19e8b49caa6f14f7a133379933ca770a47c18e7bba8"
+    },
+    {
+      "path": "frontend/ilbi/src/context/AuthProvider.jsx",
+      "lines": 201,
+      "sha256": "e8e1667452906fbc44fe7f5711bb51208c4aa0ff74f8e1a1658bd52d133ddb6a"
+    },
+    {
+      "path": "frontend/ilbi/src/context/ConfirmContext.jsx",
+      "lines": 111,
+      "sha256": "6f0530d8aaefe6f184ddc276d2a6144c5fecc1392f9458bbcb99c3c63dbb1763"
+    },
+    {
+      "path": "frontend/ilbi/src/context/TenantContext.jsx",
+      "lines": 69,
+      "sha256": "9be1f0a5f300325a1c205e15fd0cbb9ef49a9a886595ec27c7d4c7b4b0db0a1d"
+    },
+    {
+      "path": "frontend/ilbi/src/context/ThemeContext.jsx",
+      "lines": 35,
+      "sha256": "8edceb2097a87507d933504139aea4a33abc3fa0566900d56940b8788f651b5e"
+    },
+    {
+      "path": "frontend/ilbi/src/context/ToastContext.jsx",
+      "lines": 111,
+      "sha256": "4213108eccdc306ac030c8a63b53933e0fd94fd306471876bb96e5cd4bbed4b9"
+    },
+    {
+      "path": "frontend/ilbi/src/context/WorkspaceContext.jsx",
+      "lines": 66,
+      "sha256": "ddba34d6019ddc8c7f12bb918213415bce07e28abdac520dd8e85eaecdb1fbbd"
+    },
+    {
+      "path": "frontend/ilbi/src/context/authContext.js",
+      "lines": 11,
+      "sha256": "ec7fd8b49378697ee754edf281041c0f76fdf6920ce9ed205a3188fb9a6451df"
+    },
+    {
+      "path": "frontend/ilbi/src/hooks/useAccountDraft.js",
+      "lines": 40,
+      "sha256": "d7f7d0a193dd8116f44cfe634848f34872d25320974d137953e9f1910d5d3bbe"
+    },
+    {
+      "path": "frontend/ilbi/src/hooks/useAccountDraftFile.js",
+      "lines": 30,
+      "sha256": "218eff2d4e7999bf2f89019db0ef413fec1663d509ff8ef3bba051e2f9df37e0"
+    },
+    {
+      "path": "frontend/ilbi/src/hooks/useAuth.js",
+      "lines": 10,
+      "sha256": "898e6e4d5bbeaa1ed0fc24973635c6daba233c153e43fb1bd3e38aea664da403"
+    },
+    {
+      "path": "frontend/ilbi/src/hooks/useCarouselPlayback.js",
+      "lines": 84,
+      "sha256": "c464f5db62a7a81d5e3064b9a6fea59bb9fe67e7602bf27945be0dff9464d374"
+    },
+    {
+      "path": "frontend/ilbi/src/hooks/useLandingMotion.js",
+      "lines": 161,
+      "sha256": "8ae7bce35a62445178dd32d98a4cf9be34bbd1ddcee75a4205130b01d5d27d8c"
+    },
+    {
+      "path": "frontend/ilbi/src/hooks/usePaginatedList.js",
+      "lines": 52,
+      "sha256": "d7db67de2b5231bd2ad07d1183c967a1581ce996ac6e47e15e580d954e030978"
+    },
+    {
+      "path": "frontend/ilbi/src/hooks/usePersistedState.js",
+      "lines": 76,
+      "sha256": "a6173c19af696a7480c3af6790a9e0f9bc4f7c7c01420ca711e1f945e238ce16"
+    },
+    {
+      "path": "frontend/ilbi/src/hooks/useSelectPopover.js",
+      "lines": 93,
+      "sha256": "f816564e160717f1f51a5bee0af1398c4f4eb022ba71c705d04454c146e8075b"
+    },
+    {
+      "path": "frontend/ilbi/src/hooks/useTenantCurrency.js",
+      "lines": 25,
+      "sha256": "6f9bdf79d9fd636ac5a740f1fde1914eabae2837a0aecad5ab6e1eff87794098"
+    },
+    {
+      "path": "frontend/ilbi/src/hooks/useWorkspaceAction.js",
+      "lines": 24,
+      "sha256": "cbd9fc827d103f364e608033a1ed3c5c2ede7f5e473f78ff90b241a9fce99774"
+    },
+    {
+      "path": "frontend/ilbi/src/main.jsx",
+      "lines": 19,
+      "sha256": "b55e9c6867089d894fdfc8938341d6122adc3fab957c3cd857ccf8abab574d70"
+    },
+    {
+      "path": "frontend/ilbi/src/pages/AcceptTerms.jsx",
+      "lines": 545,
+      "sha256": "ba92ba7a2a4cb1e00accc6370af637508de3ff13a0074f94ad3be7f1d66e0039"
+    },
+    {
+      "path": "frontend/ilbi/src/pages/Audit.jsx",
+      "lines": 304,
+      "sha256": "de70a7be76863d90d5f9d529b40d4d8839837a252e4b5e77c9c0b7e8e7ca22a0"
+    },
+    {
+      "path": "frontend/ilbi/src/pages/B2BTransactions.jsx",
+      "lines": 1171,
+      "sha256": "471d5155881fd86401ba6af1c9f031c065842191d7a3d4a679bec4965d166599"
+    },
+    {
+      "path": "frontend/ilbi/src/pages/Catalog.jsx",
+      "lines": 2857,
+      "sha256": "727ab6ae17b853c30b7e2736461ad30c646deb901cb022e542f598493b31c998"
+    },
+    {
+      "path": "frontend/ilbi/src/pages/Dashboard.jsx",
+      "lines": 1598,
+      "sha256": "148fd719687603ea8a7e72d82a0deb82c36f2f08bc713aeabca68db48cdf408a"
+    },
+    {
+      "path": "frontend/ilbi/src/pages/Debts.jsx",
+      "lines": 1688,
+      "sha256": "caa807827648e6d84ffa8e3a0935ee34b3805b7678aeb2834c6bde1267eb93a6"
+    },
+    {
+      "path": "frontend/ilbi/src/pages/DesktopGuide.jsx",
+      "lines": 39,
+      "sha256": "19c10dfa655399d7d142ce134bead525ab5106b83905cecde17bf966d7ad21d6"
+    },
+    {
+      "path": "frontend/ilbi/src/pages/Documentation.jsx",
+      "lines": 626,
+      "sha256": "3a06c46bb2f2bd1fa85c176669ed93ccfa64d733aa5f3af01d4670bdc3b937cc"
+    },
+    {
+      "path": "frontend/ilbi/src/pages/Downloads.jsx",
+      "lines": 491,
+      "sha256": "ffb214d3fd8aa5821b9f5bb26467fcbb2877910a95988175daac829dec94c156"
+    },
+    {
+      "path": "frontend/ilbi/src/pages/Employees.jsx",
+      "lines": 525,
+      "sha256": "a5e3652a0f924574f0b2bec00b6c7a776e77900a4e06c0b0e83e06bf273eaa10"
+    },
+    {
+      "path": "frontend/ilbi/src/pages/History.jsx",
+      "lines": 195,
+      "sha256": "86fcf44d9a0358986f691b95a368e0aca8bf8d85bd58a3124d0855c4390ce803"
+    },
+    {
+      "path": "frontend/ilbi/src/pages/Inventory.jsx",
+      "lines": 1739,
+      "sha256": "fe5f21b1cccf35202f5b712fed9a1969a689f0aefb4f3e4ecdc888b47584e11e"
+    },
+    {
+      "path": "frontend/ilbi/src/pages/Landing.jsx",
+      "lines": 1192,
+      "sha256": "35e9a26e9edf8767125b62c0aae413da05b86710ee423cb74df77f8c39bd034d"
+    },
+    {
+      "path": "frontend/ilbi/src/pages/Login.jsx",
+      "lines": 1206,
+      "sha256": "c8a60f4c006277ea42dd930d6c6b2cabef54109b3799d4cbc2138c6ae9904660"
+    },
+    {
+      "path": "frontend/ilbi/src/pages/MyTenants.jsx",
+      "lines": 965,
+      "sha256": "4ccbeb4c50441379ce757d6d7ebb0ab59d01a374c000db38363fb1f85da1935f"
+    },
+    {
+      "path": "frontend/ilbi/src/pages/POS.jsx",
+      "lines": 2367,
+      "sha256": "2cf74b3310bdd3e21fca2e22ce74021622650ad91982d891f5e275bab24f3f56"
+    },
+    {
+      "path": "frontend/ilbi/src/pages/PlatformAccounts.jsx",
+      "lines": 69,
+      "sha256": "4c23e00cf213fccb132ffd1fa513ea4921a8b0559c64afc6968ae596f448fdbe"
+    },
+    {
+      "path": "frontend/ilbi/src/pages/PlatformDashboard.jsx",
+      "lines": 29,
+      "sha256": "4e6301c5be2f17af2bf9869773ba423d051044c4610fc3290850a7e993d9f706"
+    },
+    {
+      "path": "frontend/ilbi/src/pages/Profile.jsx",
+      "lines": 979,
+      "sha256": "c13874b61b304960a5906137c3f2f32035d872b2885c8edb5ac4028b48b1a3d9"
+    },
+    {
+      "path": "frontend/ilbi/src/pages/PublicReceiptView.jsx",
+      "lines": 360,
+      "sha256": "7acd6397d699155af98e729eee693e9c295f93206f496c8d1e2e677578c7492c"
+    },
+    {
+      "path": "frontend/ilbi/src/pages/Sales.jsx",
+      "lines": 1323,
+      "sha256": "c854ad6aa01dc5e7f896b57ce80c5570516335f8f144de1d19befa134726c3f0"
+    },
+    {
+      "path": "frontend/ilbi/src/pages/SellerProfileReviews.jsx",
+      "lines": 272,
+      "sha256": "f87c590bc51ae41a01b161a45e90931b2121811dcdb6edf8d5c8e39239389b52"
+    },
+    {
+      "path": "frontend/ilbi/src/pages/Services.jsx",
+      "lines": 1385,
+      "sha256": "27528629232bff1930fe85f0c798133bd9d1bc429dd041604fe046955855561d"
+    },
+    {
+      "path": "frontend/ilbi/src/pages/SetupAccount.jsx",
+      "lines": 815,
+      "sha256": "b12f7da6467b7105c48762a2bdd5a665731e2636160eec07ccfd4a8ebbe3e272"
+    },
+    {
+      "path": "frontend/ilbi/src/pages/Shifts.jsx",
+      "lines": 1370,
+      "sha256": "dc1481bf353cda515a706760488b330b977aa54f163731230f450bd5ddfd0315"
+    },
+    {
+      "path": "frontend/ilbi/src/pages/Support.jsx",
+      "lines": 896,
+      "sha256": "98d6e529f4d81c56d7c11f5cf815d91bc38d4538ff98e605fe7101fc3be46671"
+    },
+    {
+      "path": "frontend/ilbi/src/pages/Tenants.jsx",
+      "lines": 797,
+      "sha256": "f9a2fe8153b54c88288344a84153d8888cc67a13b6392f08d4ce47964fc69d7a"
+    },
+    {
+      "path": "frontend/ilbi/src/utils/accountDrafts.js",
+      "lines": 47,
+      "sha256": "fa478a00387fb7d036a6c9befd8ff07b9648b553f27e9be7611f7a11b69e9ffc"
+    },
+    {
+      "path": "frontend/ilbi/src/utils/barcodeReader.js",
+      "lines": 86,
+      "sha256": "5bc4995a9d6cde6f64b019491d564700b700780334aa114afa0b6b53409268af"
+    },
+    {
+      "path": "frontend/ilbi/src/utils/brandStorage.js",
+      "lines": 168,
+      "sha256": "b0f2c5f9eadb17a03383c149c63d35a8ca51cf1a1f2faf7c885bf583abf02da1"
+    },
+    {
+      "path": "frontend/ilbi/src/utils/cameraScanner.js",
+      "lines": 101,
+      "sha256": "2fe464d5091931b5bf2bc2f68a65e6ba06224cfcd3d826e0087439c8a80543bc"
+    },
+    {
+      "path": "frontend/ilbi/src/utils/desktopSession.js",
+      "lines": 30,
+      "sha256": "0b32ecde270d8f5de2f56dc18884ea7e031e82e27ad9927ac28da5a414219902"
+    },
+    {
+      "path": "frontend/ilbi/src/utils/documentPDF.js",
+      "lines": 63,
+      "sha256": "b603d7192734e5ba2154dffd0f277185b861dbc7b755994ac4b027683666eb84"
+    },
+    {
+      "path": "frontend/ilbi/src/utils/documentShare.js",
+      "lines": 76,
+      "sha256": "3fb9fa04791c6848d6d1a6ff995a9f767d83df9b6cc7ecddc08040e9d84a9069"
+    },
+    {
+      "path": "frontend/ilbi/src/utils/downloadFile.js",
+      "lines": 10,
+      "sha256": "ae4d35f5e8767787f98212ce679062754a01da74dc7c30d9484c894b2da8fa28"
+    },
+    {
+      "path": "frontend/ilbi/src/utils/downloads.js",
+      "lines": 27,
+      "sha256": "4c69823699c5ded07aace84fdcb65a73ed305fe7eb015f99ebb517b48fb8ed10"
+    },
+    {
+      "path": "frontend/ilbi/src/utils/draftFiles.js",
+      "lines": 25,
+      "sha256": "5886d6e35c080d1a2abae9c290534d69343b337ebb79f1ee3ab0b52b3e88ec6e"
+    },
+    {
+      "path": "frontend/ilbi/src/utils/formValidation.js",
+      "lines": 249,
+      "sha256": "1746bab482f63eb49960708d473ba3953b94aa3450c9ebed047c9307d55cd56e"
+    },
+    {
+      "path": "frontend/ilbi/src/utils/numberFormat.js",
+      "lines": 50,
+      "sha256": "d5bca9b8a9d91be55f6b975319a0002040c05cf578ecd53923000e813863f4fc"
+    },
+    {
+      "path": "frontend/ilbi/src/utils/numberToWordsUzbek.js",
+      "lines": 92,
+      "sha256": "ecc901464865d94f233efe42aa6c329d5b46ce08870b94ef2b7f850ba47d8819"
+    },
+    {
+      "path": "frontend/ilbi/src/utils/ownerInvitation.js",
+      "lines": 17,
+      "sha256": "5b10982187c72ab1ca7175f5c690b6d6f41e818ef14c9f5c8fd0d5f6b9a3efd7"
+    },
+    {
+      "path": "frontend/ilbi/src/utils/phoneFormat.js",
+      "lines": 53,
+      "sha256": "ba2f9b29f66ccf690bc943ab5a606af9c54412cf6d33fbe9f94e3e32fe3f12a5"
+    },
+    {
+      "path": "frontend/ilbi/src/utils/productLabels.js",
+      "lines": 152,
+      "sha256": "3abcc1d0c66db3bc7cbc3064a40c4dbbf568e20194c0fc9650f357709bc5f964"
+    },
+    {
+      "path": "frontend/ilbi/src/utils/receiptTax.js",
+      "lines": 28,
+      "sha256": "794d2cd09eba1cc766c2f877e2822b93b3a1f96a6aafed830527bda5c30e418f"
+    },
+    {
+      "path": "frontend/ilbi/src/utils/rememberedLogin.js",
+      "lines": 81,
+      "sha256": "410d20ab5244739f73dd9800b29f453fc976752f4a9344c6d50113709c243554"
+    },
+    {
+      "path": "frontend/ilbi/src/utils/requestKey.js",
+      "lines": 11,
+      "sha256": "67637088e44c4419c603484372da56db7e07ff02ddf81b1142543d66505f4d35"
+    },
+    {
+      "path": "frontend/ilbi/src/utils/safePresentation.js",
+      "lines": 82,
+      "sha256": "b682dabdfc340d14d8eb8aaa468c74d89f593e835345c00c5ec412177b6ed490"
+    },
+    {
+      "path": "frontend/ilbi/src/utils/updateReminder.js",
+      "lines": 18,
+      "sha256": "53c4438405674b662312ed3c33b4d681d5b8f27a9c56046fa4ff3c2691c17ebf"
+    },
+    {
+      "path": "frontend/ilbi/src/utils/visiblePolling.js",
+      "lines": 33,
+      "sha256": "f27f10449fe021b95a0d17b4662bbe190748c2bf6b5788c43b67d546b797be6e"
+    },
+    {
+      "path": "frontend/ilbi/src/utils/workspace.js",
+      "lines": 35,
+      "sha256": "f6ece36fe7b8a8dd4a6dd61644d094fcd9c4c72f8bc538806964756e3b49a365"
+    },
+    {
+      "path": "mobile-app/src/api/client.ts",
+      "lines": 183,
+      "sha256": "fb99a9ed03ac89730fbc93e1dd58d4b0fbf937e75c42bc857719881df2497c76"
+    },
+    {
+      "path": "mobile-app/src/api/environment.ts",
+      "lines": 22,
+      "sha256": "f66146750090e811a1ebe94100c5ffbfdf8b435e5871b75512f57bdfa89a8a40"
+    },
+    {
+      "path": "mobile-app/src/api/errors.ts",
+      "lines": 16,
+      "sha256": "11e8aa73ba9e303183b191c2d467103b4d9a354b718906da0f65ce35f8f3d27e"
+    },
+    {
+      "path": "mobile-app/src/api/financialIdentity.ts",
+      "lines": 97,
+      "sha256": "860f977f35fec1e3c6eef1b57f367f1967af03b2770fbb829e7d1c6cc199f069"
+    },
+    {
+      "path": "mobile-app/src/api/imageUpload.ts",
+      "lines": 24,
+      "sha256": "cd787c5d1c872b9e8f0b6df46f5e2e4e63421b35b92242d418b1bbe2fc1fb3b7"
+    },
+    {
+      "path": "mobile-app/src/api/invalidation.ts",
+      "lines": 18,
+      "sha256": "1e62f76b8105a239ac2de3589c43e0857898f7e5ea173840245813890686da37"
+    },
+    {
+      "path": "mobile-app/src/api/storage.ts",
+      "lines": 16,
+      "sha256": "cc982b857deda0d41609c5a08a140ce26829e9e4c04766501917ddc849ebdf39"
+    },
+    {
+      "path": "mobile-app/src/api/validation.ts",
+      "lines": 41,
+      "sha256": "d0396bc40e25efc9c60baaddea2fece11ca1496f35b9966fbac76ad601f2ade0"
+    },
+    {
+      "path": "mobile-app/src/app/(app)/(tabs)/_layout.tsx",
+      "lines": 1,
+      "sha256": "916d5764c63844824953a36933ccf91708eaf5a77ea3a190dfd10d4611f7d6d3"
+    },
+    {
+      "path": "mobile-app/src/app/(app)/(tabs)/b2b.tsx",
+      "lines": 1,
+      "sha256": "41cc9d968c2c325f54972f01a92fc526a0499b26452511041e8c850dce4d1563"
+    },
+    {
+      "path": "mobile-app/src/app/(app)/(tabs)/cart.tsx",
+      "lines": 1,
+      "sha256": "47a82c1b771a8f3e8bfa687b77f126a2b3b2a96e8d0077d88b03d4052165a33d"
+    },
+    {
+      "path": "mobile-app/src/app/(app)/(tabs)/cashbox.tsx",
+      "lines": 1,
+      "sha256": "c2e06e69a7f01c1ce9a101debc3b4fa94b6f0be9008900bb02fadc1af0a80386"
+    },
+    {
+      "path": "mobile-app/src/app/(app)/(tabs)/categories.tsx",
+      "lines": 1,
+      "sha256": "901e61c406121248436b8dc41bc6857bdc1efbf227be97335dda836aab3069a9"
+    },
+    {
+      "path": "mobile-app/src/app/(app)/(tabs)/customers.tsx",
+      "lines": 1,
+      "sha256": "94b5cd428a14c0fce53d10a9443e5ea4ea81553408a690851e923ca49f7c9e3d"
+    },
+    {
+      "path": "mobile-app/src/app/(app)/(tabs)/debts.tsx",
+      "lines": 1,
+      "sha256": "327ad5ab92d22a7cd707f0d93a587484bb9ae61c02b3b71144a3cc1a749d5db7"
+    },
+    {
+      "path": "mobile-app/src/app/(app)/(tabs)/documents.tsx",
+      "lines": 1,
+      "sha256": "72a308b459ee28b56c6429fa2c054fad10544c2729ad38c19e989256bc1dd225"
+    },
+    {
+      "path": "mobile-app/src/app/(app)/(tabs)/downloads.tsx",
+      "lines": 2,
+      "sha256": "f7fd853a4c28a2d63e1b143334e9779ce40ef30b6a60342d18f513a85075121e"
+    },
+    {
+      "path": "mobile-app/src/app/(app)/(tabs)/history.tsx",
+      "lines": 1,
+      "sha256": "69d4f294e8612101ea79c000f417e1a7c67f7814ac256065f8c8102e616fe88b"
+    },
+    {
+      "path": "mobile-app/src/app/(app)/(tabs)/index.tsx",
+      "lines": 1,
+      "sha256": "1bd702ada39c910e371d68044d7aef6204eaeb93127295c23235c584ba710f1d"
+    },
+    {
+      "path": "mobile-app/src/app/(app)/(tabs)/inventory.tsx",
+      "lines": 1,
+      "sha256": "28dfd9d0eb3d9cc3cc15ff20f93bf9480727d2574d62359b7f19500ab9685f26"
+    },
+    {
+      "path": "mobile-app/src/app/(app)/(tabs)/menu.tsx",
+      "lines": 2,
+      "sha256": "0a69dfc99811735d458ff3326d92cd7c4d65aecfed3ee0a383754d5f56bd12c7"
+    },
+    {
+      "path": "mobile-app/src/app/(app)/(tabs)/notifications.tsx",
+      "lines": 1,
+      "sha256": "50a98b245bbac10c06936108c3cc8fff1def3999db4c9788588ceda6d4c38729"
+    },
+    {
+      "path": "mobile-app/src/app/(app)/(tabs)/product.tsx",
+      "lines": 9,
+      "sha256": "c5bc151680232e7ae8b382fba9ec2151be4daf55b1428d6546a5e796115c86bc"
+    },
+    {
+      "path": "mobile-app/src/app/(app)/(tabs)/products.tsx",
+      "lines": 1,
+      "sha256": "77cca4d1fca55ee4b38ea7455152ce634405ab2d14b62bbf96e642c4647c1ca1"
+    },
+    {
+      "path": "mobile-app/src/app/(app)/(tabs)/profile.tsx",
+      "lines": 1,
+      "sha256": "68576572fd4892d82b06e891ffa52a474b494db7d3c420bbd8245386989d6862"
+    },
+    {
+      "path": "mobile-app/src/app/(app)/(tabs)/reports.tsx",
+      "lines": 1,
+      "sha256": "402e510bcc5d0d46a673f0c03d9323601ca8d8233de2c348a8a5ebd5e1910631"
+    },
+    {
+      "path": "mobile-app/src/app/(app)/(tabs)/sales-history.tsx",
+      "lines": 1,
+      "sha256": "b6bca6f46e792ad9df031392c35d188531576a15c1d6a5587848ec18834ef2f1"
+    },
+    {
+      "path": "mobile-app/src/app/(app)/(tabs)/settings.tsx",
+      "lines": 1,
+      "sha256": "8b7d2c0fe1ff55c4864c46c8ddc706a9c835d26a90ef35c2ada8f164e38bd6e4"
+    },
+    {
+      "path": "mobile-app/src/app/(app)/(tabs)/store-settings.tsx",
+      "lines": 1,
+      "sha256": "62757bed200a5209bddf6ed8303f862b9026ac897e40a06057bb66a5f6cd5047"
+    },
+    {
+      "path": "mobile-app/src/app/(app)/(tabs)/support.tsx",
+      "lines": 2,
+      "sha256": "ed857da2688c7e94230b033b6fe157b009227173788981991a620802c2b027c2"
+    },
+    {
+      "path": "mobile-app/src/app/(app)/(tabs)/sync.tsx",
+      "lines": 1,
+      "sha256": "9f055ee8e57c4a712e7b9a757e69f0189844355fcc2753daedfe1cb408767869"
+    },
+    {
+      "path": "mobile-app/src/app/(app)/_layout.tsx",
+      "lines": 13,
+      "sha256": "32e2b659643d56aaabd13c10899ca30a6012e8662ee7bb73d498a77e76efa0d8"
+    },
+    {
+      "path": "mobile-app/src/app/(app)/admin.tsx",
+      "lines": 1,
+      "sha256": "f169c9203c9f85857b48cb1546b43632768b32f18008974af5367b8eec520c96"
+    },
+    {
+      "path": "mobile-app/src/app/(app)/notifications.tsx",
+      "lines": 1,
+      "sha256": "b55e77610f2e34b007ba65bb1dda5b992a5442084813333b1541d32f6c2de47e"
+    },
+    {
+      "path": "mobile-app/src/app/(app)/profile.tsx",
+      "lines": 1,
+      "sha256": "f360c2938a4ff94606604719c97a2f91bd3349800f250b3521f18efc7a34bd49"
+    },
+    {
+      "path": "mobile-app/src/app/_layout.tsx",
+      "lines": 1,
+      "sha256": "a8890293f54756b72caefb23f8f4146415c8d2dc8b35f7869a2321c554572441"
+    },
+    {
+      "path": "mobile-app/src/app/checkout.tsx",
+      "lines": 1,
+      "sha256": "8d6834dbdf6ce6793f27beb54b0bca394036c808e9457b656adfbf546c8a4b6c"
+    },
+    {
+      "path": "mobile-app/src/app/downloads.tsx",
+      "lines": 1,
+      "sha256": "8dac5a2b82203fce848614d97cece87a402b7c5d04f1c9a870f4d2dbeafb65f7"
+    },
+    {
+      "path": "mobile-app/src/app/index.tsx",
+      "lines": 7,
+      "sha256": "616097b6eedc772f958f0fdeef09dfb4529672b841287c139968740fbfa5a1d1"
+    },
+    {
+      "path": "mobile-app/src/app/legal.tsx",
+      "lines": 1,
+      "sha256": "a1fe6f8b83b1c29eba5bf8da89e0574167aa14e12483b6faaa6d32705b424fe8"
+    },
+    {
+      "path": "mobile-app/src/app/login.tsx",
+      "lines": 1,
+      "sha256": "0b82268da1053e00b2fb018419cff2d22e456cd0c3f700548fffe3d46f99c4f1"
+    },
+    {
+      "path": "mobile-app/src/app/receipt.tsx",
+      "lines": 1,
+      "sha256": "f922fd4b41297d992fdec311941bb0310bd745e6a96964cbe2b9c3732d5062f3"
+    },
+    {
+      "path": "mobile-app/src/app/stores.tsx",
+      "lines": 1,
+      "sha256": "baa034bc01467639ffd9aed1986389c98d6e6d1925fbddd01d8717f5b50467c6"
+    },
+    {
+      "path": "mobile-app/src/app/support.tsx",
+      "lines": 1,
+      "sha256": "97aa910702ee41f236e9454a5704635510ab81547193d26412b09a8336ac658f"
+    },
+    {
+      "path": "mobile-app/src/app/terms.tsx",
+      "lines": 1,
+      "sha256": "8947dd94db6deea0f9d3485fcaf347ecdda5ca15662a62d0416b242bc827ef28"
+    },
+    {
+      "path": "mobile-app/src/components/brand/IlbiLogo.tsx",
+      "lines": 77,
+      "sha256": "900f962bdee3011eceb892a440e57bc9dc727f23e78732892aebfbc943407013"
+    },
+    {
+      "path": "mobile-app/src/components/brand/IlbiMark.tsx",
+      "lines": 50,
+      "sha256": "c65a04a0e2ca64a9d5c6262cf74840e48beae165277a44536c6049554fe8a3da"
+    },
+    {
+      "path": "mobile-app/src/components/ui/ApiPicker.tsx",
+      "lines": 28,
+      "sha256": "4d0bcbc83e4c997f42a57b384e7eed26b5e4df80590f7e1f7fef670926a4229e"
+    },
+    {
+      "path": "mobile-app/src/components/ui/Badge.tsx",
+      "lines": 84,
+      "sha256": "08489a25a0a3c6255831884b969e0939d2008464110bc569657aba9f9a1b2aaa"
+    },
+    {
+      "path": "mobile-app/src/components/ui/BottomSheet.tsx",
+      "lines": 156,
+      "sha256": "1920cb922187c9f7a76e7ab955d49d85a2a72e3edc462405f54e7c8756c4411c"
+    },
+    {
+      "path": "mobile-app/src/components/ui/Button.tsx",
+      "lines": 142,
+      "sha256": "8317e56e0212f90e70b1ba683fa61fb92b69a6a9c2cf2aeb21abc875a7b8bb80"
+    },
+    {
+      "path": "mobile-app/src/components/ui/ChoiceField.tsx",
+      "lines": 9,
+      "sha256": "4d1db1534e73660212583b8090888769cc3cefae4b1391fdceccf7414bcb2fbc"
+    },
+    {
+      "path": "mobile-app/src/components/ui/Input.tsx",
+      "lines": 141,
+      "sha256": "5a54f56d6bca4c3cdc9fba21c293393dd205478e05b13a440809007e711e059c"
+    },
+    {
+      "path": "mobile-app/src/components/ui/KeyboardRegion.tsx",
+      "lines": 23,
+      "sha256": "db565897fb9566b7941837485efae285dbc8082e8223526eddfebfac5a6884f0"
+    },
+    {
+      "path": "mobile-app/src/components/ui/ListState.tsx",
+      "lines": 10,
+      "sha256": "15ad928208805fb8c08ca40984f3160737253452990a8c064c4555b40528af33"
+    },
+    {
+      "path": "mobile-app/src/components/ui/Page.tsx",
+      "lines": 25,
+      "sha256": "ad1039949afa082bd02a475017ece832e2a3242fc52bee5b480da7229a1bc844"
+    },
+    {
+      "path": "mobile-app/src/components/ui/ScreenHeader.tsx",
+      "lines": 174,
+      "sha256": "7fcdaf01f0c2942b04d77aabe01073d79cad4f7c5c56ea9db1dcb2f2a1e3f3da"
+    },
+    {
+      "path": "mobile-app/src/components/ui/Toast.tsx",
+      "lines": 130,
+      "sha256": "c9c9e1686ab9f79a604da6fe5315e564102c06e01825e0756499c54ebe7dd2b7"
+    },
+    {
+      "path": "mobile-app/src/dev/preview.ts",
+      "lines": 127,
+      "sha256": "8b5fcc8214171212b48a44f45bc4b6798bea1dd534d1769332deee99fca8e1f8"
+    },
+    {
+      "path": "mobile-app/src/dev/previewB2B.ts",
+      "lines": 51,
+      "sha256": "67a1fd6acbc542a19edc0fd3ffebf2fc6aae81e20ffc13e626d8e15294baf44f"
+    },
+    {
+      "path": "mobile-app/src/dev/previewCashbox.ts",
+      "lines": 58,
+      "sha256": "de2192f73a9bec5e2f45ff000d5727997c3b9365cc6b54f363b53717295c4ba5"
+    },
+    {
+      "path": "mobile-app/src/dev/previewCatalog.ts",
+      "lines": 84,
+      "sha256": "c016f52784ce442a79ec3a12c777ea70efe6bdc2cb1e2fe15b969068b9b21ec7"
+    },
+    {
+      "path": "mobile-app/src/dev/previewCore.ts",
+      "lines": 131,
+      "sha256": "843db1c956f123d51e41e90138e809bde80c743193b634d328a65fe367503da4"
+    },
+    {
+      "path": "mobile-app/src/dev/previewNotifications.ts",
+      "lines": 30,
+      "sha256": "e69e1c3079c8648d68033f36117cc422091008bf841741130019b544838c71bf"
+    },
+    {
+      "path": "mobile-app/src/dev/previewReleases.ts",
+      "lines": 8,
+      "sha256": "b90fb223813412a403d6c4514601064d7dae81eee36297169d883d822ad45faa"
+    },
+    {
+      "path": "mobile-app/src/dev/previewStoreSettings.ts",
+      "lines": 37,
+      "sha256": "9b007297aebeaf16c2eabb5d2a389a70d277f394c0e66a3ca7277f9a71f3dedd"
+    },
+    {
+      "path": "mobile-app/src/dev/previewSupport.ts",
+      "lines": 58,
+      "sha256": "57785c41693142073dcd25aafc294d18f70c22a541f1252f77ef355c64294ee2"
+    },
+    {
+      "path": "mobile-app/src/domain/date.ts",
+      "lines": 5,
+      "sha256": "90aa35a2a1dbf2af16bc92c7d42539f8f812398f42d9bdf8e48a1a32a9187cf7"
+    },
+    {
+      "path": "mobile-app/src/domain/identifiers.ts",
+      "lines": 1,
+      "sha256": "1f1883037cfeb528f2d833038b99c2c30e4fd5483fc947a9183595f169dea09c"
+    },
+    {
+      "path": "mobile-app/src/domain/money.ts",
+      "lines": 46,
+      "sha256": "4f739cbf5e7027fe2f75c10ef0d2c4b285135c3950a7eadda3a34fb3d465b13e"
+    },
+    {
+      "path": "mobile-app/src/domain/quantity.ts",
+      "lines": 10,
+      "sha256": "ae96b8a09e983bd6e2fddbf16bdbe8c01de63e554597c835e0f9f81017179b9e"
+    },
+    {
+      "path": "mobile-app/src/domain/tax.ts",
+      "lines": 17,
+      "sha256": "c336110503734b9b168cc1730d7465d4bac86d658885371153c4b6b6b5e68b5f"
+    },
+    {
+      "path": "mobile-app/src/features/admin/AdminHome.tsx",
+      "lines": 25,
+      "sha256": "c9007489901d6293b347ba9e470c2ae8902416bcad68d9ac3e73f25808f12876"
+    },
+    {
+      "path": "mobile-app/src/features/auth/AuthContext.tsx",
+      "lines": 183,
+      "sha256": "b8337a1f47bda70694a6348dbc1bea85317060fa597fbd6ed9ee364f2cc5ee85"
+    },
+    {
+      "path": "mobile-app/src/features/auth/Gates.tsx",
+      "lines": 193,
+      "sha256": "1762018a4dcd6bf7dadcbd44d5a6622f7d9ec57ff16834c2536b758e926f744b"
+    },
+    {
+      "path": "mobile-app/src/features/auth/LoginHero.tsx",
+      "lines": 46,
+      "sha256": "c9a29399039ab754166243d13ae23801b215d5c010d57d4abd030e12ef22d260"
+    },
+    {
+      "path": "mobile-app/src/features/auth/LoginScreen.tsx",
+      "lines": 907,
+      "sha256": "cd2b9f63e9e3f64b0f6b3d72eb7ad725bd9e1aa63953b3814668982b78b584cd"
+    },
+    {
+      "path": "mobile-app/src/features/auth/permissions.ts",
+      "lines": 28,
+      "sha256": "cb8e76b1bb17cdefe27b45a7667e0633003216b0b2679ce9b1c4f51487e2ab80"
+    },
+    {
+      "path": "mobile-app/src/features/auth/profile.ts",
+      "lines": 14,
+      "sha256": "56049c0f005668e359e3462613bd82b821d7e8d0dec09adf4f50d3b7fc40cb3b"
+    },
+    {
+      "path": "mobile-app/src/features/auth/routePolicy.ts",
+      "lines": 8,
+      "sha256": "e249f1afd8fd7179e20dd4b520359d35892b8b9fc28b0d6c8bc912bec154219b"
+    },
+    {
+      "path": "mobile-app/src/features/auth/usePermissions.ts",
+      "lines": 10,
+      "sha256": "7cbc24daf7cbcfe6d839a1382c9f9ef912bb44ffabcf18f9bd06ca1f75578e99"
+    },
+    {
+      "path": "mobile-app/src/features/b2b/B2BActionSheet.tsx",
+      "lines": 79,
+      "sha256": "a4ff466c8ff7c8b913c03d41cdb706663b9b5e56da236fb75e6451ecca207a3b"
+    },
+    {
+      "path": "mobile-app/src/features/b2b/B2BScreen.tsx",
+      "lines": 90,
+      "sha256": "48e5bba84e83038a6fd26df876ee4dcc1bc4587ca7a254d57df285e32a21eddd"
+    },
+    {
+      "path": "mobile-app/src/features/b2b/commands.ts",
+      "lines": 59,
+      "sha256": "5cafa56c09d30df3d2622742a0f4eef9776d5071c8713d0277ccfcf640af65e6"
+    },
+    {
+      "path": "mobile-app/src/features/b2b/model.ts",
+      "lines": 77,
+      "sha256": "213cb2aad24da017264ec0314b6970d4439323c2a7a37cba8c2ce352f959717c"
+    },
+    {
+      "path": "mobile-app/src/features/cart/CartContext.tsx",
+      "lines": 195,
+      "sha256": "a49474347c29e4139b9fa4333f5bf5d95535914f4f1859205c6e1f537c6d0280"
+    },
+    {
+      "path": "mobile-app/src/features/cart/CartScreen.tsx",
+      "lines": 839,
+      "sha256": "854fa33fe80d78309d4d1243c9389788a599f7e7aa1c6c33a0f7a68094daa089"
+    },
+    {
+      "path": "mobile-app/src/features/cart/drafts.ts",
+      "lines": 43,
+      "sha256": "1a0e0705ded8e435ff9d571788a3e324afaaf5b4fedb7946559ef6af95c386fe"
+    },
+    {
+      "path": "mobile-app/src/features/cashbox/CashboxCategories.tsx",
+      "lines": 29,
+      "sha256": "c0a629a6638cab7755e01be24f26623f0a16b111e38ea7895127593929a93c2c"
+    },
+    {
+      "path": "mobile-app/src/features/cashbox/CashboxScreen.tsx",
+      "lines": 164,
+      "sha256": "d1ecaf7ecdba41f80430e1f4e30c5a1f3d9256e353b3ecd2c5290a4efe2fe9bd"
+    },
+    {
+      "path": "mobile-app/src/features/cashbox/categories.ts",
+      "lines": 21,
+      "sha256": "85c5aadf7b53a1b3a605d30f4c709bccae5e32f8069831822b95142d35340f94"
+    },
+    {
+      "path": "mobile-app/src/features/cashbox/commands.ts",
+      "lines": 62,
+      "sha256": "59f70016064fcea7ab98057ac11c9a43445379c4a382b6bb294ab8a6c96143c4"
+    },
+    {
+      "path": "mobile-app/src/features/cashbox/model.ts",
+      "lines": 33,
+      "sha256": "12c0ad845ddc866683239d94bad96b4af9e739b075852170b50630dc6e7c4d67"
+    },
+    {
+      "path": "mobile-app/src/features/catalog/CatalogScreen.tsx",
+      "lines": 352,
+      "sha256": "6ed1e9d138d378d50a89f4879adda329df8d39cdfed678ffc0f42bf164346d08"
+    },
+    {
+      "path": "mobile-app/src/features/catalog/CategoriesScreen.tsx",
+      "lines": 354,
+      "sha256": "1767d197fda407fb4823449169d5c1f7d1d96ed51257d5e7e2bcfcd5ecd37663"
+    },
+    {
+      "path": "mobile-app/src/features/catalog/ProductScreen.tsx",
+      "lines": 512,
+      "sha256": "49b1ff4b5380a9e40e068b43d80d2b1dddab8afc5a07a875f66a0818be7cd85f"
+    },
+    {
+      "path": "mobile-app/src/features/catalog/categories.ts",
+      "lines": 15,
+      "sha256": "7777cecbd710800255e07122a6e4e428bf179db4969b46a7f5c5fa43c8380fc3"
+    },
+    {
+      "path": "mobile-app/src/features/catalog/editorModel.ts",
+      "lines": 34,
+      "sha256": "a4999522b8740a1a62ff11497ce2006f8e7ba7229ede7babfee8d2ddf0ef60ea"
+    },
+    {
+      "path": "mobile-app/src/features/catalog/model.ts",
+      "lines": 26,
+      "sha256": "b6d70753a0a82791575a8d5433e00f222d6ff4c34ae4818d7a74facb5a38b713"
+    },
+    {
+      "path": "mobile-app/src/features/checkout/CheckoutScreen.tsx",
+      "lines": 644,
+      "sha256": "ec1e59334dbd28feeb0f0ee52e87f4b38097b14af3efaa601149d2cce874f99b"
+    },
+    {
+      "path": "mobile-app/src/features/checkout/CustomerPickerSheet.tsx",
+      "lines": 311,
+      "sha256": "e064934a5b375b8dcd85673a38c6cc37bafd078c9a3808326b2b52861f761abc"
+    },
+    {
+      "path": "mobile-app/src/features/checkout/quote.ts",
+      "lines": 28,
+      "sha256": "b2333045f5ee6eca542f6afadbe7ebfa19712814246e45fa3b28db158aad3cbf"
+    },
+    {
+      "path": "mobile-app/src/features/checkout/saleResponse.ts",
+      "lines": 9,
+      "sha256": "7c0ad38db69d91e9c43a841249b3aacdca1a9df9305e13179ee7eb1fffc91ad5"
+    },
+    {
+      "path": "mobile-app/src/features/checkout/useRetailQuote.ts",
+      "lines": 41,
+      "sha256": "2b450580408d711d25059212c56f3c27ca0521cae8a81db5f865d87b3c8fc774"
+    },
+    {
+      "path": "mobile-app/src/features/customers/CustomersScreen.tsx",
+      "lines": 70,
+      "sha256": "3b985d8aa6eab8ffbf20a0c38947810ddacf96c1281e89e5f8ce78b52ccdb20f"
+    },
+    {
+      "path": "mobile-app/src/features/customers/model.ts",
+      "lines": 6,
+      "sha256": "460beb6050eb9a0c19f2e3a0989284d93d1af9b02f67f7d3255034b17f03bb65"
+    },
+    {
+      "path": "mobile-app/src/features/debts/DebtsScreen.tsx",
+      "lines": 115,
+      "sha256": "527acc09f955fdde9adde7d7c5cc9fa9343643143520dbec4fe1e74b7728907b"
+    },
+    {
+      "path": "mobile-app/src/features/debts/commands.ts",
+      "lines": 88,
+      "sha256": "09c7d05444c6f0ac7995fe6eccfa5154ad6124d88468f50694aa273264ad3866"
+    },
+    {
+      "path": "mobile-app/src/features/debts/quote.ts",
+      "lines": 97,
+      "sha256": "871dc74eb968d778a714b1938a0591f2f2f674bb4985058e32e97bb3eb7068a4"
+    },
+    {
+      "path": "mobile-app/src/features/documents/DocumentsScreen.tsx",
+      "lines": 41,
+      "sha256": "428099bd381961fd0108121d1554b0a338d61673592650c9ca2e4935e578a814"
+    },
+    {
+      "path": "mobile-app/src/features/history/HistoryScreen.tsx",
+      "lines": 84,
+      "sha256": "661dd1ebc1d3dfec3565dbbb74c07e4b32c7180d3202f64b9b46c10aee584860"
+    },
+    {
+      "path": "mobile-app/src/features/home/HomeScreen.tsx",
+      "lines": 478,
+      "sha256": "5c1677da0c299b77e9e1c0671ad0ac929ce1976b34f744c9653d53b313a429ad"
+    },
+    {
+      "path": "mobile-app/src/features/inventory/InventoryBatchPicker.tsx",
+      "lines": 30,
+      "sha256": "a28f54e787e83b9a6bf63953adbd7874916ef6e89c70368045a11c51d4aa57c6"
+    },
+    {
+      "path": "mobile-app/src/features/inventory/InventoryOperationSheet.tsx",
+      "lines": 184,
+      "sha256": "5c93c5876c50e608bd1fe374741ca495e76077291c1a7cd9a5edbc4d17084b5b"
+    },
+    {
+      "path": "mobile-app/src/features/inventory/InventoryScreen.tsx",
+      "lines": 76,
+      "sha256": "d21d0ee0f1a00955e370d63e43a59ed7b57bafd893177d3495d4e92a172c5ae2"
+    },
+    {
+      "path": "mobile-app/src/features/inventory/InventoryTransfers.tsx",
+      "lines": 52,
+      "sha256": "d3c64bba7619cb560e2f0e8353c09316159b53201452aededa117f2cd3bdcd8d"
+    },
+    {
+      "path": "mobile-app/src/features/inventory/commands.ts",
+      "lines": 186,
+      "sha256": "1cdb18d50d9e16b3bd5dbf0009f9f6a78cc3c5872fd87445efa757105c10b6bb"
+    },
+    {
+      "path": "mobile-app/src/features/inventory/drafts.ts",
+      "lines": 33,
+      "sha256": "08abbaf37a6e9c19e5b757ec2c2593c883a1c0907b8e44f3bb3623a4dc951331"
+    },
+    {
+      "path": "mobile-app/src/features/notifications/NotificationBell.tsx",
+      "lines": 14,
+      "sha256": "edfe8a68fb4e9a0c1eccaadb75ec3a0371887cab92c088eba46663116e89223c"
+    },
+    {
+      "path": "mobile-app/src/features/notifications/NotificationPreferences.tsx",
+      "lines": 53,
+      "sha256": "0fe082175dc522863c35498ae8245a72688c66c4a5f9eef756253089b551ee85"
+    },
+    {
+      "path": "mobile-app/src/features/notifications/NotificationsContext.tsx",
+      "lines": 99,
+      "sha256": "96c3ce4b75457bb84d13f5abe81cd99a2452e087ca4e9d420f50e6e4b98a3b02"
+    },
+    {
+      "path": "mobile-app/src/features/notifications/NotificationsScreen.tsx",
+      "lines": 85,
+      "sha256": "d22fa03d739549cb844dd1edb50042fdf1e3c05cb81a1ed0c5180189ba211d96"
+    },
+    {
+      "path": "mobile-app/src/features/notifications/PushProvider.tsx",
+      "lines": 99,
+      "sha256": "7e45f57277d8e58c601cb310ffeaf5e3841f1be34078e6989233bcae7ff5df25"
+    },
+    {
+      "path": "mobile-app/src/features/notifications/inbox.ts",
+      "lines": 47,
+      "sha256": "86a2b41a5ba91475ba681146e42a78fa75959534e985adf797de8b8266aabb92"
+    },
+    {
+      "path": "mobile-app/src/features/notifications/pushRegistration.ts",
+      "lines": 89,
+      "sha256": "8fc7edcf91ae8ab1fdacaf921c706fc98333ba31e7b03ee785c83b290db076c5"
+    },
+    {
+      "path": "mobile-app/src/features/notifications/pushTarget.ts",
+      "lines": 9,
+      "sha256": "0bfc2231200e2c261f7419cbe38512f4bff5dabc1581199d5aaecf9ee1f8b995"
+    },
+    {
+      "path": "mobile-app/src/features/profile/ProfileScreen.tsx",
+      "lines": 294,
+      "sha256": "a30d58b0278a87570437541ad0d1ccbb4d091f1454f135d88cd8ecaaea489340"
+    },
+    {
+      "path": "mobile-app/src/features/receipts/ReceiptScreen.tsx",
+      "lines": 676,
+      "sha256": "2bbc84340d2772b0e5bc39af8b8b050a040ef2a154180b6aca64b0a14c9d5950"
+    },
+    {
+      "path": "mobile-app/src/features/receipts/receiptModel.ts",
+      "lines": 28,
+      "sha256": "60475a8da8edd90e894e89960e756957f2f5cd18b5b046d73e8f4652bcb2d730"
+    },
+    {
+      "path": "mobile-app/src/features/reports/ReportsScreen.tsx",
+      "lines": 98,
+      "sha256": "4099eaa3cc6d67b163592b720871daa558c6cc0e52f739c6b7f26e910a7e8d05"
+    },
+    {
+      "path": "mobile-app/src/features/reports/model.ts",
+      "lines": 49,
+      "sha256": "c3d53b3ef9043a88b962e0c1155367e603ec6f4be31d37a7aa075f60db05bcac"
+    },
+    {
+      "path": "mobile-app/src/features/sales/SaleVoidSheet.tsx",
+      "lines": 53,
+      "sha256": "61a06908094487c2d6271bf15acefa921e617c8062becf34d544bfada61f5357"
+    },
+    {
+      "path": "mobile-app/src/features/sales/SalesHistoryScreen.tsx",
+      "lines": 114,
+      "sha256": "342bc1d5aad2eeb5bf3e1d161898cd8608251e1a02db006e1947759c09d25d0d"
+    },
+    {
+      "path": "mobile-app/src/features/sales/model.ts",
+      "lines": 56,
+      "sha256": "63328d5071c1ff74e7abf96a1b4430ad3fcca604e162376bbf55bb3d667304fb"
+    },
+    {
+      "path": "mobile-app/src/features/sales/void.ts",
+      "lines": 76,
+      "sha256": "59b46781468613604a629d2afee383021744931198636a77211e964e04162d4b"
+    },
+    {
+      "path": "mobile-app/src/features/scanner/BarcodeScanner.tsx",
+      "lines": 47,
+      "sha256": "cd87d965ca630de7faf6d3312d6bdb111262bdc5f9b3ca18e3bc6068638891cd"
+    },
+    {
+      "path": "mobile-app/src/features/settings/SettingsScreen.tsx",
+      "lines": 305,
+      "sha256": "ea6985be1031d2010748ed23d52daf28c6eca382cec00b9c50867c549292d919"
+    },
+    {
+      "path": "mobile-app/src/features/settings/StoreSettingsScreen.tsx",
+      "lines": 144,
+      "sha256": "8881848ac6b72f355b1579d5bdba5786af980ca58a75729871c9c0234e1d4bed"
+    },
+    {
+      "path": "mobile-app/src/features/settings/storeCommands.ts",
+      "lines": 47,
+      "sha256": "90b65a387c4a9ba42a6336285fe747b43500bd2ac94f2689c9a4ecf2f02d6f9e"
+    },
+    {
+      "path": "mobile-app/src/features/settings/storeModel.ts",
+      "lines": 103,
+      "sha256": "e8b52f6ab3941261469c8bc396f57a5ea9f7a08624a18b759a1fea4dd4a7625c"
+    },
+    {
+      "path": "mobile-app/src/features/support/SupportScreen.tsx",
+      "lines": 173,
+      "sha256": "d4b1796eb6954b6f8903a7a3d43f1cd65eba0d7119ad35979e0b805249473cd5"
+    },
+    {
+      "path": "mobile-app/src/features/support/model.ts",
+      "lines": 17,
+      "sha256": "dfa7121c0d2e445c7e79acf82023a8acdde50e8570da55bff403afb892b4e074"
+    },
+    {
+      "path": "mobile-app/src/features/support/polling.ts",
+      "lines": 17,
+      "sha256": "de4298f45dd03ba9e6730eb8799ca5921c2ab6ec8de1c981b4f88caa6ef96aa6"
+    },
+    {
+      "path": "mobile-app/src/features/support/session.ts",
+      "lines": 43,
+      "sha256": "6683f71c423a2c24f50f3457b8638c0a10ed18cc7b2f10fa204fce4f84d7cde2"
+    },
+    {
+      "path": "mobile-app/src/features/support/useSupport.ts",
+      "lines": 71,
+      "sha256": "10f9ca2df23f08d56385c7b4931ca692d97e5a9667fa32434899a464ee9d49dc"
+    },
+    {
+      "path": "mobile-app/src/features/sync/SyncBanner.tsx",
+      "lines": 144,
+      "sha256": "e3a59fb2439ee1b80387c03be452ed026c853d5863ae56b1a9b3a28b56304202"
+    },
+    {
+      "path": "mobile-app/src/features/sync/SyncScreen.tsx",
+      "lines": 93,
+      "sha256": "2571b9dbd70270a17ce0da76b4764d3a2c2a920a8e33ff15a38f27802f6fa667"
+    },
+    {
+      "path": "mobile-app/src/features/sync/outbox.ts",
+      "lines": 35,
+      "sha256": "1f5100036a6c13ee5be6a0ac912be32464330cb26d2bd82f30842f9d401442f7"
+    },
+    {
+      "path": "mobile-app/src/features/sync/reconcile.ts",
+      "lines": 37,
+      "sha256": "78a2b0b9447624fc71e33beadee5dc2eb0bc2d9681d1987320703b8b36b10e29"
+    },
+    {
+      "path": "mobile-app/src/features/updates/DownloadsScreen.tsx",
+      "lines": 44,
+      "sha256": "fc57c1b0ee95e4104eba9137ab39f1f5687c7f56b4c20227c93d12ca39828b35"
+    },
+    {
+      "path": "mobile-app/src/features/updates/UpdateNotice.tsx",
+      "lines": 21,
+      "sha256": "eced67dfa0c2b5601d507ee2ba0890af76f10c365d28584f1d0519f19fe99044"
+    },
+    {
+      "path": "mobile-app/src/features/updates/UpdatesProvider.tsx",
+      "lines": 80,
+      "sha256": "7b9d7b3b0e89c0af7f83c0cf318d429e1310e0e478ff5250067e58b55048f708"
+    },
+    {
+      "path": "mobile-app/src/features/updates/installed.ts",
+      "lines": 9,
+      "sha256": "12828b95e1fa27e205050994acf576f76814beb77972a0440f7415cfc654f7c0"
+    },
+    {
+      "path": "mobile-app/src/features/updates/releases.ts",
+      "lines": 56,
+      "sha256": "3f3d29301d629c2fa03348070bb64993947258824e201bbca9f75b85b5923579"
+    },
+    {
+      "path": "mobile-app/src/features/updates/reminder.ts",
+      "lines": 27,
+      "sha256": "534da316171ebc02937d6131274ad82294baf8fb8ea47989b0637638a4a290c3"
+    },
+    {
+      "path": "mobile-app/src/hooks/useApiAction.ts",
+      "lines": 27,
+      "sha256": "0bb8d23eb99dff7f4d7e3c170ff11cbb582ff60707fc5118b5db9a62db8d4933"
+    },
+    {
+      "path": "mobile-app/src/hooks/useApiResource.ts",
+      "lines": 34,
+      "sha256": "8e575c764678aec051bd3a4cf2379ce5f6ff1fad51802ad96594ca10a608ce9c"
+    },
+    {
+      "path": "mobile-app/src/hooks/useFeedback.ts",
+      "lines": 7,
+      "sha256": "ec3908f776bcd21a0fed492ed7c67bb44e42914b7b68e6d9f2cfac736042c9c1"
+    },
+    {
+      "path": "mobile-app/src/hooks/useFormErrors.ts",
+      "lines": 21,
+      "sha256": "f49ec51ee6801f19fda4f177364c20d75761f3e88d09bdf76d304b65c09e1b91"
+    },
+    {
+      "path": "mobile-app/src/hooks/usePagedResource.ts",
+      "lines": 57,
+      "sha256": "5e923d6057e95445b5eb123249d6c2e94413a3a0d56f6343b756bc6d5bf8682e"
+    },
+    {
+      "path": "mobile-app/src/hooks/useScopedQuery.ts",
+      "lines": 37,
+      "sha256": "c3185a4a12a6a2cb2f19582371102f98d4995bef24d2a6a087834d9ee9fadebd"
+    },
+    {
+      "path": "mobile-app/src/hooks/useServerScope.ts",
+      "lines": 4,
+      "sha256": "30fa68379840b15e352cf37fcc00d7a3562c4a60db14fd9edf5e424f5f98719c"
+    },
+    {
+      "path": "mobile-app/src/navigation/BottomTabNavigator.tsx",
+      "lines": 39,
+      "sha256": "3baf964f41349c1e9eb37d81caa73e832ac431aab767922e090bff0f4cc5213b"
+    },
+    {
+      "path": "mobile-app/src/navigation/DrawerContent.tsx",
+      "lines": 368,
+      "sha256": "9ae59be64cfc71663e410e23ff6aade998f4ed385a0bcd93fe614da575166dd7"
+    },
+    {
+      "path": "mobile-app/src/navigation/RootNavigator.tsx",
+      "lines": 37,
+      "sha256": "edd3b7cba72a223d32d5bd482a753c44268ffad4adcbfc5ae779a4def481b379"
+    },
+    {
+      "path": "mobile-app/src/navigation/types.ts",
+      "lines": 24,
+      "sha256": "af0fc5be3d72d94e03f690975e318179a240bdfec79ebbcc2cbbb7353f6a3827"
+    },
+    {
+      "path": "mobile-app/src/navigation/useAppNavigation.ts",
+      "lines": 56,
+      "sha256": "9a53010a06188fedb18f4a74b4ffe07f727818385809b39c680a89bacc74eb40"
+    },
+    {
+      "path": "mobile-app/src/security/presentation.ts",
+      "lines": 74,
+      "sha256": "b7aa3f29ed87f5f61a05d250122629626f746650c05aa8f64d2d24df0ab60e1d"
+    },
+    {
+      "path": "mobile-app/src/storage/recordStore.ts",
+      "lines": 52,
+      "sha256": "85daa344fcb6b742de589d8748bffafbd4f5b23e19d74067b1fe6d56e7cd2da2"
+    },
+    {
+      "path": "mobile-app/src/storage/recordStore.web.ts",
+      "lines": 83,
+      "sha256": "626cea336ee5ac91280a565002c6a988bbc78a659cb3ba429da2675b4e93b20f"
+    },
+    {
+      "path": "mobile-app/src/storage/recordTypes.ts",
+      "lines": 7,
+      "sha256": "cb962aa9dc9f14119f8c196d1fec7930a6c357e31373b2779902ff8bcbced588"
+    },
+    {
+      "path": "mobile-app/src/theme/ThemeContext.tsx",
+      "lines": 66,
+      "sha256": "2484391a03fbdc60a0a1fdbed9e82782f994387cee7f4e9354b53f772fbcea8d"
+    },
+    {
+      "path": "mobile-app/src/theme/tokens.ts",
+      "lines": 148,
+      "sha256": "c447565b7e05e4393941469712c4c354d79a8b3b1f012a39e08d4f76c5999dad"
+    }
+  ],
+  "web_routes": [
+    {
+      "path": "/",
+      "component": "Landing"
+    },
+    {
+      "path": "/download",
+      "component": "Downloads"
+    },
+    {
+      "path": "/desktop-guide",
+      "component": "DesktopGuide"
+    },
+    {
+      "path": "/login",
+      "component": "Login"
+    },
+    {
+      "path": "/support",
+      "component": "SupportRoute"
+    },
+    {
+      "path": "/setup-account",
+      "component": "SetupAccount"
+    },
+    {
+      "path": "/reset-password",
+      "component": "SetupAccount"
+    },
+    {
+      "path": "/accept-terms",
+      "component": "AcceptTerms"
+    },
+    {
+      "path": "/r/:token",
+      "component": "PublicReceiptView"
+    },
+    {
+      "path": "/receipt/:token",
+      "component": "PublicReceiptView"
+    },
+    {
+      "path": "dashboard",
+      "component": "Dashboard"
+    },
+    {
+      "path": "accounts",
+      "component": "RoleProtectedRoute"
+    },
+    {
+      "path": "pos",
+      "component": "POS"
+    },
+    {
+      "path": "catalog",
+      "component": "Catalog"
+    },
+    {
+      "path": "inventory",
+      "component": "Inventory"
+    },
+    {
+      "path": "sales",
+      "component": "Sales"
+    },
+    {
+      "path": "debts",
+      "component": "Debts"
+    },
+    {
+      "path": "b2b",
+      "component": "B2BTransactions"
+    },
+    {
+      "path": "shifts",
+      "component": "Shifts"
+    },
+    {
+      "path": "history",
+      "component": "RoleProtectedRoute"
+    },
+    {
+      "path": "tenants",
+      "component": "RoleProtectedRoute"
+    },
+    {
+      "path": "seller-profiles/review",
+      "component": "RoleProtectedRoute"
+    },
+    {
+      "path": "my-tenants",
+      "component": "RoleProtectedRoute"
+    },
+    {
+      "path": "employees",
+      "component": "RoleProtectedRoute"
+    },
+    {
+      "path": "services",
+      "component": "RoleProtectedRoute"
+    },
+    {
+      "path": "audit",
+      "component": "RoleProtectedRoute"
+    },
+    {
+      "path": "profile",
+      "component": "Profile"
+    },
+    {
+      "path": "docs",
+      "component": "Documentation"
+    },
+    {
+      "path": "*",
+      "component": "Navigate"
+    }
+  ],
+  "mobile_routes": [
+    "mobile-app/src/app/(app)/(tabs)/b2b.tsx",
+    "mobile-app/src/app/(app)/(tabs)/cart.tsx",
+    "mobile-app/src/app/(app)/(tabs)/cashbox.tsx",
+    "mobile-app/src/app/(app)/(tabs)/categories.tsx",
+    "mobile-app/src/app/(app)/(tabs)/customers.tsx",
+    "mobile-app/src/app/(app)/(tabs)/debts.tsx",
+    "mobile-app/src/app/(app)/(tabs)/documents.tsx",
+    "mobile-app/src/app/(app)/(tabs)/downloads.tsx",
+    "mobile-app/src/app/(app)/(tabs)/history.tsx",
+    "mobile-app/src/app/(app)/(tabs)/index.tsx",
+    "mobile-app/src/app/(app)/(tabs)/inventory.tsx",
+    "mobile-app/src/app/(app)/(tabs)/menu.tsx",
+    "mobile-app/src/app/(app)/(tabs)/notifications.tsx",
+    "mobile-app/src/app/(app)/(tabs)/product.tsx",
+    "mobile-app/src/app/(app)/(tabs)/products.tsx",
+    "mobile-app/src/app/(app)/(tabs)/profile.tsx",
+    "mobile-app/src/app/(app)/(tabs)/reports.tsx",
+    "mobile-app/src/app/(app)/(tabs)/sales-history.tsx",
+    "mobile-app/src/app/(app)/(tabs)/settings.tsx",
+    "mobile-app/src/app/(app)/(tabs)/store-settings.tsx",
+    "mobile-app/src/app/(app)/(tabs)/support.tsx",
+    "mobile-app/src/app/(app)/(tabs)/sync.tsx",
+    "mobile-app/src/app/(app)/admin.tsx",
+    "mobile-app/src/app/(app)/notifications.tsx",
+    "mobile-app/src/app/(app)/profile.tsx",
+    "mobile-app/src/app/checkout.tsx",
+    "mobile-app/src/app/downloads.tsx",
+    "mobile-app/src/app/index.tsx",
+    "mobile-app/src/app/legal.tsx",
+    "mobile-app/src/app/login.tsx",
+    "mobile-app/src/app/receipt.tsx",
+    "mobile-app/src/app/stores.tsx",
+    "mobile-app/src/app/support.tsx",
+    "mobile-app/src/app/terms.tsx"
+  ],
+  "web_api_literals": [
+    {
+      "path": "/auth/admin-login/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 264
+    },
+    {
+      "path": "/auth/admin-login/telegram-status/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 270
+    },
+    {
+      "path": "/auth/admin-login/send-otp/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 276
+    },
+    {
+      "path": "/auth/admin-login/verify-otp/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 282
+    },
+    {
+      "path": "/auth/password-reset/request/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 290
+    },
+    {
+      "path": "/auth/password-reset/change-with-old/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 297
+    },
+    {
+      "path": "/auth/password-reset/verify/?token=",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 303
+    },
+    {
+      "path": "/auth/password-reset/confirm/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 306
+    },
+    {
+      "path": "/auth/password-reset/resume/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 312
+    },
+    {
+      "path": "/auth/me/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 317
+    },
+    {
+      "path": "/auth/profile/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 320
+    },
+    {
+      "path": "/auth/change-password/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 326
+    },
+    {
+      "path": "/auth/profile/avatar/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 332
+    },
+    {
+      "path": "/auth/profile/avatar/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 338
+    },
+    {
+      "path": "/auth/unban/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 343
+    },
+    {
+      "path": "/auth/accept-terms/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 349
+    },
+    {
+      "path": "/docs/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 355
+    },
+    {
+      "path": "/docs/?doc=${encodeURIComponent(docKey)}",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 356
+    },
+    {
+      "path": "/docs/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 358
+    },
+    {
+      "path": "/analytics/dashboard/${q}",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 373
+    },
+    {
+      "path": "/tenants/${tenantId}/employees/permissions/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 378
+    },
+    {
+      "path": "/tenants/my/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 379
+    },
+    {
+      "path": "/tenants/my/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 380
+    },
+    {
+      "path": "/tenants/my/${tenantId}/seller-profile/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 384
+    },
+    {
+      "path": "/tenants/seller-profiles/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 388
+    },
+    {
+      "path": "/tenants/seller-profiles/review/${query.size ? ",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 396
+    },
+    {
+      "path": "/tenants/seller-profiles/${id}/review/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 398
+    },
+    {
+      "path": "/tenants/current/transfer-targets/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 402
+    },
+    {
+      "path": "/tenants/seller-profiles/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 403
+    },
+    {
+      "path": "/tenants/seller-profiles/${id}/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 407
+    },
+    {
+      "path": "/tenants/${query ? ",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 413
+    },
+    {
+      "path": "/tenants/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 416
+    },
+    {
+      "path": "/tenants/${id}/resend-owner-invite/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 420
+    },
+    {
+      "path": "/tenants/${id}/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 424
+    },
+    {
+      "path": "/tenants/${id}/change-owner/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 429
+    },
+    {
+      "path": "/tenants/${id}/activate/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 438
+    },
+    {
+      "path": "/tenants/${id}/deactivate/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 442
+    },
+    {
+      "path": "/tenants/${tenantId}/employees/hire/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 446
+    },
+    {
+      "path": "/tenants/${tenantId}/employees/${query ? ",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 452
+    },
+    {
+      "path": "/tenants/${tenantId}/employees/${employeeId}/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 455
+    },
+    {
+      "path": "/tenants/${tenantId}/employees/${employeeId}/resend-invite/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 457
+    },
+    {
+      "path": "/tenants/${tenantId}/employees/${employeeId}/account-status/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 459
+    },
+    {
+      "path": "/tenants/${tenantId}/employees/${employeeId}/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 461
+    },
+    {
+      "path": "/tenants/${tenantId}/employees/${employeeId}/restore/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 463
+    },
+    {
+      "path": "/tenants/${tenantId}/employees/fire/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 465
+    },
+    {
+      "path": "/tenants/current/${q}",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 471
+    },
+    {
+      "path": "/tenants/current/${q}",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 478
+    },
+    {
+      "path": "/tenants/current/test-telegram/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 484
+    },
+    {
+      "path": "/tenants/current/send-report-now/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 489
+    },
+    {
+      "path": "/tenants/current/send-low-stock-report-now/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 494
+    },
+    {
+      "path": "/catalog/import/template/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 501
+    },
+    {
+      "path": "/catalog/import/preview/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 502
+    },
+    {
+      "path": "/catalog/import/${id}/commit/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 503
+    },
+    {
+      "path": "/catalog/variants/${id}/barcode/${params?.force ? '?force=true' : ''}",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 505
+    },
+    {
+      "path": "/catalog/categories/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 509
+    },
+    {
+      "path": "/catalog/categories/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 511
+    },
+    {
+      "path": "/catalog/categories/${id}/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 516
+    },
+    {
+      "path": "/catalog/categories/${id}/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 521
+    },
+    {
+      "path": "/catalog/products/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 525
+    },
+    {
+      "path": "/catalog/products/${id}/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 529
+    },
+    {
+      "path": "/catalog/products/${id}/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 531
+    },
+    {
+      "path": "/catalog/products/${id}/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 536
+    },
+    {
+      "path": "/catalog/products/${id}/archive/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 540
+    },
+    {
+      "path": "/catalog/products/${id}/unarchive/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 544
+    },
+    {
+      "path": "/catalog/products/${productId}/images/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 548
+    },
+    {
+      "path": "/catalog/products/${productId}/images/${imageId}/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 553
+    },
+    {
+      "path": "/catalog/products/${productId}/variants/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 558
+    },
+    {
+      "path": "/catalog/variants/${qs ? ",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 568
+    },
+    {
+      "path": "/catalog/variants/${id}/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 571
+    },
+    {
+      "path": "/catalog/variants/${id}/archive/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 576
+    },
+    {
+      "path": "/catalog/variants/${id}/unarchive/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 580
+    },
+    {
+      "path": "/inventory/suppliers/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 586
+    },
+    {
+      "path": "/inventory/batches/?${new URLSearchParams(params)}",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 587
+    },
+    {
+      "path": "/inventory/stock/${qs ? ",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 595
+    },
+    {
+      "path": "/inventory/stock/${q}",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 599
+    },
+    {
+      "path": "/inventory/stock/${variantId}/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 602
+    },
+    {
+      "path": "/inventory/movements/?${query}",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 610
+    },
+    {
+      "path": "/inventory/intake/batch/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 613
+    },
+    {
+      "path": "/inventory/adjust/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 618
+    },
+    {
+      "path": "/inventory/customer-return/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 623
+    },
+    {
+      "path": "/inventory/supplier-return/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 628
+    },
+    {
+      "path": "/inventory/write-off/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 633
+    },
+    {
+      "path": "/inventory/deficits/${q}",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 639
+    },
+    {
+      "path": "/inventory/transfers/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 643
+    },
+    {
+      "path": "/inventory/transfers/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 645
+    },
+    {
+      "path": "/inventory/transfers/${id}/receive/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 650
+    },
+    {
+      "path": "/inventory/transfers/${id}/return/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 655
+    },
+    {
+      "path": "/inventory/transfers/${id}/close-discrepancy/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 660
+    },
+    {
+      "path": "/sales/?${query}",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 673
+    },
+    {
+      "path": "/sales/${id}/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 675
+    },
+    {
+      "path": "/sales/${id}/receipt-token/rotate/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 676
+    },
+    {
+      "path": "/sales/public/receipt/${encodeURIComponent(token)}/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 678
+    },
+    {
+      "path": "/sales/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 680
+    },
+    {
+      "path": "/sales/${saleId}/void/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 685
+    },
+    {
+      "path": "/sales/items/${saleItemId}/void/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 691
+    },
+    {
+      "path": "/sales/counterparties/?${queryString(typeof params === 'string' ? { search: params } : params)}",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 697
+    },
+    {
+      "path": "/sales/counterparties/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 701
+    },
+    {
+      "path": "/sales/counterparties/import/template/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 705
+    },
+    {
+      "path": "/sales/counterparties/import/preview/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 706
+    },
+    {
+      "path": "/sales/counterparties/import/${id}/commit/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 707
+    },
+    {
+      "path": "/sales/counterparties/${id}/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 708
+    },
+    {
+      "path": "/sales/counterparties/${id}/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 710
+    },
+    {
+      "path": "/sales/counterparties/${id}/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 715
+    },
+    {
+      "path": "/sales/counterparties/${counterpartyId}/sales/${qs ? '?' + qs : ''}",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 721
+    },
+    {
+      "path": "/sales/counterparties/${id}/payments/?${queryString(typeof params === 'object' ? params : { page: params })}",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 723
+    },
+    {
+      "path": "/sales/counterparties/${counterpartyId}/payments/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 727
+    },
+    {
+      "path": "/sales/counterparties/${counterpartyId}/payments/correct/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 732
+    },
+    {
+      "path": "/sales/b2b/inbox/?${queryString(params)}",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 737
+    },
+    {
+      "path": "/sales/b2b/${saleId}/accept/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 739
+    },
+    {
+      "path": "/sales/b2b/${saleId}/reject/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 744
+    },
+    {
+      "path": "/sales/b2b/${saleId}/returns/receive/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 749
+    },
+    {
+      "path": "/sales/b2b/${saleId}/returns/close-discrepancy/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 754
+    },
+    {
+      "path": "/sales/notifications/?${queryString(params)}",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 759
+    },
+    {
+      "path": "/sales/notifications/read-all/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 760
+    },
+    {
+      "path": "/sales/notifications/${id}/read/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 762
+    },
+    {
+      "path": "/sales/notifications/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 766
+    },
+    {
+      "path": "/sales/notifications/${id}/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 770
+    },
+    {
+      "path": "/cashbox/shift/open/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 776
+    },
+    {
+      "path": "/cashbox/shift/current/?${queryString(typeof params === 'object' ? params : {})}",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 777
+    },
+    {
+      "path": "/cashbox/shift/close/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 779
+    },
+    {
+      "path": "/cashbox/expenses/?${queryString(params)}",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 783
+    },
+    {
+      "path": "/cashbox/expenses/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 785
+    },
+    {
+      "path": "/cashbox/income/?${queryString(params)}",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 789
+    },
+    {
+      "path": "/cashbox/income/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 791
+    },
+    {
+      "path": "/cashbox/reports/?${queryString(typeof params === 'object' ? params : { page: params })}",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 795
+    },
+    {
+      "path": "/cashbox/reports/${id}/",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 798
+    },
+    {
+      "path": "/audit/history/?${queryString(params)}",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 802
+    },
+    {
+      "path": "/audit/history/${encodeURIComponent(source)}/${id}/?${queryString(params)}",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 803
+    },
+    {
+      "path": "/audit/logs/${qs ? ",
+      "file": "frontend/ilbi/src/api/client.js",
+      "line": 814
+    },
+    {
+      "path": "/workspace/overview/",
+      "file": "frontend/ilbi/src/api/workspace.js",
+      "line": 4
+    },
+    {
+      "path": "/workspace/search/?q=${encodeURIComponent(query)}",
+      "file": "frontend/ilbi/src/api/workspace.js",
+      "line": 5
+    },
+    {
+      "path": "/workspace/reminders/?completed=${completed}&page=${page}",
+      "file": "frontend/ilbi/src/api/workspace.js",
+      "line": 6
+    },
+    {
+      "path": "/workspace/members/",
+      "file": "frontend/ilbi/src/api/workspace.js",
+      "line": 7
+    },
+    {
+      "path": "/workspace/reminders/",
+      "file": "frontend/ilbi/src/api/workspace.js",
+      "line": 8
+    },
+    {
+      "path": "/workspace/reminders/${id}/",
+      "file": "frontend/ilbi/src/api/workspace.js",
+      "line": 9
+    },
+    {
+      "path": "/workspace/reminders/${id}/",
+      "file": "frontend/ilbi/src/api/workspace.js",
+      "line": 10
+    }
+  ],
+  "scope": "Tracked source census; current navigation, API wrappers and feature/action review. Inclusion is not line-by-line execution or native acceptance."
+}

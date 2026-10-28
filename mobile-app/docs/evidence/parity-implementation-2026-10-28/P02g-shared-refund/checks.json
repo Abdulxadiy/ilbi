@@ -1,0 +1,14 @@
+{
+  "web_unit_passed": 93,
+  "web_build": "passed",
+  "touched_oxlint": "passed",
+  "actual_indexeddb_assertions": 19,
+  "shared_page_browser": "passed, controlled API, actual DB/reload",
+  "existing_import_browser": "passed",
+  "native_electron_acceptance": false,
+  "production_financial_acceptance": false,
+  "backend_unchanged_previous_passes": 1218,
+  "mobile_unchanged_previous_passes": 688,
+  "emulator_touched": false,
+  "version_changed": false
+}

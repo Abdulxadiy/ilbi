@@ -1,0 +1,2 @@
+PASS: genuine owner-signed, non-debug release v1.0.0/build 1 installed on fresh API 36 x86_64 Android; starts with Metro stopped; real-mode login, public downloads and installed native identity work. No login or financial/support mutation submitted.
+ARM64 is included in the APK but was not run on physical hardware. No iOS or public-server activation claim.

@@ -1,0 +1,583 @@
+{
+  "audit_date": "2026-10-28",
+  "baseline_commit": "888ed76f1a67ae2bbf2a9ca09ffcf5d3be9366f7",
+  "meaning": "Workflow groups, not completion percentages. BOR means connected source/main workflow, not full native acceptance.",
+  "rows": [
+    {
+      "id": "C01",
+      "capability": "Qoidalarni qabul qilish, ruxsatli hisob/do‘kon bilan kirish",
+      "web_desktop": "Bor",
+      "mobile_status": "BOR",
+      "mobile": "Server hujjati, rozilik va kirish gate mavjud.",
+      "findings": "001,005,006,007"
+    },
+    {
+      "id": "C02",
+      "capability": "Login, Telegram bog‘lash, OTP va 6-raqamdan avtomatik tasdiqlash",
+      "web_desktop": "Bor",
+      "mobile_status": "BOR",
+      "mobile": "Haqiqiy auth API, qayta yuborish va xato maydoni mavjud.",
+      "findings": "084,085,086,088"
+    },
+    {
+      "id": "C03",
+      "capability": "Oddiy parolni tiklash va eski parol bilan almashtirish",
+      "web_desktop": "Bor",
+      "mobile_status": "BOR",
+      "mobile": "Login modalidagi request/confirm/change-with-old ishlangan.",
+      "findings": "002,003"
+    },
+    {
+      "id": "C04",
+      "capability": "Taklif havolasi orqali yangi xodim/hisobni sozlash va reset-resume",
+      "web_desktop": "Bor",
+      "mobile_status": "YO‘Q",
+      "mobile": "Web SetupAccount yo‘li uchun teng native route/deep-link onboarding yo‘q. Oddiy reset bu oqimning hammasi emas.",
+      "findings": "002"
+    },
+    {
+      "id": "C05",
+      "capability": "Profil, avatar yuklash/o‘chirish va parol o‘zgartirish",
+      "web_desktop": "Bor",
+      "mobile_status": "BOR",
+      "mobile": "Build 5 dagi avatar API va sidebar rasmi ham bor; real qurilma yuklash UAT bu auditda bajarilmadi.",
+      "findings": "003"
+    },
+    {
+      "id": "C06",
+      "capability": "Loginni eslab qolishni boshqarish",
+      "web_desktop": "Web/native siyosati; desktop OS vault",
+      "mobile_status": "QISMAN",
+      "mobile": "Token SecureStore’da saqlanadi. Username/parolni alohida eslab qolish/unutish va desktop vault UX’i yo‘q.",
+      "findings": "004"
+    },
+    {
+      "id": "C07",
+      "capability": "Bir nechta do‘konni tanlash/almashtirish",
+      "web_desktop": "Bor",
+      "mobile_status": "BOR",
+      "mobile": "Hisob/serverga bog‘langan do‘kon va faol a’zolik ruxsatlari bor.",
+      "findings": "006,087"
+    },
+    {
+      "id": "C08",
+      "capability": "Yangi do‘kon/filial yaratish, sotuvchi profilini yaratish/bog‘lash",
+      "web_desktop": "Bor",
+      "mobile_status": "YO‘Q",
+      "mobile": "Ilovada mavjud do‘konni tanlash bor; MyTenants boshqaruvining o‘zi yo‘q.",
+      "findings": "049"
+    },
+    {
+      "id": "C09",
+      "capability": "Rol va faol do‘kon bo‘yicha ko‘rish/amal vakolatlari",
+      "web_desktop": "Bor",
+      "mobile_status": "BOR",
+      "mobile": "Route/amal tekshiruvlari bor; huquqlarni tahrirlash bilan aralashtirmaslik kerak.",
+      "findings": "007"
+    },
+    {
+      "id": "C10",
+      "capability": "Xodim yollash, taklif yuborish, tahrirlash, blok/arxiv/bo‘shatish",
+      "web_desktop": "Bor",
+      "mobile_status": "YO‘Q",
+      "mobile": "Employees native ekrani va yozish oqimlari yo‘q.",
+      "findings": "047"
+    },
+    {
+      "id": "C11",
+      "capability": "Xodim huquqlarini tahrirlash va tayyor rollar",
+      "web_desktop": "Bor",
+      "mobile_status": "YO‘Q",
+      "mobile": "Mavjud huquqni tekshirish bor, permission editor/preset boshqaruvi yo‘q.",
+      "findings": "048"
+    },
+    {
+      "id": "C12",
+      "capability": "Bugun/hafta/oy/yil statistikasi va asosiy KPI",
+      "web_desktop": "Bor, 4 davr",
+      "mobile_status": "BOR",
+      "mobile": "4 davr, savdo/naqd/karta/nasiya/qarz/o‘rtacha chek va kunlar jadvali bor.",
+      "findings": "008"
+    },
+    {
+      "id": "C13",
+      "capability": "Foyda, tannarx, umumiy ko‘rsatkichlar va interaktiv tahlil grafiklari",
+      "web_desktop": "Bor",
+      "mobile_status": "QISMAN",
+      "mobile": "Mobile UI foyda/tannarx va web’dagi taqqoslash/grafik imkoniyatlarining hammasini chiqarmaydi.",
+      "findings": "008"
+    },
+    {
+      "id": "C14",
+      "capability": "Kategoriya/ichki kategoriya yaratish va tahrirlash",
+      "web_desktop": "Bor",
+      "mobile_status": "BOR",
+      "mobile": "Serverdagi daraxt, valyuta, filtrlash va menu amallari bor.",
+      "findings": "020"
+    },
+    {
+      "id": "C15",
+      "capability": "Tovar/variantlar, 3 narx, birlik, kod, barcode, MXIK, arxiv/tiklash",
+      "web_desktop": "Bor",
+      "mobile_status": "BOR",
+      "mobile": "Asosiy CRUD va tarixni saqlovchi server amallari bor.",
+      "findings": "021,022,023"
+    },
+    {
+      "id": "C16",
+      "capability": "Tovar rasmlari va 3 rasmli galereya",
+      "web_desktop": "Bor, ProductToolsModal + carousel",
+      "mobile_status": "QISMAN",
+      "mobile": "Mavjud mahsulotning asosiy rasmini PATCH qilish bor. Galereya qo‘shish/o‘chirish/carousel va create-formdagi rasm tanlash teng emas.",
+      "findings": "024"
+    },
+    {
+      "id": "C17",
+      "capability": "Tovarlarni Excel fayldan template → preview → commit bilan import qilish",
+      "web_desktop": "Bor",
+      "mobile_status": "YO‘Q",
+      "mobile": "Mobile file picker/import-preview/commit ekrani yo‘q.",
+      "findings": "025"
+    },
+    {
+      "id": "C18",
+      "capability": "Shtrix-kod yaratish va narx/etiketka chop etish",
+      "web_desktop": "Bor",
+      "mobile_status": "YO‘Q",
+      "mobile": "Barcode’ni o‘qish/qo‘lda yozish bor; generate/label-print oqimi yo‘q.",
+      "findings": "026"
+    },
+    {
+      "id": "C19",
+      "capability": "Kamera bilan barcode o‘qish, aniq qidirish va sahifalash",
+      "web_desktop": "Bor",
+      "mobile_status": "BOR",
+      "mobile": "CameraView va exact barcode query bor; build 5 kamera permission’i oldingi release tekshiruvida tasdiqlangan.",
+      "findings": "018,019"
+    },
+    {
+      "id": "C20",
+      "capability": "Savat, kelishilgan sotuv narxi, kasr miqdor va ulgurji rejim",
+      "web_desktop": "Bor",
+      "mobile_status": "BOR",
+      "mobile": "Joriy savdo narxi katalog narxidan alohida, qoralama va aniq pul/miqdor hisoblari bor.",
+      "findings": "012,090,091,092,094,109"
+    },
+    {
+      "id": "C21",
+      "capability": "POS yonidagi dollar/kurs kalkulyatori",
+      "web_desktop": "Bor",
+      "mobile_status": "QISMAN",
+      "mobile": "Kalkulyator StoreSettings ichida bor; POS yonida yo‘q va sozlama vakolatisiz kassir kira olmaydi.",
+      "findings": "015,053"
+    },
+    {
+      "id": "C22",
+      "capability": "Nasiya savdoda mijoz va alohida qaytarish sanasi",
+      "web_desktop": "Bor",
+      "mobile_status": "BOR",
+      "mobile": "Checkout deadline tekshiradi va serverga yuboradi; mijoz default muddati tahriri esa alohida yetishmaydi.",
+      "findings": "090,034"
+    },
+    {
+      "id": "C23",
+      "capability": "Savdo oldidan stock, soliq va expiry ogohlantirishlarini tekshirish",
+      "web_desktop": "Bor",
+      "mobile_status": "BOR",
+      "mobile": "Joriy variant/soliq qiymati qayta o‘qiladi, muddati o‘tgan batch uchun rozilik olinadi. Production fiskal gate saqlanadi.",
+      "findings": "013,014,016,017,129"
+    },
+    {
+      "id": "C24",
+      "capability": "Savdolar tarixi, mijoz/sana/holat/to‘lov/valyuta filtrlari",
+      "web_desktop": "Bor",
+      "mobile_status": "BOR",
+      "mobile": "Server filtrlari, sahifalar, tafsilot va chek yo‘li mavjud.",
+      "findings": "009"
+    },
+    {
+      "id": "C25",
+      "capability": "Savdoni to‘liq va qisman qaytarish",
+      "web_desktop": "Bor",
+      "mobile_status": "BOR",
+      "mobile": "Sabab, qolgan kasr miqdor, bir martalik moliyaviy identifikatorlar bilan ishlangan; native moliyaviy UAT ochiq.",
+      "findings": "010,011"
+    },
+    {
+      "id": "C26",
+      "capability": "Ombor qoldig‘i, harakatlari, partiya/expiry va tannarx huquqlari",
+      "web_desktop": "Bor",
+      "mobile_status": "BOR",
+      "mobile": "Haqiqiy stock/movement/batch endpointlari va sahifalar bor.",
+      "findings": "027,030"
+    },
+    {
+      "id": "C27",
+      "capability": "Ko‘p qatorli kirim, ta’minotchi, tannarx, invoice/batch/expiry",
+      "web_desktop": "Bor",
+      "mobile_status": "BOR",
+      "mobile": "Serverga bog‘langan draft va once-only amallar bor.",
+      "findings": "028"
+    },
+    {
+      "id": "C28",
+      "capability": "Mijozdan/ta’minotchiga qaytarish va hisobdan chiqarish",
+      "web_desktop": "Bor",
+      "mobile_status": "BOR",
+      "mobile": "Batch, sabab va aniq miqdor bilan ishlangan.",
+      "findings": "029"
+    },
+    {
+      "id": "C29",
+      "capability": "Ichki transfer: yuborish, qisman qabul, jismoniy qaytish, tafovut",
+      "web_desktop": "Bor",
+      "mobile_status": "BOR",
+      "mobile": "Mapping, owner cheklovi va server receipt/journal qo‘llanadi.",
+      "findings": "031"
+    },
+    {
+      "id": "C30",
+      "capability": "Alohida kam qoldiq/defitsit hisoboti",
+      "web_desktop": "Bor",
+      "mobile_status": "QISMAN",
+      "mobile": "Qoldiqni kamidan saralash va alertdan omborga kirish bor; /inventory/deficits/ alohida UI yo‘q.",
+      "findings": "032"
+    },
+    {
+      "id": "C31",
+      "capability": "Mijozlar ro‘yxati/qidiruv, asosiy yaratish va ism/izoh tahriri",
+      "web_desktop": "Bor",
+      "mobile_status": "BOR",
+      "mobile": "Haqiqiy paged API va UZS/USD balanslari bor; quyidagi kengroq metadata bilan teng emas.",
+      "findings": "033,034"
+    },
+    {
+      "id": "C32",
+      "capability": "Mijozning do‘kon kodi/B2B bog‘lanishi, default qarz muddati, o‘chirish",
+      "web_desktop": "Bor",
+      "mobile_status": "QISMAN",
+      "mobile": "Native form ism/telefon/yangi izoh bilan cheklangan; target_tenant_code/default due-date/delete boshqaruvi yo‘q.",
+      "findings": "034"
+    },
+    {
+      "id": "C33",
+      "capability": "Bitta mijozning xaridlar, to‘lovlar va qarz harakati ko‘chirmasi",
+      "web_desktop": "Bor",
+      "mobile_status": "QISMAN",
+      "mobile": "SalesHistory’da mijoz filtri bor. Mijoz kartasida payment ledger/statement va to‘liq reconciliation yo‘q.",
+      "findings": "035"
+    },
+    {
+      "id": "C34",
+      "capability": "Mijozlarni jadvaldan import qilish",
+      "web_desktop": "Bor",
+      "mobile_status": "YO‘Q",
+      "mobile": "Template, fayl tanlash, preview va import commit yo‘q.",
+      "findings": "036"
+    },
+    {
+      "id": "C35",
+      "capability": "Qarz qabul qilish: UZS/USD, naqd/karta, filial va izoh",
+      "web_desktop": "Bor",
+      "mobile_status": "BOR",
+      "mobile": "Server quote, joriy balans guard’i va asl kalitli qayta tekshirish mavjud.",
+      "findings": "038"
+    },
+    {
+      "id": "C36",
+      "capability": "Qarz/ortiqcha to‘lov va muddati o‘tgan/yaqin/kelgusi filtrlar",
+      "web_desktop": "Bor",
+      "mobile_status": "QISMAN",
+      "mobile": "Qarzdorlar ro‘yxati va collection bor; kredit/settled/due-date filtrlar to‘liq emas.",
+      "findings": "037"
+    },
+    {
+      "id": "C37",
+      "capability": "Mijoz haqqini qaytarish va oldingi qarz to‘lovini tuzatish",
+      "web_desktop": "Bor",
+      "mobile_status": "YO‘Q",
+      "mobile": "Refund/correct-debt-payment egaga mo‘ljallangan UI yo‘q.",
+      "findings": "039"
+    },
+    {
+      "id": "C38",
+      "capability": "Smena ochish/yopish, UZS/USD sanash, tafovut, kirim/xarajat",
+      "web_desktop": "Bor",
+      "mobile_status": "BOR",
+      "mobile": "Server amallari va jurnalda aniq qayta tekshirish mavjud.",
+      "findings": "040,041,042"
+    },
+    {
+      "id": "C39",
+      "capability": "Kassa va hisobot ro‘yxatlaridan qidirish",
+      "web_desktop": "Bor",
+      "mobile_status": "QISMAN",
+      "mobile": "Kirim/xarajat tabs va pagination bor; web Shifts’dagi search boshqaruvi native Cashbox/Reports ro‘yxatlarida yo‘q.",
+      "findings": "042"
+    },
+    {
+      "id": "C40",
+      "capability": "Saqlangan Z-hisobotlar va modern/thermal ko‘rinishlar",
+      "web_desktop": "Bor",
+      "mobile_status": "QISMAN",
+      "mobile": "Server ro‘yxati/detail va jadval-PDF ulashish bor; qidirish, web modern/thermal layout va printer imkoniyati teng emas.",
+      "findings": "043"
+    },
+    {
+      "id": "C41",
+      "capability": "B2B kiruvchi/chiquvchi hujjatlar, qabul qilish/rad etish",
+      "web_desktop": "Bor",
+      "mobile_status": "BOR",
+      "mobile": "List, mapping, qisman qabul va holat amallari bor.",
+      "findings": "044,045"
+    },
+    {
+      "id": "C42",
+      "capability": "Yangi B2B hamkor yaratish va POS’da kimga jo‘natilishini ko‘rsatish",
+      "web_desktop": "Bor",
+      "mobile_status": "QISMAN",
+      "mobile": "Do‘kon kodi/badge native formda yo‘q. Mavjud web’da bog‘langan kontragentni tanlash serverda B2B savdo yaratishi mumkin; “B2B umuman yaratib bo‘lmaydi” degan xulosa qilinmadi.",
+      "findings": "034,044"
+    },
+    {
+      "id": "C43",
+      "capability": "B2B qaytgan tovarni qabul qilish va tafovutni yopish",
+      "web_desktop": "Bor",
+      "mobile_status": "BOR",
+      "mobile": "Jo‘natuvchi/owner tekshiruvlari va bir martalik server amallari bor.",
+      "findings": "046"
+    },
+    {
+      "id": "C44",
+      "capability": "Oddiy saqlangan chek, 58/80mm, print, PDF va share",
+      "web_desktop": "Bor",
+      "mobile_status": "BOR",
+      "mobile": "Snapshotdagi summa/soliq/identifikatsiya bilan asosiy rendering bor; native printer/share-sheet bu auditda ishlatilmadi.",
+      "findings": "068,069,095,096,097"
+    },
+    {
+      "id": "C45",
+      "capability": "A4 hisob-faktura, yuboruvchi/qabul qiluvchi imzo, imzoli eksport",
+      "web_desktop": "Bor",
+      "mobile_status": "YO‘Q",
+      "mobile": "Mobile DocumentsScreen — oddiy savdo cheklari ro‘yxati. A4 invoice/signature screen/route yo‘q.",
+      "findings": "065,066,067"
+    },
+    {
+      "id": "C46",
+      "capability": "Scannable QR/barcode, ochiq chek va havolani revoke/rotate",
+      "web_desktop": "Bor",
+      "mobile_status": "QISMAN",
+      "mobile": "Mavjud token havolasini nusxalash bor. FileText ikonka QR emas; native public-receipt route va rotate action yo‘q. Browserdagi public chek alohida ishlaydi.",
+      "findings": "070,071"
+    },
+    {
+      "id": "C47",
+      "capability": "PDF’ni alohida saqlash va fayl sifatida qayta ochish",
+      "web_desktop": "Web download; desktop save-dialog",
+      "mobile_status": "QISMAN",
+      "mobile": "Vaqtinchalik PDF + OS share mavjud; aniq user-visible save/open oqimi yo‘q. OS share orqali boshqa ilovada saqlash mumkinligi haqiqiy qurilmada tekshirilmagan.",
+      "findings": "072"
+    },
+    {
+      "id": "C48",
+      "capability": "Savdo/ombor/mijozlarni Excel/CSV ga eksport qilish",
+      "web_desktop": "Bor",
+      "mobile_status": "YO‘Q",
+      "mobile": "Native biznes ro‘yxatlarida export UI/fayl oqimi yo‘q. Client’ning blob javobni o‘qiy olishi buning o‘rnini bosmaydi.",
+      "findings": "073,098"
+    },
+    {
+      "id": "C49",
+      "capability": "Do‘kon, chek ko‘rinishi, QQS/soliq va CBU/ichki kurs sozlamalari",
+      "web_desktop": "Bor",
+      "mobile_status": "BOR",
+      "mobile": "6 bo‘lim, section PATCH va revision/stale settings guard mavjud.",
+      "findings": "053,054"
+    },
+    {
+      "id": "C50",
+      "capability": "Telegram manzil/notify sozlamalari va rejalangan/manual hisobotlar",
+      "web_desktop": "Bor",
+      "mobile_status": "RUNTIME",
+      "mobile": "Native UI/API mavjud. Haqiqiy guruhga yuborish va reja bo‘yicha yetkazish bu auditda sinalmadi.",
+      "findings": "055,056"
+    },
+    {
+      "id": "C51",
+      "capability": "Tarix, snapshot tafsilotlari va alohida audit jurnali",
+      "web_desktop": "Bor",
+      "mobile_status": "QISMAN",
+      "mobile": "Owner tarix/search/category/page/detail bor; davr/custom sana, admin do‘kon filtri, alohida audit UI va print/export teng emas.",
+      "findings": "063,064"
+    },
+    {
+      "id": "C52",
+      "capability": "Guest/account matnli support, suhbat va operator claim/close/reopen",
+      "web_desktop": "Bor",
+      "mobile_status": "BOR",
+      "mobile": "Sidebar ekranida real API va viewable-message read-through bor.",
+      "findings": "057,059"
+    },
+    {
+      "id": "C53",
+      "capability": "Support rasm/voice/sticker yuborish, ko‘rish/tinglash va UI tillari",
+      "web_desktop": "Bor",
+      "mobile_status": "QISMAN",
+      "mobile": "Reply-language tanlovi va media borligi yozuvi bor; image viewer, voice player/recorder va sticker composer yo‘q.",
+      "findings": "058"
+    },
+    {
+      "id": "C54",
+      "capability": "Support operatorining mijoz/do‘kon profilini boshqarishi",
+      "web_desktop": "Bor",
+      "mobile_status": "QISMAN",
+      "mobile": "Operator inbox/claim bor; web CustomerProfileModal amallari yo‘q.",
+      "findings": "059"
+    },
+    {
+      "id": "C55",
+      "capability": "In-app bildirishnoma ro‘yxati, o‘qish/o‘chirish va hujjatga o‘tish",
+      "web_desktop": "Bor",
+      "mobile_status": "QISMAN",
+      "mobile": "Asosiy inbox bor. Backenddagi /b2b legacy havolasi uchun ochish amali yo‘q — DMP-132 qayta hosil qilindi.",
+      "findings": "060,132"
+    },
+    {
+      "id": "C56",
+      "capability": "Telefon ilovasi yopiq paytdagi push",
+      "web_desktop": "Mobilga xos yetkazish talabi",
+      "mobile_status": "RUNTIME",
+      "mobile": "Android FCM kodi bor, lekin server push_enabled=false, project/key konfiguratsiyasi yo‘q; iOS transporti qo‘llanmagan.",
+      "findings": "060"
+    },
+    {
+      "id": "C57",
+      "capability": "Global qidiruv, favorites va tezkor workspace vositalari",
+      "web_desktop": "Bor",
+      "mobile_status": "YO‘Q",
+      "mobile": "Sidebar ichida menu qidiruvi bor; global biznes qidiruvi/favorites/umumiy calculator emas.",
+      "findings": "061"
+    },
+    {
+      "id": "C58",
+      "capability": "Topshiriq/eslatma, mas’ul, due-date va bajarildi holati",
+      "web_desktop": "Bor",
+      "mobile_status": "YO‘Q",
+      "mobile": "Bildirishnomani o‘qish bor; workspace reminder CRUD/complete oqimi yo‘q.",
+      "findings": "062"
+    },
+    {
+      "id": "C59",
+      "capability": "Yuridik matnlar va to‘liq qo‘llanma/hujjatlar kutubxonasi",
+      "web_desktop": "Bor",
+      "mobile_status": "QISMAN",
+      "mobile": "Legal matn fetch/view bor; docs list/Markdown/image/edit/certificate print teng emas.",
+      "findings": "001,074"
+    },
+    {
+      "id": "C60",
+      "capability": "Platforma hisoblari/do‘konlar/owner almashish/ban/seller review",
+      "web_desktop": "Admin uchun bor",
+      "mobile_status": "QISMAN",
+      "mobile": "AdminHome 4 ta hisoblagich, Telegram flag va oxirgi faoliyatni o‘qiydi. To‘liq boshqaruv actionlari yo‘q; kassir roli uchun majburiy emas.",
+      "findings": "050,051,052,124,125"
+    },
+    {
+      "id": "C61",
+      "capability": "Internet yo‘q paytda to‘liq katalog/stock/savdo va keyingi sync",
+      "web_desktop": "Desktopda lokal backend; oddiy web bunday emas",
+      "mobile_status": "YO‘Q",
+      "mobile": "Ilova savat/jurnalni saqlaydi, lekin offline biznes DB/stock mirror va qabul qilingan offline yozish protokoli yo‘q.",
+      "findings": "075"
+    },
+    {
+      "id": "C62",
+      "capability": "Offline enrollment, imzolangan account/device grant va avtomatik dependency sync",
+      "web_desktop": "Desktopda bor",
+      "mobile_status": "YO‘Q",
+      "mobile": "Native offline ruxsat/expiry/worker/dependency graph yo‘q.",
+      "findings": "076,077"
+    },
+    {
+      "id": "C63",
+      "capability": "Natijasi noma’lum amal uchun qo‘lda jurnal/retry/reconciliation",
+      "web_desktop": "Desktopda to‘liq SyncCenter",
+      "mobile_status": "QISMAN",
+      "mobile": "Server/account/store-bound asl kalitlar va qo‘lda tekshirish bor; to‘liq offline sync/priority emas, unscoped legacy replay yopiq.",
+      "findings": "078,079"
+    },
+    {
+      "id": "C64",
+      "capability": "Idle/session lock va background privacy/unlock",
+      "web_desktop": "Desktopda bor",
+      "mobile_status": "YO‘Q",
+      "mobile": "Mobile token saqlashi lock emas; privacy overlay/unlock policy yo‘q. Screenshot/task-switcher amalda tekshirilmadi.",
+      "findings": "080"
+    },
+    {
+      "id": "C65",
+      "capability": "Shifrlangan backup/restore va pending-work recovery",
+      "web_desktop": "Desktopda bor",
+      "mobile_status": "YO‘Q",
+      "mobile": "Foydalanuvchi boshqaradigan native backup/restore oqimi yo‘q; OS backup holati tekshirilmagan.",
+      "findings": "081"
+    },
+    {
+      "id": "C66",
+      "capability": "LAN’dagi asosiy kassaga pairing va register revoke/rejoin",
+      "web_desktop": "Desktopda bor",
+      "mobile_status": "YO‘Q",
+      "mobile": "Native pairing yo‘li yo‘q; telefon ikkilamchi kassa bo‘lishi alohida product scope.",
+      "findings": "082"
+    },
+    {
+      "id": "C67",
+      "capability": "Sidebar, tezkor pastki tablar, light/dark va ILBI logo",
+      "web_desktop": "Bor, platformaga mos",
+      "mobile_status": "BOR",
+      "mobile": "Mobile uchun alohida tasdiqlangan dizayn qo‘llanadi; desktop classic/fast skin’ni aynan ko‘chirish shart emas.",
+      "findings": "110,113,120"
+    },
+    {
+      "id": "C68",
+      "capability": "Android yuklab olish va eski native build uchun update eslatmasi",
+      "web_desktop": "Desktop o‘z updater’iga ega",
+      "mobile_status": "BOR",
+      "mobile": "Rasmiy feed build 5; runtime source APK5 bilan teng. Eski build fixture’lari sinovlari bor, mavjud emulator ko‘rilmadi.",
+      "findings": "083"
+    },
+    {
+      "id": "C69",
+      "capability": "iPhone uchun tarqatilgan IPA va APNs yetkazishi",
+      "web_desktop": "iOS alohida release",
+      "mobile_status": "RUNTIME",
+      "mobile": "React Native source/JS export bor; rasmiy feed’da iOS paketi yo‘q, joriy PushProvider Android-only.",
+      "findings": "083,060"
+    },
+    {
+      "id": "C70",
+      "capability": "Katta font, Reduce Motion va real native performance",
+      "web_desktop": "OS/qurilmaga bog‘liq",
+      "mobile_status": "RUNTIME",
+      "mobile": "Avtomatik test yoki browser screenshot barcha qurilmalarda FPS/memory/keyboard/font acceptance isboti emas.",
+      "findings": "112,114,115,119"
+    },
+    {
+      "id": "C71",
+      "capability": "Windows/Linux installer, tray, bundled Python/PostgreSQL jarayonlari",
+      "web_desktop": "Desktopga xos",
+      "mobile_status": "DESKTOPGA_XOS",
+      "mobile": "Binar/protsesslarni telefonga nusxalash talab qilinmaydi; offline biznes natijasi esa yuqorida alohida baholandi.",
+      "findings": "075,082,083"
+    },
+    {
+      "id": "C72",
+      "capability": "Production fiskal/OFD savdo gate va UZS-only retail",
+      "web_desktop": "Umumiy backend cheklovi",
+      "mobile_status": "UMUMIY_CHEKLOV",
+      "mobile": "DEBUG=false’da create-sale ochiq emas; server DEBUG=false tasdiqlandi. Bu faqat mobile kamchiligi emas. Gate o‘zgartirilmadi, real savdo yuborilmadi.",
+      "findings": "014,129"
+    }
+  ]
+}

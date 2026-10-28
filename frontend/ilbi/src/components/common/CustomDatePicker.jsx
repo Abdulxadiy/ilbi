@@ -1,6 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useId } from 'react';
 import { Calendar, ChevronLeft, ChevronRight, X, Clock, Check } from 'lucide-react';
 import CustomSelect from './CustomSelect';
+import { fieldChanged } from '../../utils/formValidation.js';
 
 const MONTH_NAMES_UZ = [
   'Yanvar', 'Fevral', 'Mart', 'Aprel', 'May', 'Iyun',
@@ -30,9 +31,13 @@ export default function CustomDatePicker({
   clearable = true,
   title = '',
   includeTime = false,
+  'data-api-field': apiField,
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef(null);
+  const nativeRef = useRef(null);
+  const validationId = useId();
+  useEffect(() => { if (nativeRef.current) fieldChanged(nativeRef.current); }, [value]);
 
   // Parse initial date or default to current date safely from string, Date, or object
   const parseDate = (val) => {
@@ -311,6 +316,7 @@ export default function CustomDatePicker({
   return (
     <div
       ref={containerRef}
+      data-validation-container="true"
       id={id ? `${id}-container` : undefined}
       className={`custom-datepicker-wrapper ${className}`}
       style={{
@@ -323,10 +329,11 @@ export default function CustomDatePicker({
       title={title}
     >
       {/* Hidden input for form serialization */}
-      {name && <input type="hidden" name={name} value={value ?? ''} id={id} />}
+      {(name || apiField) && <input ref={nativeRef} type="hidden" name={name} value={value ?? ''} id={id} data-api-field={apiField} data-validation-target={validationId} />}
 
       {/* Main Trigger Button */}
       <div
+        id={validationId}
         role="button"
         tabIndex={disabled ? -1 : 0}
         onClick={() => !disabled && setIsOpen(!isOpen)}

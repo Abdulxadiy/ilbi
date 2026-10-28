@@ -39,7 +39,10 @@ export function installAuthFixture({ saved = true, profileFailure = false, guest
       return json(authQA.user);
     }
     if (path === '/api/v1/auth/token/refresh/') return json(authQA.tokens);
-    if (path === '/api/v1/auth/admin-login/') return authQA.dailyMfa?json({...authQA.tokens,password_login:true}):json({ login_ticket: 'synthetic-ticket', telegram_linked: true, phone_hint: '+998 ** *** ** 41' });
+    if (path === '/api/v1/auth/admin-login/') {
+      if (authQA.rejectCredentials) return json({ detail: 'Username or password incorrect!' }, 401);
+      return authQA.dailyMfa?json({...authQA.tokens,password_login:true}):json({ login_ticket: 'synthetic-ticket', telegram_linked: true, phone_hint: '+998 ** *** ** 41' });
+    }
     if (path === '/api/v1/auth/admin-login/send-otp/') return json({ otp_sent: true });
     if (path === '/api/v1/auth/admin-login/verify-otp/') return body?.verification_code === '123456' ? json(authQA.tokens) : json({ detail: 'Invalid OTP' }, 401);
     if (path === '/api/v1/tenants/current/') return json({ id: 7, usd_rate: '12800', receipt_settings: { tax_regime: 'aos', vat_enabled: false, vat_rate: '0', vat_price_mode: 'included' } });

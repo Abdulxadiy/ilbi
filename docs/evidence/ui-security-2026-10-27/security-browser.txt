@@ -1,0 +1,2 @@
+5:21:42 PM [vite] (client) [console.error] ILBI render failed.
+PASS: guest verifier absent, support PATCH allowlist/security routing, audit redaction and safe crash recovery in real Chrome.

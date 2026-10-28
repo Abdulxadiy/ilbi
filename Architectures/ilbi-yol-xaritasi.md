@@ -87,7 +87,7 @@
 
 ### 0.3. Hozirgi kod holati (2026-10, yangilangan v0.12.4)
 
-Repo: `Sales-Platform/` — `ilbi/` (Django 6 + DRF), `frontend/ilbi/` (React 18 + Vite SPA), `telegram_bot_sms/` (aiogram bot), `Architectures/` (shu fayl + `shop-yol-xaritasi.md`), ildiz `docker-compose.yml`.
+Repo: `ilbi/` — `backend/` (Django 6 + DRF), `frontend/ilbi/` (React 18 + Vite SPA), `telegram_bot_sms/` (aiogram bot), `Architectures/` (shu fayl + `shop-yol-xaritasi.md`), ildiz `docker-compose.yml`.
 
 **Aktiv Docker Konteynerlari:**
 - `sales-platform-postgres-1` (PostgreSQL 16)
@@ -407,8 +407,8 @@ O'chirish: hard-delete yo'q, `is_active=False`.
 ## 2. Texnik poydevor (qayerda nima yashaydi)
 
 ```
-Sales-Platform/
-  ilbi/                 # Django + DRF (core backend — do'konning ichki boshqaruvi)
+ilbi/
+  backend/                 # Django + DRF (core backend — do'konning ichki boshqaruvi)
     apps/
       core | tenants | accounts | tg_bot | permissions | catalog | inventory | sales | cashbox | analytics
     apps/accounts/services/ # employee_service, tenant_service, permission_service, otp_services, login_throttle, phone_utils

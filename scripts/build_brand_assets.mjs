@@ -42,7 +42,7 @@ if (process.argv.includes('--png')) {
       const png = Buffer.from(data, 'base64');
       await writeFile(new URL(name, target), png);
       if (name === 'ilbi-logo-email.png') {
-        const backend = new URL('ilbi/apps/core/brand/', root);
+        const backend = new URL('backend/apps/core/brand/', root);
         await mkdir(backend, { recursive: true });
         await writeFile(new URL(name, backend), png);
       }

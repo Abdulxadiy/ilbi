@@ -1,0 +1,75 @@
+import React from 'react';
+import { AppState } from 'react-native';
+import { act, fireEvent, render, renderHook, waitFor } from '@testing-library/react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Linking from 'expo-linking';
+import { ThemeProvider } from '../src/theme/ThemeContext';
+import { UpdatesProvider, useUpdates } from '../src/features/updates/UpdatesProvider';
+import { UpdateNotice } from '../src/features/updates/UpdateNotice';
+import { DownloadsScreen } from '../src/features/updates/DownloadsScreen';
+import { fetchReleaseFeed, parseReleaseFeed } from '../src/features/updates/releases';
+let mockAccount: number | null = 8101;
+let nextAccount = 8101;
+const originalAppState = AppState.currentState;
+jest.mock('../src/features/auth/AuthContext', () => ({ useAuth: () => ({ user: mockAccount ? { id: mockAccount } : null }) }));
+jest.mock('../src/features/updates/installed', () => ({ installedApp: () => ({ platform: 'android', version: '1.0.0', buildNumber: '1' }) }));
+jest.mock('../src/features/updates/releases', () => ({ ...jest.requireActual('../src/features/updates/releases'), fetchReleaseFeed: jest.fn() }));
+jest.mock('../src/dev/preview', () => ({ isDesignPreview: false }));
+jest.mock('expo-linking', () => ({ openURL: jest.fn(async () => true) }));
+const android = { version: '1.0.0', buildNumber: '2', url: '/downloads/mobile/' + 'a'.repeat(40) + '/ILBI-1.0.0-android-2.apk', bytes: 100, sha256: 'b'.repeat(64) };
+const wire = { schema: 1, mobile: { android } };
+const wrapper = ({ children }: { children: React.ReactNode }) => <ThemeProvider><UpdatesProvider>{children}</UpdatesProvider></ThemeProvider>;
+describe('Native update reminder and download flow', () => {
+  beforeEach(async () => { jest.clearAllMocks(); mockAccount = ++nextAccount; Object.defineProperty(AppState, 'currentState', { value: 'active', writable: true, configurable: true }); await AsyncStorage.clear(); jest.mocked(fetchReleaseFeed).mockResolvedValue(parseReleaseFeed(wire)); });
+  afterEach(() => { jest.restoreAllMocks(); jest.useRealTimers(); });
+  afterAll(() => { Object.defineProperty(AppState, 'currentState', { value: originalAppState, writable: true, configurable: true }); });
+  test('update action opens the official package; dismissal survives a provider restart on the same day', async () => {
+    const screen = await render(<UpdateNotice />, { wrapper });
+    await fireEvent.press(await screen.findByText('Yangilash'));
+    expect(Linking.openURL).toHaveBeenCalledWith('https://ilbi.uz' + android.url);
+    expect(await screen.findByText('Yuklab olish brauzerda ochildi. O‘rnatishni qurilmangizda tugating.')).toBeTruthy();
+    await fireEvent.press(screen.getByLabelText('Yangilanish eslatmasini bugunga yopish'));
+    expect(screen.queryByText('Ilovani yangilang')).toBeNull();
+    await screen.unmount();
+    const again = await renderHook(useUpdates, { wrapper });
+    await waitFor(() => expect(again.result.current.loading).toBe(false));
+    expect(again.result.current.candidate?.buildNumber).toBe('2');
+    expect(again.result.current.reminder).toBe(false);
+  });
+  test('the next Tashkent day shows a dismissed reminder again on foreground entry', async () => {
+    jest.useFakeTimers(); jest.setSystemTime(new Date('2026-10-25T06:00:00Z'));
+    let state!: (value: any) => void;
+    jest.spyOn(AppState, 'addEventListener').mockImplementation((_event, callback) => { state = callback; return { remove: jest.fn() }; });
+    const screen = await render(<UpdateNotice />, { wrapper });
+    await screen.findByText('Ilovani yangilang');
+    await fireEvent.press(screen.getByLabelText('Yangilanish eslatmasini bugunga yopish'));
+    jest.setSystemTime(new Date('2026-10-26T06:00:00Z'));
+    await act(async () => { state('active'); });
+    expect(await screen.findByText('Ilovani yangilang')).toBeTruthy();
+  });
+  test('guest sessions do not run an automatic signed-in reminder', async () => {
+    mockAccount = null;
+    const hook = await renderHook(useUpdates, { wrapper });
+    expect(hook.result.current.reminder).toBe(false);
+    expect(fetchReleaseFeed).not.toHaveBeenCalled();
+  });
+  test('offline startup retains a previously validated update without claiming a fresh check', async () => {
+    await AsyncStorage.setItem('ilbi:official-releases:v1', JSON.stringify(wire));
+    jest.mocked(fetchReleaseFeed).mockRejectedValue(Error('Offline'));
+    const hook = await renderHook(useUpdates, { wrapper });
+    await waitFor(() => expect(hook.result.current.error).toBe('Offline'));
+    expect(hook.result.current.candidate?.buildNumber).toBe('2');
+    expect(hook.result.current.checkedAt).toBeNull();
+  });
+  test('downloads share the official feed and show independent mobile version plus unavailable iOS', async () => {
+    const screen = await render(<DownloadsScreen tabbed />, { wrapper });
+    expect(await screen.findByText('Android uchun ILBI')).toBeTruthy();
+    expect(screen.queryByText(/SHA-256/)).toBeNull();
+    expect(screen.queryByText(android.sha256)).toBeNull();
+    await fireEvent.press(await screen.findByText('Android uchun yuklab olish'));
+    expect(Linking.openURL).toHaveBeenCalledWith('https://ilbi.uz' + android.url);
+    expect(screen.getByText('iPhone va iPad uchun ILBI')).toBeTruthy();
+    expect(screen.getAllByText('Rasmiy yuklama hali joylanmagan.')).toHaveLength(3);
+    expect(fetchReleaseFeed).toHaveBeenCalledTimes(1);
+  });
+});

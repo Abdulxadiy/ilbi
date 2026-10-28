@@ -2,6 +2,7 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const { readFile, writeFile, mkdir } = require('node:fs/promises');
 const { join, resolve } = require('node:path');
 const { spawn } = require('node:child_process');
+const { publicErrorMessage } = require('./public-errors.cjs');
 const pause = ms => new Promise(ok => setTimeout(ok, ms));
 async function run(jobPath) {
   const job = JSON.parse(await readFile(jobPath, 'utf8'));
@@ -47,7 +48,7 @@ async function run(jobPath) {
     send({ phase: 'updated', progress: 100, message: 'Yangilanish o‘rnatildi. ILBI ochilmoqda…' }); reopen(false);
     completed = true; await pause(1200); app.quit();
   } catch (error) {
-    completed = true; send({ phase: 'failed', message: error.message }); reopen(true);
+    completed = true; send({ phase: 'failed', message: publicErrorMessage(error) }); reopen(true);
   }
 }
 module.exports = { run };

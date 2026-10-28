@@ -1,0 +1,6 @@
+PASS shared forms: native required/email/price/phone validation, custom select focus/red target, backend email/category/date inline errors.
+PASS canonical catalogue code rejection is mapped to the real field, not discarded as envelope metadata.
+PASS password field remains highlighted without echoing its entered secret in validation text.
+PASS source/request boundaries: HTML is plain text, edited fields ignore late errors, latest submission wins, unrelated writes cannot mark a form, tenant changes clear old errors.
+PASS web OTP: sixth digit auto-verifies, bad code is red/inline, five digits do not submit, correction succeeds, overlapping submit does not duplicate.
+PASS desktop bridge renderer OTP: sixth digit auto-verifies, bad code is red/inline, five digits do not submit, correction succeeds, overlapping submit does not duplicate.

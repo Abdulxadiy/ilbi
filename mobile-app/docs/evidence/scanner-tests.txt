@@ -1,0 +1,8 @@
+npm notice run mobile-app@1.0.0 test
+npm notice run jest --runInBand
+
+Test Suites: 32 passed, 32 total
+Tests:       199 passed, 199 total
+Snapshots:   0 total
+Time:        8.478 s, estimated 13 s
+Ran all test suites.

@@ -61,7 +61,7 @@ try {
     assert.equal(await browser.evaluate('Boolean(localStorage.getItem("ilbi_access_token") || sessionStorage.getItem("ilbi_access_token"))'), false, 'Password step alone must not grant access');
     if (await browser.evaluate('Boolean(window.ilbiDesktop)')) assert.equal(await browser.evaluate('authQA.credentialSaves'), 0, 'Do not remember credentials before successful OTP verification');
     await fill(browser, '#otp-code', '123456');
-    await browser.evaluate('document.querySelector("#otp-code").closest("form").requestSubmit()');
+    // The sixth digit now starts verification without another submit click.
     await wait(browser, 'Boolean(document.querySelector(".sidebar"))');
   }
 

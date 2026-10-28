@@ -20,7 +20,7 @@ def main():
     parser.add_argument('--apply', action='store_true', help='Apply the reviewed public profile.')
     args = parser.parse_args()
     plan = json.loads((ROOT / 'branding/ilbi-bot-profile.json').read_text())
-    backend = dotenv_values(ROOT / 'ilbi/.env')
+    backend = dotenv_values(ROOT / 'backend/.env')
     bot = dotenv_values(ROOT / 'telegram_bot_sms/.env')
     token = backend.get('TELEGRAM_BOT_TOKEN')
     if not token or token != bot.get('TELEGRAM_BOT_TOKEN'):

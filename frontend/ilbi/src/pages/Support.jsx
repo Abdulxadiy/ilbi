@@ -596,7 +596,7 @@ function SupportCenter({ user, authenticated, operator }) {
                       </button>
                     </div>
                   )}
-                  <textarea
+                  <textarea data-api-field="text"
                     className="support-tg-textarea"
                     rows={4}
                     maxLength={4000}

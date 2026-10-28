@@ -21,8 +21,8 @@ def check(root=ROOT):
         lock = json.loads((root / directory / "package-lock.json").read_text())
         versions[directory + " lock"] = lock["version"]
         versions[directory + " lock root"] = lock["packages"][""]["version"]
-    versions["backend"] = tomllib.loads((root / "ilbi/pyproject.toml").read_text())["project"]["version"]
-    backend_lock = tomllib.loads((root / "ilbi/uv.lock").read_text())
+    versions["backend"] = tomllib.loads((root / "backend/pyproject.toml").read_text())["project"]["version"]
+    backend_lock = tomllib.loads((root / "backend/uv.lock").read_text())
     versions["backend lock"] = next(item["version"] for item in backend_lock["package"] if item["name"] == "ilbi")
     preload = (root / "desktop/ilbi/preload.cjs").read_text()
     versions["desktop bridge"] = re.search(r"\bversion: '([^']+)'", preload)[1]
@@ -46,9 +46,9 @@ def bump(version, root=ROOT):
             if name == "package-lock.json":
                 data["packages"][""]["version"] = version
             path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n")
-    path = root / "ilbi/pyproject.toml"
+    path = root / "backend/pyproject.toml"
     path.write_text(re.sub(r'(?m)^version = "[^"]+"', f'version = "{version}"', path.read_text(), count=1))
-    path = root / "ilbi/uv.lock"
+    path = root / "backend/uv.lock"
     path.write_text(re.sub(r'(\nname = "ilbi"\nversion = ")[^"]+', lambda match: match[1] + version, path.read_text(), count=1))
     path = root / "desktop/ilbi/preload.cjs"
     path.write_text(re.sub(r"\bversion: '[^']+'", f"version: '{version}'", path.read_text(), count=1))

@@ -45,7 +45,7 @@ class ProductionComposeTests(unittest.TestCase):
         shutil.copy2(ROOT / ".env.production.example", self.compose_root / ".env.production.example")
         # Compose 2.38 checks env_file existence even with --no-env-resolution.
         # Use only checked-in examples in an isolated tree, never operator secrets.
-        for folder in ("ilbi", "telegram_bot_sms"):
+        for folder in ("backend", "telegram_bot_sms"):
             destination = self.compose_root / folder / ".env.production"
             destination.parent.mkdir()
             shutil.copyfile(ROOT / folder / ".env.production.example", destination)
@@ -76,7 +76,7 @@ class ProductionComposeTests(unittest.TestCase):
                 self.assertEqual(env["GUNICORN_RELOAD"], "False")
                 self.assertEqual(env["DJANGO_DEBUG"], "False")
                 self.assertEqual(env["LOCAL_DEMO_LOGIN_ENABLED"], "False")
-                self.assertTrue(declared[name]["env_file"][0]["path"].endswith("/ilbi/.env.production"))
+                self.assertTrue(declared[name]["env_file"][0]["path"].endswith("/backend/.env.production"))
         for name in ("ilbi", "celery_worker", "celery_beat", "postgres", "redis", "bot"):
             self.assertNotIn("ports", services[name])
         self.assertEqual(services["ilbi"]["healthcheck"]["test"], ["CMD", "python", "-B", "healthcheck.py"])

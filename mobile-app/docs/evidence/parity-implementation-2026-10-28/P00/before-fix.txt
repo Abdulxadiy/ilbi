@@ -1,0 +1,367 @@
+npm notice run mobile-app@1.0.0 test
+npm notice run jest --runInBand --runTestsByPath tests/activityNotificationTargets.test.ts tests/notificationScreen.test.tsx --silent
+FAIL tests/notificationScreen.test.tsx
+  ● Notification destructive action scope › an owner can open a real producer-shaped B2B alert after read acknowledgement
+
+    Unable to find an element with text: B2B savdolarni ochish
+
+    [36m<View>[39m
+      [36m<View>[39m
+        [36m<View>[39m
+          [36m<View[39m
+            [33maccessibilityLabel[39m=[32m"Menyuni ochish"[39m
+            [33maccessibilityRole[39m=[32m"button"[39m
+            [33maccessible[39m=[32m{true}[39m
+          [36m>[39m
+            [36m<RNSVGSvgView[39m
+              [33maria-hidden[39m=[32m"true"[39m
+            [36m>[39m
+              [36m<RNSVGGroup>[39m
+                [36m<RNSVGPath />[39m
+                [36m<RNSVGPath />[39m
+                [36m<RNSVGPath />[39m
+              [36m</RNSVGGroup>[39m
+            [36m</RNSVGSvgView>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+        [36m<View>[39m
+          [36m<Text>[39m
+            [0mBildirishnomalar[0m
+          [36m</Text>[39m
+        [36m</View>[39m
+        [36m<View>[39m
+          [36m<View[39m
+            [33maccessibilityLabel[39m=[32m"Bildirishnoma sozlamalari"[39m
+            [33maccessibilityRole[39m=[32m"button"[39m
+            [33maccessible[39m=[32m{true}[39m
+          [36m>[39m
+            [36m<RNSVGSvgView[39m
+              [33maria-hidden[39m=[32m"true"[39m
+            [36m>[39m
+              [36m<RNSVGGroup>[39m
+                [36m<RNSVGPath />[39m
+                [36m<RNSVGPath />[39m
+                [36m<RNSVGCircle />[39m
+                [36m<RNSVGCircle />[39m
+              [36m</RNSVGGroup>[39m
+            [36m</RNSVGSvgView>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</View>[39m
+      [36m<View>[39m
+        [36m<Text>[39m
+          [0m1[0m
+          [0m ta o‘qilmagan[0m
+        [36m</Text>[39m
+        [36m<View[39m
+          [33maccessibilityLabel[39m=[32m"Barchasini o‘qilgan qilish"[39m
+          [33maccessibilityRole[39m=[32m"button"[39m
+          [33maccessibilityState[39m=[32m{
+            {
+              "disabled": false,
+            }
+          }[39m
+          [33maccessible[39m=[32m{true}[39m
+        [36m>[39m
+          [36m<RNSVGSvgView[39m
+            [33maria-hidden[39m=[32m"true"[39m
+          [36m>[39m
+            [36m<RNSVGGroup>[39m
+              [36m<RNSVGPath />[39m
+              [36m<RNSVGPath />[39m
+            [36m</RNSVGGroup>[39m
+          [36m</RNSVGSvgView>[39m
+        [36m</View>[39m
+        [36m<View[39m
+          [33maccessibilityLabel[39m=[32m"Bildirishnomalarni tozalash"[39m
+          [33maccessibilityRole[39m=[32m"button"[39m
+          [33maccessibilityState[39m=[32m{
+            {
+              "disabled": false,
+            }
+          }[39m
+          [33maccessible[39m=[32m{true}[39m
+        [36m>[39m
+          [36m<RNSVGSvgView[39m
+            [33maria-hidden[39m=[32m"true"[39m
+          [36m>[39m
+            [36m<RNSVGGroup>[39m
+              [36m<RNSVGPath />[39m
+              [36m<RNSVGPath />[39m
+              [36m<RNSVGPath />[39m
+              [36m<RNSVGPath />[39m
+              [36m<RNSVGPath />[39m
+            [36m</RNSVGGroup>[39m
+          [36m</RNSVGSvgView>[39m
+        [36m</View>[39m
+      [36m</View>[39m
+      [36m<RCTScrollView>[39m
+        [36m<RCTRefreshControl />[39m
+        [36m<View>[39m
+          [36m<View>[39m
+            [36m<View>[39m
+              [36m<View>[39m
+                [36m<Text>[39m
+                  [0mB2B[0m
+                  [0m · Yangi[0m
+                [36m</Text>[39m
+                [36m<Text>[39m
+                  [0m27/10/2026, 10:00:00[0m
+                [36m</Text>[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mReport[0m
+              [36m</Text>[39m
+              [36m<Text>[39m
+                [0mText[0m
+              [36m</Text>[39m
+              [36m<View>[39m
+                [36m<View[39m
+                  [33maccessibilityLabel[39m=[32m"O‘qildi"[39m
+                  [33maccessibilityRole[39m=[32m"button"[39m
+                  [33maccessibilityState[39m=[32m{
+                    {
+                      "busy": false,
+                      "disabled": false,
+                    }
+                  }[39m
+                  [33maccessible[39m=[32m{true}[39m
+                [36m>[39m
+                  [36m<Text>[39m
+                    [0mO‘qildi[0m
+                  [36m</Text>[39m
+                [36m</View>[39m
+                [36m<View[39m
+                  [33maccessibilityLabel[39m=[32m"Report: o‘chirish"[39m
+                  [33maccessibilityRole[39m=[32m"button"[39m
+                  [33maccessibilityState[39m=[32m{
+                    {
+                      "disabled": false,
+                    }
+                  }[39m
+                  [33maccessible[39m=[32m{true}[39m
+                [36m>[39m
+                  [36m<RNSVGSvgView[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                  [36m>[39m
+                    [36m<RNSVGGroup>[39m
+                      [36m<RNSVGPath />[39m
+                      [36m<RNSVGPath />[39m
+                      [36m<RNSVGPath />[39m
+                      [36m<RNSVGPath />[39m
+                      [36m<RNSVGPath />[39m
+                    [36m</RNSVGGroup>[39m
+                  [36m</RNSVGSvgView>[39m
+                [36m</View>[39m
+              [36m</View>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</View>[39m
+
+      39 |     mockInbox.rows = [{ ...mockInbox.rows[0], type: 'b2b_transfer_request', link: '/b2b' }];
+      40 |     const screen = await render(<ThemeProvider><NotificationsScreen /></ThemeProvider>);
+    > 41 |     await fireEvent.press(screen.getByText('B2B savdolarni ochish'));
+         |                                  ^
+      42 |     expect(mockInbox.markRead).toHaveBeenCalledWith(3);
+      43 |     expect(mockNavigate).toHaveBeenCalledWith('B2B', undefined);
+      44 |   });
+
+      at Object.getByText (tests/notificationScreen.test.tsx:41:34)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● Notification destructive action scope › a failed read acknowledgement cannot navigate through a B2B alert
+
+    Unable to find an element with text: B2B savdolarni ochish
+
+    [36m<View>[39m
+      [36m<View>[39m
+        [36m<View>[39m
+          [36m<View[39m
+            [33maccessibilityLabel[39m=[32m"Menyuni ochish"[39m
+            [33maccessibilityRole[39m=[32m"button"[39m
+            [33maccessible[39m=[32m{true}[39m
+          [36m>[39m
+            [36m<RNSVGSvgView[39m
+              [33maria-hidden[39m=[32m"true"[39m
+            [36m>[39m
+              [36m<RNSVGGroup>[39m
+                [36m<RNSVGPath />[39m
+                [36m<RNSVGPath />[39m
+                [36m<RNSVGPath />[39m
+              [36m</RNSVGGroup>[39m
+            [36m</RNSVGSvgView>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+        [36m<View>[39m
+          [36m<Text>[39m
+            [0mBildirishnomalar[0m
+          [36m</Text>[39m
+        [36m</View>[39m
+        [36m<View>[39m
+          [36m<View[39m
+            [33maccessibilityLabel[39m=[32m"Bildirishnoma sozlamalari"[39m
+            [33maccessibilityRole[39m=[32m"button"[39m
+            [33maccessible[39m=[32m{true}[39m
+          [36m>[39m
+            [36m<RNSVGSvgView[39m
+              [33maria-hidden[39m=[32m"true"[39m
+            [36m>[39m
+              [36m<RNSVGGroup>[39m
+                [36m<RNSVGPath />[39m
+                [36m<RNSVGPath />[39m
+                [36m<RNSVGCircle />[39m
+                [36m<RNSVGCircle />[39m
+              [36m</RNSVGGroup>[39m
+            [36m</RNSVGSvgView>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</View>[39m
+      [36m<View>[39m
+        [36m<Text>[39m
+          [0m1[0m
+          [0m ta o‘qilmagan[0m
+        [36m</Text>[39m
+        [36m<View[39m
+          [33maccessibilityLabel[39m=[32m"Barchasini o‘qilgan qilish"[39m
+          [33maccessibilityRole[39m=[32m"button"[39m
+          [33maccessibilityState[39m=[32m{
+            {
+              "disabled": false,
+            }
+          }[39m
+          [33maccessible[39m=[32m{true}[39m
+        [36m>[39m
+          [36m<RNSVGSvgView[39m
+            [33maria-hidden[39m=[32m"true"[39m
+          [36m>[39m
+            [36m<RNSVGGroup>[39m
+              [36m<RNSVGPath />[39m
+              [36m<RNSVGPath />[39m
+            [36m</RNSVGGroup>[39m
+          [36m</RNSVGSvgView>[39m
+        [36m</View>[39m
+        [36m<View[39m
+          [33maccessibilityLabel[39m=[32m"Bildirishnomalarni tozalash"[39m
+          [33maccessibilityRole[39m=[32m"button"[39m
+          [33maccessibilityState[39m=[32m{
+            {
+              "disabled": false,
+            }
+          }[39m
+          [33maccessible[39m=[32m{true}[39m
+        [36m>[39m
+          [36m<RNSVGSvgView[39m
+            [33maria-hidden[39m=[32m"true"[39m
+          [36m>[39m
+            [36m<RNSVGGroup>[39m
+              [36m<RNSVGPath />[39m
+              [36m<RNSVGPath />[39m
+              [36m<RNSVGPath />[39m
+              [36m<RNSVGPath />[39m
+              [36m<RNSVGPath />[39m
+            [36m</RNSVGGroup>[39m
+          [36m</RNSVGSvgView>[39m
+        [36m</View>[39m
+      [36m</View>[39m
+      [36m<RCTScrollView>[39m
+        [36m<RCTRefreshControl />[39m
+        [36m<View>[39m
+          [36m<View>[39m
+            [36m<View>[39m
+              [36m<View>[39m
+                [36m<Text>[39m
+                  [0mB2B[0m
+                  [0m · Yangi[0m
+                [36m</Text>[39m
+                [36m<Text>[39m
+                  [0m27/10/2026, 10:00:00[0m
+                [36m</Text>[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mReport[0m
+              [36m</Text>[39m
+              [36m<Text>[39m
+                [0mText[0m
+              [36m</Text>[39m
+              [36m<View>[39m
+                [36m<View[39m
+                  [33maccessibilityLabel[39m=[32m"O‘qildi"[39m
+                  [33maccessibilityRole[39m=[32m"button"[39m
+                  [33maccessibilityState[39m=[32m{
+                    {
+                      "busy": false,
+                      "disabled": false,
+                    }
+                  }[39m
+                  [33maccessible[39m=[32m{true}[39m
+                [36m>[39m
+                  [36m<Text>[39m
+                    [0mO‘qildi[0m
+                  [36m</Text>[39m
+                [36m</View>[39m
+                [36m<View[39m
+                  [33maccessibilityLabel[39m=[32m"Report: o‘chirish"[39m
+                  [33maccessibilityRole[39m=[32m"button"[39m
+                  [33maccessibilityState[39m=[32m{
+                    {
+                      "disabled": false,
+                    }
+                  }[39m
+                  [33maccessible[39m=[32m{true}[39m
+                [36m>[39m
+                  [36m<RNSVGSvgView[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                  [36m>[39m
+                    [36m<RNSVGGroup>[39m
+                      [36m<RNSVGPath />[39m
+                      [36m<RNSVGPath />[39m
+                      [36m<RNSVGPath />[39m
+                      [36m<RNSVGPath />[39m
+                      [36m<RNSVGPath />[39m
+                    [36m</RNSVGGroup>[39m
+                  [36m</RNSVGSvgView>[39m
+                [36m</View>[39m
+              [36m</View>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</View>[39m
+
+      55 |     mockInbox.markRead.mockResolvedValueOnce(false);
+      56 |     const screen = await render(<ThemeProvider><NotificationsScreen /></ThemeProvider>);
+    > 57 |     await fireEvent.press(screen.getByText('B2B savdolarni ochish'));
+         |                                  ^
+      58 |     expect(mockNavigate).not.toHaveBeenCalled();
+      59 |   });
+      60 | });
+
+      at Object.getByText (tests/notificationScreen.test.tsx:57:34)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+FAIL tests/activityNotificationTargets.test.ts
+  ● B2B producer destination /b2b opens the native B2B list
+
+    expect(received).toEqual(expected) // deep equality
+
+    Expected: {"label": "B2B savdolarni ochish", "module": "B2B"}
+    Received: null
+
+      14 | });
+      15 | test.each(['/b2b', '/sales/b2b/inbox/'])('B2B producer destination %s opens the native B2B list', link => {
+    > 16 |   expect(notificationDestination(row('b2b_transfer_request', link))).toEqual({ module: 'B2B', label: 'B2B savdolarni ochish' });
+         |                                                                      ^
+      17 | });
+      18 | test('legacy B2B aliases remain restricted to exact trusted internal links and notification types', () => {
+      19 |   for (const link of ['https://evil.invalid/b2b', '//evil.invalid/b2b', '/b2b?redirect=https://evil.invalid', '/b2b/../accounts', '/b2b#other', '/B2B', '/b2b-other']) {
+
+      at toEqual (tests/activityNotificationTargets.test.ts:16:70)
+
+Test Suites: 2 failed, 2 total
+Tests:       3 failed, 7 passed, 10 total
+Snapshots:   0 total
+Time:        1.709 s

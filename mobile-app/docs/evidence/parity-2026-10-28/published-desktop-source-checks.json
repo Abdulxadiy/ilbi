@@ -1,0 +1,70 @@
+{
+  "scope": "Read-only Git object existence check; presence alone is not executed desktop acceptance.",
+  "files": [
+    {
+      "file": "frontend/ilbi/src/pages/Employees.jsx",
+      "present_in_current_source": true,
+      "present_in_published_desktop_source": true
+    },
+    {
+      "file": "frontend/ilbi/src/components/employees/EmployeePermissionsSelector.jsx",
+      "present_in_current_source": true,
+      "present_in_published_desktop_source": true
+    },
+    {
+      "file": "frontend/ilbi/src/pages/MyTenants.jsx",
+      "present_in_current_source": true,
+      "present_in_published_desktop_source": true
+    },
+    {
+      "file": "frontend/ilbi/src/components/common/InvoiceA4Modal.jsx",
+      "present_in_current_source": true,
+      "present_in_published_desktop_source": true
+    },
+    {
+      "file": "frontend/ilbi/src/components/common/ProductToolsModal.jsx",
+      "present_in_current_source": true,
+      "present_in_published_desktop_source": true
+    },
+    {
+      "file": "frontend/ilbi/src/components/common/CatalogImportModal.jsx",
+      "present_in_current_source": true,
+      "present_in_published_desktop_source": true
+    },
+    {
+      "file": "frontend/ilbi/src/components/common/ProductLabelsModal.jsx",
+      "present_in_current_source": true,
+      "present_in_published_desktop_source": true
+    },
+    {
+      "file": "frontend/ilbi/src/components/common/CounterpartyImportModal.jsx",
+      "present_in_current_source": true,
+      "present_in_published_desktop_source": true
+    },
+    {
+      "file": "frontend/ilbi/src/components/common/ExcelExportButton.jsx",
+      "present_in_current_source": true,
+      "present_in_published_desktop_source": true
+    },
+    {
+      "file": "frontend/ilbi/src/pages/Documentation.jsx",
+      "present_in_current_source": true,
+      "present_in_published_desktop_source": true
+    },
+    {
+      "file": "frontend/ilbi/src/components/workspace/WorkspaceSearch.jsx",
+      "present_in_current_source": true,
+      "present_in_published_desktop_source": true
+    },
+    {
+      "file": "frontend/ilbi/src/components/workspace/WorkspaceTools.jsx",
+      "present_in_current_source": true,
+      "present_in_published_desktop_source": true
+    },
+    {
+      "file": "frontend/ilbi/src/components/workspace/Reminders.jsx",
+      "present_in_current_source": true,
+      "present_in_published_desktop_source": true
+    }
+  ]
+}

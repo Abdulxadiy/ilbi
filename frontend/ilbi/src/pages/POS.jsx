@@ -1337,7 +1337,7 @@ export default function POS() {
                       >
                         <Minus size={12} />
                       </button>
-                      <input
+                      <input data-api-field="quantity"
                         type="number"
                         min="1"
                         step={item.variant.unit === 'dona' ? '1' : 'any'}
@@ -1422,7 +1422,7 @@ export default function POS() {
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, paddingTop: 6, borderTop: '1px dashed var(--border-subtle)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1 }}>
                       <span style={{ fontSize: 11, color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>Narx ({isUSD ? '$' : 'UZS'}{receiptSettings?.is_vat_payer && !receiptSettings.price_includes_vat ? ', QQSsiz' : ''}):</span>
-                      <PriceInput
+                      <PriceInput data-api-field="customPrice"
                         value={item.customPrice ?? ''}
                         onChange={(e) => updateItemPrice(item.variant.id, e.target.value)}
                         style={{

@@ -1,0 +1,29 @@
+Local backend-only activation verification — 2026-10-27
+
+Command (repository root):
+/mnt/storage/.cache/ilbi-push-tests/venv/bin/python -m pytest -q tests/deployment/test_mobile_backend_activation.py tests/deployment/test_operations.py tests/deployment/test_mobile_backend_candidate.py
+
+Current final result after bounded readiness correction: 26 passed, 8 subtests passed in 0.30s; exit 0.
+21 activation safety tests, 4 immutable candidate boundary tests, 1 existing backup recovery test.
+
+Fatal Ruff:
+/mnt/storage/.cache/ilbi-push-tests/venv/bin/python -m ruff check --select E9,F63,F7,F82 ops/deploy_mobile_backend.py tests/deployment/test_mobile_backend_activation.py
+Result: All checks passed!; exit 0.
+
+Python compile and git diff whitespace checks passed.
+
+Coverage includes exact loaded image/verified-engine-ID/revision/user1000 checks; retained old image; cross-repository reviewed reference preservation; current-state drift, including a target retagged during backup before migration; real operations locking; failed/missing rehearsal rejection; private metadata/log output; bounded migrations; backend-only environment changes; originally stopped services; unchanged bot identity; backup/migration/health failure rollback; owned one-off cleanup; and additive schema retention.
+
+The first test attempt used /usr/bin/python, which has no pytest installed. It did not execute tests. The explicit isolated test virtual environment above then executed the actual passing suite. No test assertion or rollout guard was disabled.
+
+These are local safety tests with real temporary files/locks and a synthetic Docker model, not a live production activation, actual backup restoration, or financial mutation. Production execution is owned separately by the root agent.
+
+Live read-only preflight follow-up: the previous cached production image has no OCI labels. Its Docker metadata template originally attempted to index a null labels map and failed before any mutation. The template now emits JSON null for missing labels. The target image still requires its exact OCI revision. A new local regression exercises activation failure and verified image-only rollback with an unlabelled retained image; the target missing-revision subtest still rejects it. The updated live preflight is owned by the root agent and is not claimed passed in this local record.
+
+Actual Docker Go-template verification follow-up (root agent, read-only production inspection, 2026-10-27): the first null-label conditional still failed for the old image because the Config map omitted Labels entirely. Local Python metadata fixtures did not exercise this Go missing-key behavior. The root then tested the exact index-based template against BOTH the reviewed target image and retained previous image on the real Docker engine; both inspections succeeded. The target returned its verified engine image ID and exact OCI revision; the old cached image returned its retained image ID and revision:null. The helper now uses that successfully executed template:
+{"id":{{json .Id}},"user":{{json .Config.User}},"revision":{{with index .Config "Labels"}}{{json (index . "org.opencontainers.image.revision")}}{{else}}null{{end}}}
+This proves the real engine metadata boundary, not live activation. The helper still requires an exact non-null target revision. No full Config/Env, credential values, container writes or production business operations were printed or changed during the inspection. Live --plan/activation results remain owned by the root agent.
+
+Readiness investigation/correction (2026-10-27): first live activation started the new backend but a single immediate strict probe returned not ready. The helper restored previous images/running states, then its single immediate rollback probe also returned not ready; later real checks found the retained backend healthy. This was not accepted as successful activation. The precise transient cause was not established. No unsupported-flag or database-settings-mutation cause is claimed.
+Independent read-only execution of the exact Compose health command on the retained live backend returned ready/exit 0 for three samples separated by 2s: durations 0.221s, 0.220s, 0.254s; stderr was absent. The locked Django 6.1.2 BaseDatabaseWrapper.copy implementation was inspected directly and explicitly uses copy.deepcopy(self.settings_dict), so per-probe OPTIONS changes do not accumulate into the original business connection through that path. The root separately reported no readiness dependency-unavailable log entries in the examined failure window. No customer/credential log contents were printed.
+The activation helper now retries the complete unchanged strict readiness probe for at most 60s, 2s gaps, command timeout at most 10s. Both startup and rollback use that bounded gate. Persistent new-image unreadiness still rolls back; persistent rollback unreadiness still requires manual attention. Existing health-failure fixtures were changed from a single synthetic failure to persistent failure, preserving their strict rollback assertions. Additional tests cover transient new recovery, persistent new failure with transient old recovery, and persistent failures of both images. Fake monotonic time tests the full deadline without real sleeps.

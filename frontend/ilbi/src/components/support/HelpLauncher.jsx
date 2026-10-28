@@ -482,7 +482,7 @@ function HelpLauncherContent() {
                     <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 4 }}>
                       Mavzu (ixtiyoriy)
                     </label>
-                    <input
+                    <input data-api-field="subject"
                       type="text"
                       className="input-field"
                       placeholder="Masalan: Kassa yoki hisob-kitob"
@@ -496,7 +496,7 @@ function HelpLauncherContent() {
                     <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 4 }}>
                       Savolingiz matni <span style={{ color: 'var(--accent-rose)' }}>*</span>
                     </label>
-                    <textarea
+                    <textarea data-api-field="text"
                       rows={3}
                       className="input-field"
                       required

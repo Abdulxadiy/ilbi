@@ -1,0 +1,10 @@
+{
+  "checks": {
+    "image_and_descriptor_match_oci": true,
+    "all_config_fields_match": true,
+    "all_rootfs_diff_ids_match": true,
+    "user_and_revision_match": true
+  },
+  "verified_engine_image_id": "sha256:967cd800a4fcbe9a0ea87bc23338935356ab9e08a200f029d8383dd78923fbd5",
+  "verified_config_digest": "sha256:7d55ff705f7d8d86cdd68ee7c9546d6ca69f58b9b582c50bfda990b56a6590c0"
+}

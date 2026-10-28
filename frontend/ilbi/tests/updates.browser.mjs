@@ -13,6 +13,20 @@ try {
     await browser.resize(width,900);await browser.evaluate(`document.documentElement.dataset.theme=${JSON.stringify(theme)}`);
     assert(await browser.evaluate('(()=>{const box=document.querySelector(".desktop-update-notice").getBoundingClientRect();return box.left>=0&&box.right<=innerWidth&&document.querySelector(".desktop-update-notice>.btn").getBoundingClientRect().height>=40})()'));
   }
+  await browser.evaluate('document.querySelector(".desktop-update-close").click()');
+  await wait('!document.querySelector(".desktop-update-notice")');
+  await browser.evaluate('updateQA.send({phase:"available"});updateQA.render()');
+  await new Promise(ok=>setTimeout(ok,200));
+  assert.equal(await browser.evaluate('Boolean(document.querySelector(".desktop-update-notice"))'),false,'Reload/login on the same day must not repeat a dismissed reminder');
+  await browser.evaluate('updateQA.now+=86400000;window.dispatchEvent(new Event("focus"))');
+  await wait('Boolean(document.querySelector(".desktop-update-notice"))');
+  await browser.evaluate('updateQA.render(null)');
+  await wait('!document.querySelector(".desktop-update-notice")');
+  await browser.evaluate('updateQA.render(1)');
+  await new Promise(ok=>setTimeout(ok,200));
+  assert.equal(await browser.evaluate('Boolean(document.querySelector(".desktop-update-notice"))'),false);
+  await browser.evaluate('updateQA.now+=86400000;window.dispatchEvent(new Event("focus"))');
+  await wait('Boolean(document.querySelector(".desktop-update-notice"))');
   await browser.evaluate('document.querySelector(".desktop-update-notice>.btn").click()');
   await wait('document.querySelector("progress")?.value===42');
   assert.equal(await browser.evaluate('updateQA.calls'),1);
@@ -28,5 +42,5 @@ try {
   await browser.evaluate('updateQA.unmount()');
   assert.equal(await browser.evaluate('updateQA.listeners.size'),0);
   assert.deepEqual(browser.errors,[]);
-  console.log('PASS desktop update notice: available/download/progress/retry/success, light/dark/mobile and subscription cleanup.');
+  console.log('PASS desktop update notice: daily outdated reminder, same-day dismissal across remount/login, next-day reminder, guest exclusion, available/download/progress/retry/success, light/dark/mobile and subscription cleanup.');
 }finally{await browser?.close();await server?.close()}

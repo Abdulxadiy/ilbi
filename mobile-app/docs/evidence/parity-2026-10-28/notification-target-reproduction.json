@@ -1,0 +1,17 @@
+{
+  "finding": "DMP-132",
+  "status": "reproduced_source_function_gap",
+  "producer_type": "b2b_transfer_request",
+  "producer_link": "/b2b",
+  "actual_mobile_destination": null,
+  "control_link": "/sales/b2b/inbox/",
+  "control_mobile_destination": {
+    "module": "B2B",
+    "label": "B2B savdolarni ochish"
+  },
+  "notification_action_is_hidden_when_destination_null": true,
+  "backend_source": "backend/apps/sales/services/sale_service.py:325",
+  "mobile_source": "mobile-app/src/features/notifications/inbox.ts:31",
+  "production_write_executed": false,
+  "device_accessed": false
+}

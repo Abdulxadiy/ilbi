@@ -1,0 +1,23 @@
+{
+  "package": "deepmerge",
+  "version": "4.3.1",
+  "advisory": "https://github.com/advisories/GHSA-gcqx-w48m-w2h4",
+  "description": "Reject prototype-mutating keys independently of the target prototype. Preserve upstream version and audit finding. All shipped CJS/UMD/source entry points patched reproducibly.",
+  "files": [
+    {
+      "path": "index.js",
+      "original_sha256": "12440c84957c1990ea2d5e33dc0091722dc1dc1585c6d20e0c780e568ffa9d30",
+      "patched_sha256": "1059720135d921ec92b260a17c6791caa8a0c15bb4a11038c511b661ab918e67"
+    },
+    {
+      "path": "dist/cjs.js",
+      "original_sha256": "2e5160f84a1141bd927264afe4d15766f1e6cf07daef182b37ff53fea121de7d",
+      "patched_sha256": "3dd23f111b330520cee01e3b5a4e8611a018761a6132c2ec20f7454ab2cfc07d"
+    },
+    {
+      "path": "dist/umd.js",
+      "original_sha256": "f33e6596482d1fb5c7c427f8ef92f2aa849eea9223acd974176b2fb27ddbf73a",
+      "patched_sha256": "ee17598a264052f630492d401be3a605a1e80e837a1b283be27a43d39fc7b42e"
+    }
+  ]
+}

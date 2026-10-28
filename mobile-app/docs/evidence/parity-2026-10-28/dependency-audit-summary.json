@@ -1,0 +1,30 @@
+{
+  "exit_code": 1,
+  "counts": {
+    "info": 0,
+    "low": 13,
+    "moderate": 0,
+    "high": 3,
+    "critical": 0,
+    "total": 16
+  },
+  "packages": [
+    "@expo/cli",
+    "@expo/config",
+    "@expo/local-build-cache-provider",
+    "@expo/metro-config",
+    "@expo/prebuild-config",
+    "@jest/core",
+    "@testing-library/react-native",
+    "deepmerge",
+    "expo",
+    "expo-router",
+    "jest",
+    "jest-cli",
+    "jest-config",
+    "jest-expo",
+    "jest-watch-typeahead",
+    "zod"
+  ],
+  "gate_suppressed": false
+}

@@ -37,7 +37,7 @@ The navbar contains every sidebar destination, favorites/recent pages, permissio
 
 Actual browser captures with synthetic QA data: [light workspace](../../docs/rasmlar/workspace-fast-light.png), [dark workspace](../../docs/rasmlar/workspace-fast-dark.png).
 
-`npm run test:workspace` runs the real UI against an isolated Django/PostgreSQL QA database. Setup is documented in [README_TESTS.md](../../ilbi/README_TESTS.md#desktop-workspace-browser-test). The test checks route parity, repeated layout switches, request reuse, POS cart/form preservation, search, quick actions/imports, reminders CRUD, tenant/role isolation, reload persistence, reduced motion and screen sizes. It creates synthetic records only.
+`npm run test:workspace` runs the real UI against an isolated Django/PostgreSQL QA database. Setup is documented in [README_TESTS.md](../../backend/README_TESTS.md#desktop-workspace-browser-test). The test checks route parity, repeated layout switches, request reuse, POS cart/form preservation, search, quick actions/imports, reminders CRUD, tenant/role isolation, reload persistence, reduced motion and screen sizes. It creates synthetic records only.
 
 ## Routes and access
 

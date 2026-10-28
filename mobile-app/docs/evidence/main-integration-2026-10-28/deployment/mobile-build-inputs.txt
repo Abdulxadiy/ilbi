@@ -1,0 +1,14 @@
+test_complete_stable_build_tools_are_selected_over_partial_downloads (test_mobile_build_setup.MobileBuildSetupTests.test_complete_stable_build_tools_are_selected_over_partial_downloads) ... ok
+test_different_existing_signing_configuration_is_not_overwritten (test_mobile_build_setup.MobileBuildSetupTests.test_different_existing_signing_configuration_is_not_overwritten) ... ok
+test_external_firebase_path_and_symlink_are_rejected (test_mobile_build_setup.MobileBuildSetupTests.test_external_firebase_path_and_symlink_are_rejected) ... ok
+test_firebase_package_must_match_ilbi (test_mobile_build_setup.MobileBuildSetupTests.test_firebase_package_must_match_ilbi) ... ok
+test_firebase_service_account_cannot_be_renamed_as_client_config (test_mobile_build_setup.MobileBuildSetupTests.test_firebase_service_account_cannot_be_renamed_as_client_config) ... ok
+test_isolated_cng_source_excludes_local_credentials_env_and_generated_native_folders (test_mobile_build_setup.MobileBuildSetupTests.test_isolated_cng_source_excludes_local_credentials_env_and_generated_native_folders) ... ok
+test_only_declared_public_firebase_client_enters_cng (test_mobile_build_setup.MobileBuildSetupTests.test_only_declared_public_firebase_client_enters_cng) ... ok
+test_protected_eas_mapping_is_idempotent_and_preserves_ios_credentials (test_mobile_build_setup.MobileBuildSetupTests.test_protected_eas_mapping_is_idempotent_and_preserves_ios_credentials) ... ok
+test_signer_pin_rejects_accidental_replacement_before_build (test_mobile_build_setup.MobileBuildSetupTests.test_signer_pin_rejects_accidental_replacement_before_build) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.005s
+
+OK

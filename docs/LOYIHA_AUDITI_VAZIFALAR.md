@@ -78,7 +78,7 @@ Topilma turi: **kodda aniq** — sabab manbada ko‘rinadi; **shartli xavf** —
 
 **5/5 · P0 · Ochiq reja.**
 
-**Dalil:** `ilbi/apps/sales/services/sale_service.py:24,94`; `ilbi/apps/tenants/models.py:11`; `ilbi/apps/tenants/seller_profile_service.py`; mavjud walkthrough’dagi launch talablari.
+**Dalil:** `backend/apps/sales/services/sale_service.py:24,94`; `backend/apps/tenants/models.py:11`; `backend/apps/tenants/seller_profile_service.py`; mavjud walkthrough’dagi launch talablari.
 
 Sotuvchi profili va muddati tekshiriladi, `DEBUG=False` bo‘lsa savdo ataylab rad etiladi. Fiskal adapter, provayder tasdiqlaydigan natija va xatolar, dalil hujjatlari, identifikatorlarni shifrlash va saqlash muddati hali yakunlanmagan. `tax_identifier` DBda oddiy `CharField`; javobda maskalash saqlashdagi shifrlash o‘rnini bosmaydi. Operator review API mavjud, lekin to‘liq tekshiruv interfeysi va dalil jarayoni yo‘q.
 
@@ -197,7 +197,7 @@ Foydalanuvchi 2.2ni ma’qullab, avval fiskal provayder, mavjud bank terminali v
 
 **5/5 · P0 · Kodda aniq va parallel bajarishda shartli xavf.**
 
-**Dalil:** `ilbi/apps/cashbox/services/cashbox_service.py:78,186`; `ilbi/apps/cashbox/models.py`; `ilbi/apps/sales/models/debt_payment_model.py`.
+**Dalil:** `backend/apps/cashbox/services/cashbox_service.py:78,186`; `backend/apps/cashbox/models.py`; `backend/apps/sales/models/debt_payment_model.py`.
 
 Smena alohida identifikator bilan yuritilmaydi: oxirgi hisobot va `Sale.created_at`dan hisoblanadi. `close_shift()` transaction ichida, lekin smenani yopishni seriallashtiruvchi lock yo‘q. Ikki yopish so‘rovi bir xil tushum uchun ikki hisobot yaratishi mumkin. Hisoblangandan keyin qo‘shilgan kirim/chiqim keyingi umumiy `update()` bilan oldingi hisobga bog‘lanishi mumkin. Boshlang‘ich naqd, o‘tgan smenadan qolgan pul, real qarz to‘lovining tenderi va boshqa smenada bajarilgan refund alohida hisoblanmaydi.
 
@@ -211,7 +211,7 @@ Smena alohida identifikator bilan yuritilmaydi: oxirgi hisobot va `Sale.created_
 
 **5/5 · P1 · Kodda aniq.**
 
-**Dalil:** `ilbi/apps/sales/services/void_service.py:38,117,173`; `ilbi/apps/sales/models/sale_model.py`; `ilbi/api/v1/inventory/views/movement_views.py`.
+**Dalil:** `backend/apps/sales/services/void_service.py:38,117,173`; `backend/apps/sales/models/sale_model.py`; `backend/api/v1/inventory/views/movement_views.py`.
 
 `void_sale_item()` asl `total_amount`ni kamaytiradi; `void_sale()` to‘liq bekor qilishda uni saqlaydi. `refunded_amount` retail voidda yangilanmaydi. Bir xil chek uchun ikki xil hisob qoidasi paydo bo‘lgan. Inventar mijoz qaytarishi esa asl sotuv va tender bilan majburiy bog‘lanmagan: omborni oshirib, savdo/qarzni o‘zgartirmasligi mumkin. Voidning 7 kunlik texnik chegarasi iste’molchi qaytarish jarayoniga ham aralashgan.
 
@@ -225,7 +225,7 @@ Smena alohida identifikator bilan yuritilmaydi: oxirgi hisobot va `Sale.created_
 
 **5/5 · P1 · Shartli xavf, kodda tartib farqi aniq.**
 
-**Dalil:** `ilbi/apps/sales/services/sale_service.py:183,233`; `ilbi/apps/sales/services/b2b_transfer_service.py:481,657`; `ilbi/apps/inventory/services/stock_service.py:141`; `ilbi/apps/catalog/services/product_service.py:22`; `ilbi/apps/catalog/services/category_service.py:18`; `ilbi/apps/tenants/services.py:53`.
+**Dalil:** `backend/apps/sales/services/sale_service.py:183,233`; `backend/apps/sales/services/b2b_transfer_service.py:481,657`; `backend/apps/inventory/services/stock_service.py:141`; `backend/apps/catalog/services/product_service.py:22`; `backend/apps/catalog/services/category_service.py:18`; `backend/apps/tenants/services.py:53`.
 
 Savdo Stockni, keyin Counterpartyni lock qiladi; B2B qaytish Counterpartyni, keyin Stockni lock qiladi. Bir xil qoldiq va kontragentda ular o‘zaro kutishga tushishi mumkin. Batch kirim foydalanuvchi yuborgan tartibda ishlaydi. SKU/kod generatsiyasi mavjud qatorlarni lock qiladi, bo‘sh katalogda esa lock qiladigan qator yo‘q; birinchi parallel yaratishlar bir xil kod olishi mumkin. Tenant maksimumini `count()` bilan tekshirish parallel yaratishga chidamli emas.
 
@@ -239,7 +239,7 @@ Savdo Stockni, keyin Counterpartyni lock qiladi; B2B qaytish Counterpartyni, key
 
 **4/5 · P1 · Kodda aniq.**
 
-**Dalil:** `ilbi/apps/sales/services/sale_service.py:74`; `ilbi/apps/sales/models/sale_model.py`; `frontend/ilbi/src/pages/POS.jsx:457`; `ilbi/apps/sales/services/debt_service.py:17`.
+**Dalil:** `backend/apps/sales/services/sale_service.py:74`; `backend/apps/sales/models/sale_model.py`; `frontend/ilbi/src/pages/POS.jsx:457`; `backend/apps/sales/services/debt_service.py:17`.
 
 POS so‘rovi `idempotency_key` yubormaydi. Backendda kalit oddiy index, unique constraint yoki payload hash yo‘q. Mavjud savdoni izlash receipt lockidan oldin: ikki so‘rov bir vaqtda “yo‘q” deb topib, keyin navbat bilan ikkita savdo yaratishi mumkin. Shu kalit bilan boshqa savat yuborilsa ham eski savdo qaytadi. Qarz to‘lovi takroriy so‘rovda qarzni yana kamaytiradi.
 
@@ -253,7 +253,7 @@ POS so‘rovi `idempotency_key` yubormaydi. Backendda kalit oddiy index, unique 
 
 **4/5 · P1 · Kodda aniq.**
 
-**Dalil:** `ilbi/apps/sales/services/counterparty_service.py:16,47`; `ilbi/api/v1/sales/serializers.py:38`.
+**Dalil:** `backend/apps/sales/services/counterparty_service.py:16,47`; `backend/api/v1/sales/serializers.py:38`.
 
 Telefon raqami bilan User izlanib, uning birinchi faol do‘koni yoki xodimlik do‘koni avtomatik `target_tenant`ga aylanadi. Ko‘p do‘konli egada `.first()` qaysi do‘kon mo‘ljallanganini bilmaydi. Oddiy mijozni saqlash kutilmaganda B2B savdoga aylanishi mumkin. Manba tenantning o‘ziga bog‘lashdan ham shu servisda alohida himoya yo‘q.
 
@@ -267,7 +267,7 @@ Telefon raqami bilan User izlanib, uning birinchi faol do‘koni yoki xodimlik d
 
 **4/5 · P1 · Kodda aniq.**
 
-**Dalil:** `ilbi/apps/inventory/services/transfer_service.py:40,86,257`; `ilbi/apps/sales/services/sale_service.py:212`.
+**Dalil:** `backend/apps/inventory/services/transfer_service.py:40,86,257`; `backend/apps/sales/services/sale_service.py:212`.
 
 Manzil varianti mahsulot/variant nomi bilan avtomatik tanlanadi; birlik va valyuta mosligi majburiy tekshirilmaydi. Masalan, nomi bir xil “kg” va “dona” qoldiqlari qo‘shilib ketishi mumkin. `_apply()` transfer qabulida `last_cost_price`ni olib o‘tmaydi: yangi manzil Stockida tannarx bo‘sh qoladi, keyingi savdoda 0 olinadi va foyda sun’iy oshadi. Qabul bosqichida dispatchdan keyin o‘zgargan seller bog‘lanishi ham qayta tekshirilmaydi.
 
@@ -295,7 +295,7 @@ Header almashtirilganda API client yangi tenantni yuboradi, lekin Services, Dash
 
 **4/5 · P1 · Kodda aniq.**
 
-**Dalil:** `ilbi/api/v1/accounts/views/admin_login.py`; `ilbi/apps/accounts/services/otp_services.py:49`; `login_throttle.py:75,113`.
+**Dalil:** `backend/api/v1/accounts/views/admin_login.py`; `backend/apps/accounts/services/otp_services.py:49`; `login_throttle.py:75,113`.
 
 OTP tasdiqlashda parol bosqichi o‘tilganini bildiradigan bir martalik ticket yo‘q: username va telefon uchun saqlangan kod tekshiriladi. OTPni o‘qish va o‘chirish alohida Redis buyruqlari, parallel tasdiqlar ikkalasi ham muvaffaqiyatli bo‘lishi mumkin. Throttle username/telefon/email kirish matni bilan alohida yuradi, permanent ban esa faqat `username` bo‘yicha update qiladi. Shu accountning uch identifikatori himoyada bir xil subyekt hisoblanmaydi.
 
@@ -333,7 +333,7 @@ OTP tasdiqlashda parol bosqichi o‘tilganini bildiradigan bir martalik ticket y
 
 **4/5 · P1 · Kodda aniq.**
 
-**Dalil:** `ilbi/apps/accounts/services/password_reset_service.py:390,544,554`; `ilbi/api/v1/accounts/views/password_reset.py:41`; `ilbi/api/v1/accounts/serializers.py`.
+**Dalil:** `backend/apps/accounts/services/password_reset_service.py:390,544,554`; `backend/api/v1/accounts/views/password_reset.py:41`; `backend/api/v1/accounts/serializers.py`.
 
 Yangi reset so‘rovi avvalgi tokenni bekor qilmaydi. Tasdiqlashda token username validatsiyasidan oldin o‘chadi: band username tanlash havolani yaroqsiz qiladi. Token berilgandan keyin xodim bo‘shatilgan yoki account bloklangan bo‘lsa confirm bosqichida vakolat qayta tekshirilmaydi. Username mavjud accountda ham almashtiriladi, serializer izohi esa faqat birinchi o‘rnatishni va’da qiladi. Request view yuborish xatosi/cooldown natijasini e’tiborsiz qoldirib “yuborildi” deydi; `email_hint/has_email` esa ma’lum va noma’lum accountni farqlaydi.
 
@@ -347,7 +347,7 @@ Yangi reset so‘rovi avvalgi tokenni bekor qilmaydi. Tasdiqlashda token usernam
 
 **4/5 · P1 · Shartli parallel xavf va kodda aniq validatsiya bo‘shlig‘i.**
 
-**Dalil:** `ilbi/api/v1/accounts/views/profile_views.py:24,128`; `complete_profile.py`; `ilbi/apps/accounts/services/password_reset_service.py:524,575`.
+**Dalil:** `backend/api/v1/accounts/views/profile_views.py:24,128`; `complete_profile.py`; `backend/apps/accounts/services/password_reset_service.py:524,575`.
 
 Profil tahriri `user.save()` bilan barcha ustunlarni eski instance’dan yozadi. Boshqa so‘rov parol/token_version/is_active ni o‘zgartirgach, kechroq tugagan profil so‘rovi eski qiymatlarni qayta yozishi mumkin. Parol yo‘llarida asosan uzunlik tekshiriladi, settingsdagi `AUTH_PASSWORD_VALIDATORS` qo‘llanmaydi. Emailni o‘zgartirishda qayta tasdiq yo‘q; reset email bo‘yicha `.first()` ishlatadi, email esa DBda unique emas.
 
@@ -361,7 +361,7 @@ Profil tahriri `user.save()` bilan barcha ustunlarni eski instance’dan yozadi.
 
 **4/5 · P1 · Shartli xavf.**
 
-**Dalil:** `ilbi/apps/inventory/migrations/0006_remove_branches_one_stock_per_variant.py`; `ilbi/apps/tenants/migrations/0008_remove_branch_model.py`; `0011_delete_branch_after_scope_removal.py`; accounts/sales/cashboxdagi branch removal migratsiyalari.
+**Dalil:** `backend/apps/inventory/migrations/0006_remove_branches_one_stock_per_variant.py`; `backend/apps/tenants/migrations/0008_remove_branch_model.py`; `0011_delete_branch_after_scope_removal.py`; accounts/sales/cashboxdagi branch removal migratsiyalari.
 
 Migratsiya branch va eski transfer jadvallarini o‘chiradi, Stockni variant uchun `OneToOneField` qiladi. Ikki filialda bir variantning qoldig‘i mavjud bo‘lsa unique o‘zgarish bajarilmaydi. Eski branch, narx va tarixni alohida tenantga ko‘chirish `RunPython` bosqichi yo‘q.
 
@@ -379,7 +379,7 @@ Mavjud master reja DBni disposable deb belgilagan. Shuning uchun eski ma’lumot
 
 **3/5 · P0 · Kodda aniq.**
 
-**Dalil:** `ilbi/api/v1/cashbox/views/cashbox_views.py:20,51,96`; `ilbi/config/settings.py:147`; `ilbi/api/v1/catalog/views/product_views.py:73,293`; `ilbi/api/v1/tenants/views.py:326,347`.
+**Dalil:** `backend/api/v1/cashbox/views/cashbox_views.py:20,51,96`; `backend/config/settings.py:147`; `backend/api/v1/catalog/views/product_views.py:73,293`; `backend/api/v1/tenants/views.py:326,347`.
 
 Kassa view/base’da action permission yo‘q, REST defaults’da ham permission belgilanmagan. Membership bor xodim, alohida vakolatsiz, chiqim/kirim yozishi va smenani yopishi mumkin. Mahsulot yaratishdagi `initial_quantity` ombor kirimini faqat `catalog.add_product` bilan bajaradi. Variant archive endpointi `archive_product` o‘rniga `change_product` talab qiladi. Telegram test endpointi oddiy autentifikatsiyali staffga maxsus group ID berishga ruxsat beradi. Transfer target view platform admin uchun `self.tenant=None` holatini ishlovsiz qoldiradi.
 
@@ -393,7 +393,7 @@ Kassa view/base’da action permission yo‘q, REST defaults’da ham permission
 
 **3/5 · P1 · Kodda aniq.**
 
-**Dalil:** `ilbi/api/v1/sales/serializers.py:77`; `ilbi/api/v1/inventory/serializers.py:9,30`; sale/stock viewlarining serializer chaqiruvlari.
+**Dalil:** `backend/api/v1/sales/serializers.py:77`; `backend/api/v1/inventory/serializers.py:9,30`; sale/stock viewlarining serializer chaqiruvlari.
 
 `sales.view_sale` bor xodimga `cost_price`, `inventory.view_stock` bor xodimga `last_cost_price` va movement `cost_price` qaytadi. `catalog.view_cost_price` alohida tekshirilmaydi; serializerlarda foydalanuvchi konteksti ham bu maqsadda berilmagan. Frontend ustunni yashirishi API javobidagi tannarxni himoya qilmaydi.
 
@@ -407,7 +407,7 @@ Kassa view/base’da action permission yo‘q, REST defaults’da ham permission
 
 **3/5 · P1 · Kodda aniq.**
 
-**Dalil:** `ilbi/apps/analytics/services/analytics_service.py:104,279`; `ilbi/apps/inventory/services/deficit_service.py:39`.
+**Dalil:** `backend/apps/analytics/services/analytics_service.py:104,279`; `backend/apps/inventory/services/deficit_service.py:39`.
 
 Analitika faol miqdorni faqat `quantity - voided_quantity` bilan hisoblaydi. B2Bning jismonan qaytgan va tafovuti yopilgan miqdorlari ayirilmaydi. Qisman qabul qilingan savdoning qolgan qismi return-pending bo‘lganda sale statusi butunlay hisobotdan chiqib ketadi; qabul qilingan qism ham yo‘qoladi. Deficit filtri yangi `b2b_partially_accepted` item statusini qamramaydi. Sana chegaralari UTC bo‘yicha, frontend esa brauzer mahalliy sanasidan foydalanadi.
 
@@ -421,7 +421,7 @@ Analitika faol miqdorni faqat `quantity - voided_quantity` bilan hisoblaydi. B2B
 
 **3/5 · P1 · Kodda aniq.**
 
-**Dalil:** `ilbi/api/v1/catalog/views/product_views.py:73,105,141,179,242`.
+**Dalil:** `backend/api/v1/catalog/views/product_views.py:73,105,141,179,242`.
 
 Mahsulot + boshlang‘ich kirim yaratishda barcha exceptionlar transaction ichida ushlanib Response qaytariladi: mahsulot yaratilgach kirimda biznes xatosi bo‘lsa, tashqi transaction muvaffaqiyatli tugab, foydalanuvchi 400 ko‘rsa ham mahsulot qolishi mumkin. Product PATCH avval mahsulotni saqlaydi, keyin variantni; variant xatosi birinchi o‘zgarishni qaytarmaydi. Noto‘g‘ri `variant_id` bo‘lsa rad etish o‘rniga birinchi variant tahrirlanadi. Variant PATCHdagi save va narx auditi ham bitta transactionda emas.
 
@@ -435,7 +435,7 @@ Mahsulot + boshlang‘ich kirim yaratishda barcha exceptionlar transaction ichid
 
 **3/5 · P1 · Kodda aniq.**
 
-**Dalil:** `ilbi/apps/catalog/services/category_service.py:122`; `ilbi/api/v1/catalog/views/product_views.py:147`; `ilbi/api/v1/catalog/serializers.py`.
+**Dalil:** `backend/apps/catalog/services/category_service.py:122`; `backend/api/v1/catalog/views/product_views.py:147`; `backend/api/v1/catalog/serializers.py`.
 
 Variant valyutasi kategoriyadan olinadi. Qoldig‘i va tarixi bor kategoriya UZS→USDga o‘zgartirilishi yoki mahsulot boshqa valyutadagi kategoriyaga ko‘chirilishi mumkin: narx va qoldiq qiymati konvertatsiyasiz boshqa birlikda talqin qilinadi. Oddiy katalog narx serializerlarida `min_value` yo‘q, manfiy narxlar saqlanishi mumkin.
 
@@ -449,7 +449,7 @@ Variant valyutasi kategoriyadan olinadi. Qoldig‘i va tarixi bor kategoriya UZS
 
 **3/5 · P1 · Kodda aniq.**
 
-**Dalil:** `ilbi/apps/sales/services/sale_service.py:183,227`; `b2b_transfer_service.py:485,661`; reja §4.2.
+**Dalil:** `backend/apps/sales/services/sale_service.py:183,227`; `b2b_transfer_service.py:485,661`; reja §4.2.
 
 `qty * unit_price` ikki xonaga yaxlitlanmasdan line va sale summasiga qo‘shiladi; DB saqlashda har ustun alohida yaxlitlanadi. Ikki qatorning har biri `0.333 × 0.05 = 0.01665` bo‘lsa, qatorlar 0.02+0.02=0.04, savdo jami esa 0.03 bo‘lishi mumkin. B2B qaytishda `quantize(0.01)` ishlatiladi, lekin rejalashtirilgan `ROUND_HALF_UP` aniq berilmagan; qismlarga bo‘lib qaytarishda ham yaxlitlash qoldig‘i boshqarilmaydi.
 
@@ -463,7 +463,7 @@ Variant valyutasi kategoriyadan olinadi. Qoldig‘i va tarixi bor kategoriya UZS
 
 **3/5 · P2 · Kodda aniq.**
 
-**Dalil:** `ilbi/api/v1/sales/views/sale_views.py:36`; inventory movement va cashbox list viewlari; `frontend/ilbi/src/pages/Sales.jsx:167,655`; `src/api/client.js`dagi list metodlari.
+**Dalil:** `backend/api/v1/sales/views/sale_views.py:36`; inventory movement va cashbox list viewlari; `frontend/ilbi/src/pages/Sales.jsx:167,655`; `src/api/client.js`dagi list metodlari.
 
 Ko‘p listlar `page` bo‘lmasa barcha qatorlarni qaytaradi; movement/cashbox/payment listlarining ayrimlari `page`ni umuman qo‘llamaydi. POS/katalog barcha variantni yuklab, frontendda filtrlab sahifalaydi. Sales esa serverdan 20 qator oladi, sana/to‘lov/status filtrlarini faqat shu sahifaga qo‘llaydi: boshqa sahifadagi mos sotuv “topilmadi” bo‘lishi mumkin. Raw sana va ID querylari serializer bilan validatsiya qilinmaydi; noto‘g‘ri format ayrim ORM yo‘llarida 500ga olib keladi. Bazi narx filtrlari noto‘g‘ri qiymatni jim tashlab ketadi.
 
@@ -477,7 +477,7 @@ Ko‘p listlar `page` bo‘lmasa barcha qatorlarni qaytaradi; movement/cashbox/p
 
 **3/5 · P1 · Konfiguratsiyaga bog‘liq xavf.**
 
-**Dalil:** `ilbi/config/settings.py:229,242`; `docker-compose.yml:60`; `nginx/nginx.conf:43`; `frontend/ilbi/src/api/client.js:72`.
+**Dalil:** `backend/config/settings.py:229,242`; `docker-compose.yml:60`; `nginx/nginx.conf:43`; `frontend/ilbi/src/api/client.js:72`.
 
 MinIO yoqilganda endpointning defaulti Docker ichidagi `http://minio:9000`. Shu host bilan chiqarilgan media URL tashqi brauzerda ochilmaydi; frontend faqat nginx/ilbi hostlarini moslaydi. Compose’da bucket yaratish va kerakli access policy bosqichi yo‘q. Nginx `/media/`ni doim lokal katalogdan beradi. Storage credentiallari xavfsiz bo‘lmagan defaultlarga ega; media/backup uchun to‘liq ekspluatatsiya oqimi ko‘rsatilmagan.
 
@@ -491,7 +491,7 @@ MinIO yoqilganda endpointning defaulti Docker ichidagi `http://minio:9000`. Shu 
 
 **3/5 · P1 · Ochiq reja va konfiguratsiyada aniq.**
 
-**Dalil:** `docker-compose.yml`; `frontend/ilbi/Dockerfile`; `nginx/nginx.conf`; `ilbi/gunicorn.conf.py`; `ilbi/config/settings.py:39`; backend Dockerfile/entrypoint.
+**Dalil:** `docker-compose.yml`; `frontend/ilbi/Dockerfile`; `nginx/nginx.conf`; `backend/gunicorn.conf.py`; `backend/config/settings.py:39`; backend Dockerfile/entrypoint.
 
 README production uchun ham development Compose’ni tavsiya qiladi. Frontend Vite dev server, 5173 port ochiq, Nginxda TLS/SPA build yo‘li yo‘q; host whitelistda `*` bor. Gunicorn reload default yoqilgan. Gevent bilan oddiy psycopg2 ishlatiladi, rejalashtirilgan psycogreen patch yo‘q. Buildlar `latest` va backendda frozen syncdan fallback syncga tayanadi. Worker/beat app startga tayanadi, migration tayyorligiga aniq signal yo‘q. Backup/restore, monitoring va readiness oqimi ham yakunlanmagan.
 
@@ -543,15 +543,15 @@ README production uchun ham development Compose’ni tavsiya qiladi. Frontend Vi
 
 **Holat:** foydalanuvchi **“Ha, 4-qadamni bajar”** deb tasdiqladi. Lokal implementatsiya va tegishli tekshiruvlar **BAJARILDI**; serverga deploy qilinmadi. Quyidagi dalil o‘zgarishdan oldingi holatni ifodalaydi.
 
-**Dalil:** `ilbi/config/settings.py`da default cache `LocMemCache`; production sozlamasi uni almashtirmaydi. `PublicReceiptRateThrottle` ochiq chek uchun `60/minute`, `MyTenantsView` yangi do‘kon uchun `5/day` cheklovini DRF cache orqali hisoblaydi. Bir necha Gunicorn jarayoni yoki instance bilan hisoblagichlar alohida qoladi. Support throttle va loginning o‘z Redis mexanizmi bor; ular bilan bir xil muammo deb ko‘rsatilmaydi.
+**Dalil:** `backend/config/settings.py`da default cache `LocMemCache`; production sozlamasi uni almashtirmaydi. `PublicReceiptRateThrottle` ochiq chek uchun `60/minute`, `MyTenantsView` yangi do‘kon uchun `5/day` cheklovini DRF cache orqali hisoblaydi. Bir necha Gunicorn jarayoni yoki instance bilan hisoblagichlar alohida qoladi. Support throttle va loginning o‘z Redis mexanizmi bor; ular bilan bir xil muammo deb ko‘rsatilmaydi.
 
 **Taklif doirasi:** production default cacheni mavjud Redisga alohida prefiks bilan ulash; mavjud limitlarning qiymati va tegishli API xatti-harakatini saqlash; ikki alohida jarayondan bitta hisob ko‘rinishini ajratilgan Redisda tekshirish. Haqiqiy serverga deploy alohida. Bu keskin parallel so‘rovlar uchun atomar throttle yoki to‘liq DDoS himoyasi kafolati emas; bunday kengayish alohida baholanadi.
 
 **Qabul mezoni:** productionda ochiq chek va do‘kon yaratish urinishlari workerlar orasida umumiy ko‘rinadi; kutilgan `429` tekshiriladi; support, login va development/test muhitining ajratilishi buzilmaydi. Ilova kodi foydalanuvchi roziligidan keyin o‘zgartiriladi.
 
-**Bajarildi:** `ilbi/config/settings_production.py`da default cache explicit `REDIS_URL` orqali `RedisCache`ga o‘tkazildi; canonical domen asosidagi production prefiksi support va login kalitlarini ajratadi. Redis ulanish/o‘qish timeoutlari 2 soniya. Bo‘sh, boshqa protokolli yoki noto‘g‘ri portli URL startda rad etiladi; xato xabarida credential qiymati ko‘rsatilmaydi. Redis ishlamasa lokal hisoblagichga yashirin qaytilmaydi. Base/development/test cache sozlamalari va support aliasi o‘zgarmadi. Mavjud `60/minute` va `5/day` limit qiymatlari saqlandi.
+**Bajarildi:** `backend/config/settings_production.py`da default cache explicit `REDIS_URL` orqali `RedisCache`ga o‘tkazildi; canonical domen asosidagi production prefiksi support va login kalitlarini ajratadi. Redis ulanish/o‘qish timeoutlari 2 soniya. Bo‘sh, boshqa protokolli yoki noto‘g‘ri portli URL startda rad etiladi; xato xabarida credential qiymati ko‘rsatilmaydi. Redis ishlamasa lokal hisoblagichga yashirin qaytilmaydi. Base/development/test cache sozlamalari va support aliasi o‘zgarmadi. Mavjud `60/minute` va `5/day` limit qiymatlari saqlandi.
 
-**O‘zgargan qismlar:** production settings; `ilbi/.env.production.example` izohi; kengaytirilgan `apps/core/tests/test_production_settings.py`; yangi `apps/core/tests/test_shared_throttles.py`; README va test yo‘riqnomasi. Haqiqiy `.env`, ilova DBsi, savdo/fiskal oqimi, frontend va server konfiguratsiyasi ishga tushirish orqali o‘zgartirilmadi.
+**O‘zgargan qismlar:** production settings; `backend/.env.production.example` izohi; kengaytirilgan `apps/core/tests/test_production_settings.py`; yangi `apps/core/tests/test_shared_throttles.py`; README va test yo‘riqnomasi. Haqiqiy `.env`, ilova DBsi, savdo/fiskal oqimi, frontend va server konfiguratsiyasi ishga tushirish orqali o‘zgartirilmadi.
 
 **Tekshiruv:** production sozlamasini yuklaydigan mustaqil Python jarayonlari yangi vaqtinchalik Redisga ulandi. Chekda 60 va ownerda 5 urinishdan keyin boshqa yangi jarayonda ham `429`, `throttled`, `Retry-After` tasdiqlandi. Boshqa IP/ownerga ruxsat, vaqt oynasi tugashi, limit to‘lgan ownerning GET ro‘yxati, default/support/login kalitlari mustaqilligi, development/test lokal cache’i va Redis uzilishida fallback yo‘qligi tekshirildi. Bu integration testlarda DB ulanishi taqiqlangan, biznes handler va membership stub qilingan; ularning haqiqiy oqimi normal API regressiyalarida tekshirildi. Production settings/shared cache, tenants, sales API/receipt tax, support va admin login testlari birga: **116 passed, 22.94 s**. Ruff format/check o‘tdi. 8 ta avvaldan mavjud Django email sozlamalari deprecation ogohlantirishi bor.
 
@@ -561,15 +561,15 @@ README production uchun ham development Compose’ni tavsiya qiladi. Frontend Vi
 
 **Holat:** foydalanuvchi **“Ha, 5-qadamni bajar”** deb tasdiqladi. Uzilishdan keyin **“continue”** bilan davom ettirishni so‘radi. Lokal implementatsiya va tegishli tekshiruvlar **BAJARILDI**; serverga deploy qilinmadi. Quyidagi dalil o‘zgarishdan oldingi holatga tegishli.
 
-**Dalil:** `docker-compose.prod.yml`da PostgreSQL va Redis healthcheck bor, backend ilovada healthcheck yo‘q. Worker/beat/bot/frontend faqat `depends_on: [ilbi]` bilan konteynerning boshlanishini kutadi; ilovaning haqiqatan tayyorligini kutmaydi. `ilbi/entrypoint.sh` Gunicorndan oldin dependency sync, migratsiya, bucket va static tayyorgarligini bajaradi. URLlar va core manbalarida ilova DB/Redis tayyorligini tekshiradigan endpoint topilmadi.
+**Dalil:** `docker-compose.prod.yml`da PostgreSQL va Redis healthcheck bor, backend ilovada healthcheck yo‘q. Worker/beat/bot/frontend faqat `depends_on: [ilbi]` bilan konteynerning boshlanishini kutadi; ilovaning haqiqatan tayyorligini kutmaydi. `backend/entrypoint.sh` Gunicorndan oldin dependency sync, migratsiya, bucket va static tayyorgarligini bajaradi. URLlar va core manbalarida ilova DB/Redis tayyorligini tekshiradigan endpoint topilmadi.
 
 **Taklif doirasi:** tashqariga ichki tafsilot bermaydigan tayyorlik tekshiruvi; PostgreSQL va Redis bilan ishlay olishini tekshirish; production backend healthcheck va bog‘liq xizmatlarni dastlabki startda `service_healthy` orqali kutdirish. Private tekshiruvning public edge orqali ochilmasligi saqlanadi. Alohida PostgreSQL/Redis uzilishi va qayta tayyor bo‘lishi sun’iy muhitda tekshiriladi. Migratsiyani alohida release-jobga ko‘chirish, avtomatik restart, tashqi monitoring/xabar yuborish va serverga deploy bu taklifga kirmaydi.
 
 **Qabul mezoni:** tayyor bo‘lsa muvaffaqiyat, DB/Redis ishlamasa tayyor emas holati; xato javobida sirlar va traceback yo‘q; production bog‘liq xizmatlari backend tayyorligini kutadi. Docker health holati nosozlikni ko‘rsatadi, o‘zi ishlayotgan xizmatlarni avtomatik to‘xtatish/restart qilish kafolati berilmaydi.
 
-**Bajarildi:** `ilbi/apps/core/readiness.py` va `api/v1/urls.py` orqali `GET/HEAD /api/v1/internal/health/ready/` qo‘shildi. Faqat haqiqiy loopback socket peer qabul qilinadi; soxta proxy headeri bunga ta’sir qilmaydi. Alohida, har safar yopiladigan PostgreSQL ulanishida `SELECT 1`, Redisga timeout va retry’siz `PING` yuboriladi. Tayyorlikda `200 {"status":"ready"}`, bog‘liqlik ishlamasa `503 {"status":"not_ready"}`; xato tafsiloti, credential yoki traceback qaytarilmaydi va logga yozilmaydi. Javob cache qilinmaydi. Tekshiruv ma’lumot yozmaydi.
+**Bajarildi:** `backend/apps/core/readiness.py` va `api/v1/urls.py` orqali `GET/HEAD /api/v1/internal/health/ready/` qo‘shildi. Faqat haqiqiy loopback socket peer qabul qilinadi; soxta proxy headeri bunga ta’sir qilmaydi. Alohida, har safar yopiladigan PostgreSQL ulanishida `SELECT 1`, Redisga timeout va retry’siz `PING` yuboriladi. Tayyorlikda `200 {"status":"ready"}`, bog‘liqlik ishlamasa `503 {"status":"not_ready"}`; xato tafsiloti, credential yoki traceback qaytarilmaydi va logga yozilmaydi. Javob cache qilinmaydi. Tekshiruv ma’lumot yozmaydi.
 
-`ilbi/healthcheck.py` standart Python orqali lokal HTTP endpointni tekshiradi: proxy va redirect ishlatmaydi, kichik kutilgan JSONni tekshiradi, faqat `ready`/`not ready` va exit 0/1 chiqaradi. Production Compose’da backend healthcheck: 15 soniya interval, 10 soniya timeout, 120 soniya start grace va 3 retry. Worker, beat, bot va frontend dastlabki Compose startida backend `service_healthy` bo‘lishini kutadi. Mavjud public Nginx bloklari saqlandi; yangi route public sxemaga kiritilmaydi. README va test yo‘riqnomasi yangilandi.
+`backend/healthcheck.py` standart Python orqali lokal HTTP endpointni tekshiradi: proxy va redirect ishlatmaydi, kichik kutilgan JSONni tekshiradi, faqat `ready`/`not ready` va exit 0/1 chiqaradi. Production Compose’da backend healthcheck: 15 soniya interval, 10 soniya timeout, 120 soniya start grace va 3 retry. Worker, beat, bot va frontend dastlabki Compose startida backend `service_healthy` bo‘lishini kutadi. Mavjud public Nginx bloklari saqlandi; yangi route public sxemaga kiritilmaydi. README va test yo‘riqnomasi yangilandi.
 
 **Tekshiruv:** yangi `apps/core/tests/test_readiness.py`dagi **11 test, 7.52 s** o‘tdi. Alohida production WSGI jarayoni faqat yangi sun’iy PostgreSQL/Redisga ulanib, har bir xizmatni navbat bilan to‘xtatish/qayta yoqishda `200 → 503 → 200` va HTTP probe natijasini tasdiqladi. DBda ilova jadvali va Redisda kalit yaratilmagani tekshirildi. Peer/soxta header rad etilishi, GET/HEAD, POSTni rad etish, yopiq error/log, no-store, noto‘g‘ri JSON/redirect/katta javob sinovdan o‘tdi. Kengaytirilgan haqiqiy Nginx/TLS/Compose tekshiruvida **9 test, 2.629 s** o‘tdi: public readiness URL va kodlangan prefiks ham yopiq; dependency shartlari to‘g‘ri. Production settingsning 27 testi ham o‘tdi. Ruff format/check, Django system check va OpenAPI `--validate --fail-on-warn` o‘tdi; schema’da readiness yo‘q.
 
@@ -579,7 +579,7 @@ README production uchun ham development Compose’ni tavsiya qiladi. Frontend Vi
 
 **Holat:** foydalanuvchi **“Hozircha o‘zgartirma”** deb javob berdi. Taklif **KEYINGA QOLDIRILDI**; ushbu ish uchun Dockerfile, entrypoint, paketlar, lock va Compose o‘zgartirilmadi. Qayta boshlash uchun yangi aniq tasdiq kerak.
 
-**Dalil:** `ilbi/Dockerfile`da `uv sync --frozen --no-install-project || uv sync --no-install-project` bor: birinchi buyruq xatosida lockni o‘zgartira oladigan fallbackga o‘tiladi. Oxirgi `uv sync --frozen` dev paketlarini ham qo‘shadi. `ilbi/entrypoint.sh` Gunicorn har boshlanganida `uv sync --frozen --no-dev`ni yana bajaradi; paket tekshirish/o‘rnatish release buildidan runtimega ko‘chgan. Production Compose shu backend image’dan uch xizmatda foydalanadi. Development esa kod va alohida `.venv` volumeni mount qiladi, uni ehtiyotsiz umumiy o‘zgartirish buzishi mumkin.
+**Dalil:** `backend/Dockerfile`da `uv sync --frozen --no-install-project || uv sync --no-install-project` bor: birinchi buyruq xatosida lockni o‘zgartira oladigan fallbackga o‘tiladi. Oxirgi `uv sync --frozen` dev paketlarini ham qo‘shadi. `backend/entrypoint.sh` Gunicorn har boshlanganida `uv sync --frozen --no-dev`ni yana bajaradi; paket tekshirish/o‘rnatish release buildidan runtimega ko‘chgan. Production Compose shu backend image’dan uch xizmatda foydalanadi. Development esa kod va alohida `.venv` volumeni mount qiladi, uni ehtiyotsiz umumiy o‘zgartirish buzishi mumkin.
 
 **Taklif doirasi:** backend uchun alohida production build target; lock mos kelmasa aniq xato, versiyani qayta yechadigan fallback yo‘q; runtime’da faqat zarur production paketlari; production startupda `uv sync`ni bajarmaslik. Production Compose backend/worker/beat shu targetni ishlatadi. Developmentning mounted venv oqimi saqlanadi. Migratsiya va media/static tayyorlashni ajratish, dependency versiyalarini keng yangilash, image digestlarini pin qilish va serverga deploy bu qadamga kirmaydi.
 
@@ -589,7 +589,7 @@ README production uchun ham development Compose’ni tavsiya qiladi. Frontend Vi
 
 **Holat:** foydalanuvchi **“Ha, 7-qadamni bajar”** deb tasdiqladi. Lokal implementatsiya va tegishli tekshiruvlar **BAJARILDI**; serverga deploy qilinmadi. **Turi:** production siyosatini aniqlashtirish/yaxshilash. Quyidagi dalil o‘zgarishdan oldingi holatga tegishli.
 
-**Dalil:** `ilbi/config/urls.py` `/api/schema/`, `/api/docs/`, `/api/redoc/`ni barcha muhitlarda ro‘yxatdan o‘tkazadi. `SPECTACULAR_SETTINGS` serve permissionni almashtirmaydi; o‘rnatilgan drf-spectacular’da `SERVE_PERMISSIONS` defaulti `AllowAny`, `SERVE_PUBLIC=True`. Production edge bu yo‘llarni backendga uzatadi. Shu konfiguratsiya productionda ham dasturchilar uchun API sxemasi va sinov oynalariga login qilmasdan kirish imkonini beradi. Bu safar haqiqiy serverga so‘rov yuborilmadi; xulosa joriy kod va o‘rnatilgan kutubxona sozlamalari bo‘yicha.
+**Dalil:** `backend/config/urls.py` `/api/schema/`, `/api/docs/`, `/api/redoc/`ni barcha muhitlarda ro‘yxatdan o‘tkazadi. `SPECTACULAR_SETTINGS` serve permissionni almashtirmaydi; o‘rnatilgan drf-spectacular’da `SERVE_PERMISSIONS` defaulti `AllowAny`, `SERVE_PUBLIC=True`. Production edge bu yo‘llarni backendga uzatadi. Shu konfiguratsiya productionda ham dasturchilar uchun API sxemasi va sinov oynalariga login qilmasdan kirish imkonini beradi. Bu safar haqiqiy serverga so‘rov yuborilmadi; xulosa joriy kod va o‘rnatilgan kutubxona sozlamalari bo‘yicha.
 
 **Taklif doirasi:** productionda ushbu uch texnik URLni o‘chirish; development va CLI orqali OpenAPI yaratishni saqlash. Ilovaning foydalanuvchi qo‘llanmalari `/docs`, support va biznes APIlari o‘z faoliyatini davom ettiradi. API amallari mavjud ruxsat tekshiruvlariga tayanadi; taklif texnik hujjatning ommaviy ko‘rinishiga tegishli. Ommaviy API integratsiyasi rejalashtirilsa, hujjatni kim ko‘rishi alohida belgilanadi.
 
@@ -597,7 +597,7 @@ README production uchun ham development Compose’ni tavsiya qiladi. Frontend Vi
 
 **Bajarildi:** base settingsda `API_DOCS_ENABLED=True`, production settingsda qat’iy `False` belgilandi. Root URL konfiguratsiyasi schema/Swagger/Redoc route’larini faqat shu belgi yoqilganda qo‘shadi. Productionda UI import/route registratsiyasi bajarilmaydi; drf-spectacular runtime annotatsiyalari va CLI generatori saqlanadi. Foydalanuvchi `/docs` qo‘llanmasi va `/api/v1/docs/`, support, readiness va biznes API route’lari saqlandi. 6-qadamdagi paket/Dockerfile/entrypoint ishlariga tegilmadi.
 
-**O‘zgargan fayllar:** `ilbi/config/settings.py`, `settings_production.py`, `urls.py`; yangi `ilbi/apps/core/tests/test_api_docs_production.py`; README, test yo‘riqnomasi va audit.
+**O‘zgargan fayllar:** `backend/config/settings.py`, `settings_production.py`, `urls.py`; yangi `backend/apps/core/tests/test_api_docs_production.py`; README, test yo‘riqnomasi va audit.
 
 **Tekshiruv:** productionda uchta asosiy texnik URL, slashsiz ko‘rinishlar va schema format querysi `404`; development/testda Swagger/Redoc `200` va schema route’i mavjud. Production sozlamasi bilan CLI OpenAPI yaratish, validatsiya va fail-on-warn o‘tdi. Yangi subprocess testlarida dotenv o‘qish, DB/Redis ulanishlari taqiqlangan; kalit faqat sun’iy. Mavjud schema/UI hamda mahsulot qo‘llanmasi rol/ruxsat regressiyalari ajratilgan test DBda tekshirildi. **38 passed, 1 deselected, 11.94 s**; 8 ta avvaldan mavjud Django email deprecation ogohlantirishi bor. Deselected — repodagi haqiqiy Markdownni vaqtincha o‘zgartiradigan eski `test_docs_edit_only_platform_admin`; ushbu qadam uning fayl izolatsiyasini o‘zgartirmaydi. Yangi/tegishli kod uchun Ruff, base settings uchun CI sintaksis/undefined-name tekshiruvi o‘tdi.
 
@@ -615,7 +615,7 @@ README production uchun ham development Compose’ni tavsiya qiladi. Frontend Vi
 
 **Fayllar:** production Nginx shabloni, mavjud HTTPS testining qayta ishlatiladigan sun’iy fixture’i, yangi `tests/deployment/test_nginx_rate_limits.py`, README, test yo‘riqnomasi va shu audit. Haqiqiy env/DB/media yoki ilova biznes kodi o‘zgartirilmadi. Dockerfile/dependency/entrypoint va 6-qadamga tegilmadi.
 
-**Tekshiruv:** haqiqiy Nginx `nginx -t`, ikki worker va vaqtinchalik TLS/echo backend bilan yangi 9 rate-limit testi hamda oldingi 9 HTTPS/Compose testi birga **18/18, 15.451 s** o‘tdi. Login/OTP/reset/encoding/slash/query, soxta header, boshqa peer IP, auth/API ajratilishi, 80 so‘rovli ko‘p kassir burst va 500 so‘rovli sun’iy API flood, umumiy worker budgeti, kutgandan keyin tiklanish, backendga bormagan rejectionlar va upstream `429` tekshirildi. Ruxsat etilgan POST method/body va proxy headerlari saqlandi. Ruff check/format (`ilbi/pyproject.toml`) va Markdown tekshiruvi o‘tdi. Vaqtinchalik konteyner/tarmoq/sertifikatlar tozalangani tekshirildi. Bu POS biznes/yuklama testi emas; backend faqat fixture.
+**Tekshiruv:** haqiqiy Nginx `nginx -t`, ikki worker va vaqtinchalik TLS/echo backend bilan yangi 9 rate-limit testi hamda oldingi 9 HTTPS/Compose testi birga **18/18, 15.451 s** o‘tdi. Login/OTP/reset/encoding/slash/query, soxta header, boshqa peer IP, auth/API ajratilishi, 80 so‘rovli ko‘p kassir burst va 500 so‘rovli sun’iy API flood, umumiy worker budgeti, kutgandan keyin tiklanish, backendga bormagan rejectionlar va upstream `429` tekshirildi. Ruxsat etilgan POST method/body va proxy headerlari saqlandi. Ruff check/format (`backend/pyproject.toml`) va Markdown tekshiruvi o‘tdi. Vaqtinchalik konteyner/tarmoq/sertifikatlar tozalangani tekshirildi. Bu POS biznes/yuklama testi emas; backend faqat fixture.
 
 **Qolgan tashqi ish:** real NAT/ko‘p kassir yuklamasida limitni kuzatish va zarur bo‘lsa moslash; Cloudflare/WAF/DDoS ulash alohida. Oldiga proksi qo‘yilsa faqat ishonchli proksi tarmoqlaridan real IP tiklash hamda originni chetlab kirishni yopish kerak; hozir ixtiyoriy `CF-Connecting-IP`/`X-Forwarded-For` ishonilmaydi. Lokal cheklov internet miqyosidagi DDoSdan to‘liq himoya kafolati emas. [Nginx rasmiy algoritmi](https://nginx.org/en/docs/http/ngx_http_limit_req_module.html).
 
@@ -637,7 +637,7 @@ Cloudflare DDoS himoyasi barcha tariflarda mavjud; bepul WAFda Free Managed Rule
 
 **3/5 · P2 · Kodda aniq va ochiq reja.**
 
-**Dalil:** `ilbi/api/v1/accounts/views/docs_views.py:164,193`; `terms_views.py:24`; `ilbi/apps/accounts/models/user_model.py`.
+**Dalil:** `backend/api/v1/accounts/views/docs_views.py:164,193`; `terms_views.py:24`; `backend/apps/accounts/models/user_model.py`.
 
 Admin PUT amaldagi Markdownni ustidan yozadi; eski versiya saqlanmaydi. Userda bitta `terms_accepted` flag va vaqt/IP bor: qaysi hujjat, matn hash/versiya, til yoki rozilik turi qabul qilingani qayd etilmaydi. Matn o‘zgarganda qayta qabul mexanizmi yo‘q. Frontend acceptance gate bor, biznes APIlarda shu rozilik siyosati markaziy tekshirilmaydi.
 
@@ -651,7 +651,7 @@ Admin PUT amaldagi Markdownni ustidan yozadi; eski versiya saqlanmaydi. Userda b
 
 **3/5 · P2 · Kodda aniq.**
 
-**Dalil:** `ilbi/apps/core/services/audit_service.py:12,50,58`; `ilbi/api/v1/accounts/views/terms_views.py:12`; `ilbi/api/v1/catalog/views/product_views.py:141,242`; `ilbi/apps/sales/services/debt_service.py`.
+**Dalil:** `backend/apps/core/services/audit_service.py:12,50,58`; `backend/api/v1/accounts/views/terms_views.py:12`; `backend/api/v1/catalog/views/product_views.py:141,242`; `backend/apps/sales/services/debt_service.py`.
 
 Auditda kontekst bo‘lmasa egasining birinchi membershipi tanlanadi: ko‘p do‘konli egada hodisa noto‘g‘ri tenantga yozilishi mumkin. `X-Forwarded-For`ning chapdagi birinchi qiymati ishonchli proxy/format tekshiruvisiz olinadi; Nginx mavjud headerni qo‘shib yuboradi. Ayrim profil xatolari auditda jim yutiladi. Product PATCH orqali narx o‘zgartirish variant PATCHdagi price auditini chetlab o‘tadi; qarz to‘lovi uchun alohida action audit yo‘q.
 
@@ -665,7 +665,7 @@ Auditda kontekst bo‘lmasa egasining birinchi membershipi tanlanadi: ko‘p do�
 
 **3/5 · P1 · Kodda aniq.**
 
-**Dalil:** `ilbi/api/v1/accounts/views/employee_views.py:27,40`; `ilbi/api/v1/accounts/serializers.py:118`; `frontend/ilbi/src/pages/Employees.jsx:24,70`.
+**Dalil:** `backend/api/v1/accounts/views/employee_views.py:27,40`; `backend/api/v1/accounts/serializers.py:118`; `frontend/ilbi/src/pages/Employees.jsx:24,70`.
 
 Hire serializer emailni qabul qiladi, view uni `EmployeeService.hire()`ga uzatmaydi. Frontend email/permission tanlashni yubormaydi, yuborilgan first_name/last_name backend hire serializerida yo‘q. Yangi xodim uchun parol o‘rnatish xati va ishlash vakolatlari oqimi to‘liq emas. UI xodimlar ro‘yxatini ham maxsus endpointdan yuklamaydi; tenant list/current state bilan cheklangan. AUD-08dagi `tenant_id || 1` bunga qo‘shimcha xato.
 
@@ -693,7 +693,7 @@ Sahifalar ma’lumot yuklash, biznes hisoblari, modal, hujjat chop etish va katt
 
 **2/5 · P1 · Kodda aniq.**
 
-**Dalil:** `.github/workflows/ci.yml:24,25`; `ilbi/config/settings_test.py:37,39`; `ilbi/config/settings.py:33`; `ilbi/.gitignore`; test modullari va frontend package.json.
+**Dalil:** `.github/workflows/ci.yml:24,25`; `backend/config/settings_test.py:37,39`; `backend/config/settings.py:33`; `backend/.gitignore`; test modullari va frontend package.json.
 
 CI pytest envda `DJANGO_SECRET_KEY` yo‘q. Test settings asosiy settingsni import qilgandan keyin test secretni belgilaydi; asosiy settings esa avval secret yo‘qligidan exception ko‘taradi. `.env.test` repoda yo‘q/ignore qilingan; toza CI clone shu tartibda boshlanmaydi. Ruff `--exit-zero` bilan haqiqiy lint gate emas. Parallel stock/sale/shift/OTP tekshiruvlari manbalarda topilmadi, frontendda test scripti yo‘q. Oldingi testlar ayrim eski void xatti-harakatlarini hali tasdiqlaydi.
 
@@ -717,13 +717,13 @@ CI pytest envda `DJANGO_SECRET_KEY` yo‘q. Test settings asosiy settingsni impo
 
 **Tekshiruv:** hujjat/rozilik moduli to‘liq, texnik schema/UI moduli va boshqa moduldagi ommaviy qo‘llanma/rasmlar testi birga **9 passed, 40.21 s**. Tahrirlash testi tashlanmadi. Testdan oldin va keyin repodagi **20 ta Markdown faylning SHA-256** qiymatlari bir xil chiqdi. Boshqa moduldagi haqiqiy ommaviy qo‘llanma/rasm o‘qilishi fixture override’i tarqalmaganini ham tekshirdi. Ruff format/check o‘tdi. Faqat ajratilgan test DB/Redis ishlatildi; 8 ta avvaldan mavjud Django email deprecation ogohlantirishi bor.
 
-**O‘zgargan qismlar:** mavjud test moduli, `ilbi/README_TESTS.md` va ushbu audit. Yangi test funksiyasi qo‘shilmadi; mavjud sinov izolyatsiyasi tuzatildi. Serverga o‘rnatish yoki product runtime o‘zgarishi talab qilinmadi. Pytestning vaqtinchalik fayllari faqat sun’iy test matnini saqlaydi; asl hujjatni tiklashga tayanilmaydi.
+**O‘zgargan qismlar:** mavjud test moduli, `backend/README_TESTS.md` va ushbu audit. Yangi test funksiyasi qo‘shilmadi; mavjud sinov izolyatsiyasi tuzatildi. Serverga o‘rnatish yoki product runtime o‘zgarishi talab qilinmadi. Pytestning vaqtinchalik fayllari faqat sun’iy test matnini saqlaydi; asl hujjatni tiklashga tayanilmaydi.
 
 ### AUD-27 — Avatar tekshiruvi va faylni xavfsiz almashtirish
 
 **2/5 · P0 · Validatsiya bo‘shlig‘i kodda aniq; brauzer ta’siri deployga bog‘liq.**
 
-**Dalil:** `ilbi/api/v1/accounts/views/profile_views.py:68`; `ilbi/config/urls.py`dagi media serve; `nginx/nginx.conf`dagi `/media/`.
+**Dalil:** `backend/api/v1/accounts/views/profile_views.py:68`; `backend/config/urls.py`dagi media serve; `nginx/nginx.conf`dagi `/media/`.
 
 Upload to‘g‘ridan-to‘g‘ri `request.FILES['avatar']`ni modelga yozadi; serializer ImageField, fayl formati yoki hajm tekshiruvi yo‘q. Modelning ImageField nomi `save()` vaqtida fayl haqiqiy rasm ekanini tekshirmaydi. HTML/SVG kabi faol kontent media yo‘lida saqlanishi mumkin; u ilova originida ochilsa brauzerda script ishlash va storagega kirish xavfi bor. Eski avatar yangi fayl muvaffaqiyatli saqlanishidan oldin o‘chiriladi.
 
@@ -771,7 +771,7 @@ Hook o‘qish effectida `defaultValue`ga bog‘langan; POS unga har renderda yan
 
 **2/5 · P1 · Kodda aniq.**
 
-**Dalil:** `ilbi/apps/cashbox/services/cashbox_service.py:291`; `ilbi/apps/sales/services/debt_service.py:108`; `ilbi/apps/tenants/services.py:172`.
+**Dalil:** `backend/apps/cashbox/services/cashbox_service.py:291`; `backend/apps/sales/services/debt_service.py:108`; `backend/apps/tenants/services.py:172`.
 
 Telegram, Celery `.delay()` va SMTP dispatch DB transactioni tugamasdan chaqiriladi. Keyingi xatoda DB rollback bo‘lsa ham xabar/xat allaqachon ketgan bo‘lishi mumkin. Telegram kutish payti pul/stock locklari ushlab turiladi. Celeryga berilgan vazifa commitdan oldingi ma’lumotni o‘qishi mumkin.
 
@@ -785,7 +785,7 @@ Telegram, Celery `.delay()` va SMTP dispatch DB transactioni tugamasdan chaqiril
 
 **2/5 · P2 · Kodda aniq.**
 
-**Dalil:** `ilbi/apps/cashbox/tasks.py:129`; `ilbi/apps/inventory/tasks.py`; `ilbi/apps/sales/tasks.py:22,30`; `ilbi/config/settings.py:140`.
+**Dalil:** `backend/apps/cashbox/tasks.py:129`; `backend/apps/inventory/tasks.py`; `backend/apps/sales/tasks.py:22,30`; `backend/config/settings.py:140`.
 
 Daily report 5 daqiqada tekshiriladi, `abs(minute-report_minute)<=5` bir hisobotni bir necha marta yuboradi; daily uchun yuborilgan-sana himoyasi yo‘q. Soat chegarasi va downtime uchun catch-up yo‘q. TIME_ZONE UTC bo‘lgani uchun interfeysdagi mahalliy vaqt bilan farq qiladi. Telegram sender xatoni `False`ga aylantiradi; taskdagi `autoretry_for=(Exception,)` ishga tushmaydi. Low-stockdagi sana checki taskni enqueue qilish bilan atomar emas.
 
@@ -799,7 +799,7 @@ Daily report 5 daqiqada tekshiriladi, `abs(minute-report_minute)<=5` bir hisobot
 
 **2/5 · P1 · Kodda aniq.**
 
-**Dalil:** `ilbi/apps/accounts/authentication.py:17`; `ilbi/config/settings.py`dagi SIMPLE_JWT; `ilbi/api/v1/accounts/urls.py:20`; `frontend/ilbi/src/context/AuthContext.jsx:8,35`; `src/api/client.js`dagi refresh.
+**Dalil:** `backend/apps/accounts/authentication.py:17`; `backend/config/settings.py`dagi SIMPLE_JWT; `backend/api/v1/accounts/urls.py:20`; `frontend/ilbi/src/context/AuthContext.jsx:8,35`; `src/api/client.js`dagi refresh.
 
 `token_version` claimi yo‘q token revocation tekshiruvidan o‘tib ketadi; mos kelmasligi faqat claim mavjud bo‘lsa tekshiriladi. Refresh standart view orqali, rotation/blacklist sozlamalari yo‘q. Frontend sahifa qayta ochilganda access muddati tugagan bo‘lsa, hali valid refresh token borligiga qaramay barcha tokenni o‘chiradi. Revoked access uchun refresh yangi, lekin eski versionli access chiqarsa, qayta so‘rov 401 bo‘lishi va auth state to‘liq yangilanmasligi mumkin.
 
@@ -849,7 +849,7 @@ Daily report 5 daqiqada tekshiriladi, `abs(minute-report_minute)<=5` bir hisobot
 
 **2/5 · P1 · Kodda aniq va shartli xavf.**
 
-**Dalil:** `telegram_bot_sms/main.py`dagi contact handler; `ilbi/api/v1/tg_bot/serializers.py:9`; `ilbi/apps/tg_bot/models.py`.
+**Dalil:** `telegram_bot_sms/main.py`dagi contact handler; `backend/api/v1/tg_bot/serializers.py:9`; `backend/apps/tg_bot/models.py`.
 
 Kontakt egasi senderga mosligi tekshiriladi — bu foydali himoya. Biroq handler faqat private chat bilan cheklanmagan: o‘z kontaktini guruhda yuborish group chat IDni bog‘lashi va keyingi OTPni guruhga chiqarishi mumkin. Telefon update_or_create bilan almashtiriladi, chat_id esa unique; o‘sha Telegram account yangi telefon bilan qayta ulanganda IntegrityError ehtimoli bor. Qayta bog‘lash uchun eski chatga bildirish va audit yo‘q. Async handler ichida `requests.post()` ishlatilib bot event loopi bloklanadi.
 
@@ -897,7 +897,7 @@ Kontakt egasi senderga mosligi tekshiriladi — bu foydali himoya. Biroq handler
 
 **Sinov muhiti qaydi:** restricted sandbox mahalliy socket `send()`ini `PermissionError(1)` bilan rad etdi; asyncio thread callbacklari event loopni uyg‘ota olmay, ikki test jarayoni kutilishda qoldi. Faqat ushbu ishda boshlangan ikki test jarayoni to‘xtatildi va mahalliy uyg‘otish ruxsati bor muhitda shu mock testlar to‘liq o‘tkazildi. Bu avtomatik tasdiq rad javobi yoki production kodi xatosi emas. Vaqtinchalik jarayonlar qolmadi.
 
-**Chegara:** Requests timeouti avvalgi connect/read cheklovi; yangi qat’iy umumiy deadline/retry mexanizmi qo‘shilmadi. Handler bekor qilinsa, workerda allaqachon boshlangan HTTP chaqiruvi tugashi mumkin. Load test, real backend latency, thread pool tuning va deploy bu qadamga kirmaydi. O‘zgargan fayllar: bot `main.py`, mavjud bot test moduli, bot README, `ilbi/README_TESTS.md` va ushbu audit. Haqiqiy kontakt/DB/media/env o‘zgarmadi.
+**Chegara:** Requests timeouti avvalgi connect/read cheklovi; yangi qat’iy umumiy deadline/retry mexanizmi qo‘shilmadi. Handler bekor qilinsa, workerda allaqachon boshlangan HTTP chaqiruvi tugashi mumkin. Load test, real backend latency, thread pool tuning va deploy bu qadamga kirmaydi. O‘zgargan fayllar: bot `main.py`, mavjud bot test moduli, bot README, `backend/README_TESTS.md` va ushbu audit. Haqiqiy kontakt/DB/media/env o‘zgarmadi.
 
 #### 2026-10-16 — 13-qadam: Telegram konflikti va platforma adminining ish muhiti
 
@@ -944,7 +944,7 @@ Remember me parolni Base64ga aylantirib `localStorage`ga yozadi. Base64 qayta oc
 
 **1/5 · P1 · Kodda aniq.**
 
-**Dalil:** `ilbi/apps/cashbox/services/cashbox_service.py:268,283`.
+**Dalil:** `backend/apps/cashbox/services/cashbox_service.py:268,283`.
 
 `owner` faqat `notify_web_reports=True` blokida aniqlanadi. Web notification o‘chirilgan, Telegram `personal/both` yoqilgan bo‘lsa, `owner.phone_number`ga kirishda `UnboundLocalError` yuz beradi va smena transactioni qaytadi.
 
@@ -958,7 +958,7 @@ Remember me parolni Base64ga aylantirib `localStorage`ga yozadi. Base64 qayta oc
 
 **1/5 · P2 · Kodda aniq.**
 
-**Dalil:** `ilbi/apps/accounts/services/tenant_context_service.py`; `ilbi/api/permissions.py:100`; `ilbi/api/v1/tenants/views.py:275`.
+**Dalil:** `backend/apps/accounts/services/tenant_context_service.py`; `backend/api/permissions.py:100`; `backend/api/v1/tenants/views.py:275`.
 
 Activate view own ownerga ruxsat berishini aytadi, lekin kontekst faqat `tenant__is_active=True` membershipdan olinadi. O‘chirilgan do‘kon headeri rad etiladi yoki tenant None bo‘ladi; object permission ham shu faol kontekstga tayanadi. Egasi o‘zi deaktivatsiya qilgan do‘konini qayta yoqa olmaydi, admin kerak bo‘ladi.
 
@@ -972,7 +972,7 @@ Activate view own ownerga ruxsat berishini aytadi, lekin kontekst faqat `tenant_
 
 **1/5 · P2 · Koddan kelib chiqadigan xato.**
 
-**Dalil:** `ilbi/api/permissions.py:160,163`; GET/POST/PATCH map ishlatadigan catalog/sales viewlari.
+**Dalil:** `backend/api/permissions.py:160,163`; GET/POST/PATCH map ishlatadigan catalog/sales viewlari.
 
 `permission_map`da request method yo‘q bo‘lsa `ImproperlyConfigured` ko‘tariladi. Maplarda odatda HEAD/OPTIONS yo‘q. DRF permission tekshiruvi handlerdan oldin bo‘lgani uchun oddiy metadata/HEAD yoki qo‘llanmaydigan method kutilgan javob o‘rniga 500ga aylanishi mumkin.
 
@@ -986,7 +986,7 @@ Activate view own ownerga ruxsat berishini aytadi, lekin kontekst faqat `tenant_
 
 **1/5 · P2 · Kodda aniq.**
 
-**Dalil:** `ilbi/api/v1/sales/serializers.py:265,284`; `frontend/ilbi/src/pages/PublicReceiptView.jsx:333`; `components/common/ReceiptSlip.jsx:440`.
+**Dalil:** `backend/api/v1/sales/serializers.py:265,284`; `frontend/ilbi/src/pages/PublicReceiptView.jsx:333`; `components/common/ReceiptSlip.jsx:440`.
 
 Public serializer `refunded_amount/net_amount`ni va item qaytarish holatini chiqarmaydi; frontend faqat total ko‘rsatadi. B2B qaytishlarda asl jami saqlanib refund alohida yozilgani uchun public nusxa amaldagi sof qiymatni bermaydi. Public item javobida ichki item ID ham bor, avval kelishilgan whitelistda bunga ehtiyoj yo‘q.
 
@@ -1000,7 +1000,7 @@ Public serializer `refunded_amount/net_amount`ni va item qaytarish holatini chiq
 
 **1/5 · P3 · Kod/hujjatda aniq.**
 
-**Dalil:** `README.md:49,50,51`; `ilbi/config/urls.py`; `docker-compose.yml`; `frontend/ilbi/src/api/client.js`dagi branchId argumentlar; `components/layout/Layout.jsx`; master plan checkpoint va walkthrough logi.
+**Dalil:** `README.md:49,50,51`; `backend/config/urls.py`; `docker-compose.yml`; `frontend/ilbi/src/api/client.js`dagi branchId argumentlar; `components/layout/Layout.jsx`; master plan checkpoint va walkthrough logi.
 
 README backendni localhost:8000 deydi, Compose backendga host port bermaydi; Swagger/Redoc yo‘llari haqiqiy `/api/docs/` va `/api/redoc/`ga mos emas. Audit davomida ikkala `.env.example`dagi eski insecure secret placeholderi tashqi o‘zgarishda bo‘sh qiymatga almashtirildi; startup baribir haqiqiy secretni talab qiladi, README quick startda uni yaratish/to‘ldirishning aniq qadami kerak. Qolgan branchId argumentlari ishlatilmaydi; ayrim matnlar eski filial/Z-hisobot nomlarini saqlagan. Reja checkpointidagi ochiq/yopiq ishlar keyingi walkthrough yozuvlari bilan bir xil emas, bir nechta qayd takrorlangan.
 

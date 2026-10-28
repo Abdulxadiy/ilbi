@@ -624,7 +624,7 @@ export default function Inventory() {
                   color: 'var(--text-muted)',
                 }}
               />
-              <input
+              <input data-api-field="stockSearch"
                 type="text"
                 placeholder="Tovar nomi, SKU, shtrix-kod yoki 3 bosqichli kod..."
                 value={inventoryFilters.stockSearch}
@@ -663,7 +663,7 @@ export default function Inventory() {
 
             {/* Sort Order */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <CustomSelect
+              <CustomSelect data-api-field="stockSort"
                 icon={ArrowUpDown}
                 value={inventoryFilters.stockSort}
                 onChange={(val) => setInventoryFilters({ ...inventoryFilters, stockSort: val })}
@@ -841,7 +841,7 @@ export default function Inventory() {
                   color: 'var(--text-muted)',
                 }}
               />
-              <input
+              <input data-api-field="movementSearch"
                 type="text"
                 placeholder="Tovar nomi yoki harakat izohi bo‘yicha izlash..."
                 value={inventoryFilters.movementSearch}
@@ -862,7 +862,7 @@ export default function Inventory() {
             {/* Movement Type Filter */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <span style={{ fontSize: 12, color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>Harakat turi:</span>
-              <CustomSelect
+              <CustomSelect data-api-field="movementType"
                 value={inventoryFilters.movementType}
                 onChange={(val) => setInventoryFilters({ ...inventoryFilters, movementType: val })}
                 options={[
@@ -1353,14 +1353,14 @@ export default function Inventory() {
       {/* Modal 2: Qoldiqni To‘g‘rilash (Stock Adjust) */}
       <Modal isOpen={adjustModalOpen} onClose={() => setAdjustModalOpen(false)} title="Ombor Qoldig‘ini Tuzatish" maxWidth={760}>
         <form onSubmit={handleAdjustSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <BatchSelector variantId={selectedVariantId} value={selectedBatch} onChange={setSelectedBatch} allowEmpty={formDirection === 'in'} />
+          <BatchSelector variantId={selectedVariantId} data-api-field="batch_id" value={selectedBatch} onChange={setSelectedBatch} allowEmpty={formDirection === 'in'} />
           <div>
             <label style={{ display: 'block', fontSize: 13, color: 'var(--text-secondary)', marginBottom: 6 }}>
               Tovar Varianti *
             </label>
             <RemoteVariantSelect
               enabled={adjustModalOpen}
-              value={selectedVariantId}
+              data-api-field="product_variant_id" required value={selectedVariantId}
               onChange={(val) => { setSelectedVariantId(val); setSelectedBatch(''); }}
               placeholder="Tovarni tanlang..."
               
@@ -1374,7 +1374,7 @@ export default function Inventory() {
                 Yo‘nalish *
               </label>
               <CustomSelect
-                value={formDirection}
+                data-api-field="direction" value={formDirection}
                 onChange={(val) => setFormDirection(val)}
                 options={[
                   { value: 'in', label: '+ Qo‘shish (Ortiqcha topildi)' },
@@ -1392,7 +1392,7 @@ export default function Inventory() {
                 step="0.001"
                 min="0.001"
                 placeholder="Masalan: 5"
-                value={formQuantity}
+                data-api-field="quantity" value={formQuantity}
                 onChange={(e) => setFormQuantity(e.target.value)}
                 required
                 style={{ width: '100%', padding: '12px 14px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-card)', background: 'var(--bg-input)', color: 'var(--text-primary)', fontSize: 14, outline: 'none' }}
@@ -1407,7 +1407,7 @@ export default function Inventory() {
             <input
               type="text"
               placeholder="Masalan: Yillik inventarizatsiya natijasi"
-              value={formNote}
+              data-api-field="note" value={formNote}
               onChange={(e) => setFormNote(e.target.value)}
               style={{ width: '100%', padding: '12px 14px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-card)', background: 'var(--bg-input)', color: 'var(--text-primary)', fontSize: 14, outline: 'none' }}
             />
@@ -1435,7 +1435,7 @@ export default function Inventory() {
       {/* Modal 3: Mijoz Qaytardi (Customer Return) */}
       <Modal isOpen={customerReturnModalOpen} onClose={() => setCustomerReturnModalOpen(false)} title="Mijozdan Tovarni Qaytarib Olish (Cheksiz)" maxWidth={760}>
         <form onSubmit={handleCustomerReturnSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <BatchSelector variantId={selectedVariantId} value={selectedBatch} onChange={setSelectedBatch} allowEmpty={true} />
+          <BatchSelector variantId={selectedVariantId} data-api-field="batch_id" value={selectedBatch} onChange={setSelectedBatch} allowEmpty={true} />
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, padding: 12, borderRadius: 'var(--radius-sm)', background: 'rgba(59, 130, 246, 0.1)', border: '1px solid rgba(59, 130, 246, 0.25)', color: '#93c5fa', fontSize: 13 }}>
             <Info size={18} style={{ flexShrink: 0, marginTop: 2, color: '#60a5fa' }} />
             <div>
@@ -1451,7 +1451,7 @@ export default function Inventory() {
             </label>
             <RemoteVariantSelect
               enabled={customerReturnModalOpen}
-              value={selectedVariantId}
+              data-api-field="product_variant_id" required value={selectedVariantId}
               onChange={(val) => { setSelectedVariantId(val); setSelectedBatch(''); }}
               placeholder="Tovarni tanlang..."
               
@@ -1468,7 +1468,7 @@ export default function Inventory() {
               step="0.001"
               min="0.001"
               placeholder="Masalan: 1"
-              value={formQuantity}
+              data-api-field="quantity" value={formQuantity}
               onChange={(e) => setFormQuantity(e.target.value)}
               required
               style={{ width: '100%', padding: '12px 14px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-card)', background: 'var(--bg-input)', color: 'var(--text-primary)', fontSize: 14, outline: 'none' }}
@@ -1482,7 +1482,7 @@ export default function Inventory() {
             <input
               type="text"
               placeholder="Masalan: Chek #582, o‘lchami to‘g‘ri kelmadi"
-              value={formNote}
+              data-api-field="note" value={formNote}
               onChange={(e) => setFormNote(e.target.value)}
               style={{ width: '100%', padding: '12px 14px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-card)', background: 'var(--bg-input)', color: 'var(--text-primary)', fontSize: 14, outline: 'none' }}
             />
@@ -1510,14 +1510,14 @@ export default function Inventory() {
       {/* Modal 4: Ta’minotchiga Qaytarish (Supplier Return) */}
       <Modal isOpen={supplierReturnModalOpen} onClose={() => setSupplierReturnModalOpen(false)} title="Ta’minotchiga Tovarni Qaytarish" maxWidth={760}>
         <form onSubmit={handleSupplierReturnSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <BatchSelector variantId={selectedVariantId} value={selectedBatch} onChange={setSelectedBatch} allowEmpty={false} />
+          <BatchSelector variantId={selectedVariantId} data-api-field="batch_id" value={selectedBatch} onChange={setSelectedBatch} allowEmpty={false} />
           <div>
             <label style={{ display: 'block', fontSize: 13, color: 'var(--text-secondary)', marginBottom: 6 }}>
               Qaytariladigan Variant *
             </label>
             <RemoteVariantSelect
               enabled={supplierReturnModalOpen}
-              value={selectedVariantId}
+              data-api-field="product_variant_id" required value={selectedVariantId}
               onChange={(val) => { setSelectedVariantId(val); setSelectedBatch(''); }}
               placeholder="Tovarni tanlang..."
               
@@ -1534,7 +1534,7 @@ export default function Inventory() {
               step="0.001"
               min="0.001"
               placeholder="Masalan: 10"
-              value={formQuantity}
+              data-api-field="quantity" value={formQuantity}
               onChange={(e) => setFormQuantity(e.target.value)}
               required
               style={{ width: '100%', padding: '12px 14px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-card)', background: 'var(--bg-input)', color: 'var(--text-primary)', fontSize: 14, outline: 'none' }}
@@ -1548,7 +1548,7 @@ export default function Inventory() {
             <input
               type="text"
               placeholder="Masalan: Zavod braki, Ta’minotchi bilan kelishildi"
-              value={formNote}
+              data-api-field="note" value={formNote}
               onChange={(e) => setFormNote(e.target.value)}
               style={{ width: '100%', padding: '12px 14px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-card)', background: 'var(--bg-input)', color: 'var(--text-primary)', fontSize: 14, outline: 'none' }}
             />
@@ -1576,7 +1576,7 @@ export default function Inventory() {
       {/* Modal 5: Write-off / Hisobdan chiqarish */}
       <Modal isOpen={writeOffModalOpen} onClose={() => setWriteOffModalOpen(false)} title="Hisobdan Chiqarish (Isrofgarchilik)" maxWidth={760}>
         <form onSubmit={handleWriteOffSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <BatchSelector variantId={selectedVariantId} value={selectedBatch} onChange={setSelectedBatch} allowEmpty={false} />
+          <BatchSelector variantId={selectedVariantId} data-api-field="batch_id" value={selectedBatch} onChange={setSelectedBatch} allowEmpty={false} />
           <div style={{ padding: 12, borderRadius: 'var(--radius-xs)', background: 'rgba(var(--danger-rgb), 0.1)', border: '1px solid rgba(var(--danger-rgb), 0.2)', color: 'var(--accent-rose)', fontSize: 13 }}>
             Diqqat: Ushbu amal tovarlarni ombordan butunlay hisobdan chiqaradi va tizim auditiga qayd etiladi.
           </div>
@@ -1587,7 +1587,7 @@ export default function Inventory() {
             </label>
             <RemoteVariantSelect
               enabled={writeOffModalOpen}
-              value={selectedVariantId}
+              data-api-field="product_variant_id" required value={selectedVariantId}
               onChange={(val) => { setSelectedVariantId(val); setSelectedBatch(''); }}
               placeholder="Tovarni tanlang..."
               
@@ -1604,7 +1604,7 @@ export default function Inventory() {
               step="0.001"
               min="0.001"
               placeholder="Masalan: 3"
-              value={formQuantity}
+              data-api-field="quantity" value={formQuantity}
               onChange={(e) => setFormQuantity(e.target.value)}
               required
               style={{ width: '100%', padding: '12px 14px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-card)', background: 'var(--bg-input)', color: 'var(--text-primary)', fontSize: 14, outline: 'none' }}
@@ -1618,7 +1618,7 @@ export default function Inventory() {
             <input
               type="text"
               placeholder="Masalan: Tashish paytida sindi"
-              value={formNote}
+              data-api-field="note" value={formNote}
               onChange={(e) => setFormNote(e.target.value)}
               required
               style={{ width: '100%', padding: '12px 14px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-card)', background: 'var(--bg-input)', color: 'var(--text-primary)', fontSize: 14, outline: 'none' }}

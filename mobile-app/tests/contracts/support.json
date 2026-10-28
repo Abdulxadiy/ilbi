@@ -1,0 +1,175 @@
+{
+  "source": "Actual Django APIClient serializers, isolated PostgreSQL; synthetic support users; notification delivery mocked",
+  "metadata": {
+    "phone": "+998770212149",
+    "telegram_username": "abdulxadiy_0",
+    "languages": [
+      "uz"
+    ],
+    "ai_enabled": false,
+    "max_image_bytes": 2097152
+  },
+  "conversation": {
+    "id": "72e20c25-835e-498f-ab24-a7a04a026c60",
+    "name": "Mobile test customer",
+    "subject": "Mobile support contract",
+    "language": "uz",
+    "status": "active",
+    "operator_id": 148,
+    "operator_name": "admin13",
+    "tenant_id": 52,
+    "unread_count": 0,
+    "created_at": "2026-10-25T10:19:14.415598+05:00",
+    "updated_at": "2026-10-25T10:19:14.427318+05:00"
+  },
+  "created": {
+    "id": "72e20c25-835e-498f-ab24-a7a04a026c60",
+    "name": "Mobile test customer",
+    "subject": "Mobile support contract",
+    "language": "uz",
+    "status": "waiting",
+    "operator_id": null,
+    "operator_name": "",
+    "tenant_id": 52,
+    "unread_count": 0,
+    "created_at": "2026-10-25T10:19:14.415598+05:00",
+    "updated_at": "2026-10-25T10:19:14.415603+05:00"
+  },
+  "guest": {
+    "id": "a48e48bd-003f-4ccb-ad0c-7a0ff6aea622",
+    "name": "Synthetic guest",
+    "subject": "How to start?",
+    "language": "en",
+    "status": "waiting",
+    "operator_id": null,
+    "operator_name": "",
+    "tenant_id": null,
+    "unread_count": 0,
+    "created_at": "2026-10-25T10:19:14.457752+05:00",
+    "updated_at": "2026-10-25T10:19:14.457758+05:00"
+  },
+  "messages": {
+    "results": [
+      {
+        "id": 173,
+        "sender": "visitor",
+        "author_name": "",
+        "client_id": "805a31e0-4c7b-4f11-aaaa-8042ee259a34",
+        "text": "Please help",
+        "event": "",
+        "has_image": false,
+        "has_voice": false,
+        "voice_duration": 0,
+        "sticker": "",
+        "reply_to": null,
+        "created_at": "2026-10-25T10:19:14.415928+05:00"
+      },
+      {
+        "id": 174,
+        "sender": "system",
+        "author_name": "",
+        "client_id": "68bf3de7-9502-447e-a427-054b10fc807b",
+        "text": "",
+        "event": "claim",
+        "has_image": false,
+        "has_voice": false,
+        "voice_duration": 0,
+        "sticker": "",
+        "reply_to": null,
+        "created_at": "2026-10-25T10:19:14.420729+05:00"
+      },
+      {
+        "id": 175,
+        "sender": "operator",
+        "author_name": "admin13",
+        "client_id": "62dcb663-502c-4ab8-a04a-909d195b760c",
+        "text": "Synthetic operator answer",
+        "event": "",
+        "has_image": false,
+        "has_voice": false,
+        "voice_duration": 0,
+        "sticker": "",
+        "reply_to": {
+          "id": 173,
+          "sender": "visitor",
+          "author_name": "Mobile test customer",
+          "text": "Please help",
+          "has_image": false,
+          "has_voice": false,
+          "voice_duration": 0,
+          "sticker": ""
+        },
+        "created_at": "2026-10-25T10:19:14.426992+05:00"
+      }
+    ],
+    "has_more": false
+  },
+  "after": {
+    "results": [
+      {
+        "id": 174,
+        "sender": "system",
+        "author_name": "",
+        "client_id": "68bf3de7-9502-447e-a427-054b10fc807b",
+        "text": "",
+        "event": "claim",
+        "has_image": false,
+        "has_voice": false,
+        "voice_duration": 0,
+        "sticker": "",
+        "reply_to": null,
+        "created_at": "2026-10-25T10:19:14.420729+05:00"
+      },
+      {
+        "id": 175,
+        "sender": "operator",
+        "author_name": "admin13",
+        "client_id": "62dcb663-502c-4ab8-a04a-909d195b760c",
+        "text": "Synthetic operator answer",
+        "event": "",
+        "has_image": false,
+        "has_voice": false,
+        "voice_duration": 0,
+        "sticker": "",
+        "reply_to": {
+          "id": 173,
+          "sender": "visitor",
+          "author_name": "Mobile test customer",
+          "text": "Please help",
+          "has_image": false,
+          "has_voice": false,
+          "voice_duration": 0,
+          "sticker": ""
+        },
+        "created_at": "2026-10-25T10:19:14.426992+05:00"
+      }
+    ],
+    "has_more": false
+  },
+  "closed": {
+    "id": "72e20c25-835e-498f-ab24-a7a04a026c60",
+    "name": "Mobile test customer",
+    "subject": "Mobile support contract",
+    "language": "uz",
+    "status": "closed",
+    "operator_id": 148,
+    "operator_name": "admin13",
+    "tenant_id": 52,
+    "unread_count": 0,
+    "created_at": "2026-10-25T10:19:14.415598+05:00",
+    "updated_at": "2026-10-25T10:19:14.444445+05:00"
+  },
+  "reopened": {
+    "id": "72e20c25-835e-498f-ab24-a7a04a026c60",
+    "name": "Mobile test customer",
+    "subject": "Mobile support contract",
+    "language": "uz",
+    "status": "waiting",
+    "operator_id": null,
+    "operator_name": "",
+    "tenant_id": 52,
+    "unread_count": 0,
+    "created_at": "2026-10-25T10:19:14.415598+05:00",
+    "updated_at": "2026-10-25T10:19:14.450560+05:00"
+  }
+}

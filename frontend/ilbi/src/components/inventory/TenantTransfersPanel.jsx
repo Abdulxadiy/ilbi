@@ -267,7 +267,7 @@ export default function TenantTransfersPanel({ activeTenant, isOwner, transfers,
                   onChange={val => updateDraft(index, 'source_variant_id', val)}
                   onVariant={variant => { if (variant) setVariants(prev => [...prev.filter(v => v.id !== variant.id), variant]); }}
                   placeholder="Manba mahsulot/varianti" fullWidth />
-                <input
+                <input data-api-field="quantity"
                   type="number"
                   min="0.001"
                   step="0.001"
@@ -286,7 +286,7 @@ export default function TenantTransfersPanel({ activeTenant, isOwner, transfers,
                   required
                 />
                 {isOwner && variant ? (
-                  <CustomSelect
+                  <CustomSelect data-api-field="destination_category_id"
                     value={row.destination_category_id}
                     onChange={(val) => updateDraft(index, 'destination_category_id', val)}
                     options={[

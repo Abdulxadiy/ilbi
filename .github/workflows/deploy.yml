@@ -84,7 +84,7 @@ jobs:
           echo "tag=sha-$RELEASE_SHA" >> "$GITHUB_OUTPUT"
       - uses: docker/build-push-action@v6
         with:
-          context: ./ilbi
+          context: ./backend
           target: production
           platforms: linux/amd64
           push: true
@@ -136,6 +136,7 @@ jobs:
         run: |
           rsync -a ops/ production:/srv/ilbi/ops/
           rsync -a scripts/data_backup.py production:/srv/ilbi/scripts/
+          ssh production 'python3 /srv/ilbi/ops/prepare_backend_layout.py /srv/ilbi --apply'
           rsync -a docker-compose.prod.yml production:/srv/ilbi/
           ssh production 'mkdir -p /srv/ilbi/desktop/downloads'
           # Immutable commit directories keep existing download links intact.

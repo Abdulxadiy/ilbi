@@ -7,7 +7,7 @@ from pathlib import Path
 
 if not getattr(sys, "frozen", False):
     bundled_app = Path(__file__).resolve().parent / "app"
-    sys.path.insert(0, str(bundled_app if bundled_app.is_dir() else Path(__file__).resolve().parents[1] / "ilbi"))
+    sys.path.insert(0, str(bundled_app if bundled_app.is_dir() else Path(__file__).resolve().parents[1] / "backend"))
 os.environ["DJANGO_SETTINGS_MODULE"] = "config.settings_desktop"
 
 

@@ -1,0 +1,1 @@
+PASS: installed Android debug app; home, real keyboard price edit, fractional quantity, persisted draft after process restart, synthetic checkout and authoritative change. No physical camera/iOS/release claim.

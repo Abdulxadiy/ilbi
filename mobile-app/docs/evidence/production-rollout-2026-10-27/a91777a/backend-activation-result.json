@@ -1,0 +1,20 @@
+{
+  "exit_code": 0,
+  "started_at_utc": "2026-10-27T15:18:43Z",
+  "finished_at_utc": "2026-10-27T15:19:26Z",
+  "result": {
+    "activated": true,
+    "backup_archive": "/srv/ilbi-backups/ilbi-data-20261027T151849Z-8215b919b7ba.tar.gpg",
+    "backup_sha256": "88c4e19a9b5785f569f50d529afffed05d887f0c048c14807639f1b97dc05737",
+    "image": "ghcr.io/abdulxadiy/ilbi/backend:sha-a91777a0b7908898d9359b5e24c3f1df5e1cb1b7",
+    "image_id": "sha256:62102671c771f78d0f4499ec422f4efb1d5b79dd74030b5a72b4b0e3563c1249",
+    "previous_image": "ghcr.io/abdulxadiy/sales-platform/backend:sha-2d799dd5596a92fb6a0e3be6cf51a2a018c88e2d",
+    "private_log": "/home/ubuntu/.local/share/ilbi-release-staging/mobile-backend-a91777a/logs/mobile-backend-d08c6cd6cceb42b0a00315cb36498a98.log",
+    "running_writers": [
+      "ilbi",
+      "celery_worker",
+      "celery_beat",
+      "bot"
+    ]
+  }
+}

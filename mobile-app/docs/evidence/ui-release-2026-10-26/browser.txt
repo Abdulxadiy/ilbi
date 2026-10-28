@@ -1,0 +1,6 @@
+2026-10-26 — isolated host browser acceptance
+Source copied to a private directory with separate Metro/proxy ports 8091/8092 and project-local caches.
+The existing browser harness ran against that copy. Its live-refresh edit and restoration affected only the copied Home file.
+No emulator/ADB action, original-source marker edit or production transaction was performed.
+The historical report says Docker; this execution used the same proxy directly on the host.
+PASS: Interactive phone preview (Docker), sidebar support with persistent tabs, consented ticket, message acknowledgement, close/reopen, logout/login and guest/account isolation, camera manual fallback/unknown exact code, parent/child category CRUD, product/variant creation, archive/restore/delete, persistent catalog prices isolated from negotiated cart price, Router filter, price negotiation, sidebar, persistent tabs across five secondary modules, dark theme, 320px viewport, live source refresh, demo checkout/change and saved receipt. Native Android/iOS are separate checks.

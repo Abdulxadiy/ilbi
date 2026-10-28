@@ -61,11 +61,11 @@ def stage_source(backend):
         shutil.rmtree(app)
     for directory in ("apps", "api", "config", "data"):
         shutil.copytree(
-            ROOT / "ilbi" / directory,
+            ROOT / "backend" / directory,
             app / directory,
             ignore=shutil.ignore_patterns("__pycache__", "tests", "test_*.py", ".env*"),
         )
-    shutil.copy(ROOT / "ilbi/pyproject.toml", app / "pyproject.toml")
+    shutil.copy(ROOT / "backend/pyproject.toml", app / "pyproject.toml")
     shutil.copy(ROOT / "desktop/runtime.py", backend / "runtime.py")
     shutil.copy(ROOT / "desktop/backup_store.py", backend / "backup_store.py")
     docs = backend / "docs"
@@ -137,7 +137,7 @@ def main():
     extract(archives["python"], backend / "python")
     pth = next((backend / "python").glob("python*._pth"))
     pth.write_text("python313.zip\n.\nLib/site-packages\n../app\nimport site\n")
-    lock = tomllib.loads((ROOT / "ilbi/uv.lock").read_text())
+    lock = tomllib.loads((ROOT / "backend/uv.lock").read_text())
     packages = {
         item["name"]: item
         for item in lock["package"]

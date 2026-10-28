@@ -1,0 +1,13 @@
+{
+  "source": "9a025e0c5a475a8b9d667b7a768b6d457fe1852a",
+  "first_local_passed": 1082,
+  "remaining_non_docker_cases": 39,
+  "docker_cases_verified_in_full_ci_only": [
+    "apps/core/tests/test_readiness.py::test_real_dependency_outage_and_recovery[postgres]",
+    "apps/core/tests/test_readiness.py::test_real_dependency_outage_and_recovery[redis]",
+    "apps/core/tests/test_shared_throttles.py::test_workers_share_existing_limits_and_recover_after_expiry[receipt-60-60]",
+    "apps/core/tests/test_shared_throttles.py::test_workers_share_existing_limits_and_recover_after_expiry[tenant-5-86400]",
+    "apps/core/tests/test_shared_throttles.py::test_default_support_and_login_keys_remain_separate"
+  ],
+  "full_source_ci_passed": 1126
+}

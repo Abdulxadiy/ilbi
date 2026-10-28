@@ -1,4 +1,6 @@
 import { localStore, sessionStore, markAuthenticationCurrent } from '../utils/brandStorage.js';
+import { captureRequestValidation, reportRequestValidation } from '../utils/formValidation.js';
+import { redactRequestError, safeApiErrorMessage, safeDisplayText } from '../utils/safePresentation.js';
 /**
  * ILBI API Client with JWT Interceptor & Automatic Refresh
  */
@@ -94,7 +96,7 @@ export const resolveAvatarUrl = (raw) => {
 
 export const resolveMediaUrl = resolveAvatarUrl;
 
-async function handleResponse(response, responseType) {
+async function handleResponse(response, responseType, requestBody) {
   if (response.status === 204) {
     return null;
   }
@@ -102,9 +104,10 @@ async function handleResponse(response, responseType) {
 
   const contentType = response.headers.get('content-type') || '';
   const isJson = contentType.includes('application/json');
-  const data = isJson ? await response.json() : await response.text();
+  let data = isJson ? await response.json() : await response.text();
 
   if (!response.ok) {
+    data = redactRequestError(data, requestBody);
     if (response.status === 423 && typeof window !== 'undefined' && window.ilbiDesktop) window.dispatchEvent(new Event('desktop:locked'));
     let errorMsg = 'Kutilmagan xatolik yuz berdi';
 
@@ -125,7 +128,7 @@ async function handleResponse(response, responseType) {
           data.detail ||
           data.message ||
           (typeof data.error === 'string' ? data.error : data.error?.message) ||
-          (Array.isArray(data) ? data[0] : JSON.stringify(data));
+          safeApiErrorMessage(data, response.status);
       }
     } else if (typeof data === 'string') {
       if (data.trim().startsWith('<')) {
@@ -135,7 +138,7 @@ async function handleResponse(response, responseType) {
       }
     }
 
-    const err = new Error(errorMsg);
+    const err = new Error(response.status >= 500 ? safeApiErrorMessage(data, response.status) : safeDisplayText(errorMsg));
     err.status = response.status;
     err.data = data;
     err.retryAfterMs = Number(response.headers.get('Retry-After') || 0) * 1000;
@@ -163,7 +166,7 @@ export function refreshAccessToken() {
         ...(typeof window !== 'undefined' && window.ilbiDesktop && !parseJwt(refresh)?.desktop_device ? { 'X-ILBI-Cloud-Session': 'true' } : {}) },
       body: JSON.stringify({ refresh }),
     });
-    const data = await handleResponse(response);
+    const data = await handleResponse(response, undefined, { refresh });
     if (getAuthenticationGeneration() !== generation || getRefreshToken() !== refresh) throw new Error('Sessiya o‘zgargan.');
     setTokens(data.access, data.refresh || refresh, null, true);
     window.dispatchEvent(new CustomEvent('auth:token', { detail: data.access }));
@@ -180,6 +183,7 @@ export function refreshAccessToken() {
 }
 
 export async function request(endpoint, options = {}) {
+  const validation = captureRequestValidation(options.method, options.body);
   const generation = getAuthenticationGeneration();
   const assertCurrentSession = () => {
     if (getAuthenticationGeneration() !== generation) throw new Error('Sessiya o‘zgargan. Amalni qayta boshlang.');
@@ -241,10 +245,12 @@ export async function request(endpoint, options = {}) {
       }
     }
 
-    const result = await handleResponse(response, options.responseType);
+    const result = await handleResponse(response, options.responseType, options.body);
     assertCurrentSession();
     return result;
   } catch (error) {
+    const currentTenant = tenantStorageKey ? sessionStore.getItem(tenantStorageKey) || localStore.getItem(tenantStorageKey) : null;
+    if (generation === getAuthenticationGeneration() && currentTenant === activeTenantId) reportRequestValidation(error, validation);
     throw error;
   }
 }
@@ -727,6 +733,8 @@ export const salesApi = {
       method: 'POST',
       body: JSON.stringify(data),
     }),
+  quoteDebtAdjustment: (counterpartyId, data) => request(`/sales/counterparties/${counterpartyId}/payments/adjustment-quote/`, { method: 'POST', body: data }),
+  commitDebtAdjustment: (counterpartyId, data) => request(`/sales/counterparties/${counterpartyId}/payments/adjust/`, { method: 'POST', body: data }),
 
   getB2BInbox: (params = {}, options = {}) => request(`/sales/b2b/inbox/?${queryString(params)}`, options),
   acceptB2B: (saleId, itemsPayload) =>

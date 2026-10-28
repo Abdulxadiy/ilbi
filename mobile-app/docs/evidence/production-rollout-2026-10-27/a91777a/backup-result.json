@@ -1,0 +1,16 @@
+{
+  "images": {
+    "ilbi": "ghcr.io/abdulxadiy/sales-platform/backend:sha-2d799dd5596a92fb6a0e3be6cf51a2a018c88e2d",
+    "celery_worker": "ghcr.io/abdulxadiy/sales-platform/backend:sha-2d799dd5596a92fb6a0e3be6cf51a2a018c88e2d",
+    "celery_beat": "ghcr.io/abdulxadiy/sales-platform/backend:sha-2d799dd5596a92fb6a0e3be6cf51a2a018c88e2d",
+    "frontend": "ghcr.io/abdulxadiy/sales-platform/frontend:sha-2d799dd5596a92fb6a0e3be6cf51a2a018c88e2d",
+    "bot": "ghcr.io/abdulxadiy/sales-platform/bot:sha-2d799dd5596a92fb6a0e3be6cf51a2a018c88e2d",
+    "postgres": "postgres:16-alpine",
+    "redis": "redis:7-alpine"
+  },
+  "started_at_utc": "2026-10-27T13:13:02Z",
+  "backup_succeeded": true,
+  "archive": "/srv/ilbi-backups/ilbi-data-20261027T131308Z-242888cf4c64.tar.gpg",
+  "archive_bytes": 5662804,
+  "finished_at_utc": "2026-10-27T13:13:35Z"
+}

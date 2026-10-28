@@ -1,0 +1,1 @@
+PASS: real Chrome section settings, red schedule field, independent persistence, CBU conversion and immutable saved receipt

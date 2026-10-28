@@ -1,0 +1,58 @@
+{
+  "expo": {
+    "name": "ILBI",
+    "slug": "ilbi-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "uz.ilbi.mobile",
+      "buildNumber": "1"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#F0EFEB",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "package": "uz.ilbi.mobile",
+      "googleServicesFile": "./google-services.json",
+      "versionCode": 5,
+      "blockedPermissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-secure-store",
+      "expo-sharing",
+      "expo-router",
+      "expo-sqlite",
+      "expo-asset",
+      "expo-notifications",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "ILBI profil va mahsulot rasmini tanlash uchun galereyadan foydalanadi.",
+          "microphonePermission": false
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "ILBI tovar shtrix-kodini skanerlash uchun kameradan foydalanadi.",
+          "microphonePermission": false,
+          "recordAudioAndroid": false,
+          "barcodeScannerEnabled": true
+        }
+      ]
+    ],
+    "scheme": "ilbi"
+  }
+}

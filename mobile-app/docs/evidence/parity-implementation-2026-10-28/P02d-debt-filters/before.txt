@@ -1,0 +1,227 @@
+FFFFFFFFFF.                                                              [100%]
+=================================== FAILURES ===================================
+_ test_due_filter_is_tashkent_business_day_debt_only_and_applies_before_pagination[overdue-expected0] _
+
+owner = <User: owner0>, tenant = <Tenant: Tenant 0>
+debt_rows = {'overdue': <Counterparty: overdue (+998930000000)>, 'today': <Counterparty: today (+998930000001)>, 'soon': <Counterparty: soon (+998930000002)>, 'soon_edge': <Counterparty: soon_edge (+998930000003)>, ...}
+due = 'overdue', expected = ['overdue']
+
+    @pytest.mark.parametrize('due,expected', [('overdue', ['overdue']), ('today', ['today', 'usd', 'mixed']), ('soon', ['soon', 'soon_edge']), ('future', ['future']), ('undated', ['undated'])])
+    def test_due_filter_is_tashkent_business_day_debt_only_and_applies_before_pagination(owner, tenant, debt_rows, due, expected):
+        client = client_for(owner, tenant)
+        # Neither UTC date nor a temporarily activated different timezone may move the business day.
+        with patch('django.utils.timezone.now', return_value=NOW), timezone.override('America/Los_Angeles'):
+            response = client.get(PATH, {'due_status': due, 'page': 1, 'page_size': 1})
+            assert response.status_code == 200, response.data
+>           assert response.data['count'] == len(expected)
+E           AssertionError: assert 10 == 1
+E            +  where 1 = len(['overdue'])
+
+apps/sales/tests/test_counterparty_due_filters.py:50: AssertionError
+_ test_due_filter_is_tashkent_business_day_debt_only_and_applies_before_pagination[today-expected1] _
+
+owner = <User: owner3>, tenant = <Tenant: Tenant 2>
+debt_rows = {'overdue': <Counterparty: overdue (+998930000012)>, 'today': <Counterparty: today (+998930000013)>, 'soon': <Counterparty: soon (+998930000014)>, 'soon_edge': <Counterparty: soon_edge (+998930000015)>, ...}
+due = 'today', expected = ['today', 'usd', 'mixed']
+
+    @pytest.mark.parametrize('due,expected', [('overdue', ['overdue']), ('today', ['today', 'usd', 'mixed']), ('soon', ['soon', 'soon_edge']), ('future', ['future']), ('undated', ['undated'])])
+    def test_due_filter_is_tashkent_business_day_debt_only_and_applies_before_pagination(owner, tenant, debt_rows, due, expected):
+        client = client_for(owner, tenant)
+        # Neither UTC date nor a temporarily activated different timezone may move the business day.
+        with patch('django.utils.timezone.now', return_value=NOW), timezone.override('America/Los_Angeles'):
+            response = client.get(PATH, {'due_status': due, 'page': 1, 'page_size': 1})
+            assert response.status_code == 200, response.data
+>           assert response.data['count'] == len(expected)
+E           AssertionError: assert 10 == 3
+E            +  where 3 = len(['today', 'usd', 'mixed'])
+
+apps/sales/tests/test_counterparty_due_filters.py:50: AssertionError
+_ test_due_filter_is_tashkent_business_day_debt_only_and_applies_before_pagination[soon-expected2] _
+
+owner = <User: owner6>, tenant = <Tenant: Tenant 4>
+debt_rows = {'overdue': <Counterparty: overdue (+998930000024)>, 'today': <Counterparty: today (+998930000025)>, 'soon': <Counterparty: soon (+998930000026)>, 'soon_edge': <Counterparty: soon_edge (+998930000027)>, ...}
+due = 'soon', expected = ['soon', 'soon_edge']
+
+    @pytest.mark.parametrize('due,expected', [('overdue', ['overdue']), ('today', ['today', 'usd', 'mixed']), ('soon', ['soon', 'soon_edge']), ('future', ['future']), ('undated', ['undated'])])
+    def test_due_filter_is_tashkent_business_day_debt_only_and_applies_before_pagination(owner, tenant, debt_rows, due, expected):
+        client = client_for(owner, tenant)
+        # Neither UTC date nor a temporarily activated different timezone may move the business day.
+        with patch('django.utils.timezone.now', return_value=NOW), timezone.override('America/Los_Angeles'):
+            response = client.get(PATH, {'due_status': due, 'page': 1, 'page_size': 1})
+            assert response.status_code == 200, response.data
+>           assert response.data['count'] == len(expected)
+E           AssertionError: assert 10 == 2
+E            +  where 2 = len(['soon', 'soon_edge'])
+
+apps/sales/tests/test_counterparty_due_filters.py:50: AssertionError
+_ test_due_filter_is_tashkent_business_day_debt_only_and_applies_before_pagination[future-expected3] _
+
+owner = <User: owner9>, tenant = <Tenant: Tenant 6>
+debt_rows = {'overdue': <Counterparty: overdue (+998930000036)>, 'today': <Counterparty: today (+998930000037)>, 'soon': <Counterparty: soon (+998930000038)>, 'soon_edge': <Counterparty: soon_edge (+998930000039)>, ...}
+due = 'future', expected = ['future']
+
+    @pytest.mark.parametrize('due,expected', [('overdue', ['overdue']), ('today', ['today', 'usd', 'mixed']), ('soon', ['soon', 'soon_edge']), ('future', ['future']), ('undated', ['undated'])])
+    def test_due_filter_is_tashkent_business_day_debt_only_and_applies_before_pagination(owner, tenant, debt_rows, due, expected):
+        client = client_for(owner, tenant)
+        # Neither UTC date nor a temporarily activated different timezone may move the business day.
+        with patch('django.utils.timezone.now', return_value=NOW), timezone.override('America/Los_Angeles'):
+            response = client.get(PATH, {'due_status': due, 'page': 1, 'page_size': 1})
+            assert response.status_code == 200, response.data
+>           assert response.data['count'] == len(expected)
+E           AssertionError: assert 10 == 1
+E            +  where 1 = len(['future'])
+
+apps/sales/tests/test_counterparty_due_filters.py:50: AssertionError
+_ test_due_filter_is_tashkent_business_day_debt_only_and_applies_before_pagination[undated-expected4] _
+
+owner = <User: owner12>, tenant = <Tenant: Tenant 8>
+debt_rows = {'overdue': <Counterparty: overdue (+998930000048)>, 'today': <Counterparty: today (+998930000049)>, 'soon': <Counterparty: soon (+998930000050)>, 'soon_edge': <Counterparty: soon_edge (+998930000051)>, ...}
+due = 'undated', expected = ['undated']
+
+    @pytest.mark.parametrize('due,expected', [('overdue', ['overdue']), ('today', ['today', 'usd', 'mixed']), ('soon', ['soon', 'soon_edge']), ('future', ['future']), ('undated', ['undated'])])
+    def test_due_filter_is_tashkent_business_day_debt_only_and_applies_before_pagination(owner, tenant, debt_rows, due, expected):
+        client = client_for(owner, tenant)
+        # Neither UTC date nor a temporarily activated different timezone may move the business day.
+        with patch('django.utils.timezone.now', return_value=NOW), timezone.override('America/Los_Angeles'):
+            response = client.get(PATH, {'due_status': due, 'page': 1, 'page_size': 1})
+            assert response.status_code == 200, response.data
+>           assert response.data['count'] == len(expected)
+E           AssertionError: assert 10 == 1
+E            +  where 1 = len(['undated'])
+
+apps/sales/tests/test_counterparty_due_filters.py:50: AssertionError
+_ test_summary_credits_in_both_currencies_stays_store_wide_and_search_combines _
+
+owner = <User: owner15>, tenant = <Tenant: Tenant 10>
+debt_rows = {'overdue': <Counterparty: overdue (+998930000060)>, 'today': <Counterparty: today (+998930000061)>, 'soon': <Counterparty: soon (+998930000062)>, 'soon_edge': <Counterparty: soon_edge (+998930000063)>, ...}
+
+    def test_summary_credits_in_both_currencies_stays_store_wide_and_search_combines(owner, tenant, debt_rows):
+        with patch('django.utils.timezone.now', return_value=NOW):
+            response = client_for(owner, tenant).get(PATH, {'page': 1, 'due_status': 'today', 'search': 'USD'})
+        assert response.data['count'] == 1
+        summary = response.data['summary']
+        assert summary['total_count'] == 10
+        assert Decimal(summary['total_debt_uzs']) == Decimal('66.50')
+        assert Decimal(summary['total_debt_usd']) == Decimal('2.50')
+        assert Decimal(summary['total_credit_uzs']) == Decimal('3.00')
+>       assert Decimal(summary['total_credit_usd']) == Decimal('5.00')
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'total_credit_usd'
+
+apps/sales/tests/test_counterparty_due_filters.py:69: KeyError
+_ test_invalid_due_filter_is_a_field_error_not_unfiltered_results[/api/v1/sales/counterparties/] _
+
+owner = <User: owner18>, tenant = <Tenant: Tenant 12>
+path = '/api/v1/sales/counterparties/'
+
+    @pytest.mark.parametrize('path', [PATH, PATH + 'export/'])
+    def test_invalid_due_filter_is_a_field_error_not_unfiltered_results(owner, tenant, path):
+        response = client_for(owner, tenant).get(path, {'due_status': 'not-a-real-filter', 'page': 1})
+>       assert response.status_code == 400
+E       assert 200 == 400
+E        +  where 200 = <Response status_code=200, "application/json">.status_code
+
+apps/sales/tests/test_counterparty_due_filters.py:76: AssertionError
+_ test_invalid_due_filter_is_a_field_error_not_unfiltered_results[/api/v1/sales/counterparties/export/] _
+
+owner = <User: owner20>, tenant = <Tenant: Tenant 13>
+path = '/api/v1/sales/counterparties/export/'
+
+    @pytest.mark.parametrize('path', [PATH, PATH + 'export/'])
+    def test_invalid_due_filter_is_a_field_error_not_unfiltered_results(owner, tenant, path):
+        response = client_for(owner, tenant).get(path, {'due_status': 'not-a-real-filter', 'page': 1})
+>       assert response.status_code == 400
+E       assert 200 == 400
+E        +  where 200 = <HttpResponse status_code=200, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">.status_code
+
+apps/sales/tests/test_counterparty_due_filters.py:76: AssertionError
+____ test_due_export_uses_exact_same_server_filter_and_has_no_side_effects _____
+
+owner = <User: owner22>, tenant = <Tenant: Tenant 14>
+debt_rows = {'overdue': <Counterparty: overdue (+998930000072)>, 'today': <Counterparty: today (+998930000073)>, 'soon': <Counterparty: soon (+998930000074)>, 'soon_edge': <Counterparty: soon_edge (+998930000075)>, ...}
+
+    def test_due_export_uses_exact_same_server_filter_and_has_no_side_effects(owner, tenant, debt_rows):
+        with patch('django.utils.timezone.now', return_value=NOW):
+            response = client_for(owner, tenant).get(PATH + 'export/', {'due_status': 'soon'})
+        assert response.status_code == 200
+        workbook = load_workbook(BytesIO(response.content), read_only=True)
+        values = list(workbook['Qarzdorlik'].values)
+        cells = {value for row in values for value in row if isinstance(value, str)}
+        assert {'soon', 'soon_edge'} <= cells
+>       assert not ({'overdue', 'today', 'future', 'USD', 'Mixed', 'Credit', 'Archived', 'Foreign'} & cells)
+E       AssertionError: assert not ({'Archived', 'Credit', 'Foreign', 'Mixed', 'USD', 'future', ...} & {'+998930000072', '+998930000073', '+998930000074', '+998930000075', '+998930000076', '+998930000077', ...})
+
+apps/sales/tests/test_counterparty_due_filters.py:88: AssertionError
+_ test_partial_collection_keeps_due_until_settled_and_original_replay_survives_filter_change _
+
+owner = <User: owner25>, tenant = <Tenant: Tenant 16>
+
+    def test_partial_collection_keeps_due_until_settled_and_original_replay_survives_filter_change(owner, tenant):
+        cp = CounterpartyFactory(tenant=tenant, debt_balance_uzs='10.25', debt_due_date=TODAY-timedelta(days=1))
+        client = client_for(owner, tenant)
+        payment_path = PATH + f'{cp.pk}/payments/'
+        payload = {'amount': '3.25', 'currency': 'UZS', 'payment_type': 'card', 'branch_id': tenant.pk, 'note': 'Partial due collection'}
+        quote = client.get(payment_path + 'quote/', payload)
+        assert quote.status_code == 200
+        body = {**payload, 'expected_quote': quote.data['expected_quote'], 'idempotency_key': 'due-partial-original'}
+        accepted = client.post(payment_path, body, format='json')
+        assert accepted.status_code == 201
+        with patch('django.utils.timezone.now', return_value=NOW):
+            listed = client.get(PATH, {'page': 1, 'due_status': 'overdue'})
+            assert listed.data['count'] == 1
+            assert listed.data['results'][0]['debt_balance_uzs'] == '7.00'
+            assert client.post(payment_path, body, format='json').data == accepted.data
+            final_payload = {**payload, 'amount': '7.00'}
+            final_quote = client.get(payment_path + 'quote/', final_payload)
+            final = client.post(payment_path, {**final_payload, 'expected_quote': final_quote.data['expected_quote'], 'idempotency_key': 'due-final-original'}, format='json')
+            assert final.status_code == 201
+>           assert client.get(PATH, {'page': 1, 'due_status': 'overdue'}).data['count'] == 0
+E           assert 1 == 0
+
+apps/sales/tests/test_counterparty_due_filters.py:111: AssertionError
+=============================== warnings summary ===============================
+../../../../../.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394
+  /mnt/storage/.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394: RemovedInDjango2028Warning: The EMAIL_HOST_PASSWORD setting is deprecated. Migrate to MAILERS before Django 2028.
+    dj_settings.DATABASES  # noqa: B018
+
+../../../../../.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394
+  /mnt/storage/.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394: RemovedInDjango2028Warning: The EMAIL_HOST setting is deprecated. Migrate to MAILERS before Django 2028.
+    dj_settings.DATABASES  # noqa: B018
+
+../../../../../.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394
+  /mnt/storage/.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394: RemovedInDjango2028Warning: The EMAIL_BACKEND setting is deprecated. Migrate to MAILERS before Django 2028.
+    dj_settings.DATABASES  # noqa: B018
+
+../../../../../.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394
+  /mnt/storage/.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394: RemovedInDjango2028Warning: The EMAIL_USE_SSL setting is deprecated. Migrate to MAILERS before Django 2028.
+    dj_settings.DATABASES  # noqa: B018
+
+../../../../../.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394
+  /mnt/storage/.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394: RemovedInDjango2028Warning: The EMAIL_USE_TLS setting is deprecated. Migrate to MAILERS before Django 2028.
+    dj_settings.DATABASES  # noqa: B018
+
+../../../../../.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394
+  /mnt/storage/.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394: RemovedInDjango2028Warning: The EMAIL_HOST_USER setting is deprecated. Migrate to MAILERS before Django 2028.
+    dj_settings.DATABASES  # noqa: B018
+
+../../../../../.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394
+  /mnt/storage/.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394: RemovedInDjango2028Warning: The EMAIL_TIMEOUT setting is deprecated. Migrate to MAILERS before Django 2028.
+    dj_settings.DATABASES  # noqa: B018
+
+../../../../../.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394
+  /mnt/storage/.cache/ilbi-push-tests/venv/lib/python3.12/site-packages/pytest_django/plugin.py:394: RemovedInDjango2028Warning: The EMAIL_PORT setting is deprecated. Migrate to MAILERS before Django 2028.
+    dj_settings.DATABASES  # noqa: B018
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED apps/sales/tests/test_counterparty_due_filters.py::test_due_filter_is_tashkent_business_day_debt_only_and_applies_before_pagination[overdue-expected0]
+FAILED apps/sales/tests/test_counterparty_due_filters.py::test_due_filter_is_tashkent_business_day_debt_only_and_applies_before_pagination[today-expected1]
+FAILED apps/sales/tests/test_counterparty_due_filters.py::test_due_filter_is_tashkent_business_day_debt_only_and_applies_before_pagination[soon-expected2]
+FAILED apps/sales/tests/test_counterparty_due_filters.py::test_due_filter_is_tashkent_business_day_debt_only_and_applies_before_pagination[future-expected3]
+FAILED apps/sales/tests/test_counterparty_due_filters.py::test_due_filter_is_tashkent_business_day_debt_only_and_applies_before_pagination[undated-expected4]
+FAILED apps/sales/tests/test_counterparty_due_filters.py::test_summary_credits_in_both_currencies_stays_store_wide_and_search_combines
+FAILED apps/sales/tests/test_counterparty_due_filters.py::test_invalid_due_filter_is_a_field_error_not_unfiltered_results[/api/v1/sales/counterparties/]
+FAILED apps/sales/tests/test_counterparty_due_filters.py::test_invalid_due_filter_is_a_field_error_not_unfiltered_results[/api/v1/sales/counterparties/export/]
+FAILED apps/sales/tests/test_counterparty_due_filters.py::test_due_export_uses_exact_same_server_filter_and_has_no_side_effects
+FAILED apps/sales/tests/test_counterparty_due_filters.py::test_partial_collection_keeps_due_until_settled_and_original_replay_survives_filter_change
+10 failed, 1 passed, 8 warnings in 0.84s

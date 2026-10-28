@@ -1,0 +1,9 @@
+{
+  "success": true,
+  "numPassedTestSuites": 74,
+  "numFailedTestSuites": 0,
+  "numPassedTests": 726,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "source_scope": "Combined integration workingtree; dependency/toolchain and login slices are committed separately, then verified again by PR/main CI. Native adapters are component tests; desktop bridge is a controlled browser fixture."
+}

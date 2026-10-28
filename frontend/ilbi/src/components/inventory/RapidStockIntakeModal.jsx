@@ -643,7 +643,7 @@ export default function RapidStockIntakeModal({
               <Truck size={13} style={{ color: 'var(--primary)' }} />
               Ta’minotchi
             </label>
-            <input
+            <input data-api-field="supplier"
               type="text"
               list="rapid-intake-suppliers-list"
               placeholder="Yetkazib beruvchi nomi (ixtiyoriy)"
@@ -701,7 +701,7 @@ export default function RapidStockIntakeModal({
               <FileText size={13} style={{ color: 'var(--primary)' }} />
               Faktura / Nakladnoy №
             </label>
-            <input
+            <input data-api-field="invoiceNumber"
               type="text"
               placeholder="Masalan: FAK-2026-904"
               value={draft.invoiceNumber || ''}
@@ -725,7 +725,7 @@ export default function RapidStockIntakeModal({
               <MessageSquare size={13} style={{ color: 'var(--primary)' }} />
               Izoh
             </label>
-            <input
+            <input data-api-field="note"
               type="text"
               placeholder="Qisqa izoh..."
               value={draft.note || ''}
@@ -1152,7 +1152,7 @@ export default function RapidStockIntakeModal({
 
                         {/* 3. Partiya № */}
                         <td style={{ padding: '10px 10px', borderBottom: '1px solid var(--border-subtle)', verticalAlign: 'middle' }}>
-                          <input
+                          <input data-api-field="batch_code"
                             type="text"
                             placeholder="Ixtiyoriy"
                             value={item.batch_code || ''}
@@ -1175,7 +1175,7 @@ export default function RapidStockIntakeModal({
                         {/* 4. Yaroqlilik Muddati */}
                         <td style={{ padding: '10px 10px', borderBottom: '1px solid var(--border-subtle)', verticalAlign: 'middle', minWidth: 170 }}>
                           <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                            <CustomDatePicker
+                            <CustomDatePicker data-api-field="expires_on"
                               size="sm"
                               value={item.expires_on || ''}
                               min="2020-01-01"
@@ -1247,7 +1247,7 @@ export default function RapidStockIntakeModal({
                               <Minus size={13} />
                             </button>
 
-                            <input
+                            <input data-api-field="quantity"
                               ref={(el) => (rowInputRefs.current[`${item.id}_qty`] = el)}
                               type="number"
                               step={unit === 'dona' ? '1' : '0.001'}
@@ -1299,7 +1299,7 @@ export default function RapidStockIntakeModal({
                         {/* 7. Tan Narxi */}
                         <td style={{ padding: '10px 10px', borderBottom: '1px solid var(--border-subtle)', verticalAlign: 'middle' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                            <PriceInput
+                            <PriceInput data-api-field="cost_price"
                               ref={(el) => (rowInputRefs.current[`${item.id}_cost`] = el)}
                               placeholder="0"
                               value={item.cost_price}

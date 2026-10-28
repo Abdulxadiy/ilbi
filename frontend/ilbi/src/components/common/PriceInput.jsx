@@ -1,5 +1,6 @@
 import React, { useRef, useLayoutEffect, useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { formatThousands, cleanNumber } from '../../utils/numberFormat';
+import { refreshFieldValidation } from '../../utils/formValidation.js';
 
 /**
  * PriceInput Component
@@ -41,6 +42,7 @@ const PriceInput = forwardRef(function PriceInput({
     const number = Number(clean);
     const invalid = clean !== '' && (!Number.isFinite(number) || (min !== undefined && number < Number(min)) || (max !== undefined && number > Number(max)));
     inputRef.current?.setCustomValidity(invalid ? `Qiymat ${min ?? 0} dan ${max ?? 'yuqori chegarasiz'} gacha bo‘lishi kerak.` : '');
+    refreshFieldValidation(inputRef.current);
   }, [displayValue, min, max]);
 
   // Restore cursor position after formatting state update

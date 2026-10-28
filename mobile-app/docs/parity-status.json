@@ -1,0 +1,1078 @@
+{
+  "principle": "Implement → test → record evidence → advance. Never mark an unexecuted or failed check as passed.",
+  "records": {
+    "DMP-001": {
+      "title": "Terms acceptance and policy gate",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Explicit consent checkbox and sessionEntry business gate tested; legal document routes fetch server content. Auth/gates: 17 tests pass; tsc/lint pass."
+      ],
+      "notes": ""
+    },
+    "DMP-002": {
+      "title": "Password reset, invitation onboarding and resume",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "2026-10-28: basic request/confirm/change-with-old reset exists and login tests pass; invitation SetupAccount/resume/deep-link onboarding is still absent.",
+        "2026-10-28 P01b: native guarded setup-account/reset-password routes, original email-link import, server token inspection, first password/username validation, pending2FA resume and secure ticket handoff into existing Telegram/auto-OTP login implemented. Timeout/stale-link/session guards checked. 564 mobile tests/64 suites,33 actual password-reset backend tests, tsc/strict lint and all-platform Expo export pass; isolated Chrome UI passes with controlled API. Evidence: evidence/parity-implementation-2026-10-28/P01b/. HTTPS app/domain association, actual native linking/mail delivery remain external acceptance; not deployed."
+      ],
+      "notes": "2026-10-28 P01b: native guarded setup-account/reset-password routes, original email-link import, server token inspection, first password/username validation, pending2FA resume and secure ticket handoff into existing Telegram/auto-OTP login implemented. Timeout/stale-link/session guards checked. 564 mobile tests/64 suites,33 actual password-reset backend tests, tsc/strict lint and all-platform Expo export pass; isolated Chrome UI passes with controlled API. Evidence: evidence/parity-implementation-2026-10-28/P01b/. HTTPS app/domain association, actual native linking/mail delivery remain external acceptance; not deployed."
+    },
+    "DMP-003": {
+      "title": "Account profile, avatar and password management",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Real profile/password API, inline validation and logout/session isolation tested; avatar upload/delete remains. See CORE_API_READINESS_2026_10_27.md.",
+        "2026-10-28: profile edit/password/logout and avatar upload/delete plus sidebar avatar are implemented; 518 mobile tests pass including the actual mocked-picker/API contract checks in coreReadiness/productEditor/imageUpload. Native avatar UAT remains."
+      ],
+      "notes": "2026-10-28: profile edit/password/logout and avatar upload/delete plus sidebar avatar are implemented; 518 mobile tests pass including the actual mocked-picker/API contract checks in coreReadiness/productEditor/imageUpload. Native avatar UAT remains."
+    },
+    "DMP-004": {
+      "title": "Remembered login with native credential protection",
+      "status": "OPEN",
+      "evidence": [],
+      "notes": ""
+    },
+    "DMP-005": {
+      "title": "Account/session recovery UI",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Profile failure shows retry/logout recovery; retry component and delayed profile-after-logout tests pass."
+      ],
+      "notes": ""
+    },
+    "DMP-006": {
+      "title": "Explicit multi-store choice and consistent store switching",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Validated membership selection, explicit multi-store gate, saved account/server-scoped choice, Home switch entry and store-choice UI tested."
+      ],
+      "notes": "Native switch and permissions regression tested separately in DMP-007."
+    },
+    "DMP-007": {
+      "title": "Role/permission-aware navigation and action guards",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "9 permission/checkout tests pass: active-membership grants, cross-store isolation, owner-only actions, admin separation and denied sale POST. Router guards and navigation/action checks added; tsc/lint pass."
+      ],
+      "notes": "Backend remains authoritative; native deep-link/device permission acceptance still required."
+    },
+    "DMP-008": {
+      "title": "Dashboard periods, custom dates and detailed analytics",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "Four real analytics periods, KPI/chart and scoped loading connected; custom-date/profitability/drill-down parity remains.",
+        "2026-10-28: four period controls exist on BOTH clients. Profit/cost/store overview/interactive charts remain unequal; Dashboard.jsx:119 passes null custom dates, so custom dashboard dates are NOT counted as an existing web-only UI capability."
+      ],
+      "notes": "2026-10-28: four period controls exist on BOTH clients. Profit/cost/store overview/interactive charts remain unequal; Dashboard.jsx:119 passes null custom dates, so custom dashboard dates are NOT counted as an existing web-only UI capability."
+    },
+    "DMP-009": {
+      "title": "Dedicated sales list, server filters and pagination",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Dedicated sales/customer/date/status/payment filters, pagination/detail:28 mobile and33 PostgreSQL cases; SALES_HISTORY_READINESS_2026_10_27.md. Native/deploy gate remains.",
+        "docs/evidence/parity-implementation-2026-10-28/P03b-document-identity/README.md"
+      ],
+      "notes": "Fixed QueryDict absent b2b_only default hiding B2B from general sales/documents; explicit true/false and original/current party search tested in full1224 backend pass. Existing native/deployment acceptance remains."
+    },
+    "DMP-010": {
+      "title": "Full sale cancellation and reason",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Reasoned full returns use per-dialog IDs, actor/store-bound receipts and original-key concurrency/rollback coverage; native financial acceptance pending."
+      ],
+      "notes": ""
+    },
+    "DMP-011": {
+      "title": "Partial item cancellation and returned quantities",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Exact fractional item returns, remaining-quantity checks, actor-bound acknowledgements and retained completed keys tested;33 real sales backend cases."
+      ],
+      "notes": ""
+    },
+    "DMP-012": {
+      "title": "Partner/wholesale price mode",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Cart wholesale toggle uses configured partner prices, preserves negotiated overrides, persists mode and sends is_partner_sale. Cart persistence/quote tests verify mode, prices and missing partner configuration; tsc/lint pass."
+      ],
+      "notes": ""
+    },
+    "DMP-013": {
+      "title": "Live stock revalidation before accepting payment",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Checkout re-reads selected live variants immediately before a new sale; stock reduction between opening checkout and confirming blocks POST. Quote/checkout suites: 21 tests pass; tsc/lint pass."
+      ],
+      "notes": "Existing uncertain/confirmed intents replay their original identity instead of failing a new-sale stock check."
+    },
+    "DMP-014": {
+      "title": "Non-UZS item handling and currency safety",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Catalog retains USD label and disables retail add; cart domain rejects USD and live quote checks current currency. USD screen/domain/quote tests pass."
+      ],
+      "notes": ""
+    },
+    "DMP-015": {
+      "title": "USD exchange calculator with current tenant rate",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "2026-10-28: StoreSettingsScreen:130 has conversion with store rates, but it is settings-permission gated and not reachable beside POS for an ordinary cashier. Not wholly absent."
+      ],
+      "notes": "2026-10-28: StoreSettingsScreen:130 has conversion with store rates, but it is settings-permission gated and not reachable beside POS for an ordinary cashier. Not wholly absent."
+    },
+    "DMP-016": {
+      "title": "Tax-inclusive/exclusive totals and settings expectation",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Integer per-line VAT inclusive/exclusive totals, current tenant receipt settings and expected_tax_settings POST guard implemented. Fractional backend contract and VAT/checkout tests pass; backend receipt-tax suite passes."
+      ],
+      "notes": ""
+    },
+    "DMP-017": {
+      "title": "Expiry/batch warning at checkout",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Live expired_batches render their actual batch/date/quantity and require an explicit acknowledgement keyed to those warnings. Integration test blocks POST before consent and allows it afterward."
+      ],
+      "notes": ""
+    },
+    "DMP-018": {
+      "title": "Real camera barcode scanning",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "199 mobile tests pass (7 camera boundary checks), strict lint/tsc and actual SDK58 permission introspection pass. Interactive host phone regression verifies scanner manual fallback and unknown exact code.",
+        "199 mobile tests plus SDK58 permission introspection and host phone regression pass. Actual installed Android deny/grant dialogs and virtual preview work; Android camera registry verifies active→background closed→resume active→dismiss closed (camera.json)."
+      ],
+      "notes": "Physical Android/iOS barcode decoding and iOS permission/runtime acceptance remain open. Emulator lifecycle evidence is not physical-camera decoding proof."
+    },
+    "DMP-019": {
+      "title": "Server pagination and exact barcode lookup",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Paged catalog and exact barcode mode implemented; pagination/real-shape screen tests pass, including complete barcode query; full Jest suite, tsc and lint pass."
+      ],
+      "notes": ""
+    },
+    "DMP-020": {
+      "title": "Category tree and category administration",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "14 targeted mobile checks and 36 isolated PostgreSQL catalog/category API/service checks passed; Chrome created USD parent/child, followed category filter and deleted both with persistent tabs. tsc/strict lint passed."
+      ],
+      "notes": "Native keyboard and screen reader acceptance remains separate."
+    },
+    "DMP-021": {
+      "title": "Product and variant creation/editing",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "192 mobile tests, 37 real PostgreSQL catalog API/service tests and interactive Chrome product/variant create/edit flow passed. Actual receipt snapshots retain old names/prices after catalog edits. tsc/strict lint passed."
+      ],
+      "notes": "Native keyboard/accessibility acceptance remains separate; image/import/labels tracked separately."
+    },
+    "DMP-022": {
+      "title": "Persistent product prices and minimum-price policy",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Actual backend accepts negotiated price below the advisory minimum and preserves old receipt prices; Chrome changed catalog default while existing cart kept its negotiated price. All 192 mobile tests passed."
+      ],
+      "notes": "Minimum is advisory in this backend; never introduce a blocking price floor. Native acceptance remains separate."
+    },
+    "DMP-023": {
+      "title": "Archive, restore and delete product lifecycle",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Actual PostgreSQL product/variant archive and restore, archived POS exclusion and preserved stock/history on DELETE tested; Chrome lifecycle flow passed; read-only UI and confirmed rejection tests pass."
+      ],
+      "notes": "Source correction: DELETE archives a product with history instead of rejecting it. No financial history is removed. Native runtime acceptance remains separate."
+    },
+    "DMP-024": {
+      "title": "Product images, thumbnails and gallery management",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "2026-10-28: existing product main-image PATCH is in build5. Web ProductToolsModal gallery upload/delete/carousel and create-time image selection remain missing on native."
+      ],
+      "notes": "2026-10-28: existing product main-image PATCH is in build5. Web ProductToolsModal gallery upload/delete/carousel and create-time image selection remain missing on native."
+    },
+    "DMP-025": {
+      "title": "Spreadsheet product import with preview/commit",
+      "status": "OPEN",
+      "evidence": [],
+      "notes": ""
+    },
+    "DMP-026": {
+      "title": "Product barcode generation and label printing",
+      "status": "OPEN",
+      "evidence": [],
+      "notes": ""
+    },
+    "DMP-027": {
+      "title": "Real stock list, movements and reconciliation",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Real stock/movements, scoped search/pages and reasoned adjustment/recovery:61 inventory ORM/API and48 mobile tests. See INVENTORY_READINESS_2026_10_27.md."
+      ],
+      "notes": ""
+    },
+    "DMP-028": {
+      "title": "Rapid multi-line stock intake",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Multi-line intake with actual supplier/invoice/cost/batch/expiry, persisted drafts and capability gate; once-only/rollback tested. Native acceptance pending."
+      ],
+      "notes": ""
+    },
+    "DMP-029": {
+      "title": "Customer return, supplier return and write-off",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Actual customer/supplier returns and write-off, batch selection/reasons and durable keyed receipts;61 inventory/48 mobile checks passed."
+      ],
+      "notes": ""
+    },
+    "DMP-030": {
+      "title": "Batch stock, suppliers, expiry and protected costs",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Real batch selection/expiry filters, exact quantities and protected supplier/cost visibility. Replays use current permissions; native acceptance pending."
+      ],
+      "notes": ""
+    },
+    "DMP-031": {
+      "title": "Inter-store transfer dispatch, receipt, return and discrepancy",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Dispatch, mapped partial receipt, physical return and owner discrepancy closure; real concurrency/rollback/permission checks passed. No physical-return bypass."
+      ],
+      "notes": ""
+    },
+    "DMP-032": {
+      "title": "Deficit view and low-stock operational workflow",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "Real quantity sorting/expiry filters and notification-to-stock navigation work; dedicated deficit report/operational delivery remains."
+      ],
+      "notes": ""
+    },
+    "DMP-033": {
+      "title": "Authoritative customer list and balance summaries",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Real paged customer list/search/store-wide debt summaries and basic create/edit;29 core mobile and12 API/ORM cases passed.",
+        "2026-10-28 P02d follow-up: missing USD customer-credit aggregate added alongside UZS; store-wide summary remains independent of list/search/page. Actual API and strict mobile filtering/quick access verified with1217 backend and647 mobile checks plus controlled Chrome390/320. Evidence: evidence/parity-implementation-2026-10-28/P02d-debt-filters/. Native/production acceptance open."
+      ],
+      "notes": ""
+    },
+    "DMP-034": {
+      "title": "Customer editing, deletion, notes, code and due date",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Actual basic create/name/note editing connected; code/due-date/archive/delete lifecycle remains separate.",
+        "2026-10-28 P02a: native create includes B2B code/note/default due date; allowed edit fields only, strict date errors, fresh-balance archive confirmation and history preservation. POS preserves B2B recipient/default date across restart while keeping manual same-customer dates. 582 mobile tests/65 suites and21 actual PostgreSQL customer/service tests pass; tsc/lint/Ruff/all-platform export pass. Controlled Chrome UI390/320 passes. Evidence: evidence/parity-implementation-2026-10-28/P02a/. Native/production acceptance open."
+      ],
+      "notes": "2026-10-28 P02a: native create includes B2B code/note/default due date; allowed edit fields only, strict date errors, fresh-balance archive confirmation and history preservation. POS preserves B2B recipient/default date across restart while keeping manual same-customer dates. 582 mobile tests/65 suites and21 actual PostgreSQL customer/service tests pass; tsc/lint/Ruff/all-platform export pass. Controlled Chrome UI390/320 passes. Evidence: evidence/parity-implementation-2026-10-28/P02a/. Native/production acceptance open."
+    },
+    "DMP-035": {
+      "title": "Customer purchase and payment ledger",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "2026-10-28 P02a: native scoped customer statement includes paged all/debt purchases, returns/net/aggregate counts, and payment channel/actor/branch/note/conversion plus signed corrections. Actual API contract reconciles100-sale minus20-return minus10-payment to70 balance. Foreign-customer rows and stale scopes rejected; debt-only access and safe pagination tested. 582 mobile/21 backend tests plus controlled Chrome390/320 pass. Evidence: evidence/parity-implementation-2026-10-28/P02a/. Native acceptance open.",
+        "2026-10-28 P02c follow-up: actual controlled browser re-entry reproduced a cached customer balance; focus refetch and scrollable statement header fix it.627 mobile tests including refocus/staff-denial regressions and Chrome390/320 pass. Evidence: evidence/parity-implementation-2026-10-28/P02c-native-adjustments/. Physical/native and deployment acceptance remain open.",
+        "docs/evidence/parity-implementation-2026-10-28/P03b-document-identity/README.md"
+      ],
+      "notes": "Customer purchase statements also search stored product/variant names after catalog changes; final actual API/full backend1224 checks pass. Existing native ledger/restart/financial acceptance remains."
+    },
+    "DMP-036": {
+      "title": "Spreadsheet customer import",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "2026-10-28 P02e: multipart template/picker/preview/error/confirmation screen and original-job durable recovery are connected. Backend context protocol and real isolated API fixture added;1218 unfiltered backend tests pass. Final SDK58 patched dependency/mobile/export/browser checks are in progress. Native/provider/production acceptance remains open.",
+        "2026-10-28 P02e: native authenticated template/system XLSX-CSV picker, bounded server preview with red row errors/search/pages, exact BigInt opening totals, explicit original-job commit and durable journal/recovery connected. Versioned job/actor/store preview/ack added.1218 backend/688 mobile tests, tsc/strict ESLint/Ruff/schema/no-migration/SDK58 compatibility/all-platform export and controlled real-input Chrome390/320 pass. Evidence: evidence/parity-implementation-2026-10-28/P02e-customer-import/. Native/provider/save/share/upgrade/production acceptance open; dependency audit still3high+13low."
+      ],
+      "notes": "Customer import source/controlled UI verified; native providers and production acceptance remain open."
+    },
+    "DMP-037": {
+      "title": "Real debt filters and collection",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Actual debtor search/summary and guarded collection/recovery work; overdue/soon/future filters and installed restart acceptance remain.",
+        "2026-10-28 P02d: server-side overdue/today/next7/future/undated filters use configured Tashkent business date before pagination/export; native verifies filter acknowledgement and correct rows. Both-currency credit summaries and credit/refund shortcut added.10 red API checks reproduced;1217 full backend/647 mobile tests, tsc/strict ESLint/Ruff/all-platform export and controlled Chrome390/320 pass. Evidence: evidence/parity-implementation-2026-10-28/P02d-debt-filters/. Real native restart/upgrade/cash and production acceptance remain open."
+      ],
+      "notes": "Source verified for real debt filters/collection; installed native restart and production acceptance remain open."
+    },
+    "DMP-038": {
+      "title": "Payment currency, cash/card, branch and note",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Exact UZS/USD cash/card/branch/note, authoritative quote, actor-bound ack and stale-balance/no-new-credit guard:83 backend,40 quote and16 UI checks plus journal tests. See DEBT_QUOTE_PROTOCOL_2026_10_27.md."
+      ],
+      "notes": ""
+    },
+    "DMP-039": {
+      "title": "Customer credit refund and payment correction",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "2026-10-28 P02b adjustment API: real legacy USD-credit defect reproduced before fix. Negative USD adjustments against existing USD credit retain USD; legacy positive FX/snapshots preserved. New owner-only quoted refund/correction protocol enforces selected currency, credit bounds, actor/store/reason, original-key replay and rollback/concurrency safety.114 targeted/1206 full backend and606 mobile consumer tests pass; tsc/strict lint/Ruff/schema gate and no-migration check pass. Evidence: evidence/parity-implementation-2026-10-28/P02b-adjustment-api/. Not deployed; native/web journal/UI connection and historical-record review remain.",
+        "2026-10-28 P02c: native owner-only refund/signed correction sheet, strict quote/commit commands and durable original-key journal recovery verified.627 mobile tests/68 suites, tsc/strict ESLint and Android/iOS/web export pass. Controlled Chrome390/320 covers quote-before-write, lost-response same-key replay, signed correction, inline errors and balance refresh; real stale-focus defect reproduced/fixed. Evidence: evidence/parity-implementation-2026-10-28/P02c-native-adjustments/. Shared-renderer quote/journal integration, native/production acceptance and historical review remain.",
+        "2026-10-28 P02f: strict shared-renderer quote/ack codec consumes the same actual API fixture as native; new atomic IndexedDB journal passes real two-connection concurrency, quota rollback, scope/immutability/replay/corruption checks in isolated Chrome.93 web unit tests, build and touched Oxlint pass; focused final protocol/browser recheck passes. Evidence: evidence/parity-implementation-2026-10-28/P02f-web-journal/. API commands and refund UI/recovery connection remain; native/provider/production acceptance and historical review remain open.",
+        "2026-10-28 P02g: native and shared-renderer quote/confirmation/original-key recovery are connected. Shared UI uses authoritative refreshed balances, specific red fields, reloadable IndexedDB pending banner and storage-only ack retry; mixed UZS debt/USD credit entry bug reproduced/fixed.93 web tests/build/touched Oxlint,19 actual IndexedDB checks, shared-page Chrome1280/390/320/dark390 and existing import browser pass. Evidence: evidence/parity-implementation-2026-10-28/P02g-shared-refund/. Backend/mobile unchanged at1218/688 prior passes. Native/Electron/cash/production and historical-record review acceptance remain open."
+      ],
+      "notes": "Source and controlled UI verified for native/shared refund/correction protocols; native/provider/cash/production and historical-review gates remain open."
+    },
+    "DMP-040": {
+      "title": "Open shift and current-register status",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Real current/open shift, UZS/USD cash, stale report protection and original-key receipt protocol; cashbox45 mobile /12 PostgreSQL tests passed. Deploy/native gate remains; see CASHBOX_READINESS_2026_10_27.md."
+      ],
+      "notes": ""
+    },
+    "DMP-041": {
+      "title": "Close shift, counted cash and discrepancy explanation",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Counted close/discrepancy/staff notes, reread changed totals, exact acknowledgement and atomic report/shift/inbox rollback tested; native acceptance pending."
+      ],
+      "notes": ""
+    },
+    "DMP-042": {
+      "title": "Cash expenses/income and reusable categories",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Real paged income/expense lists and keyed writes, editable dates, source/category reuse scoped to server/account/store; cashbox45/12 tests passed. More list filter controls remain."
+      ],
+      "notes": ""
+    },
+    "DMP-043": {
+      "title": "Historical Z-reports and share/print layouts",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "Authoritative historical Z-report list/detail/PDF sharing connected and API/component tested. Full desktop layout variants, printer/native sharing acceptance remain; see CORE_API_READINESS_2026_10_27.md."
+      ],
+      "notes": ""
+    },
+    "DMP-044": {
+      "title": "Incoming/outgoing B2B transaction lists",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Actual scoped B2B incoming/outgoing lists, detail and escaped PDF;33 PostgreSQL/23 mobile checks and host Chrome flow passed. See B2B_API_READINESS_2026_10_27.md."
+      ],
+      "notes": ""
+    },
+    "DMP-045": {
+      "title": "Accept B2B with destination product/category mapping",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Permitted category/variant mapping, durable actor/payload receipts and exact1.250 acceptance verified by ORM and synthetic Chrome."
+      ],
+      "notes": ""
+    },
+    "DMP-046": {
+      "title": "Reject, receive return and close B2B discrepancy",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Reject, physical-return receipt and owner-only discrepancy closure have once-only stock/debt tests. Dispatched goods cannot be generically cancelled."
+      ],
+      "notes": ""
+    },
+    "DMP-047": {
+      "title": "Hire, edit, invite and lifecycle management",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "2026-10-28 P01a: tenant-scoped native owner/admin employee directory, search/pages/filters, hire/edit/invite/fire/block/unblock/archive/restore and confirmation/reason flows implemented. Selected-store headers, server action flags, stale-session and uncertain-write guards checked. 544 mobile tests/63 suites and48 actual PostgreSQL/API employee tests pass; tsc/strict lint/Ruff pass. Evidence: evidence/parity-implementation-2026-10-28/P01a/. Native/mail delivery remains open; link onboarding is P01b."
+      ],
+      "notes": "2026-10-28 P01a: tenant-scoped native owner/admin employee directory, search/pages/filters, hire/edit/invite/fire/block/unblock/archive/restore and confirmation/reason flows implemented. Selected-store headers, server action flags, stale-session and uncertain-write guards checked. 544 mobile tests/63 suites and48 actual PostgreSQL/API employee tests pass; tsc/strict lint/Ruff pass. Evidence: evidence/parity-implementation-2026-10-28/P01a/. Native/mail delivery remains open; link onboarding is P01b."
+    },
+    "DMP-048": {
+      "title": "Granular permission editor and role presets",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "2026-10-28 P01a: categorized/searchable permission editor, seven qualified-code presets and all-assignable/clear choices use current server IDs. Owner-only grants filtered; unchanged unknown legacy grants preserved; changed unknown selections rejected. Actual server response fixture consumed by mobile tests;544 mobile and48 backend employee tests pass. Evidence: evidence/parity-implementation-2026-10-28/P01a/. Native acceptance remains open."
+      ],
+      "notes": "2026-10-28 P01a: categorized/searchable permission editor, seven qualified-code presets and all-assignable/clear choices use current server IDs. Owner-only grants filtered; unchanged unknown legacy grants preserved; changed unknown selections rejected. Actual server response fixture consumed by mobile tests;544 mobile and48 backend employee tests pass. Evidence: evidence/parity-implementation-2026-10-28/P01a/. Native acceptance remains open."
+    },
+    "DMP-049": {
+      "title": "Owner store creation and seller-profile binding",
+      "status": "OPEN",
+      "evidence": [],
+      "notes": ""
+    },
+    "DMP-050": {
+      "title": "Platform overview, account status and identity recovery",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "2026-10-28: AdminHome loads /platform/overview/ counts/activity; native account/tenant/identity/ban administration actions remain absent."
+      ],
+      "notes": "2026-10-28: AdminHome loads /platform/overview/ counts/activity; native account/tenant/identity/ban administration actions remain absent."
+    },
+    "DMP-051": {
+      "title": "Tenant administration, ownership transfer and activation",
+      "status": "OPEN",
+      "evidence": [],
+      "notes": ""
+    },
+    "DMP-052": {
+      "title": "Seller verification decisions and validity",
+      "status": "OPEN",
+      "evidence": [],
+      "notes": ""
+    },
+    "DMP-053": {
+      "title": "Store currency settings and automatic CBU rate",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Actual manual/CBU settings and exact conversion, section-local PATCH/revision guard;40 settings/receipt mobile and73 backend checks. STORE_SETTINGS_READINESS_2026_10_27.md."
+      ],
+      "notes": ""
+    },
+    "DMP-054": {
+      "title": "Receipt identity, layout and tax configuration",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Real receipt/tax configuration and immutable saved identity/layout/server totals;40 mobile/73 backend and host persistence/snapshot checks. Native/fiscal acceptance remains."
+      ],
+      "notes": ""
+    },
+    "DMP-055": {
+      "title": "Telegram destination, notification preferences and test",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "Actual Telegram/preferences form and explicit send/test confirmation connected; unknown outcomes guarded. No live Telegram acceptance send performed."
+      ],
+      "notes": ""
+    },
+    "DMP-056": {
+      "title": "Scheduled and on-demand daily/shift/low-stock reports",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "Validated schedules/targets and manual action UI connected; invalid weekday/day rejected. Actual scheduled/manual delivery acceptance remains."
+      ],
+      "notes": ""
+    },
+    "DMP-057": {
+      "title": "Authenticated and guest help conversations",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "28 targeted mobile infrastructure/real-DTO checks and 19 actual PostgreSQL support tests pass, including guest/account isolation, idempotency and cursor history; strict lint/tsc pass.",
+        "222 mobile tests, strict lint/tsc, 19 PostgreSQL support tests, full host/Chrome regression and actual installed API 36 Android owner/guest sidebar flow passed; see SUPPORT_MOBILE_VALIDATION.md and support-* evidence."
+      ],
+      "notes": "Dedicated sidebar page with five persistent tabs, guest help at login, UUID text retries, consent, history/read-through and close/reopen. Android SecureStore/IME/logout ownership checked against explicit synthetic API; backend contracts separately real. No floating launcher. iOS/physical/live delivery remain; media DMP-058 and profile DMP-059 are separate."
+    },
+    "DMP-058": {
+      "title": "Attachments, voice, stickers and multilingual support UI",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "2026-10-28: reply-language selector and media-presence labels exist; image/voice/sticker sending/playback and full translated support UI remain absent."
+      ],
+      "notes": "2026-10-28: reply-language selector and media-presence labels exist; image/voice/sticker sending/playback and full translated support UI remain absent."
+    },
+    "DMP-059": {
+      "title": "Operator inbox and customer/tenant profile actions",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "Operator inbox/claim/close/reopen/read-through and assignment-gated replies implemented; component checks reject replying to another operator’s conversation, and actual PostgreSQL support tests cover assignment."
+      ],
+      "notes": "Customer/account/store profile controls and their reasoned audit actions remain. No native operator or production delivery acceptance claim."
+    },
+    "DMP-060": {
+      "title": "Real notification inbox, unread count and actions",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "Actual inbox/actions/deep links and recipient-safe direct FCM source, Firebase inputs validated;22 push plus57 activity backend checks. OS delivery/deploy external; NOTIFICATION_READINESS_2026_10_27.md.",
+        "2026-10-28: real inbox/read/delete/preferences are present. DMP-132 reproduces missing /b2b target; read-only production check confirms push disabled and no configured project/sender file. Android native delivery and APNs remain unaccepted."
+      ],
+      "notes": "2026-10-28: real inbox/read/delete/preferences are present. DMP-132 reproduces missing /b2b target; read-only production check confirms push disabled and no configured project/sender file. Android native delivery and APNs remain unaccepted."
+    },
+    "DMP-061": {
+      "title": "Global search, favorites and quick tools",
+      "status": "OPEN",
+      "evidence": [],
+      "notes": ""
+    },
+    "DMP-062": {
+      "title": "Reminders, assignment, due dates and completion",
+      "status": "OPEN",
+      "evidence": [],
+      "notes": ""
+    },
+    "DMP-063": {
+      "title": "Unified activity timeline and change snapshots",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "Owner-scoped real timeline/categories/search/pages/details connected and API-tested; advanced actor/date filters and all snapshot/link cases remain."
+      ],
+      "notes": ""
+    },
+    "DMP-064": {
+      "title": "Audit journal with filters and detail",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "Actual audit-backed history respects owner/store scope; standalone full audit filters remain. Credential presentation hardening in progress.",
+        "2026-10-28: owner history and credential-redacted snapshots exist; separate /audit/logs UI and full filters do not. Security redaction is already implemented, not still pending."
+      ],
+      "notes": "2026-10-28: owner history and credential-redacted snapshots exist; separate /audit/logs UI and full filters do not. Security redaction is already implemented, not still pending."
+    },
+    "DMP-065": {
+      "title": "Sale-linked A4 invoice with authoritative rows",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "docs/evidence/parity-implementation-2026-10-28/P03a-saved-documents/README.md",
+        "docs/evidence/parity-implementation-2026-10-28/P03b-document-identity/README.md"
+      ],
+      "notes": "Sale-linked A4 source now includes frozen party identities and general-list B2B visibility; actual API fixtures/shared and native-model Chrome PDFs. Signature/file/device acceptance still separate."
+    },
+    "DMP-066": {
+      "title": "Sender and receiver signatures with persisted document identity",
+      "status": "OPEN",
+      "evidence": [],
+      "notes": ""
+    },
+    "DMP-067": {
+      "title": "Actual document PDF/share action",
+      "status": "OPEN",
+      "evidence": [],
+      "notes": ""
+    },
+    "DMP-068": {
+      "title": "Saved receipt snapshot, taxes and product identifiers",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Saved identity/address/header/footer/legal data/display flags,58/80mm PDFs and server line totals implemented; native print/fiscal provider acceptance remains.",
+        "docs/evidence/parity-implementation-2026-10-28/P03a-saved-documents/README.md",
+        "docs/evidence/parity-implementation-2026-10-28/P03b-document-identity/README.md"
+      ],
+      "notes": "Frozen private sale parties/store, nullable product provenance, legacy notices and anonymous public redaction verified:1224 backend,724 mobile,96 web tests; actual shared/native-model Chrome PDF regression. Native/production/fiscal acceptance still open."
+    },
+    "DMP-069": {
+      "title": "Thermal 58/80 mm format and configurable printer output",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "2026-10-28: saved 58/80mm width and native Print/PDF source exist; exact physical printer output and all desktop thermal layouts remain unverified."
+      ],
+      "notes": "2026-10-28: saved 58/80mm width and native Print/PDF source exist; exact physical printer output and all desktop thermal layouts remain unverified."
+    },
+    "DMP-070": {
+      "title": "Real QR/barcode and public receipt viewing",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "2026-10-28: public token copy link exists; native public receipt route, actual QR/barcode renderer and scan/open acceptance remain missing."
+      ],
+      "notes": "2026-10-28: public token copy link exists; native public receipt route, actual QR/barcode renderer and scan/open acceptance remain missing."
+    },
+    "DMP-071": {
+      "title": "Rotate/revoke public receipt share token",
+      "status": "OPEN",
+      "evidence": [],
+      "notes": ""
+    },
+    "DMP-072": {
+      "title": "Permanent file saving and genuine file viewing",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "2026-10-28: temporary native PDF and share sheet exist; explicit permanent save/reopen UX and real OS destination acceptance remain."
+      ],
+      "notes": "2026-10-28: temporary native PDF and share sheet exist; explicit permanent save/reopen UX and real OS destination acceptance remain."
+    },
+    "DMP-073": {
+      "title": "Excel/CSV exports of business lists",
+      "status": "OPEN",
+      "evidence": [],
+      "notes": ""
+    },
+    "DMP-074": {
+      "title": "Real help/legal documentation and certificate printing",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "2026-10-28: legal-text route exists; help/docs library, Markdown/images, editing and certificate print remain missing. Sales DocumentsScreen is not that library."
+      ],
+      "notes": "2026-10-28: legal-text route exists; help/docs library, Markdown/images, editing and certificate print remain missing. Sales DocumentsScreen is not that library."
+    },
+    "DMP-075": {
+      "title": "Usable offline data store and business write journal",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "2026-10-28: native SQLite/financial journal and cart draft persistence exist, but no full offline catalog/stock/business authorization/sync. Do not equate a retry journal with desktop offline business parity."
+      ],
+      "notes": "2026-10-28: native SQLite/financial journal and cart draft persistence exist, but no full offline catalog/stock/business authorization/sync. Do not equate a retry journal with desktop offline business parity."
+    },
+    "DMP-076": {
+      "title": "Offline enrollment, account grants and credential expiry",
+      "status": "OPEN",
+      "evidence": [],
+      "notes": ""
+    },
+    "DMP-077": {
+      "title": "Automatic reconnect synchronization with ordered dependencies",
+      "status": "OPEN",
+      "evidence": [],
+      "notes": ""
+    },
+    "DMP-078": {
+      "title": "Sync center, progress, priority and retry controls",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "Native journal screen lists active account/store intents, original payload summaries, explicit retry/busy status and confirmed results; 16 journal/reconciliation/UI tests pass; tsc/lint pass."
+      ],
+      "notes": "Ordered offline queue, reconnect progress and priority controls depend on DMP-075/076/077 and remain to implement."
+    },
+    "DMP-079": {
+      "title": "Uncertain result reconciliation and journal migration",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "Original-key reconciliation, stale-session/foreign-origin guards and scoped legacy-sale review with cart backup/tombstone implemented; 16 tests pass. Unscoped legacy records are retained and never transmitted."
+      ],
+      "notes": "Legacy origin/account recovery, broader journal migration and offline recovery scenarios still require implementation/acceptance."
+    },
+    "DMP-080": {
+      "title": "Session auto-lock and background privacy",
+      "status": "OPEN",
+      "evidence": [],
+      "notes": ""
+    },
+    "DMP-081": {
+      "title": "Encrypted backup, restore and pending-work preservation",
+      "status": "OPEN",
+      "evidence": [],
+      "notes": ""
+    },
+    "DMP-082": {
+      "title": "Connect to an existing local primary register",
+      "status": "OPEN",
+      "evidence": [],
+      "notes": ""
+    },
+    "DMP-083": {
+      "title": "Installed mobile package, updates and data migration",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "236 mobile tests, lint/tsc, web phone/download Chrome checks and installed API 36 actual version/build + daily reminder persistence passed; native SDK 58 APK with expo-application built. See MOBILE_UPDATES_VALIDATION.md and ILOVANI_YIGISH_UZ.md.",
+        "Genuine owner-signed standalone 1.0.0/build 1 APK built and installed on fresh API 36 Android; login/downloads/native version work with Metro stopped. Real APK export/local staging activation passed, preserving desktop metadata. See MOBILE_UPDATES_VALIDATION.md.",
+        "2026-10-28: APK1.0.0/build5 is published from4ec8f46, signed/source checked and fully downloaded via HTTPS; public feed freshly confirmed. iOS release, installed build5 upgrade/data migration and physical native acceptance remain unexecuted; owner emulator untouched."
+      ],
+      "notes": "2026-10-28: APK1.0.0/build5 is published from4ec8f46, signed/source checked and fully downloaded via HTTPS; public feed freshly confirmed. iOS release, installed build5 upgrade/data migration and physical native acceptance remain unexecuted; owner emulator untouched."
+    },
+    "DMP-084": {
+      "title": "Telegram bot connection onboarding is missing",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "tests/auth.test.tsx + login.test.tsx: unlinked bot gate, real bot link, polling confirmation and one automatic OTP; 17 auth/profile/gate/UI tests pass; tsc/lint pass."
+      ],
+      "notes": "Real Telegram delivery and native deep-link return remain device acceptance."
+    },
+    "DMP-085": {
+      "title": "Initial OTP is never requested by mobile login",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Linked-account initial OTP and concurrent bot confirmation tests pass; OTP UI appears only after otp_sent acknowledgment."
+      ],
+      "notes": ""
+    },
+    "DMP-086": {
+      "title": "OTP validity, resend cooldown and expired-ticket recovery",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Tests reject incomplete codes, prevent cooldown resend, and reset expired login tickets; UI countdown and back action tested."
+      ],
+      "notes": ""
+    },
+    "DMP-087": {
+      "title": "Membership permission metadata is overwritten by a thinner response",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "profile.test.ts: 4 tests passed using membership-shaped server data; AuthProvider now retains /auth/me permissions and rejects a thin tenant response."
+      ],
+      "notes": "Use authoritative membership profile without replacing permissions with the thin tenant list."
+    },
+    "DMP-088": {
+      "title": "Partially initialized profile becomes an authenticated session",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "auth.test.tsx/profile.test.ts: 10 tests passed; no authenticated profile on lookup failure, no stale profile resurrection after logout, authoritative membership retained."
+      ],
+      "notes": "Publish authenticated profile only after complete validation and authorized store restoration; test failed and stale profile responses."
+    },
+    "DMP-089": {
+      "title": "Variant parent-product ID mapping differs from backend",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "4 catalog contract tests pass: backend product parent field maps to valid cart ID, malformed records rejected, decimal price fallback verified; tsc/lint pass."
+      ],
+      "notes": ""
+    },
+    "DMP-090": {
+      "title": "Per-sale debt due-date selection and payload",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Per-sale optional ISO debt deadline input/payload added; valid date reaches sale POST, invalid calendar date is blocked. Financial suite: 33 tests pass; tsc/lint pass."
+      ],
+      "notes": ""
+    },
+    "DMP-091": {
+      "title": "Decimal prices and payments are changed into different amounts",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "26 targeted Jest tests passed: money.test.ts, cartPrice.test.tsx, checkout.test.tsx; typecheck passed; lint 0 errors. Decimal and negative-input screen cases included."
+      ],
+      "notes": "Native keyboard/device check remains in DMP-114/DMP-115."
+    },
+    "DMP-092": {
+      "title": "Fractional quantity entry and precise line display",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Dedicated decimal quantity sheet accepts 0,125 with three-place validation. BigInt line math and exact fractional increment tests pass; Docker browser applies 0,125 then restores quantity 2."
+      ],
+      "notes": ""
+    },
+    "DMP-093": {
+      "title": "Confirmed change uses the earlier local total, not accepted server total",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Confirmed change uses Decimal-compatible accepted server total. Regression test: 30,000 tendered and 24,000.50 server total produces 5,999.50; no earlier local-total substitution."
+      ],
+      "notes": ""
+    },
+    "DMP-094": {
+      "title": "Payment draft survives neither navigation nor process restart",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Version-3 origin/account/store cart persists payment method, raw amount, deadline and stable cart ID. Remount and v2 backup/migration tests pass."
+      ],
+      "notes": ""
+    },
+    "DMP-095": {
+      "title": "Card/debt receipts are labeled as cash",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Card/debt receipt rendering tests verify Karta/Nasiya labels and no cash/change rows; HTML output uses the same payment selection."
+      ],
+      "notes": ""
+    },
+    "DMP-096": {
+      "title": "Invalid/missing sale ID waits forever without an actionable error",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "9 receipt regression tests pass: missing/invalid IDs show an actionable error, request failure offers retry; tsc/lint pass."
+      ],
+      "notes": ""
+    },
+    "DMP-097": {
+      "title": "Route-parameter changes do not reset the loaded receipt/PDF state",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Receipt scope/ID/mode changes remount isolated state. Tests generate a mocked PDF then change ID and verify cleared PDF state; late old request is ignored."
+      ],
+      "notes": "Native PDF generation itself is not claimed by this mocked adapter test."
+    },
+    "DMP-098": {
+      "title": "Declared binary response handling returns text instead of a file",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "client.test.ts: 5 tests passed, including binary Blob preservation and explicit text; existing refresh/stale-session/failed-POST regressions retained."
+      ],
+      "notes": "Implement explicit blob/text response handling and binary regression checks."
+    },
+    "DMP-099": {
+      "title": "Runtime API-origin changes retain the current authorization",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "client.test.ts: 10 tests passed, including clearing authorization before server-origin change and rejecting credential-bearing invalid URLs."
+      ],
+      "notes": "Native keychain acceptance remains separate."
+    },
+    "DMP-100": {
+      "title": "Server identity is absent from draft and financial-intent keys",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "26 persistence/identity/draft tests passed. Equal account/store IDs on distinct API servers restore separate carts and use separate financial identities; original data retained."
+      ],
+      "notes": "Namespace cart drafts and financial intents by full API server identity; retain unknown-origin legacy data without blind import."
+    },
+    "DMP-101": {
+      "title": "Concurrent submissions get different retry identities",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "financialIdentity.test.ts: 5 tests passed against IndexedDB transaction driver, including 20 concurrent callers sharing one identity and property-order-independent retries. Native SQLite transaction driver typechecks.",
+        "11 transaction/identity tests pass: 40 concurrent increments across connections, atomic rollback, 20 same-intent submissions, distinct pending carts serialized by atomic sale lock, retained confirmed cart key. Native SQLite adapter compiles; native DB runtime remains unexecuted."
+      ],
+      "notes": "Actual native SQLite lifecycle remains part of DMP-075/native acceptance."
+    },
+    "DMP-102": {
+      "title": "A transient cart restore failure can overwrite the saved draft",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Injected read failure and corrupt-data tests passed: no empty overwrite; draft remains stored; explicit retry restores original items."
+      ],
+      "notes": ""
+    },
+    "DMP-103": {
+      "title": "Saved cart records have no schema validation or migration",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "drafts.test.ts validates version/server/account/store, IDs, numeric types/finite quantities/prices and fractional precision; corrupt data is blocked and retained."
+      ],
+      "notes": ""
+    },
+    "DMP-104": {
+      "title": "Cart mutation has no readiness/saved/error feedback",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Persistence tests cover failed write, visible error state, blocked unready mutations, retry and flush; global saving/error UI and catalog readiness guard added. Typecheck/lint pass."
+      ],
+      "notes": ""
+    },
+    "DMP-105": {
+      "title": "Older requests can overwrite newer search/store results",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Search/store sequencing and AbortController guards implemented in paged resources and dashboard. Deferred-response and store-switch tests pass; full Jest suite/tsc/lint pass."
+      ],
+      "notes": ""
+    },
+    "DMP-106": {
+      "title": "Customer picker only loads and searches the first server page",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Customer picker uses server search and numbered pages with visible load/retry controls. UI test selects a customer on page 2; full Jest suite/tsc/lint pass."
+      ],
+      "notes": ""
+    },
+    "DMP-107": {
+      "title": "No default request timeout or structured retry/backoff UX",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "client.test.ts: deadline/uncertain-outcome, 429 Retry-After and refresh-401 metadata/session-clear notification tests passed."
+      ],
+      "notes": ""
+    },
+    "DMP-108": {
+      "title": "Storage cleanup error can hide the original checkout failure",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Failed rejection persistence retains original server error. Confirmed result remains visible after local save failure; local-only retry never repeats POST. 33 financial tests/tsc/lint pass."
+      ],
+      "notes": ""
+    },
+    "DMP-109": {
+      "title": "Clear-cart action has no confirmation or undo",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Clear-cart sheet offers retain/explicit clear actions. UI test proves neither opening nor cancellation clears data; confirmed clear resets cart identity/payment. Pending journal records remain preserved."
+      ],
+      "notes": ""
+    },
+    "DMP-110": {
+      "title": "Bottom navigation disappears on secondary main modules",
+      "status": "VERIFIED_RUNTIME",
+      "evidence": [
+        "Docker Chrome phone preview passed: visible five-tab navigation in Documents, Inventory, Customers, Reports and Settings; sidebar navigation, theme, price, live refresh and checkout regression pass."
+      ],
+      "notes": "Expo 58 href:null redirects hidden screens; secondary routes now use non-rendered tab buttons while remaining navigable. Android/iOS native acceptance remains separate."
+    },
+    "DMP-111": {
+      "title": "Price editor touch target is approximately 20 px high",
+      "status": "VERIFIED_RUNTIME",
+      "evidence": [
+        "Docker Chrome phone test asserts editable price target height >=44px; price negotiation and fractional quantity interaction pass at the phone viewport."
+      ],
+      "notes": "Native large-text/touch acceptance remains separate."
+    },
+    "DMP-112": {
+      "title": "Input labels and icon controls lack consistent accessible names",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "All current raw TextInputs have explicit accessible names; icon-only controls have labels; shared Button retains name and busy/disabled state while loading. 169 Jest tests, tsc and lint pass; phone browser regression passes."
+      ],
+      "notes": "VoiceOver/TalkBack acceptance remains a native device check."
+    },
+    "DMP-113": {
+      "title": "Bottom safe areas are not handled consistently outside tabs",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Fullscreen checkout/receipt and login handle bottom insets; secondary screens retain inset-aware tabs; drawer/footer and modal sheets consume bottom insets. Full 169-test/tsc/lint and web phone regression pass."
+      ],
+      "notes": "Actual Android gesture area and iOS home-indicator acceptance not yet executed."
+    },
+    "DMP-114": {
+      "title": "Price/customer/signature sheets lack verified keyboard avoidance",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Modal sheets use KeyboardAvoidingView on both platforms, inset padding, shrinkable content and optional scrolling; customer-create form avoids nested virtualized list. Price/quantity/customer component and web phone regressions pass.",
+        "199 tests, strict lint/tsc pass. Actual installed Android API36 test found and fixed missing absolute keyboard offset; real keyboard price/quantity/checkout interaction, process-restart draft and confirmed synthetic sale passed."
+      ],
+      "notes": "iOS, physical devices, signature sheet and full large-text/keyboard acceptance remain separate; Android native driver rejects taps under IME."
+    },
+    "DMP-115": {
+      "title": "Large text and small-screen acceptance covers too little",
+      "status": "OPEN",
+      "evidence": [],
+      "notes": ""
+    },
+    "DMP-116": {
+      "title": "Error and cancellation feedback uses a success presentation",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Neutral/cancel feedback defaults to informational icon; errors announce an alert and use an error icon, with explicit feedback types and no success icon. Component regressions plus full 169-test suite pass."
+      ],
+      "notes": ""
+    },
+    "DMP-117": {
+      "title": "Lists conflate initial loading, empty and failed states",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "2026-10-28: ListState distinguishes loading/error/empty and retry across core paged screens; full all-screen/network/native acceptance is not established by 518 tests."
+      ],
+      "notes": "2026-10-28: ListState distinguishes loading/error/empty and retry across core paged screens; full all-screen/network/native acceptance is not established by 518 tests."
+    },
+    "DMP-118": {
+      "title": "Business timestamps use device timezone instead of a consistent store timezone",
+      "status": "OPEN",
+      "evidence": [],
+      "notes": ""
+    },
+    "DMP-119": {
+      "title": "No native animation, Reduce Motion or large-list performance evidence",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "2026-10-28: LoginHero has one-shot/Reduce Motion source; broad native animation/list/memory/FPS evidence is still absent."
+      ],
+      "notes": "2026-10-28: LoginHero has one-shot/Reduce Motion source; broad native animation/list/memory/FPS evidence is still absent."
+    },
+    "DMP-120": {
+      "title": "Launcher and adaptive icons still reference template assets",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Template launcher/adaptive/monochrome assets replaced by deterministic PNG renders of the approved ILBI vector mark; actual icon inspected. Expo doctor: 20/20; Android and iOS Hermes exports pass."
+      ],
+      "notes": "Installed launcher masking and native startup remain package/device acceptance under DMP-083."
+    },
+    "DMP-121": {
+      "title": "HTML escaping is applied to a native header string",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Native receipt header test retains R&1, while exported HTML correctly contains R&amp;1; native Text no longer receives HTML entities."
+      ],
+      "notes": ""
+    },
+    "DMP-122": {
+      "title": "Test suite lacks real API-contract and non-fixture coverage",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Actual isolated PostgreSQL/Django API test passes, including fractional sale and idempotent retry; 13 mobile contract/checkout tests pass against generated real serializer responses; tsc/lint pass."
+      ],
+      "notes": "Boundary harness currently covers profile, tenant, catalog, customers, sale and receipt. Native acceptance and other modules receive additional checks as implemented."
+    },
+    "DMP-123": {
+      "title": "Document-share browser regression expects the obsolete domain",
+      "status": "VERIFIED_RUNTIME",
+      "evidence": [
+        "frontend npm run test:document-share passes in real Chrome: public links, offline/pending recovery, clipboard/cancel, downloadable 58/80mm/A4/multipage PDFs and QR/tax preservation. Obsolete domain assertion updated to ilbi.uz and dialog-close helper now waits for committed closure."
+      ],
+      "notes": ""
+    },
+    "DMP-124": {
+      "title": "Login-throttle ban recovery is distinct from account status",
+      "status": "OPEN",
+      "evidence": [],
+      "notes": ""
+    },
+    "DMP-125": {
+      "title": "Global support Telegram settings and delivery test",
+      "status": "OPEN",
+      "evidence": [],
+      "notes": ""
+    },
+    "DMP-126": {
+      "title": "Mobile checks are not part of the repository CI workflow",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Repository CI now runs mobile lint, tsc, Jest/real serializer contracts, Android+iOS Hermes exports, Docker phone interaction/Fast Refresh and evidence uploads. Matching local checks pass (176 tests, zero lint warnings, both exports, browser regression); YAML parses."
+      ],
+      "notes": "Remote GitHub Actions run has not been executed. Separate unsuppressed mobile security audit remains failing under DMP-127."
+    },
+    "DMP-127": {
+      "title": "Expo toolchain has unresolved high-severity audit entries",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Live npm audit still reports 5 high entries / 2 advisories. Forge 1.4.0 has no published fix; Expo CLI requires Zod 3 while the patch is in v4. Exact versions, primary sources and resolution conditions recorded in docs/DEPENDENCY_SECURITY.md.",
+        "2026-10-27 live npm audit reports 3 high entries / 1 Zod advisory after compatible Forge1.4.1 update. Expo CLI still requires Zod3 while the published patch is v4. Audit gate remains active; primary sources and resolution conditions in docs/DEPENDENCY_SECURITY.md.",
+        "2026-10-28 fresh npm audit: 3 high and 13 low entries; gate exits1 and is not suppressed. No dependency update is part of this audit.",
+        "docs/evidence/main-integration-2026-10-28/security/"
+      ],
+      "notes": "High gate fixed:actual Zod4.6.7 plus9 installed-consumer/guard checks and726 mobile tests. Deepmerge4.3.1 has reviewed hash-checked source/CJS/UMD guard;15low scanner records retained, no upstream-release claim. GitHub security job now passes; full main deployment/native parity acceptance remains."
+    },
+    "DMP-128": {
+      "title": "Unused prototype code and navigation dependencies remain",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Unused prototype imports/state and generic transition adapter removed; unused direct navigation dependencies removed while Router requirements remain. 176 tests and tsc pass; ESLint across all sources/tests reports zero errors and zero warnings."
+      ],
+      "notes": ""
+    },
+    "DMP-129": {
+      "title": "Production retail POS is intentionally closed pending fiscal integration",
+      "status": "OPEN",
+      "evidence": [
+        "2026-10-28: shared SaleService still raises when DEBUG=false pending fiscal/OFD integration; production DEBUG=false confirmed read-only. No live financial write and no guard bypass performed."
+      ],
+      "notes": "2026-10-28: shared SaleService still raises when DEBUG=false pending fiscal/OFD integration; production DEBUG=false confirmed read-only. No live financial write and no guard bypass performed."
+    },
+    "DMP-130": {
+      "title": "Synthetic data and mutations diverge across mobile screens",
+      "status": "OPEN",
+      "evidence": [],
+      "notes": ""
+    },
+    "DMP-131": {
+      "title": "Logout icon uses the same color as its button background",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "Settings danger logout button now renders its icon white against the danger background; tsc/lint and phone navigation regression pass."
+      ],
+      "notes": ""
+    },
+    "DMP-132": {
+      "title": "Legacy B2B notification link has no mobile destination",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "2026-10-28 source-function reproduction: backend TYPE_B2B_REQUEST + /b2b produces null destination; /sales/b2b/inbox/ positive control opens B2B. See evidence/parity-2026-10-28/notification-target-reproduction.json.",
+        "2026-10-28 P00: exact producer /b2b alias now opens the native B2B list after mark-read; selected-store permission, denial and external-link regressions pass. 524 tests/62 suites, TypeScript and strict ESLint passed. See evidence/parity-implementation-2026-10-28/P00/. Not deployed or observed on native hardware; push acceptance remains separate."
+      ],
+      "notes": "2026-10-28 P00: exact producer /b2b alias now opens the native B2B list after mark-read; selected-store permission, denial and external-link regressions pass. 524 tests/62 suites, TypeScript and strict ESLint passed. See evidence/parity-implementation-2026-10-28/P00/. Not deployed or observed on native hardware; push acceptance remains separate."
+    },
+    "DMP-133": {
+      "title": "Owner-only debt correction accessible to a debt-entry cashier",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "2026-10-28 P02b: source/API reproduction confirms a debt-entry cashier could invoke owner-only correction, including with legacy owner-only grants. Eight regression failures reproduced before fix; API/service/central-permission guards and shared web/desktop UI restriction added.70 targeted backend tests and88 web tests/build pass; full backend Docker integration retry is in progress. Native refund/correction UI remains DMP-039.",
+        "2026-10-28 P02b authority: restricted-cashier correction bypass reproduced8 failing denial tests before fix. API and service require sales.correct_debt_payment; central owner-only checks reject legacy staff grants; shared web/desktop UI uses selected ownership.70 targeted and1178 unfiltered backend tests pass;88 web tests, production build, touched-page Oxlint/Ruff pass. Initial Docker setup errors retained; private rootless runtime resolved them without skips. Evidence: evidence/parity-implementation-2026-10-28/P02b-authority/. Source fix not deployed; native refund/correction remains DMP-039."
+      ],
+      "notes": "2026-10-28 P02b authority: restricted-cashier correction bypass reproduced8 failing denial tests before fix. API and service require sales.correct_debt_payment; central owner-only checks reject legacy staff grants; shared web/desktop UI uses selected ownership.70 targeted and1178 unfiltered backend tests pass;88 web tests, production build, touched-page Oxlint/Ruff pass. Initial Docker setup errors retained; private rootless runtime resolved them without skips. Evidence: evidence/parity-implementation-2026-10-28/P02b-authority/. Source fix not deployed; native refund/correction remains DMP-039."
+    },
+    "DMP-134": {
+      "title": "USD credit correction applies collection conversion instead of reducing USD credit",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "2026-10-28 P02b adjustment API: real legacy USD-credit defect reproduced before fix. Negative USD adjustments against existing USD credit retain USD; legacy positive FX/snapshots preserved. New owner-only quoted refund/correction protocol enforces selected currency, credit bounds, actor/store/reason, original-key replay and rollback/concurrency safety.114 targeted/1206 full backend and606 mobile consumer tests pass; tsc/strict lint/Ruff/schema gate and no-migration check pass. Evidence: evidence/parity-implementation-2026-10-28/P02b-adjustment-api/. Not deployed; native/web journal/UI connection and historical-record review remain."
+      ],
+      "notes": "2026-10-28 P02b adjustment API: real legacy USD-credit defect reproduced before fix. Negative USD adjustments against existing USD credit retain USD; legacy positive FX/snapshots preserved. New owner-only quoted refund/correction protocol enforces selected currency, credit bounds, actor/store/reason, original-key replay and rollback/concurrency safety.114 targeted/1206 full backend and606 mobile consumer tests pass; tsc/strict lint/Ruff/schema gate and no-migration check pass. Evidence: evidence/parity-implementation-2026-10-28/P02b-adjustment-api/. Not deployed; native/web journal/UI connection and historical-record review remain."
+    },
+    "DMP-135": {
+      "title": "SDK58 default fetch rejects native URI-only multipart uploads",
+      "status": "TESTED_CODE",
+      "evidence": [
+        "2026-10-28 P02e:3 real installed-Expo encoder failures reproduced for avatar/product/spreadsheet URI-only parts. Shared bytes-capable adapter and documented RN-fetch opt-in tests pass5 focused checks. Final mobile regressions/export/browser checks are in progress; physical/native/server acceptance remains open.",
+        "2026-10-28 P02e:3 actual installed SDK58 multipart encoder failures reproduced for avatar/product/spreadsheet URI-only parts. Shared bytes-capable File adapter fixes them and honors documented RN-fetch opt-in.5 real encoder/opt-in checks,688 total mobile tests, tsc/strict ESLint and Android/iOS/web export pass. Compatibility patches remain SDK58; app/platform/build unchanged. Evidence: evidence/parity-implementation-2026-10-28/P02e-customer-import/. Actual native/provider/server uploads remain open; no request mock is called physical acceptance."
+      ],
+      "notes": "SDK58 native multipart encoding defect source-verified; physical provider/network upload and release acceptance remain open."
+    }
+  },
+  "lastSourceAudit": {
+    "date": "2026-10-28",
+    "timezone": "Asia/Tashkent",
+    "baselineCommit": "888ed76f1a67ae2bbf2a9ca09ffcf5d3be9366f7",
+    "scope": "Source parity and available tests; no blanket native acceptance.",
+    "jsonStatusMismatchesRepairedFromLedger": 30
+  }
+}

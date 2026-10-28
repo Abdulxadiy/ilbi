@@ -2,6 +2,8 @@
 
 Current platform release: [v1.4.0](docs/releases/v1.4.0.md).
 
+Repository: [Abdulxadiy/ilbi](https://github.com/Abdulxadiy/ilbi). Clone with `git clone https://github.com/Abdulxadiy/ilbi.git`; the project root is `ilbi/` and the Django backend is `backend/`.
+
 Push ready changes to main with Git or IDE Source Control. Passing CI automatically builds the Windows and Linux packages and deploys the platform and downloads to production; saving a local file does not push it. Details: [CI and automatic deployment](automation/README.md).
 
 ILBI is an enterprise-grade multi-tenant retail and wholesale sales platform designed for inventory tracking, point-of-sale (POS) operations, cash register (cashbox) accounting, debt management, and B2B commerce.
@@ -10,7 +12,7 @@ ILBI is an enterprise-grade multi-tenant retail and wholesale sales platform des
 
 ## Tech Stack
 
-- **Backend**: Python 3.12, Django (version constrained in `ilbi/pyproject.toml`), Django REST Framework, Celery, Gunicorn + Gevent
+- **Backend**: Python 3.12, Django (version constrained in `backend/pyproject.toml`), Django REST Framework, Celery, Gunicorn + Gevent
 - **Database & Cache**: PostgreSQL 16, Redis 7
 - **Frontend**: React 19, Vite, Tailwind CSS, Lucide Icons
 - **Proxy & Server**: Nginx, Docker, Docker Compose
@@ -32,7 +34,7 @@ Copy example environment files to configure your local environment:
 
 ```bash
 cp .env.example .env
-cp ilbi/.env.example ilbi/.env
+cp backend/.env.example backend/.env
 cp telegram_bot_sms/.env.example telegram_bot_sms/.env
 ```
 
@@ -55,6 +57,8 @@ docker compose up --build
 - **API Documentation (Swagger)**: http://localhost/api/docs/
 - **API Documentation (Redoc)**: http://localhost/api/redoc/
 
+The optional React Native mobile development service runs with `docker compose --profile mobile up -d --build --no-deps mobile`. Open [the interactive phone preview](http://localhost:8082/preview). It uses synthetic design data by default and supports live code refresh. See [mobile development instructions](mobile-app/README.md) and [the implementation review](mobile-app/docs/MOBILE_REVIEW.md) for native testing and current limitations.
+
 The frontend root `/` is ILBI's public presentation page. Sign-in stays at `/login`; authenticated work starts at `/dashboard`. The presentation follows native scrolling in both directions, including a four-stage sales story. Reduced-motion preferences and short windows retain the complete, unpinned presentation.
 
 The product gallery presents six real interface captures with synthetic demonstration data. It supports side previews, touch swipes, mouse dragging, keyboard navigation and an original-size image viewer. Automatic playback pauses on hover, focus, hidden pages and when the gallery leaves the viewport; manual navigation stops playback until the visitor enables it again. Reduced-motion preferences disable autoplay by default.
@@ -63,7 +67,7 @@ The product gallery presents six real interface captures with synthetic demonstr
 
 #### Backend:
 ```bash
-cd ilbi
+cd backend
 uv sync
 uv run python manage.py migrate
 uv run python manage.py runserver 0.0.0.0:8000
@@ -84,10 +88,10 @@ Run the backend test suite using the isolated test database stack:
 
 ```bash
 # 1. Start test Postgres and Redis
-docker compose -f ilbi/docker-compose.test.yml up -d
+docker compose -f backend/docker-compose.test.yml up -d
 
 # 2. Run pytest with coverage
-cd ilbi
+cd backend
 uv run pytest
 ```
 
@@ -289,7 +293,7 @@ Windows exports preserve that entry. Mobile application development is separate.
 Additional verification commands, using only disposable test databases:
 
 ```bash
-cd ilbi
+cd backend
 uv sync --group desktop
 uv run pytest apps/desktop_sync/tests apps/core/tests/test_api_docs_production.py
 uv run python ../desktop/verify_runtime.py
@@ -317,7 +321,7 @@ Production uses a separate Compose file with a built React bundle served by Ngin
 
 ```bash
 cp .env.production.example .env.production
-cp ilbi/.env.production.example ilbi/.env.production
+cp backend/.env.production.example backend/.env.production
 cp telegram_bot_sms/.env.production.example telegram_bot_sms/.env.production
 ```
 
@@ -369,8 +373,8 @@ The probe prints only `ready` (exit 0) or `not ready` (exit 1). The endpoint is 
 
 HSTS initially applies only to the canonical domain for one hour (`SECURE_HSTS_SECONDS=3600`, set in the root production environment). Increase it after verifying HTTPS and certificate renewal. `includeSubDomains` and browser preload are deliberately disabled until every affected domain is ready; Django `check --deploy` therefore reports the corresponding two advisory warnings. Do not enable preload just to remove these warnings.
 
-For local regression checks, run `cd ilbi && uv run pytest apps/core/tests/test_production_settings.py -q`.
-Shared-counter integration checks are in `apps/core/tests/test_shared_throttles.py`: they need Docker and an already available `redis:7-alpine` image, start a disposable Redis on a random loopback port, and exercise production throttles in separate Python processes without using an application database. See [the test guide](ilbi/README_TESTS.md).
+For local regression checks, run `cd backend && uv run pytest apps/core/tests/test_production_settings.py -q`.
+Shared-counter integration checks are in `apps/core/tests/test_shared_throttles.py`: they need Docker and an already available `redis:7-alpine` image, start a disposable Redis on a random loopback port, and exercise production throttles in separate Python processes without using an application database. See [the test guide](backend/README_TESTS.md).
 Readiness checks are in `apps/core/tests/test_readiness.py`: they use a separate production WSGI process and new synthetic PostgreSQL/Redis containers, then stop/restart each test dependency to verify failure and recovery without using application data.
 From the repository root, `python -m unittest discover -s tests/deployment -v` checks the rendered Compose configuration, a real isolated Nginx TLS edge, and encrypted backup/recovery against a synthetic PostgreSQL database. It requires Docker, OpenSSL, GnuPG (`gpg` / `gpgconf`) and already available `nginx:alpine`, `python:3.12-slim` and `postgres:16-alpine` images. It creates temporary test certificates/containers, uses no application database, and removes its resources afterwards.
 
@@ -428,7 +432,7 @@ Celery Beat schedules `apps.tenants.tasks.sync_cbu_rates_task` hourly, with retr
 
 `Tenant.usd_rate` remains the saved manual rate in the database. Tenant API responses expose the effective rate as `usd_rate`, the saved value as read-only `manual_usd_rate`, the selected `auto_usd_rate` flag and `usd_rate_source`, and read-only `cbu_rates`. In automatic mode, omit `usd_rate` from PATCH requests, including unrelated settings saves. Debt conversions save the applied rate, source, effective date and converted UZS amount; historical operations are never recalculated using today's rate. Older records retain their original notes without inventing a missing rate.
 
-Validation: `cd ilbi && .venv/bin/python -m pytest apps/tenants/tests/test_exchange_rates.py -q`; `cd frontend/ilbi && npm run test:currency`.
+Validation: `cd backend && .venv/bin/python -m pytest apps/tenants/tests/test_exchange_rates.py -q`; `cd frontend/ilbi && npm run test:currency`.
 
 ## Unified activity history
 
@@ -438,11 +442,11 @@ Owners and platform administrators have a **Tarix** sidebar entry at `/history`.
 
 Successful catalog API mutations now record actor, object name and before/after snapshots in the existing immutable audit journal, in the same transaction as the mutation. Deleted product snapshots remain readable; failed and no-op edits do not create events. Price-only edits retain their existing price-change audit. Existing sales/movements are immediately available; edits that were never recorded before this release cannot be reconstructed. Apply `core.0014_catalog_history_actions` through the normal migration process and rebuild the frontend.
 
-Validation: `cd ilbi && .venv/bin/python -m pytest apps/core/tests/test_history_api.py apps/catalog/tests -q`; `cd frontend/ilbi && npm run test:history`. Browser QA uses synthetic data and covers receipts/A4, intake/edit details, filtering/pagination, tenant switching with delayed replies, errors and mobile/light/dark layout.
+Validation: `cd backend && .venv/bin/python -m pytest apps/core/tests/test_history_api.py apps/catalog/tests -q`; `cd frontend/ilbi && npm run test:history`. Browser QA uses synthetic data and covers receipts/A4, intake/edit details, filtering/pagination, tenant switching with delayed replies, errors and mobile/light/dark layout.
 
 ## ILBI rebranding and existing deployments
 
-Backend source is in `ilbi/`; frontend source is in `frontend/ilbi/`. The master plan is `ILBI_MASTER_PLAN.md`; the implementation checklist is [REBRANDING_AUDIT_ILBI_UZ.md](REBRANDING_AUDIT_ILBI_UZ.md). UI, loading, print, email and Telegram branding use ILBI / ilbi.uz without a PRO product badge.
+Backend source is in `backend/`; frontend source is in `frontend/ilbi/`. The master plan is `ILBI_MASTER_PLAN.md`; the implementation checklist is [REBRANDING_AUDIT_ILBI_UZ.md](REBRANDING_AUDIT_ILBI_UZ.md). UI, loading, print, email and Telegram branding use ILBI / ilbi.uz without a PRO product badge.
 
 For existing Docker installations, pin `COMPOSE_PROJECT_NAME` and the resource mapping in the ignored root `.env`. `ILBI_NETWORK_NAME` / `ILBI_NETWORK_EXTERNAL` and `ILBI_VENV_VOLUME` / `ILBI_VENV_EXTERNAL` allow reusing the original network and dependency volume. Existing PostgreSQL roles/databases and media buckets can retain their configured names; changing env text does not rename stored data. The backend service is now `ilbi`, with a temporary legacy DNS alias for internal clients. `FRONTEND_PORT` selects the Docker frontend port if a native Vite server already uses 5173.
 

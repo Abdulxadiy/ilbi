@@ -1,0 +1,349 @@
+{
+  "production_base": "2d799dd5596a92fb6a0e3be6cf51a2a018c88e2d",
+  "backend_source": "d35ea11043affab1671172f42e27d367033232a1",
+  "layout": "Original ilbi/ backend; frontend, bot, desktop and platform version unchanged.",
+  "activation": "FCM override remains inactive under ops/ until separately staged.",
+  "files": [
+    {
+      "path": "ilbi/api/schema.py",
+      "sha256": "3af71b7f9fec89370404b7745404fe95d4e93009469c84c2725e2be61a3a36b8"
+    },
+    {
+      "path": "ilbi/api/v1/accounts/urls.py",
+      "sha256": "976ee9afc4fb0577467a395275a640555da6fbcba7c2bdc6f1f5b8094b782906"
+    },
+    {
+      "path": "ilbi/api/v1/accounts/views/docs_views.py",
+      "sha256": "99c69d2e67df5ad1f3a4a942c725695d3d22600fc68c80af0d3c5cabf0cca96e"
+    },
+    {
+      "path": "ilbi/api/v1/audit/serializers.py",
+      "sha256": "ee81262b5ec7644069a69d7396da819f4ef394179b8a5964b0222d70ac9e9471"
+    },
+    {
+      "path": "ilbi/api/v1/cashbox/serializers.py",
+      "sha256": "7799600b9cc6e20e7e80a94f2008694efc7a5f1d15cf1f999b5ecd824001e31b"
+    },
+    {
+      "path": "ilbi/api/v1/cashbox/urls.py",
+      "sha256": "22788c3587113425bacb4c8ba810ac202ccce82b12f31e979ee298b1ac5749d8"
+    },
+    {
+      "path": "ilbi/api/v1/cashbox/views/cashbox_views.py",
+      "sha256": "b31ed3b210124784a00fabea4461ca331294f9b66f89c791ab32ed362870720a"
+    },
+    {
+      "path": "ilbi/api/v1/catalog/views/product_views.py",
+      "sha256": "cff9ac1c80db675070b746b13da7d72583bb0f4d6aff6a153ac0b5afb1f07719"
+    },
+    {
+      "path": "ilbi/api/v1/inventory/idempotency.py",
+      "sha256": "0149ef22dca0aa57bec43f368ab5d5ca83afdbb5985a064b326f14336fb78a14"
+    },
+    {
+      "path": "ilbi/api/v1/inventory/serializers.py",
+      "sha256": "18724334e4c326750c282628ec8d074362d98d1f2e47eb0dc48b47282fffbad6"
+    },
+    {
+      "path": "ilbi/api/v1/inventory/urls.py",
+      "sha256": "6c2ce5c16847d394dffca7306cd2be4d3839177e0eabda1b7043aac06ad9b2c5"
+    },
+    {
+      "path": "ilbi/api/v1/inventory/views/movement_views.py",
+      "sha256": "53e1af04660a4e4ebcd415dc061ba03a4c7356ec1528acb7b3c7550f04443ca4"
+    },
+    {
+      "path": "ilbi/api/v1/inventory/views/operation_views.py",
+      "sha256": "954de7116d1befb5945ce3f90c0ec69a46b47a2129b250d93fb6588d95f59466"
+    },
+    {
+      "path": "ilbi/api/v1/inventory/views/transfer_views.py",
+      "sha256": "0437058a5e74218957f645cd2174ee74e75f1e55fd236c50d52e839e22828cb4"
+    },
+    {
+      "path": "ilbi/api/v1/sales/b2b_idempotency.py",
+      "sha256": "9a64a7058dfb2d6cea86da60e89713c61c8012f3254eacb1800dcbb4d0219192"
+    },
+    {
+      "path": "ilbi/api/v1/sales/serializers.py",
+      "sha256": "9de0c8c2e6fade20ba5a2bd01b3e66557737ffb5589d2eee4c0a79b3efb480c7"
+    },
+    {
+      "path": "ilbi/api/v1/sales/urls.py",
+      "sha256": "8d48be3a78e94adff259ee6ae0ea7809979f5739281150a758c605799a6c54ab"
+    },
+    {
+      "path": "ilbi/api/v1/sales/views/b2b_views.py",
+      "sha256": "c697197f5cdc11addef3d7772c49372109f4f067be5ec5e12d45ee48fcbdcc46"
+    },
+    {
+      "path": "ilbi/api/v1/sales/views/counterparty_views.py",
+      "sha256": "552f8a06cd4eebdc90496d53478e30fe3493eda6cea2204a31195bcb862b4eae"
+    },
+    {
+      "path": "ilbi/api/v1/sales/views/notification_views.py",
+      "sha256": "2ef9f29057ff9b15087ac37db91ef38b6d94a294535532bac9b74b0fed5523cd"
+    },
+    {
+      "path": "ilbi/api/v1/sales/views/sale_views.py",
+      "sha256": "7a10ce7c37fb0a4e9c0ca064bf0eb3805a1e5c34c76e58229e2cda4bb7a4d47e"
+    },
+    {
+      "path": "ilbi/api/v1/support/serializers.py",
+      "sha256": "dd9a2c0fdc51a0cabc59dc160a6978f822a8a2634d8bb361532d8671878b45e5"
+    },
+    {
+      "path": "ilbi/api/v1/support/views.py",
+      "sha256": "2b00d7b79b1e1ce3637c9d8a1e392b86b824db0bda0e1d7ea05f4794407ae418"
+    },
+    {
+      "path": "ilbi/api/v1/tenants/serializers.py",
+      "sha256": "c9e9a77ba3c6eb021077e3ead93bd2c4ff3c01726e4f24149d5ef5dfead22af7"
+    },
+    {
+      "path": "ilbi/api/v1/tenants/views.py",
+      "sha256": "a1911b38b7c3b72019f1af16d926a8fdcb41dab25e56f3d93a22a761c22cb088"
+    },
+    {
+      "path": "ilbi/api/v1/workspace.py",
+      "sha256": "c7acf61f3a483844a4cd418b7cde5a4cb97eebd217409e3c83c027fed2614d77"
+    },
+    {
+      "path": "ilbi/apps/cashbox/migrations/0006_cashboxmutationreceipt.py",
+      "sha256": "6f43b118c1ef608c955d7ca5ae7db864988d1d242cf3ccc55e70496f93c700af"
+    },
+    {
+      "path": "ilbi/apps/cashbox/models.py",
+      "sha256": "edeb45451ffa096c8eda61ac96e99ef95022db97f87cbd7df96c2a83b7295a25"
+    },
+    {
+      "path": "ilbi/apps/cashbox/services/cashbox_service.py",
+      "sha256": "ab68d51209d20e490e75341febfc282428914fda54d5c6380bd264038073300e"
+    },
+    {
+      "path": "ilbi/apps/cashbox/services/mutations.py",
+      "sha256": "b11e73169880eb86810e91a4ab0376d10e67b0288d15cf80ad077bbe92a6db5d"
+    },
+    {
+      "path": "ilbi/apps/cashbox/tests/test_mobile_mutations.py",
+      "sha256": "c73612f98e75a8ed91086544ed47312f5b0b166262aa9a8291b341408b97bf7f"
+    },
+    {
+      "path": "ilbi/apps/catalog/tests/test_mobile_catalog_flow.py",
+      "sha256": "8f5b2c4a1ea8a6ba35c18766d1ba3ee67cf9436cd94413d2025e0d320e1bce2f"
+    },
+    {
+      "path": "ilbi/apps/core/audit_privacy.py",
+      "sha256": "0a8aed1c0cc8aa6b7bc86eb2ac54a718a5560a4c568a61e77c758bca64f224bf"
+    },
+    {
+      "path": "ilbi/apps/core/migrations/0017_workspacereminder_due_notified_at.py",
+      "sha256": "3e3c3208c8133fe0d5172a664ae47dcc185e645bb067f27e906eb83846c2931b"
+    },
+    {
+      "path": "ilbi/apps/core/models.py",
+      "sha256": "9fa582547450df90ac4a772e0f5fbe9b90d254c9e09e720f827b3154937804ea"
+    },
+    {
+      "path": "ilbi/apps/core/services/history_service.py",
+      "sha256": "b25dfc413bc982956a1fcd60596e5ccf862e055e3d994857f558d523a44ba456"
+    },
+    {
+      "path": "ilbi/apps/core/services/workspace_notifications.py",
+      "sha256": "87252cb7213f0146e102fd59724617f2d4344832c9ece3c5bc8df63f6bb366d8"
+    },
+    {
+      "path": "ilbi/apps/core/tasks.py",
+      "sha256": "2ab02b044e4b7eaae47c2b59686fb2a0a22f1e676a4e5556ac576a6e57271d33"
+    },
+    {
+      "path": "ilbi/apps/core/tests/test_mobile_api_readiness.py",
+      "sha256": "c5e5db5341b83b37000b0d6381a468b2faf97efe19b3119e5c7d471e1b9ba914"
+    },
+    {
+      "path": "ilbi/apps/core/tests/test_security_presentation.py",
+      "sha256": "9bace060074157e57e91fa0a38da0ec0ffe6185e3c6300e2b5184a73d650bdbe"
+    },
+    {
+      "path": "ilbi/apps/inventory/migrations/0014_inventorymutationreceipt.py",
+      "sha256": "fb3940707024690c6fb45290da6f9a303da548406d8bdd5673de29df3aacb211"
+    },
+    {
+      "path": "ilbi/apps/inventory/models/__init__.py",
+      "sha256": "0cfeaa7460caca1801d9b38a11a316ef1d6f3c7e0e3340226f746cbf8ec14412"
+    },
+    {
+      "path": "ilbi/apps/inventory/models/mutation_receipt_model.py",
+      "sha256": "3ccafc387f626fe44de2013baa1164971680eb4a638aec526aa5aa0895308abc"
+    },
+    {
+      "path": "ilbi/apps/inventory/tests/test_mobile_inventory_mutations.py",
+      "sha256": "396fb506d52dade3818b022f60b69bc56edb1fd5aa836e01a0b37358305d7b5f"
+    },
+    {
+      "path": "ilbi/apps/notifications/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "ilbi/apps/notifications/apps.py",
+      "sha256": "9724bdcc37784e1634b468ddb8349a10ce2f1f66cc940917f57b224c331358a8"
+    },
+    {
+      "path": "ilbi/apps/notifications/delivery.py",
+      "sha256": "158af8655503cd5ad54f2a37e2e891defa47eb964be176d2812b60bba6895e76"
+    },
+    {
+      "path": "ilbi/apps/notifications/fcm.py",
+      "sha256": "58ec21e3bafb5d798133cd196fc9d2eaf037648450f315e3ce216d97be393ec2"
+    },
+    {
+      "path": "ilbi/apps/notifications/migrations/0001_initial.py",
+      "sha256": "525ac842d9ea0c0887470fbcb6cd0894c73797dd0e762395c0b9b99c77d2ee87"
+    },
+    {
+      "path": "ilbi/apps/notifications/migrations/0002_pushevent_push_event_expand_idx.py",
+      "sha256": "b30a8af8430eea6884e4f7a1c6363a7d9497c1ef7c0387912fc6a6a30fd3bf5b"
+    },
+    {
+      "path": "ilbi/apps/notifications/migrations/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "ilbi/apps/notifications/models.py",
+      "sha256": "5fe03891e14d6faa412725835309be6f886052c83e6e06bc38953676703fa2ae"
+    },
+    {
+      "path": "ilbi/apps/notifications/registration.py",
+      "sha256": "21903273505d1d9760531f6c147a1ad24dd77377571746f882c74cdeb2781696"
+    },
+    {
+      "path": "ilbi/apps/notifications/signals.py",
+      "sha256": "8bd5415d4299ace5cfa9cda1324636cc6e524bc61c40bfc0cfc7b2234c60adf9"
+    },
+    {
+      "path": "ilbi/apps/notifications/tasks.py",
+      "sha256": "abe5c9e394164341385d43ddc2737282131bd88a85fd212fe74a782fd8ddb088"
+    },
+    {
+      "path": "ilbi/apps/notifications/tests/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "ilbi/apps/notifications/tests/test_activity_producers.py",
+      "sha256": "a035ea58e30eca919addda5aa781390f50da24d4cf4237ea94f29807f8da5d22"
+    },
+    {
+      "path": "ilbi/apps/notifications/tests/test_push.py",
+      "sha256": "da254fc2cb1f28bf3819a53f265d95b274f901531c0e574c3cf1a865a727ca62"
+    },
+    {
+      "path": "ilbi/apps/notifications/views.py",
+      "sha256": "e96b80c10a604c851e416d33b2608fa1db1e6b2ffb1eecfcad0c7c107dd3aa88"
+    },
+    {
+      "path": "ilbi/apps/sales/migrations/0020_sale_void_request.py",
+      "sha256": "3afcbd8a6701ae98ad9890caf3849d897d49d3f5c1976cfd7f02d78f43f04be7"
+    },
+    {
+      "path": "ilbi/apps/sales/migrations/0021_b2bmutationreceipt.py",
+      "sha256": "401a927706f6f84f4423c03c74708e208a7c922f9e14cf9e526ca3984751f66f"
+    },
+    {
+      "path": "ilbi/apps/sales/migrations/0022_alter_notification_type.py",
+      "sha256": "ebbd9f57bed03009d8870603df0ddc81f8e52012566a5b00aa4fab0f303c7b90"
+    },
+    {
+      "path": "ilbi/apps/sales/models/__init__.py",
+      "sha256": "34136d3fdca28c0f02b3b87a1bfb5e1ebc7d0ba7faf38d0e512d7b26d7e6c318"
+    },
+    {
+      "path": "ilbi/apps/sales/models/b2b_mutation_model.py",
+      "sha256": "6254b981fa69be4749848271569c9c0cf56c4b98d4b2d10b3c858697d7b9a750"
+    },
+    {
+      "path": "ilbi/apps/sales/models/notification_model.py",
+      "sha256": "e2cab4a4ae2bf4d931dac786bd2b850ef3bce01858370a19eb1ca267d40f93bd"
+    },
+    {
+      "path": "ilbi/apps/sales/models/sale_void_request_model.py",
+      "sha256": "4c4d26fddf2320385321cb67adfa6cc3e6dcb71bf0f686e130dbd05940132e8b"
+    },
+    {
+      "path": "ilbi/apps/sales/services/debt_service.py",
+      "sha256": "8d1307127f5dbee5e38b2fe51a1d421de3b3b0114b92fffeac829fecc5e2623b"
+    },
+    {
+      "path": "ilbi/apps/sales/services/void_service.py",
+      "sha256": "123dbb651e2bfda341290546fce5d5b14ce1bd03d75ed243bf01a0409cf4c50e"
+    },
+    {
+      "path": "ilbi/apps/sales/tests/test_mobile_b2b.py",
+      "sha256": "1f9ad54453e9e6c26076403dcd11536573bb4021098c31e76ddd1ef67813c7d2"
+    },
+    {
+      "path": "ilbi/apps/sales/tests/test_mobile_contracts.py",
+      "sha256": "c38ff619cc7d40c264bf0f6545391f7b7f27280f70920e11743587a82e72afa7"
+    },
+    {
+      "path": "ilbi/apps/sales/tests/test_mobile_debt_quote.py",
+      "sha256": "46dd270df2e9edc6a7266c1e6847fbe35ba595fbacaecc08ef1cf6f1cd49885e"
+    },
+    {
+      "path": "ilbi/apps/sales/tests/test_mobile_sale_void.py",
+      "sha256": "88040be3fb3875264f17bed9c111976c894af7a283463cb4d5b4d366dd5c54a5"
+    },
+    {
+      "path": "ilbi/apps/support/notifications.py",
+      "sha256": "a1a683ca2fed71ba121a0cc3c29fdc87ead4d547d39a01c27cb4a45b474d753f"
+    },
+    {
+      "path": "ilbi/apps/support/tests/test_support.py",
+      "sha256": "540274247de1413acae9a36ae932ed5dfcae98070bd07010bf4dc370e1bc46c0"
+    },
+    {
+      "path": "ilbi/apps/tenants/settings_revision.py",
+      "sha256": "3d750c3da63fa68f8dd6756d1af5c4bab99cac54759704169cb322b2b978dfbb"
+    },
+    {
+      "path": "ilbi/apps/tenants/tests/test_mobile_store_settings.py",
+      "sha256": "c747517b3a4f012f992a9588cebd82b54174211d482222659beed47b7d623153"
+    },
+    {
+      "path": "ilbi/config/celery.py",
+      "sha256": "9e8749b1d856f186c8905403566620c5b74ba1ea874c6c3f283e0c535dda6ecf"
+    },
+    {
+      "path": "ilbi/config/settings.py",
+      "sha256": "17787e5debd6c299bc7c15fe7917c987d202b8fbd9ca46dc3166b337d30e11a4"
+    }
+  ],
+  "excluded_nonruntime_paths": [
+    ".env.production.example",
+    "README_TESTS.md",
+    "docker-compose.test.yml"
+  ],
+  "shared_contract_fixtures": [
+    {
+      "path": "mobile-app/tests/contracts/backend.json",
+      "sha256": "5d2421a97e1e5b179e51a4037bed3cfe944d05c0cab164a9f072aae342cfd893"
+    },
+    {
+      "path": "mobile-app/tests/contracts/support.json",
+      "sha256": "dcb1d02b6b45df88aea92cc37c7b00f2abaa41d7db862a2cbb6e5cff6ff8e09c"
+    }
+  ],
+  "additional_operations_files": [
+    {
+      "path": "ops/compose.sh",
+      "sha256": "076721fb8796f9e790c198d9b9586bbf4e502f66ba9be3370035921f3cfaa4a0"
+    },
+    {
+      "path": "ops/mobile_push.compose.yml",
+      "sha256": "8bd6a4518326f2d0e34a680c4d16100f8129f022c7ad666e46d9792f05d9fcc0"
+    },
+    {
+      "path": "ops/check_mobile_backend_readiness.py",
+      "sha256": "f1558b9a6143cc4560dcbe550cdf15e9353a1e5ffdca2cac4832edcd16f4ea78"
+    }
+  ]
+}

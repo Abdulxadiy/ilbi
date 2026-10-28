@@ -67,7 +67,7 @@ def main():
     python = backend / "python/bin/python3"
     version = subprocess.check_output([str(python), "-c", "import sys;print(f'{sys.version_info.major}.{sys.version_info.minor}')"], text=True).strip()
     site_packages = backend / f"python/lib/python{version}/site-packages"
-    lock = tomllib.loads((ROOT / "ilbi/uv.lock").read_text())
+    lock = tomllib.loads((ROOT / "backend/uv.lock").read_text())
     packages = [item for item in lock["package"] if item["name"] not in EXCLUDED and "version" in item and "registry" in item.get("source", {})]
     requirements = []
     for item in sorted(packages, key=lambda item: item["name"]):

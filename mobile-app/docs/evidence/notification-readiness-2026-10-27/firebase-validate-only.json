@@ -1,0 +1,13 @@
+{
+  "project": "ilbi-80eb1",
+  "validateOnly": true,
+  "target": "synthetic non-device token",
+  "httpStatus": 400,
+  "providerStatus": "INVALID_ARGUMENT",
+  "reasonCodes": [
+    "INVALID_ARGUMENT"
+  ],
+  "realDeviceTargeted": false,
+  "deliveryAttempted": false,
+  "scope": "FCM validation response only; not native OS delivery acceptance"
+}
