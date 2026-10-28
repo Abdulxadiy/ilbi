@@ -1,0 +1,49 @@
+2026-10-28T17:57:01.6687345Z ILBI o‘rnatildi. Ilovalar menyusidan ILBI’ni oching.
+2026-10-28T17:57:01.6688266Z Yoki: /tmp/ilbi-linux-package-o153tiXg/bin space/ilbi
+2026-10-28T17:57:17.4624072Z ✔ bundled Linux runtime migrates, isolates its database and preserves data on restart (15677.752065ms)
+2026-10-28T17:57:22.9787107Z Native security QA: private store started.
+2026-10-28T17:57:22.9788379Z Native security QA: consistent encrypted backup created and store resumed.
+2026-10-28T17:57:22.9789500Z Native security QA: encrypted backup restored and store resumed.
+2026-10-28T17:57:24.3577289Z Native security QA: daily MFA expiry blocks password-only entry and preserves outbox.
+2026-10-28T17:57:24.8257610Z ✔ installed native account unlock, durable locks and encrypted PostgreSQL restore preserve pending work (23039.341547ms)
+2026-10-28T17:58:09.2303272Z ✔ failed Linux secure storage stays retryable and public downloads still work (4351.889147ms)
+2026-10-28T17:58:09.2321525Z ✖ default installed launch opens downloads before setup, recovers a failed request and starts the encrypted store (63105.320754ms)
+2026-10-28T17:58:09.2434110Z ℹ tests 4
+2026-10-28T17:58:09.2435011Z ℹ suites 0
+2026-10-28T17:58:09.2435710Z ℹ pass 3
+2026-10-28T17:58:09.2436109Z ℹ fail 1
+2026-10-28T17:58:09.2436475Z ℹ cancelled 0
+2026-10-28T17:58:09.2436884Z ℹ skipped 0
+2026-10-28T17:58:09.2437266Z ℹ todo 0
+2026-10-28T17:58:09.2437709Z ℹ duration_ms 67537.122191
+2026-10-28T17:58:09.2451512Z
+2026-10-28T17:58:09.2451942Z ✖ failing tests:
+2026-10-28T17:58:09.2452280Z
+2026-10-28T17:58:09.2452834Z test at desktop/ilbi/tests/windows-ui.test.cjs:120:1
+2026-10-28T17:58:09.2454388Z ✖ default installed launch opens downloads before setup, recovers a failed request and starts the encrypted store (63105.320754ms)
+2026-10-28T17:58:09.2456110Z   Error: Installed public downloads before store setup did not become ready: Unable to revert mtime: /usr/share/fonts
+2026-10-28T17:58:09.2457271Z   Unable to revert mtime: /usr/share/fonts/truetype
+2026-10-28T17:58:09.2458104Z   Unable to revert mtime: /usr/share/fonts/truetype/dejavu
+2026-10-28T17:58:09.2459475Z   Unable to revert mtime: /usr/share/fonts
+2026-10-28T17:58:09.2460162Z   Unable to revert mtime: /usr/share/fonts/truetype
+2026-10-28T17:58:09.2461182Z   Unable to revert mtime: /usr/share/fonts/truetype/dejavu
+2026-10-28T17:58:09.2461840Z
+2026-10-28T17:58:09.2462633Z   DevTools listening on ws://127.0.0.1:43297/devtools/browser/178458d5-012a-4813-9809-ee57fa7674d2
+2026-10-28T17:58:09.2463961Z   Error occurred in handler for 'ilbi:pair-create': Error: So‘rov manbasi tasdiqlanmadi.
+2026-10-28T17:58:09.2465500Z       at /tmp/ilbi-linux-package-o153tiXg/data space/ilbi-app/releases/build-8eztnmUO/resources/app.asar/public-errors.cjs:13:27
+2026-10-28T17:58:09.2466866Z       at Session.<anonymous> (node:electron/js2c/browser_init:1:119048)
+2026-10-28T17:58:09.2467658Z       at Session.emit (node:events:514:28)
+2026-10-28T17:58:09.2468731Z   Error occurred in handler for 'ilbi:backup-create': Error: So‘rov manbasi tasdiqlanmadi.
+2026-10-28T17:58:09.2470581Z       at /tmp/ilbi-linux-package-o153tiXg/data space/ilbi-app/releases/build-8eztnmUO/resources/app.asar/public-errors.cjs:13:27
+2026-10-28T17:58:09.2472244Z       at async Session.<anonymous> (node:electron/js2c/browser_init:1:119032)
+2026-10-28T17:58:09.2473449Z   Error occurred in handler for 'ilbi:session-lock': Error: So‘rov manbasi tasdiqlanmadi.
+2026-10-28T17:58:09.2474857Z       at /tmp/ilbi-linux-package-o153tiXg/data space/ilbi-app/releases/build-8eztnmUO/resources/app.asar/public-errors.cjs:13:27
+2026-10-28T17:58:09.2476131Z       at async Session.<anonymous> (node:electron/js2c/browser_init:1:119032)
+2026-10-28T17:58:09.2476782Z
+2026-10-28T17:58:09.2477480Z       at waitFor (/home/runner/work/ilbi/ilbi/desktop/ilbi/tests/windows-ui.test.cjs:59:11)
+2026-10-28T17:58:09.2478583Z       at async /home/runner/work/ilbi/ilbi/desktop/ilbi/tests/windows-ui.test.cjs:138:5
+2026-10-28T17:58:09.2479785Z       at async withInstalled (/home/runner/work/ilbi/ilbi/desktop/ilbi/tests/windows-ui.test.cjs:65:5)
+2026-10-28T17:58:09.2481505Z       at async TestContext.<anonymous> (/home/runner/work/ilbi/ilbi/desktop/ilbi/tests/windows-ui.test.cjs:123:3)
+2026-10-28T17:58:09.2482591Z       at async Test.run (node:internal/test_runner/test:1409:7)
+2026-10-28T17:58:09.2483497Z       at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+2026-10-28T17:58:13.4154873Z ##[error]Process completed with exit code 1.

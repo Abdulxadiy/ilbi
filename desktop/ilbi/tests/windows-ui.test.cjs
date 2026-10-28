@@ -92,6 +92,18 @@ function assertPublicFeed(value) {
       available++;
     }
   }
+  // The public page includes published mobile clients alongside desktop ones.
+  // Keep the exact link-count check as Android/iOS publication changes.
+  const mobile = value.release.mobile;
+  const android = mobile?.android || (mobile?.url ? mobile : null);
+  if (android?.url) {
+    assert.match(android.url, /^(?:\/downloads\/.*\.apk|https:\/\/play\.google\.com\/store\/apps\/details\?)/);
+    available++;
+  }
+  if (mobile?.ios?.url) {
+    assert.match(mobile.ios.url, /^https:\/\/(?:apps\.apple\.com|testflight\.apple\.com)\//);
+    available++;
+  }
   return available;
 }
 

@@ -1,0 +1,1 @@
+{"passed":true,"old_count":2,"actual_renderer_links":3,"new_count":3,"ios_and_legacy_feeds":"pass","runtime":"real Chrome + current desktop renderer; isolated HTTP fixtures; not installed native acceptance","emulator_touched":false}

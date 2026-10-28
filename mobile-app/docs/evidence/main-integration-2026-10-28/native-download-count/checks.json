@@ -1,0 +1,9 @@
+{
+  "failed_ci": "https://github.com/Abdulxadiy/ilbi/actions/runs/40739804121/job/122999531151",
+  "actual_native_result": "Linux packaged runtime migration, data-preserving restart and encrypted backup/security checks passed; UI download-count assertion failed. The native acceptance job did not pass.",
+  "cause": "Native UI expected2 desktop links; current live feed and actual renderer also include published Android build5, totaling3.",
+  "fix": "Retain exact link-count assertion and count published Android/iOS entries, including legacy flat Android feed. No product or security boundary changed.",
+  "local_regression": "Current desktop renderer in real Chrome with captured public feed: old expected2, actual3, fixed expected3; valid future iOS4/legacy3/empty0 feed cases checked.",
+  "required_gate": "Both Windows and Linux installed native acceptance must rerun and pass in CI before deployment. Local Chrome check is not native acceptance.",
+  "emulator_touched": false
+}
