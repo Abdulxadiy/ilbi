@@ -7,6 +7,8 @@ import { createServer } from 'vite';
 import { launchBrowser } from './browser/chrome.mjs';
 
 const artifacts = await mkdtemp(join(tmpdir(), 'ilbi-downloads-ui-'));
+const legacyFeedDelay = Number(process.env.ILBI_DOWNLOAD_LEGACY_DELAY_MS ?? 150);
+assert(Number.isFinite(legacyFeedDelay) && legacyFeedDelay >= 0 && legacyFeedDelay <= 2000);
 let server, browser;
 try {
   server = await createServer({ root: fileURLToPath(new URL('..', import.meta.url)), cacheDir: 'node_modules/.vite-downloads-qa', logLevel: 'error', server: { host: '127.0.0.1', port: 0 } });
@@ -22,6 +24,7 @@ try {
         if(downloadsQA.mode==='offline')throw new TypeError('Offline');
         if(downloadsQA.mode==='missing')return new Response('',{status:404});
         if(downloadsQA.delay)await new Promise(resolve=>setTimeout(resolve,downloadsQA.delay));
+        if(downloadsQA.mode==='legacy')await new Promise(resolve=>setTimeout(resolve,${legacyFeedDelay}));
         return new Response(JSON.stringify({schema:1,windows:{version:'1.2.0',url:'/downloads/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/ILBI-Setup-1.2.0-x64.exe',bytes:196124625,channel:'preview',sha256:'a'.repeat(64)},linux:downloadsQA.mode==='legacy'?null:{version:'1.2.0',url:'/downloads/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/ILBI-1.2.0-linux-x64.tar.gz',bytes:210000000,channel:'preview',sha256:'b'.repeat(64)},mobile:downloadsQA.mode==='mobile'?{android:{version:'1.0.0',buildNumber:'2',url:'/downloads/mobile/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/ILBI-1.0.0-android-2.apk',bytes:42000000,sha256:'c'.repeat(64),channel:'preview'},ios:{version:'1.0.0',buildNumber:'1',url:'https://apps.apple.com/uz/app/ilbi/id123456789',channel:'preview'}}:null}),{status:200,headers:{'Content-Type':'application/json'}});
       }
       if(sessionStorage.getItem('download-auth')==='true'){
@@ -89,7 +92,9 @@ try {
   assert.deepEqual(browser.errors, []);
   await browser.evaluate('sessionStorage.setItem("download-mode","legacy");window.downloadBeforeReload=true');
   await browser.call('Page.reload');
-  await wait('!window.downloadBeforeReload&&Boolean(document.querySelector("[data-platform=linux] button:disabled"))');
+  // Linux is disabled even while the feed is pending. Wait for the published
+  // Windows link before asserting this Windows-only legacy feed is complete.
+  await wait(`!window.downloadBeforeReload && Boolean(document.querySelector('a.downloads-button[href$=".exe"]')) && Boolean(document.querySelector('[data-platform=linux] button:disabled'))`);
   assert.equal(await browser.evaluate('document.querySelectorAll(".downloads-button[href]").length'), 1);
 
   await browser.evaluate('sessionStorage.setItem("download-mode","mobile");window.downloadBeforeReload=true');

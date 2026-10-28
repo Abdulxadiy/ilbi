@@ -1,0 +1,14 @@
+{
+  "failed_main_ci": "https://github.com/Abdulxadiy/ilbi/actions/runs/40736817147",
+  "failed_job": "Check download links and mobile layout in Chrome",
+  "cause": "Linux disabled state was true while the release feed was still pending; the assertion counted zero links before the valid Windows link rendered.",
+  "reproduced": "Controlled150ms legacy-feed delay gives the same0!=1 failure.",
+  "fix": "Wait for the actual published Windows executable link and unavailable Linux state before retaining the exact one-link assertion.",
+  "checks": [
+    "same actual browser page passes with150ms feed delay",
+    "same browser suite passes with750ms feed delay",
+    "touched Oxlint passes"
+  ],
+  "product_code_changed": false,
+  "assertions_removed": false
+}

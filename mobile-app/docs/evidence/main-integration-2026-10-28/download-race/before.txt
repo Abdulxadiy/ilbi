@@ -1,0 +1,71 @@
+Browser errors: []
+{
+  body: 'Asosiy sahifaga\n' +
+    'ILBI sizning qurilmangizda\n' +
+    'Yuklab olish\n' +
+    '\n' +
+    'Qurilmangiz uchun rasmiy ILBI ilovasini tanlang. Kompyuter va mobil ilova versiyalari alohida yuritiladi.\n' +
+    '\n' +
+    'Windows uchun ILBI\n' +
+    'v1.4.0\n' +
+    '\n' +
+    'Klassik va Tezkor ish stoli. Savdo, ombor, nasiya va sinxronlash navbati bir dasturda.\n' +
+    '\n' +
+    'Windows · 64 bit\n' +
+    'Tekshirilmoqda…\n' +
+    'Linux uchun ILBI\n' +
+    'v1.4.0\n' +
+    '\n' +
+    'Arch Linux va Ubuntu 22.04+ uchun. Python va mahalliy baza ilovaning ichida; virtual mashina kerak emas.\n' +
+    '\n' +
+    'Linux · x86_64\n' +
+    'Tekshirilmoqda…\n' +
+    'Arxiv va oddiy o‘rnatuvchi. Linux’da o‘rnatish — 4 qadam\n' +
+    'Android uchun ILBI\n' +
+    'Hozircha mavjud emas\n' +
+    '\n' +
+    'Telefon va planshetda savdo hamda do‘kon boshqaruvi. Mobil ilova platformadan alohida versiyalanadi.\n' +
+    '\n' +
+    'Android\n' +
+    'Android yuklamasi hali joylanmagan\n' +
+    'iPhone va iPad uchun ILBI\n' +
+    'Hozircha mavjud emas\n' +
+    '\n' +
+    'iPhone va iPad uchun rasmiy ilova. O‘rnatish va yangilash App Store yoki TestFlight orqali bajariladi.\n' +
+    '\n' +
+    'iOS · iPadOS\n' +
+    'iPhone ilovasi hali joylanmagan\n' +
+    'Linux’da o‘rnatish — 4 qadam\n' +
+    'Yuklangan .tar.gz arxivni papkaga oching.\n' +
+    'Ichidagi ILBI papkasida o‘ng tugma → Terminalda ochish.\n' +
+    'bash install.sh yozib, Enter bosing. sudo kerak emas.\n' +
+    'Ilovalar menyusidan ILBIni oching.\n' +
+    '\n' +
+    'Menyuda ko‘rinmasa: ~/.local/bin/ilbi.\n' +
+    '\n' +
+    'Paket Linux x86_64 uchun. GNOME Keyring yoki KWallet ochiq bo‘lsin. Yangilashda ILBI’ni yoping va yangi arxivdagi install.sh faylini yana ishga tushiring — ma’lumotlar saqlanadi.\n' +
+    '\n' +
+    'Linux uchun batafsil qo‘llanma\n' +
+    'Arch, boshqa Linux’lar va parollar omborini sozlash.\n' +
+    'Birinchi ishga tushirish\n' +
+    'ILBI’ni o‘rnating va Ishni boshlash tugm',
+  url: 'http://127.0.0.1:42459/download'
+}
+node:internal/modules/run_main:111
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+0 !== 1
+
+    at file:///mnt/storage/.cache/ilbi-native-tools/main-integration-20261028/frontend/ilbi/tests/downloads.browser.mjs:94:10 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: 0,
+  expected: 1,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v26.11.1
