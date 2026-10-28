@@ -993,13 +993,14 @@
     },
     "DMP-127": {
       "title": "Expo toolchain has unresolved high-severity audit entries",
-      "status": "EXTERNAL_GATE",
+      "status": "TESTED_CODE",
       "evidence": [
         "Live npm audit still reports 5 high entries / 2 advisories. Forge 1.4.0 has no published fix; Expo CLI requires Zod 3 while the patch is in v4. Exact versions, primary sources and resolution conditions recorded in docs/DEPENDENCY_SECURITY.md.",
         "2026-10-27 live npm audit reports 3 high entries / 1 Zod advisory after compatible Forge1.4.1 update. Expo CLI still requires Zod3 while the published patch is v4. Audit gate remains active; primary sources and resolution conditions in docs/DEPENDENCY_SECURITY.md.",
-        "2026-10-28 fresh npm audit: 3 high and 13 low entries; gate exits1 and is not suppressed. No dependency update is part of this audit."
+        "2026-10-28 fresh npm audit: 3 high and 13 low entries; gate exits1 and is not suppressed. No dependency update is part of this audit.",
+        "docs/evidence/main-integration-2026-10-28/security/"
       ],
-      "notes": "2026-10-28 fresh npm audit: 3 high and 13 low entries; gate exits1 and is not suppressed. No dependency update is part of this audit."
+      "notes": "High gate fixed:actual Zod4.6.7 plus9 installed-consumer/guard checks and726 mobile tests. Deepmerge4.3.1 has reviewed hash-checked source/CJS/UMD guard;15low scanner records retained, no upstream-release claim. GitHub security job now passes; full main deployment/native parity acceptance remains."
     },
     "DMP-128": {
       "title": "Unused prototype code and navigation dependencies remain",

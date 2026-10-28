@@ -1,0 +1,13 @@
+test_copies_exactly_once_with_private_mode_and_keeps_legacy (test_backend_layout.BackendLayoutTests.test_copies_exactly_once_with_private_mode_and_keeps_legacy) ... ok
+test_current_only_is_accepted_without_recreating_legacy (test_backend_layout.BackendLayoutTests.test_current_only_is_accepted_without_recreating_legacy) ... ok
+test_default_inspects_without_creating_a_directory_or_copy (test_backend_layout.BackendLayoutTests.test_default_inspects_without_creating_a_directory_or_copy) ... ok
+test_different_existing_files_are_preserved_and_rejected (test_backend_layout.BackendLayoutTests.test_different_existing_files_are_preserved_and_rejected) ... ok
+test_failed_write_removes_only_new_copy_and_preserves_the_legacy_environment (test_backend_layout.BackendLayoutTests.test_failed_write_removes_only_new_copy_and_preserves_the_legacy_environment) ... ok
+test_file_and_directory_symlinks_are_rejected (test_backend_layout.BackendLayoutTests.test_file_and_directory_symlinks_are_rejected) ... ok
+test_missing_both_files_is_rejected (test_backend_layout.BackendLayoutTests.test_missing_both_files_is_rejected) ... ok
+test_public_permissions_are_rejected_without_copy (test_backend_layout.BackendLayoutTests.test_public_permissions_are_rejected_without_copy) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.003s
+
+OK

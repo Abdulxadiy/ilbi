@@ -1,0 +1,10 @@
+test_changed_install_patch_inputs_invalidate_an_existing_apk_without_version_changes (test_mobile_apk_verification.MobileApkSourceVerificationTests.test_changed_install_patch_inputs_invalidate_an_existing_apk_without_version_changes) ... ok
+test_dependency_changes_require_a_new_package_even_if_app_version_stays_the_same (test_mobile_apk_verification.MobileApkSourceVerificationTests.test_dependency_changes_require_a_new_package_even_if_app_version_stays_the_same) ... ok
+test_docs_and_host_helper_scripts_do_not_make_an_unchanged_runtime_stale (test_mobile_apk_verification.MobileApkSourceVerificationTests.test_docs_and_host_helper_scripts_do_not_make_an_unchanged_runtime_stale) ... ok
+test_install_and_build_hooks_cannot_be_ignored_as_check_helpers (test_mobile_apk_verification.MobileApkSourceVerificationTests.test_install_and_build_hooks_cannot_be_ignored_as_check_helpers) ... ok
+test_runtime_edits_and_new_untracked_routes_invalidate_the_existing_apk (test_mobile_apk_verification.MobileApkSourceVerificationTests.test_runtime_edits_and_new_untracked_routes_invalidate_the_existing_apk) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.080s
+
+OK

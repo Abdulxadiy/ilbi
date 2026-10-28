@@ -34,7 +34,7 @@ cd /srv/ilbi
 ./ops/compose.sh logs --tail 100 ilbi
 ```
 
-Backend papkasi ko‘chirilgan ushbu versiyani productionga chiqarishdan oldin serverdagi eski `/srv/ilbi/ilbi/.env.production` faylini `/srv/ilbi/backend/.env.production` manziliga ko‘chiring; katalog va faylning yopiq ruxsatlarini saqlang. Yangi manzilda fayl allaqachon mavjud bo‘lsa, ustidan yozishdan oldin operator sozlamalarini tekshiring. Bu bir martalik yo‘l o‘zgarishi; Compose servis nomlari va ma’lumotlar volume’lari saqlanadi.
+Main avtomatik deploy jarayoni Compose faylini almashtirishdan oldin `ops/prepare_backend_layout.py /srv/ilbi --apply`ni bajaradi. U eski `/srv/ilbi/ilbi/.env.production` faylidan `/srv/ilbi/backend/.env.production`ga aynan nusxa oladi, yangi faylni600 ruxsatida saqlaydi va eski nusxani saqlab qoladi. Faqat mavjud yopiq fayllar o‘qiladi; symbolic link, ochiq ruxsat yoki ikki xil mavjud konfiguratsiya bo‘lsa, fayllarni o‘zgartirmasdan to‘xtaydi. Takroriy deploy bir xil nusxani qayta yozmaydi. `--apply`siz buyruq faqat holatni tekshiradi. Compose servis nomlari va ma’lumotlar volume’lari saqlanadi. `docker-compose.mobile-push.yml` oldin alohida faollashtirilgan bo‘lsa, `ops/compose.sh` uni keyingi deploylarda ham qo‘llaydi; bu ish pushni o‘z-o‘zidan yoqmaydi.
 
 Maxfiy fayllar: `.env.production`, `backend/.env.production`, `telegram_bot_sms/.env.production`.
 Ularning mazmunini Git, issue yoki chatga yubormang. Parollar yangi yaratilgan;

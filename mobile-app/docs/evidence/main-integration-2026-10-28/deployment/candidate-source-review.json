@@ -1,0 +1,477 @@
+{
+  "candidate_commit": "f67d770fd404721d6117db1d7729cf0d09a771e7",
+  "files": [
+    {
+      "candidate": "ilbi/api/schema.py",
+      "unified": "backend/api/schema.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/api/v1/accounts/urls.py",
+      "unified": "backend/api/v1/accounts/urls.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/api/v1/accounts/views/docs_views.py",
+      "unified": "backend/api/v1/accounts/views/docs_views.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/api/v1/audit/serializers.py",
+      "unified": "backend/api/v1/audit/serializers.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/api/v1/cashbox/serializers.py",
+      "unified": "backend/api/v1/cashbox/serializers.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/api/v1/cashbox/urls.py",
+      "unified": "backend/api/v1/cashbox/urls.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/api/v1/cashbox/views/cashbox_views.py",
+      "unified": "backend/api/v1/cashbox/views/cashbox_views.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/api/v1/catalog/views/product_views.py",
+      "unified": "backend/api/v1/catalog/views/product_views.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/api/v1/inventory/idempotency.py",
+      "unified": "backend/api/v1/inventory/idempotency.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/api/v1/inventory/serializers.py",
+      "unified": "backend/api/v1/inventory/serializers.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/api/v1/inventory/urls.py",
+      "unified": "backend/api/v1/inventory/urls.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/api/v1/inventory/views/movement_views.py",
+      "unified": "backend/api/v1/inventory/views/movement_views.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/api/v1/inventory/views/operation_views.py",
+      "unified": "backend/api/v1/inventory/views/operation_views.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/api/v1/inventory/views/transfer_views.py",
+      "unified": "backend/api/v1/inventory/views/transfer_views.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/api/v1/sales/b2b_idempotency.py",
+      "unified": "backend/api/v1/sales/b2b_idempotency.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/api/v1/sales/serializers.py",
+      "unified": "backend/api/v1/sales/serializers.py",
+      "identical": false,
+      "reviewed_difference": "New adjustment/import output fields, saved-party identity, deterministic rows and public snapshot redaction."
+    },
+    {
+      "candidate": "ilbi/api/v1/sales/urls.py",
+      "unified": "backend/api/v1/sales/urls.py",
+      "identical": false,
+      "reviewed_difference": "Adds guarded debt-adjustment quote/commit endpoints; existing mobile routes retained."
+    },
+    {
+      "candidate": "ilbi/api/v1/sales/views/b2b_views.py",
+      "unified": "backend/api/v1/sales/views/b2b_views.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/api/v1/sales/views/counterparty_views.py",
+      "unified": "backend/api/v1/sales/views/counterparty_views.py",
+      "identical": false,
+      "reviewed_difference": "Adds authoritative due filters/USD credit summary and saved-product purchase search."
+    },
+    {
+      "candidate": "ilbi/api/v1/sales/views/notification_views.py",
+      "unified": "backend/api/v1/sales/views/notification_views.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/api/v1/sales/views/sale_views.py",
+      "unified": "backend/api/v1/sales/views/sale_views.py",
+      "identical": false,
+      "reviewed_difference": "Adds saved-party search and fixes omitted optional B2B filter; detail/public/permission behavior retained."
+    },
+    {
+      "candidate": "ilbi/api/v1/support/serializers.py",
+      "unified": "backend/api/v1/support/serializers.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/api/v1/support/views.py",
+      "unified": "backend/api/v1/support/views.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/api/v1/tenants/serializers.py",
+      "unified": "backend/api/v1/tenants/serializers.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/api/v1/tenants/views.py",
+      "unified": "backend/api/v1/tenants/views.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/api/v1/workspace.py",
+      "unified": "backend/api/v1/workspace.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/cashbox/migrations/0006_cashboxmutationreceipt.py",
+      "unified": "backend/apps/cashbox/migrations/0006_cashboxmutationreceipt.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/cashbox/models.py",
+      "unified": "backend/apps/cashbox/models.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/cashbox/services/cashbox_service.py",
+      "unified": "backend/apps/cashbox/services/cashbox_service.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/cashbox/services/mutations.py",
+      "unified": "backend/apps/cashbox/services/mutations.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/cashbox/tests/test_mobile_mutations.py",
+      "unified": "backend/apps/cashbox/tests/test_mobile_mutations.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/catalog/tests/test_mobile_catalog_flow.py",
+      "unified": "backend/apps/catalog/tests/test_mobile_catalog_flow.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/core/audit_privacy.py",
+      "unified": "backend/apps/core/audit_privacy.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/core/migrations/0017_workspacereminder_due_notified_at.py",
+      "unified": "backend/apps/core/migrations/0017_workspacereminder_due_notified_at.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/core/models.py",
+      "unified": "backend/apps/core/models.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/core/services/history_service.py",
+      "unified": "backend/apps/core/services/history_service.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/core/services/workspace_notifications.py",
+      "unified": "backend/apps/core/services/workspace_notifications.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/core/tasks.py",
+      "unified": "backend/apps/core/tasks.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/core/tests/test_mobile_api_readiness.py",
+      "unified": "backend/apps/core/tests/test_mobile_api_readiness.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/core/tests/test_security_presentation.py",
+      "unified": "backend/apps/core/tests/test_security_presentation.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/inventory/migrations/0014_inventorymutationreceipt.py",
+      "unified": "backend/apps/inventory/migrations/0014_inventorymutationreceipt.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/inventory/models/__init__.py",
+      "unified": "backend/apps/inventory/models/__init__.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/inventory/models/mutation_receipt_model.py",
+      "unified": "backend/apps/inventory/models/mutation_receipt_model.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/inventory/tests/test_mobile_inventory_mutations.py",
+      "unified": "backend/apps/inventory/tests/test_mobile_inventory_mutations.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/notifications/__init__.py",
+      "unified": "backend/apps/notifications/__init__.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/notifications/apps.py",
+      "unified": "backend/apps/notifications/apps.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/notifications/delivery.py",
+      "unified": "backend/apps/notifications/delivery.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/notifications/fcm.py",
+      "unified": "backend/apps/notifications/fcm.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/notifications/migrations/0001_initial.py",
+      "unified": "backend/apps/notifications/migrations/0001_initial.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/notifications/migrations/0002_pushevent_push_event_expand_idx.py",
+      "unified": "backend/apps/notifications/migrations/0002_pushevent_push_event_expand_idx.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/notifications/migrations/__init__.py",
+      "unified": "backend/apps/notifications/migrations/__init__.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/notifications/models.py",
+      "unified": "backend/apps/notifications/models.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/notifications/registration.py",
+      "unified": "backend/apps/notifications/registration.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/notifications/signals.py",
+      "unified": "backend/apps/notifications/signals.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/notifications/tasks.py",
+      "unified": "backend/apps/notifications/tasks.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/notifications/tests/__init__.py",
+      "unified": "backend/apps/notifications/tests/__init__.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/notifications/tests/test_activity_producers.py",
+      "unified": "backend/apps/notifications/tests/test_activity_producers.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/notifications/tests/test_push.py",
+      "unified": "backend/apps/notifications/tests/test_push.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/notifications/views.py",
+      "unified": "backend/apps/notifications/views.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/sales/migrations/0020_sale_void_request.py",
+      "unified": "backend/apps/sales/migrations/0020_sale_void_request.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/sales/migrations/0021_b2bmutationreceipt.py",
+      "unified": "backend/apps/sales/migrations/0021_b2bmutationreceipt.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/sales/migrations/0022_alter_notification_type.py",
+      "unified": "backend/apps/sales/migrations/0022_alter_notification_type.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/sales/models/__init__.py",
+      "unified": "backend/apps/sales/models/__init__.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/sales/models/b2b_mutation_model.py",
+      "unified": "backend/apps/sales/models/b2b_mutation_model.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/sales/models/notification_model.py",
+      "unified": "backend/apps/sales/models/notification_model.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/sales/models/sale_void_request_model.py",
+      "unified": "backend/apps/sales/models/sale_void_request_model.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/sales/services/debt_service.py",
+      "unified": "backend/apps/sales/services/debt_service.py",
+      "identical": false,
+      "reviewed_difference": "Owner correction authorization, quoted same-currency corrections and USD credit preservation."
+    },
+    {
+      "candidate": "ilbi/apps/sales/services/void_service.py",
+      "unified": "backend/apps/sales/services/void_service.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/sales/tests/test_mobile_b2b.py",
+      "unified": "backend/apps/sales/tests/test_mobile_b2b.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/sales/tests/test_mobile_contracts.py",
+      "unified": "backend/apps/sales/tests/test_mobile_contracts.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/sales/tests/test_mobile_debt_quote.py",
+      "unified": "backend/apps/sales/tests/test_mobile_debt_quote.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/sales/tests/test_mobile_sale_void.py",
+      "unified": "backend/apps/sales/tests/test_mobile_sale_void.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/support/notifications.py",
+      "unified": "backend/apps/support/notifications.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/support/tests/test_support.py",
+      "unified": "backend/apps/support/tests/test_support.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/tenants/settings_revision.py",
+      "unified": "backend/apps/tenants/settings_revision.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/apps/tenants/tests/test_mobile_store_settings.py",
+      "unified": "backend/apps/tenants/tests/test_mobile_store_settings.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/config/celery.py",
+      "unified": "backend/config/celery.py",
+      "identical": true,
+      "reviewed_difference": null
+    },
+    {
+      "candidate": "ilbi/config/settings.py",
+      "unified": "backend/config/settings.py",
+      "identical": false,
+      "reviewed_difference": "Adds explicit debt-adjustment kind enum for warning-free OpenAPI."
+    }
+  ],
+  "missing_candidate_source_files": [],
+  "candidate_tests_preserved": true,
+  "operations": "Readiness checker and optional push overlay identical; persistent optional compose override restored. The old commit-pinned branch-only image publisher is superseded by verified main CI/CD. Original candidate manifest archived as history.",
+  "merge_strategy": "Record candidate ancestry with ours only after this source/test/operations review; preserve the newer backend/ layout and guarded superseding code, not the obsolete ilbi/ layout."
+}

@@ -208,6 +208,8 @@ Every original audit ID is retained exactly once. Acceptance text below comes fr
 
 | P03b document identity | CODE_VERIFIED | DMP-068 frozen private parties/legacy provenance/public redaction; DMP-009/065 omitted-boolean B2B list bug and DMP-035 historical search:5 red identity cases and linked-B2B exclusion reproduced;1224 full backend,724 mobile/74 suites,96 web tests; tsc/strict mobile lint, new backend Ruff/touched-source baseline, Vite/all-platform Expo export and real Chrome shared/native-model PDF regressions pass. Evidence: evidence/parity-implementation-2026-10-28/P03b-document-identity/. | Continue P03 sender/receiver signature capture and scoped content-bound persistence, signed PDF, QR/barcode/token and file lifecycle. Existing legacy lint, native/provider/upgrade/deployment/security/fiscal gates remain open. |
 
+| Main integration security | CODE_VERIFIED | DMP-127 blocking high finding resolved with real Zod4.6.7,9 actual toolchain/guard checks,726 mobile tests, SDK58 compatibility/all-platform exports; deepmerge source guard is reproducible and its15low scanner entries remain visible. GitHub mobile-dependency-security passes. Evidence: evidence/main-integration-2026-10-28/security/. | Merge reviewed source and backend-candidate ancestry into main; verify main CI/native desktop packages and production activation. Wider native/parity/fiscal/provider gates remain open. |
+
 ## Final-only cleanup gate
 
 Keep this file while even one required item, genuine native/provider acceptance, security/fiscal gate, data-preservation check or final review remains incomplete. Before deleting it:

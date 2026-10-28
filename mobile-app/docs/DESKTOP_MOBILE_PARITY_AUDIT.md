@@ -299,7 +299,7 @@ Approved rollout checkpoint: backend candidate `f67d770` remains deployed and si
 | [DMP-124](#dmp-124) | OPEN | Pending |
 | [DMP-125](#dmp-125) | OPEN | Pending |
 | [DMP-126](#dmp-126) | TESTED_CODE | Repository CI now runs mobile lint, tsc, Jest/real serializer contracts, Android+iOS Hermes exports, Docker phone interaction/Fast Refresh and evidence uploads. Matching local checks pass (176 tests, zero lint warnings, both exports, browser regression); YAML parses. |
-| [DMP-127](#dmp-127) | EXTERNAL_GATE | 2026-10-28 fresh npm audit: 3 high and 13 low entries; gate exits1 and is not suppressed. No dependency update is part of this audit. |
+| [DMP-127](#dmp-127) | TESTED_CODE | docs/evidence/main-integration-2026-10-28/security/ |
 | [DMP-128](#dmp-128) | TESTED_CODE | Unused prototype imports/state and generic transition adapter removed; unused direct navigation dependencies removed while Router requirements remain. 176 tests and tsc pass; ESLint across all sources/tests reports zero errors and zero warnings. |
 | [DMP-129](#dmp-129) | OPEN | 2026-10-28: shared SaleService still raises when DEBUG=false pending fiscal/OFD integration; production DEBUG=false confirmed read-only. No live financial write and no guard bypass performed. |
 | [DMP-130](#dmp-130) | OPEN | Pending |
