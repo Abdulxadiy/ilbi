@@ -190,8 +190,8 @@ Approved rollout checkpoint: backend candidate `f67d770` remains deployed and si
 | [DMP-044](#dmp-044) | TESTED_CODE | Actual scoped B2B incoming/outgoing lists, detail and escaped PDF;33 PostgreSQL/23 mobile checks and host Chrome flow passed. See B2B_API_READINESS_2026_10_27.md. |
 | [DMP-045](#dmp-045) | TESTED_CODE | Permitted category/variant mapping, durable actor/payload receipts and exact1.250 acceptance verified by ORM and synthetic Chrome. |
 | [DMP-046](#dmp-046) | TESTED_CODE | Reject, physical-return receipt and owner-only discrepancy closure have once-only stock/debt tests. Dispatched goods cannot be generically cancelled. |
-| [DMP-047](#dmp-047) | OPEN | Pending |
-| [DMP-048](#dmp-048) | OPEN | Pending |
+| [DMP-047](#dmp-047) | TESTED_CODE | 2026-10-28 P01a: tenant-scoped native owner/admin employee directory, search/pages/filters, hire/edit/invite/fire/block/unblock/archive/restore and confirmation/reason flows implemented. Selected-store headers, server action flags, stale-session and uncertain-write guards checked. 544 mobile tests/63 suites and48 actual PostgreSQL/API employee tests pass; tsc/strict lint/Ruff pass. Evidence: evidence/parity-implementation-2026-10-28/P01a/. Native/mail delivery remains open; link onboarding is P01b. |
+| [DMP-048](#dmp-048) | TESTED_CODE | 2026-10-28 P01a: categorized/searchable permission editor, seven qualified-code presets and all-assignable/clear choices use current server IDs. Owner-only grants filtered; unchanged unknown legacy grants preserved; changed unknown selections rejected. Actual server response fixture consumed by mobile tests;544 mobile and48 backend employee tests pass. Evidence: evidence/parity-implementation-2026-10-28/P01a/. Native acceptance remains open. |
 | [DMP-049](#dmp-049) | OPEN | Pending |
 | [DMP-050](#dmp-050) | IN_PROGRESS | 2026-10-28: AdminHome loads /platform/overview/ counts/activity; native account/tenant/identity/ban administration actions remain absent. |
 | [DMP-051](#dmp-051) | OPEN | Pending |

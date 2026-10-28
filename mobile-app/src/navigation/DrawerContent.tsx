@@ -28,6 +28,7 @@ export const DrawerContent: React.FC<DrawerContentComponentProps> = ({ navigatio
     { id: 'tovarlar', label: 'Tovarlar', icon: Package, route: 'Tovar' },
     { id: 'ombor', label: 'Ombor', icon: Archive, drawerRoute: 'Inventory' },
     { id: 'mijozlar', label: 'Mijozlar', icon: Users, drawerRoute: 'Customers' },
+    { id: 'xodimlar', label: 'Xodimlar', icon: Users, route: 'Employees' },
     { id: 'qarzlar', label: 'Qarzlar', icon: Clock, route: 'Qarz' },
     { id: 'hujjatlar', label: 'Hujjatlar', icon: FileText, drawerRoute: 'Documents' },
     { id: 'hisobotlar', label: 'Hisobotlar', icon: BarChart3, drawerRoute: 'Reports' },

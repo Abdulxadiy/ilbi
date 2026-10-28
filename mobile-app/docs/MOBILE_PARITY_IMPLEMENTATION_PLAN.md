@@ -90,8 +90,8 @@ Every original audit ID is retained exactly once. Acceptance text below comes fr
 | DMP-044 | P11 | Incoming/outgoing B2B transaction lists (TESTED_CODE) | PRIOR_CODE_EVIDENCE | Send a test B2B sale between two permitted stores and reconcile both lists and invoice access. |
 | DMP-045 | P11 | Accept B2B with destination product/category mapping (TESTED_CODE) | PRIOR_CODE_EVIDENCE | Accept mapped and unmapped lines, verify target stock/product creation and reject cross-currency/unit mistakes. |
 | DMP-046 | P11 | Reject, receive return and close B2B discrepancy (TESTED_CODE) | PRIOR_CODE_EVIDENCE | Exercise rejected and partially returned shipments; verify accepted/rejected/returned/pending quantities and final discrepancy history. |
-| DMP-047 | P01 | Hire, edit, invite and lifecycle management (OPEN) | TODO | As owner manage an employee through activation, restriction and termination without deleting historical transactions; cashier must not see management actions. |
-| DMP-048 | P01 | Granular permission editor and role presets (OPEN) | TODO | Assign a narrow preset, customize individual permissions, refresh a cashier session and verify permitted actions and hidden confidential fields. |
+| DMP-047 | P01 | Hire, edit, invite and lifecycle management (OPEN) | CODE_VERIFIED | As owner manage an employee through activation, restriction and termination without deleting historical transactions; cashier must not see management actions. |
+| DMP-048 | P01 | Granular permission editor and role presets (OPEN) | CODE_VERIFIED | Assign a narrow preset, customize individual permissions, refresh a cashier session and verify permitted actions and hidden confidential fields. |
 | DMP-049 | P06 | Owner store creation and seller-profile binding (OPEN) | TODO | Create and configure a permitted owner store, bind its seller profile and observe it in store selection without leaking another owner’s store. |
 | DMP-050 | P06 | Platform overview, account status and identity recovery (IN_PROGRESS) | TODO | If supported, test admin-only overview/account identity/status while store commercial data stays restricted; otherwise provide a clear role-not-supported screen. |
 | DMP-051 | P06 | Tenant administration, ownership transfer and activation (OPEN) | TODO | Decide scope; if enabled, require admin authorization, appropriate confirmation and audit evidence for each ownership/status transition. |
@@ -191,6 +191,8 @@ Every original audit ID is retained exactly once. Acceptance text below comes fr
 | --- | --- | --- | --- |
 | Plan bootstrap | READY | All132 IDs covered once; full scope/dependencies/acceptance and final-only deletion rule recorded. | Completed plan bootstrap. |
 | P00 | CODE_VERIFIED | Producer-shaped regression reproduced3 failures before fix;524 tests/62 suites, tsc and strict ESLint pass after fix. Permanent evidence: evidence/parity-implementation-2026-10-28/P00/. No native/deploy claim. | P01 employees/permissions/onboarding; release/native acceptance remains open. |
+
+| P01a | CODE_VERIFIED | DMP-047/048 source:544 mobile tests/63 suites,48 actual PostgreSQL employee tests, tsc/strict lint/Ruff pass. evidence/parity-implementation-2026-10-28/P01a/. Native/mail acceptance remains open. | P01b: DMP-002 invitation/reset deep-link onboarding. |
 
 ## Final-only cleanup gate
 

@@ -4,6 +4,14 @@ const a: UserTenant = { id: 1, name: 'A', is_owner: false, permissions: ['sales.
 const b: UserTenant = { id: 2, name: 'B', is_owner: false, permissions: ['analytics.view_dashboard'] };
 const user = { id: 1, role: 'staff', terms_accepted: true, tenants: [a, b], permissions: ['*', 'catalog.view_product'] } as UserProfile;
 describe('Active-store permissions', () => {
+  test('employee management requires accepted terms and actual selected ownership or platform administration', () => {
+    const owner = { ...user, role: 'owner', tenants: [{ ...a, is_owner: true }, b] } as UserProfile;
+    expect(canOpenModule(owner, a, 'Employees')).toBe(true);
+    expect(canOpenModule(owner, b, 'Employees')).toBe(false);
+    expect(canOpenModule(user, { ...a, is_owner: true }, 'Employees')).toBe(false);
+    expect(canOpenModule({ ...owner, terms_accepted: false }, a, 'Employees')).toBe(false);
+    expect(canOpenModule({ ...owner, role: 'platform_admin' }, null, 'Employees')).toBe(true);
+  });
   test('does not union grants from other stores or flattened profile permissions', () => {
     expect(hasPermission(user, a, 'sales.add_sale')).toBe(true);
     expect(hasPermission(user, a, 'analytics.view_dashboard')).toBe(false);

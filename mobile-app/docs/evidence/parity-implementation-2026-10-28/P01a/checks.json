@@ -1,0 +1,36 @@
+{
+  "slice": "P01a",
+  "date": "2026-10-28",
+  "mobile": {
+    "success": true,
+    "numTotalTestSuites": 63,
+    "numPassedTestSuites": 63,
+    "numTotalTests": 544,
+    "numPassedTests": 544,
+    "numFailedTests": 0
+  },
+  "checks": [
+    "npm run typecheck",
+    "eslint src tests --max-warnings 0",
+    "ruff check backend/apps/accounts/tests/test_mobile_employee_contract.py"
+  ],
+  "backend": {
+    "passed": 48,
+    "warnings": 8,
+    "scope": "Real Django APIClient/PostgreSQL55447/Redis56447; isolated test_ilbi_parity_team; locmem email only",
+    "tests": [
+      "test_mobile_employee_contract",
+      "test_employee_management_api",
+      "test_employee_list_view",
+      "test_employee_hire_view",
+      "test_employee_views_tenant_scope",
+      "test_employee_service"
+    ]
+  },
+  "limits": [
+    "No installed-native/device acceptance",
+    "No production action or live email",
+    "No APK/version/deployment/emulator change",
+    "Invitation link onboarding remains P01b"
+  ]
+}

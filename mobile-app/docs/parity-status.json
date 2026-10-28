@@ -362,15 +362,19 @@
     },
     "DMP-047": {
       "title": "Hire, edit, invite and lifecycle management",
-      "status": "OPEN",
-      "evidence": [],
-      "notes": ""
+      "status": "TESTED_CODE",
+      "evidence": [
+        "2026-10-28 P01a: tenant-scoped native owner/admin employee directory, search/pages/filters, hire/edit/invite/fire/block/unblock/archive/restore and confirmation/reason flows implemented. Selected-store headers, server action flags, stale-session and uncertain-write guards checked. 544 mobile tests/63 suites and48 actual PostgreSQL/API employee tests pass; tsc/strict lint/Ruff pass. Evidence: evidence/parity-implementation-2026-10-28/P01a/. Native/mail delivery remains open; link onboarding is P01b."
+      ],
+      "notes": "2026-10-28 P01a: tenant-scoped native owner/admin employee directory, search/pages/filters, hire/edit/invite/fire/block/unblock/archive/restore and confirmation/reason flows implemented. Selected-store headers, server action flags, stale-session and uncertain-write guards checked. 544 mobile tests/63 suites and48 actual PostgreSQL/API employee tests pass; tsc/strict lint/Ruff pass. Evidence: evidence/parity-implementation-2026-10-28/P01a/. Native/mail delivery remains open; link onboarding is P01b."
     },
     "DMP-048": {
       "title": "Granular permission editor and role presets",
-      "status": "OPEN",
-      "evidence": [],
-      "notes": ""
+      "status": "TESTED_CODE",
+      "evidence": [
+        "2026-10-28 P01a: categorized/searchable permission editor, seven qualified-code presets and all-assignable/clear choices use current server IDs. Owner-only grants filtered; unchanged unknown legacy grants preserved; changed unknown selections rejected. Actual server response fixture consumed by mobile tests;544 mobile and48 backend employee tests pass. Evidence: evidence/parity-implementation-2026-10-28/P01a/. Native acceptance remains open."
+      ],
+      "notes": "2026-10-28 P01a: categorized/searchable permission editor, seven qualified-code presets and all-assignable/clear choices use current server IDs. Owner-only grants filtered; unchanged unknown legacy grants preserved; changed unknown selections rejected. Actual server response fixture consumed by mobile tests;544 mobile and48 backend employee tests pass. Evidence: evidence/parity-implementation-2026-10-28/P01a/. Native acceptance remains open."
     },
     "DMP-049": {
       "title": "Owner store creation and seller-profile binding",

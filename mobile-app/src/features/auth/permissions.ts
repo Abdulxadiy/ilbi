@@ -19,6 +19,7 @@ export const modulePermissions: Record<string, string | string[]> = {
   Inventory: 'inventory.view_stock', Reports: ['analytics.view_dashboard', 'cashbox.view_cashbox'],
 };
 export function canOpenModule(user: UserProfile | null, tenant: UserTenant | null, module: string) {
+  if (module === 'Employees') return Boolean(user?.terms_accepted && (user.role === 'platform_admin' || user.role === 'owner' && tenant && user.tenants.some(row => row.id === tenant.id && row.is_owner)));
   if (['Profile', 'Notifications'].includes(module)) return Boolean(user?.terms_accepted && (user.role === 'platform_admin' || tenant && user.tenants.some(row => row.id === tenant.id)));
   if (module === 'History') return Boolean(user?.terms_accepted && user.role === 'owner' && tenant && user.tenants.some(row => row.id === tenant.id && row.is_owner));
   if (module === 'Admin') return user?.role === 'platform_admin';
