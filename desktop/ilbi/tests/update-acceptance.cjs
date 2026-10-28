@@ -103,15 +103,23 @@ let running;
   const name=process.platform==='win32'?`ILBI-Setup-${build.version}-x64.exe`:`ILBI-${build.version}-linux-x64.tar.gz`;
   const release={...build,bytes:(await stat(artifact)).size,sha256:hash.digest('hex'),url:`/downloads/${build.sourceCommit}/${name}`,buildTimestamp:Date.now()};
   const key=process.platform==='win32'?'windows':'linux';
+  await running.main('process.mainModule.require("./application.cjs").updater.stop();true');
+  await wait(()=>running.main('!process.mainModule.require("./application.cjs").updater.checking'),'Initial native update check did not settle');
   await running.main(`(()=>{const r=process.mainModule.require.bind(process.mainModule),updater=r('./application.cjs').updater;updater.stop();updater.current={...updater.current,sourceCommit:'${'a'.repeat(40)}',buildTimestamp:1};updater.fetcher=async url=>url.endsWith('/releases.json')?new Response(JSON.stringify({schema:1,${key}:${JSON.stringify(release)}})):new Response(r('node:stream').Readable.toWeb(r('node:fs').createReadStream(${JSON.stringify(artifact)})));return true})()`);
-  await running.page('window.ilbiDesktop.checkForUpdates()');
-  console.log('Update QA: update notice received.');
-  await wait(()=>running.page('Boolean(document.querySelector(".desktop-update-notice>.btn"))'),'No in-app update notice');
+  const offered=await running.page('window.ilbiDesktop.checkForUpdates()');
+  assert.equal(offered.phase,'available','The real installed updater must offer the verified package');
+  assert.equal(offered.availableBuild,build.sourceCommit,'Native acceptance must install exactly the package built by this CI');
+  // This private profile intentionally has no authenticated cloud account.
+  // Daily UI reminders belong to a verified account, so login stays quiet.
+  // Authenticated reminder, dismissal and button behavior run in updates.browser.mjs.
+  assert.equal(await running.page('Boolean(document.querySelector(".desktop-update-notice"))'),false,'An unauthenticated login must not consume an account reminder');
+  console.log('Update QA: real native offer received; guest login correctly has no account reminder.');
   // Node's inspector deliberately holds process shutdown until it disconnects.
   running.main.close();
-  // This actual UI button downloads the real package and starts its real installer.
-  await running.page('document.querySelector(".desktop-update-notice>.btn").click();true');
-  console.log('Update QA: actual download and installer requested.');
+  // Invoke the installed bridge used by the reminder's button. Authentication
+  // is not mocked or bypassed to manufacture an authenticated native UI test.
+  await running.page('setTimeout(()=>window.ilbiDesktop.updateApp().catch(error=>console.error(error)),50);true');
+  console.log('Update QA: actual download and installer requested through the real native bridge.');
   await wait(()=>running.child.exitCode!==null,'Old app did not exit cleanly',240);
   assert.equal(running.child.exitCode,0);
   console.log('Update QA: old application exited cleanly.');
@@ -135,7 +143,7 @@ let running;
   await running.page('setTimeout(()=>window.close(),50);true');
   await wait(()=>running.child.exitCode!==null,'QA application did not close',180);
   assert.equal(running.child.exitCode,0);
-  console.log(`PASS installed ${process.platform} update: UI notice, real verified download, visible installer, automatic exit/relaunch, durable outbox, encrypted vault and browser drafts preserved.`);
+  console.log(`PASS installed ${process.platform} update: guest reminder exclusion, real native bridge, verified download, visible installer, automatic exit/relaunch, durable outbox, encrypted vault and browser drafts preserved. Authenticated notice/button behavior is covered separately in the browser suite.`);
 })().catch(async error=>{
   console.error(error);
   console.error('Updater state:',await status().catch(()=>({unavailable:true})));

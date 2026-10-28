@@ -1,0 +1,12 @@
+{
+  "failed_ci": "https://github.com/Abdulxadiy/ilbi/actions/runs/40741506505/job/123005345911",
+  "actual_native_result": "All4 Linux installed runtime/security/UI checks passed without skips. Configuration-preserving reinstall/relaunch passed. Updater acceptance failed because it expected an authenticated account reminder on an anonymous login.",
+  "product_contract": "Account-scoped daily reminders are intentionally hidden until the user is verified. Production auth, session locks, MFA and permission guards are unchanged.",
+  "fix": "Require no guest reminder; require the exact CI package to be offered; trigger installation through the actual installed preload/IPC bridge used by the reminder button. Wait for initial update polling to settle before installing the controlled offer. Keep real package verification, installer/relaunch, outbox, vault, draft and saved-login durability assertions.",
+  "verified_local": {
+    "authenticated_reminder_and_button": "Real Chrome browser suite: account daily reminder/dismissal/next-day/guest exclusion/button/progress/retry/cleanup pass; bridge is an explicit fixture, not native authenticated acceptance.",
+    "updater_regressions": "8 passed,0 failed,0 skipped; bounded official immutable packages, real hashes/streamed files, tamper/truncation/cache/retry behavior."
+  },
+  "required_native_gate": "Rerun installed Windows and Linux updater/installer/relaunch/durability in CI. Pending at this commit. Do not claim a native authenticated notice/button check; that behavior is covered separately with browser fixtures.",
+  "emulator_touched": false
+}

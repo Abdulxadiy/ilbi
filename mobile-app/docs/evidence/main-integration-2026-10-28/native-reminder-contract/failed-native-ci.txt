@@ -1,0 +1,38 @@
+2026-10-28T18:07:44.0822633Z ILBI o‘rnatildi. Ilovalar menyusidan ILBI’ni oching.
+2026-10-28T18:07:44.0825170Z Yoki: /tmp/ilbi-linux-package-h6DiFIvW/bin space/ilbi
+2026-10-28T18:07:59.0320813Z ✔ bundled Linux runtime migrates, isolates its database and preserves data on restart (14842.081885ms)
+2026-10-28T18:08:05.2592688Z Native security QA: private store started.
+2026-10-28T18:08:05.2593467Z Native security QA: consistent encrypted backup created and store resumed.
+2026-10-28T18:08:05.2594148Z Native security QA: encrypted backup restored and store resumed.
+2026-10-28T18:08:06.6334162Z Native security QA: daily MFA expiry blocks password-only entry and preserves outbox.
+2026-10-28T18:08:07.0930934Z ✔ installed native account unlock, durable locks and encrypted PostgreSQL restore preserve pending work (22900.574662ms)
+2026-10-28T18:08:11.9600253Z ✔ failed Linux secure storage stays retryable and public downloads still work (3995.442378ms)
+2026-10-28T18:08:11.9601381Z ✔ default installed launch opens downloads before setup, recovers a failed request and starts the encrypted store (17458.763859ms)
+2026-10-28T18:08:11.9603238Z ℹ tests 4
+2026-10-28T18:08:11.9603663Z ℹ suites 0
+2026-10-28T18:08:11.9604091Z ℹ pass 4
+2026-10-28T18:08:11.9604743Z ℹ fail 0
+2026-10-28T18:08:11.9605213Z ℹ cancelled 0
+2026-10-28T18:08:11.9605680Z ℹ skipped 0
+2026-10-28T18:08:11.9606095Z ℹ todo 0
+2026-10-28T18:08:11.9606565Z ℹ duration_ms 27844.725451
+2026-10-28T18:08:13.7104980Z ILBI o‘rnatildi. Ilovalar menyusidan ILBI’ni oching.
+2026-10-28T18:08:13.7107354Z Yoki: /tmp/ilbi-linux-package-h6DiFIvW/bin space/ilbi
+2026-10-28T18:08:18.3923882Z Installed Linux update preserves configuration and reopens the local database.
+2026-10-28T18:08:20.5997296Z Update QA: installed application and private unenrolled profile ready.
+2026-10-28T18:08:21.6021776Z Login QA: native OS encryption and guide-window access boundary verified.
+2026-10-28T18:08:22.9938203Z Login QA: remembered password restored on an ordinary locked login.
+2026-10-28T18:08:23.2769830Z Update QA: update notice received.
+2026-10-28T18:09:53.9009255Z Error: No in-app update notice
+2026-10-28T18:09:53.9010045Z     at wait (/home/runner/work/ilbi/ilbi/desktop/ilbi/tests/update-acceptance.cjs:30:119)
+2026-10-28T18:09:53.9011004Z     at async /home/runner/work/ilbi/ilbi/desktop/ilbi/tests/update-acceptance.cjs:109:3
+2026-10-28T18:09:53.9120845Z Updater state: {
+2026-10-28T18:09:53.9121424Z   phase: 'available',
+2026-10-28T18:09:53.9121970Z   installedVersion: '1.4.0',
+2026-10-28T18:09:53.9122756Z   installedBuild: '59c312f57a2ee9ca5ad5213702d7341f664fa700',
+2026-10-28T18:09:53.9123484Z   progress: null,
+2026-10-28T18:09:53.9124399Z   message: 'ILBI v1.4.0 uchun yangi tuzatishlar chiqdi. Sizdagi nusxani yangilang.',
+2026-10-28T18:09:53.9125409Z   version: '1.4.0',
+2026-10-28T18:09:53.9126160Z   availableBuild: '59c312f57a2ee9ca5ad5213702d7341f664fa700',
+2026-10-28T18:09:53.9126941Z   bytes: 224939311
+2026-10-28T18:09:53.9127360Z }
