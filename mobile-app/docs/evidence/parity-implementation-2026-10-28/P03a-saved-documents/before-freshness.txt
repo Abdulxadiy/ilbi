@@ -1,0 +1,115 @@
+FAIL tests/receipts.test.tsx
+  ● Receipt identity and payment display › a cached list snapshot cannot bypass authoritative detail loading
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    Expected: "/sales/1/", Anything
+
+    Number of calls: 0
+
+      117 |     jest.mocked(request).mockReturnValueOnce(new Promise(resolve => { finish = resolve; }));
+      118 |     const screen = await render(<ThemeProvider><ReceiptScreen /></ThemeProvider>);
+    > 119 |     expect(request).toHaveBeenCalledWith('/sales/1/', expect.anything());
+          |                     ^
+      120 |     expect(screen.queryByText('Chek #STALE')).toBeNull();
+      121 |     expect(Print.printToFileAsync).not.toHaveBeenCalled();
+      122 |     await act(async () => finish({ ...sale(1), status: 'partially_voided', refunded_amount: '20.00', net_amount: '80.00' }));
+
+      at Object.toHaveBeenCalledWith (tests/receipts.test.tsx:119:21)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● Receipt identity and payment display › export rechecks the saved sale and never prints stale totals after a return
+
+    expect(jest.fn()).toHaveBeenCalledTimes(expected)
+
+    Expected number of calls: 2
+    Received number of calls: 1
+
+      129 |     await fireEvent.press(screen.getByText('Ulashish'));
+      130 |     await fireEvent.press(screen.getByText('PDF yuklab olish'));
+    > 131 |     expect(request).toHaveBeenCalledTimes(2);
+          |                     ^
+      132 |     const html = jest.mocked(Print.printToFileAsync).mock.calls[0][0]?.html || '';
+      133 |     expect(html).toContain('Qisman qaytarilgan'); expect(html).toContain('80');
+      134 |   });
+
+      at Object.toHaveBeenCalledTimes (tests/receipts.test.tsx:131:21)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● Receipt identity and payment display › a failed authoritative recheck blocks PDF and retains a retry
+
+    expect(jest.fn()).not.toHaveBeenCalled()
+
+    Expected number of calls: 0
+    Received number of calls: 1
+
+    1: {"html": "
+        <!DOCTYPE html><html lang=\"uz\">
+          <head>
+            <meta charset=\"utf-8\" />
+            <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no\" />
+            <style>
+              @page { size: 58mm auto; margin: 2mm; }
+              * { box-sizing: border-box; overflow-wrap: anywhere; }
+              body { font-family: monospace; padding: 0; font-size: 10px; width: 100%; margin: 0; }
+              .center { text-align: center; }
+              .saved-text { white-space: pre-wrap; }
+              .bold { font-weight: bold; }
+              .row { display: flex; justify-content: space-between; margin: 4px 0; }
+              .divider { border-top: 1px dashed #000; margin: 8px 0; }
+            </style>
+          </head>
+          <body>
+            <div class=\"center bold\" style=\"font-size: 16px;\">ilbi.uz</div>
+            <div class=\"center\">—</div>······················································
+            <div class=\"center\"></div>
+            <div class=\"divider\"></div>
+            <div class=\"bold\">Chek #R&amp;1</div>·········
+            <div>Sotuvchi: —</div>
+            <div>Mijoz: Umumiy mijoz</div>
+            <div class=\"divider\"></div>·········
+              <div class=\"row\">
+                <span>Item 1</span>
+                <span>—</span>
+              </div>
+              <div style=\"font-size: 9px; color: #555;\">1.000  × 100</div>····················
+            <div class=\"divider\"></div>
+            <div class=\"row bold\" style=\"font-size: 15px;\">
+              <span>Jami:</span>
+              <span>100 so‘m</span>
+            </div>···························
+            <div class=\"row\">
+              <span>Naqd:</span>
+              <span>— so‘m</span>
+            </div>
+            <div class=\"row\">
+              <span>Qaytim:</span>
+              <span>— so‘m</span>
+            </div>
+            <div class=\"divider\"></div>·········
+            <div class=\"center\" style=\"font-size: 10px; margin-top: 10px;\">
+              Elektron savdo nusxasi. Fiskal chek emas.
+            </div>
+          </body>
+        </html>
+      ", "margins": {"bottom": 6, "left": 6, "right": 6, "top": 6}, "width": 165}
+
+      139 |     await fireEvent.press(screen.getByText('Ulashish'));
+      140 |     await fireEvent.press(screen.getByText('PDF yuklab olish'));
+    > 141 |     expect(Print.printToFileAsync).not.toHaveBeenCalled();
+          |                                        ^
+      142 |     expect(await screen.findByText('Offline')).toBeTruthy();
+      143 |   });
+      144 |
+
+      at Object.toHaveBeenCalled (tests/receipts.test.tsx:141:40)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+Test Suites: 1 failed, 1 total
+Tests:       3 failed, 13 passed, 16 total
+Snapshots:   0 total
+Time:        3.633 s, estimated 4 s
+Ran all test suites matching tests/receipts.test.tsx.

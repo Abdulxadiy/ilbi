@@ -1,0 +1,380 @@
+{
+  "success": true,
+  "numPassedTestSuites": 74,
+  "numFailedTestSuites": 0,
+  "numPassedTests": 721,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "suites": [
+    {
+      "name": "tests/receipts.test.tsx",
+      "status": "passed",
+      "tests": 22
+    },
+    {
+      "name": "tests/coreReadiness.test.tsx",
+      "status": "passed",
+      "tests": 11
+    },
+    {
+      "name": "tests/login.test.tsx",
+      "status": "passed",
+      "tests": 13
+    },
+    {
+      "name": "tests/employees.test.tsx",
+      "status": "passed",
+      "tests": 19
+    },
+    {
+      "name": "tests/debts.test.tsx",
+      "status": "passed",
+      "tests": 19
+    },
+    {
+      "name": "tests/pagedScreens.test.tsx",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "name": "tests/inventoryOperations.test.tsx",
+      "status": "passed",
+      "tests": 7
+    },
+    {
+      "name": "tests/customers.test.tsx",
+      "status": "passed",
+      "tests": 18
+    },
+    {
+      "name": "tests/customerImportScreen.test.tsx",
+      "status": "passed",
+      "tests": 7
+    },
+    {
+      "name": "tests/storeSettingsScreen.test.tsx",
+      "status": "passed",
+      "tests": 5
+    },
+    {
+      "name": "tests/supportScreen.test.tsx",
+      "status": "passed",
+      "tests": 9
+    },
+    {
+      "name": "tests/components.test.tsx",
+      "status": "passed",
+      "tests": 7
+    },
+    {
+      "name": "tests/cartPrice.test.tsx",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "name": "tests/productEditor.test.tsx",
+      "status": "passed",
+      "tests": 7
+    },
+    {
+      "name": "tests/salesHistory.test.tsx",
+      "status": "passed",
+      "tests": 6
+    },
+    {
+      "name": "tests/checkout.test.tsx",
+      "status": "passed",
+      "tests": 9
+    },
+    {
+      "name": "tests/checkoutQuote.test.tsx",
+      "status": "passed",
+      "tests": 3
+    },
+    {
+      "name": "tests/cashboxScreen.test.tsx",
+      "status": "passed",
+      "tests": 5
+    },
+    {
+      "name": "tests/b2bScreen.test.tsx",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "name": "tests/categories.test.tsx",
+      "status": "passed",
+      "tests": 5
+    },
+    {
+      "name": "tests/debtAdjustmentSheet.test.tsx",
+      "status": "passed",
+      "tests": 6
+    },
+    {
+      "name": "tests/setupAccount.test.tsx",
+      "status": "passed",
+      "tests": 19
+    },
+    {
+      "name": "tests/updatesProvider.test.tsx",
+      "status": "passed",
+      "tests": 5
+    },
+    {
+      "name": "tests/notificationScreen.test.tsx",
+      "status": "passed",
+      "tests": 5
+    },
+    {
+      "name": "tests/syncScreen.test.tsx",
+      "status": "passed",
+      "tests": 2
+    },
+    {
+      "name": "tests/client.test.ts",
+      "status": "passed",
+      "tests": 16
+    },
+    {
+      "name": "tests/updatesPreview.test.tsx",
+      "status": "passed",
+      "tests": 1
+    },
+    {
+      "name": "tests/gates.test.tsx",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "name": "tests/scanner.test.tsx",
+      "status": "passed",
+      "tests": 7
+    },
+    {
+      "name": "tests/cartPersistence.test.tsx",
+      "status": "passed",
+      "tests": 11
+    },
+    {
+      "name": "tests/customerImport.test.ts",
+      "status": "passed",
+      "tests": 21
+    },
+    {
+      "name": "tests/multipartCompatibility.test.ts",
+      "status": "passed",
+      "tests": 5
+    },
+    {
+      "name": "tests/securityPresentation.test.tsx",
+      "status": "passed",
+      "tests": 21
+    },
+    {
+      "name": "tests/financialIdentity.test.ts",
+      "status": "passed",
+      "tests": 23
+    },
+    {
+      "name": "tests/pushProvider.test.tsx",
+      "status": "passed",
+      "tests": 10
+    },
+    {
+      "name": "tests/auth.test.tsx",
+      "status": "passed",
+      "tests": 10
+    },
+    {
+      "name": "tests/cart.test.tsx",
+      "status": "passed",
+      "tests": 5
+    },
+    {
+      "name": "tests/cashbox.test.ts",
+      "status": "passed",
+      "tests": 13
+    },
+    {
+      "name": "tests/debtQuote.test.ts",
+      "status": "passed",
+      "tests": 40
+    },
+    {
+      "name": "tests/outbox.test.ts",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "name": "tests/supportFeed.test.tsx",
+      "status": "passed",
+      "tests": 3
+    },
+    {
+      "name": "tests/customerImportFiles.test.ts",
+      "status": "passed",
+      "tests": 8
+    },
+    {
+      "name": "tests/inventoryCommands.test.ts",
+      "status": "passed",
+      "tests": 11
+    },
+    {
+      "name": "tests/debtAdjustments.test.ts",
+      "status": "passed",
+      "tests": 14
+    },
+    {
+      "name": "tests/debtCommands.test.ts",
+      "status": "passed",
+      "tests": 19
+    },
+    {
+      "name": "tests/b2b.test.ts",
+      "status": "passed",
+      "tests": 13
+    },
+    {
+      "name": "tests/saleVoid.test.ts",
+      "status": "passed",
+      "tests": 14
+    },
+    {
+      "name": "tests/permissions.test.ts",
+      "status": "passed",
+      "tests": 9
+    },
+    {
+      "name": "tests/imageUpload.test.ts",
+      "status": "passed",
+      "tests": 7
+    },
+    {
+      "name": "tests/reconcile.test.ts",
+      "status": "passed",
+      "tests": 7
+    },
+    {
+      "name": "tests/pushRegistration.test.ts",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "name": "tests/notifications.test.tsx",
+      "status": "passed",
+      "tests": 6
+    },
+    {
+      "name": "tests/quote.test.ts",
+      "status": "passed",
+      "tests": 9
+    },
+    {
+      "name": "tests/recordStore.test.ts",
+      "status": "passed",
+      "tests": 2
+    },
+    {
+      "name": "tests/supportFoundation.test.ts",
+      "status": "passed",
+      "tests": 9
+    },
+    {
+      "name": "tests/storeSettings.test.ts",
+      "status": "passed",
+      "tests": 22
+    },
+    {
+      "name": "tests/pagination.test.tsx",
+      "status": "passed",
+      "tests": 5
+    },
+    {
+      "name": "tests/resources.test.tsx",
+      "status": "passed",
+      "tests": 5
+    },
+    {
+      "name": "tests/installedVersion.test.ts",
+      "status": "passed",
+      "tests": 2
+    },
+    {
+      "name": "tests/money.test.ts",
+      "status": "passed",
+      "tests": 22
+    },
+    {
+      "name": "tests/quantity.test.ts",
+      "status": "passed",
+      "tests": 10
+    },
+    {
+      "name": "tests/catalogModel.test.ts",
+      "status": "passed",
+      "tests": 5
+    },
+    {
+      "name": "tests/debtAdjustmentModel.test.ts",
+      "status": "passed",
+      "tests": 24
+    },
+    {
+      "name": "tests/backendContracts.test.ts",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "name": "tests/documents.test.ts",
+      "status": "passed",
+      "tests": 24
+    },
+    {
+      "name": "tests/updates.test.ts",
+      "status": "passed",
+      "tests": 6
+    },
+    {
+      "name": "tests/drafts.test.ts",
+      "status": "passed",
+      "tests": 9
+    },
+    {
+      "name": "tests/theme.test.tsx",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "name": "tests/serverScope.test.tsx",
+      "status": "passed",
+      "tests": 1
+    },
+    {
+      "name": "tests/validation.test.ts",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "name": "tests/debtFilters.test.ts",
+      "status": "passed",
+      "tests": 17
+    },
+    {
+      "name": "tests/profile.test.ts",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "name": "tests/activityNotificationTargets.test.ts",
+      "status": "passed",
+      "tests": 5
+    },
+    {
+      "name": "tests/supportContracts.test.ts",
+      "status": "passed",
+      "tests": 1
+    }
+  ]
+}

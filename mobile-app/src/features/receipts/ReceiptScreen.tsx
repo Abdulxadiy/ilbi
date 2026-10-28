@@ -1,11 +1,11 @@
 import { useFeedback } from '../../hooks/useFeedback';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../auth/AuthContext';
-import { getServerScope } from '../../api/environment';
-import React, { useEffect, useState } from 'react';
+import { getApiBaseUrl, getServerScope } from '../../api/environment';
+import React, { useCallback, useRef, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { useAppNavigation as useNavigation, getReceiptSnapshot } from '../../navigation/useAppNavigation';
-import { useLocalSearchParams } from 'expo-router';
+import { useAppNavigation as useNavigation } from '../../navigation/useAppNavigation';
+import { useFocusEffect, useLocalSearchParams } from 'expo-router';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import { Copy, Download, FileCheck, FileText, Printer, Share2 } from 'lucide-react-native';
@@ -16,9 +16,13 @@ import { Toast } from '../../components/ui/Toast';
 import { IlbiLogo } from '../../components/brand/IlbiLogo';
 import { useTheme } from '../../theme/ThemeContext';
 import { radius, spacing, typography } from '../../theme/tokens';
-import { request } from '../../api/client';
+import { assertAuthScope, captureAuthScope, request } from '../../api/client';
 import * as Clipboard from 'expo-clipboard';
-import { escapeReceiptHtml, receiptMoney, receiptView } from './receiptModel';
+import { receiptMoney, receiptView } from './receiptModel';
+import { documentDate, documentHtml, documentPrintOptions, invoiceTitle, parseDocumentSale, publicReceiptUrl, DocumentFormat } from './documentModel';
+import type { SavedSale } from '../sales/model';
+import { saleStatuses } from '../sales/model';
+import { observeResource } from '../../api/invalidation';
 
 export const ReceiptScreen: React.FC = () => {
   const params = useLocalSearchParams<{ saleId?: string; mode?: string }>();
@@ -30,161 +34,95 @@ const ReceiptBody: React.FC<{ params: { saleId?: string; mode?: string } }> = ({
   const validId = typeof params.saleId === 'string' && /^[1-9]\d*$/.test(params.saleId) && Number.isSafeInteger(Number(params.saleId));
   const { colors } = useTheme();
 
-  const [saleRecord, setSaleRecord] = useState<any>(() => {
-    const cached = getReceiptSnapshot();
-    return cached && String(cached.id) === params.saleId ? cached : null;
-  });
+  const [saleRecord, setSaleRecord] = useState<SavedSale | null>(null);
   const [loadError, setLoadError] = useState(validId ? '' : 'Chek raqami noto‘g‘ri yoki ko‘rsatilmagan.');
-  const [attempt, setAttempt] = useState(0);
-  useEffect(() => {
+  const reloadRef = useRef<() => void>(() => {});
+  const [pdfReady, setPdfReady] = useState(false);
+  const [format, setFormat] = useState<DocumentFormat>(params.mode === 'InvoiceA4' ? 'a4' : 'receipt');
+  const [busy, setBusy] = useState(false), busyRef = useRef(false), mounted = useRef(false), focusEpoch = useRef(0), loadSequence = useRef(0);
+  const { user, activeTenant } = useAuth();
+  const [scope] = useState(() => captureAuthScope(user?.id, activeTenant?.id));
+  const freshSale = useCallback(async (signal?: AbortSignal) => {
+    const epoch = focusEpoch.current;
+    assertAuthScope(scope);
+    const value = await request('/sales/' + params.saleId + '/', { signal, expectedServerScope: scope.server });
+    assertAuthScope(scope);
+    if (!mounted.current || epoch !== focusEpoch.current || signal?.aborted) throw Error('Hujjat oynasi yopilgan.');
+    return parseDocumentSale(value, Number(params.saleId));
+  }, [params.saleId, scope]);
+  useFocusEffect(useCallback(() => {
+    mounted.current = true; focusEpoch.current++;
     const abort = new AbortController();
-    if (!saleRecord && validId) {
-      void Promise.resolve().then(async () => {
-        if (abort.signal.aborted) return;
-        setLoadError('');
-        try {
-          const value = await request('/sales/' + params.saleId + '/', { signal: abort.signal });
-          if (abort.signal.aborted) return;
-          if (!value || String(value.id) !== params.saleId) throw Error('Server so‘ralgan chekni tasdiqlamadi.');
-          setSaleRecord(value);
-        } catch (error: any) { if (!abort.signal.aborted) setLoadError(error.message || 'Chek yuklanmadi.'); }
-      });
-    }
-    return () => abort.abort();
-  }, [params.saleId, validId, saleRecord, attempt]);
-  const sale = saleRecord || { items: [], total_amount: 0 };
+    const load = async () => {
+      const sequence = ++loadSequence.current;
+      setSaleRecord(null); setPdfReady(false);
+      if (!validId) return;
+      setLoadError('');
+      try { const value = await freshSale(abort.signal); if (!abort.signal.aborted && sequence === loadSequence.current) setSaleRecord(value); }
+      catch (error: any) { if (!abort.signal.aborted && sequence === loadSequence.current) setLoadError(error.message || 'Chek yuklanmadi.'); }
+    };
+    reloadRef.current = () => { void load(); };
+    void load();
+    const unsubscribe = observeResource('/sales/', () => { void load(); });
+    return () => { mounted.current = false; focusEpoch.current++; loadSequence.current++; abort.abort(); unsubscribe(); };
+  }, [freshSale, validId]));
+  const sale: Partial<SavedSale> = saleRecord || { items: [], total_amount: '0.00' };
   const savedReceipt = receiptView(sale), receiptItems = savedReceipt.items;
   const currencyLabel = sale.currency === 'USD' ? 'USD' : sale.currency === 'UZS' || !sale.currency ? 'so‘m' : String(sale.currency);
-  const statusLabel = ({ completed: 'Yakunlangan', voided: 'Bekor qilingan', partially_voided: 'Qisman qaytarilgan', b2b_pending: 'B2B: qabul kutilmoqda', b2b_rejected: 'B2B: rad etilgan', b2b_accepted: 'B2B: qabul qilingan', b2b_partially_accepted: 'B2B: qisman qabul qilingan', b2b_cancelled: 'B2B: bekor qilingan', b2b_return_pending: 'B2B: qaytarish kutilmoqda' } as Record<string, string>)[sale.status] || sale.status || '';
-  const paymentLabel = ({ cash: 'Naqd', card: 'Karta', debt: 'Nasiya' } as Record<string, string>)[sale.payment_type] || 'To‘lov';
+  const statusLabel = saleRecord ? saleStatuses[saleRecord.status] : '';
+  const paymentLabel = ({ cash: 'Naqd', card: 'Karta', debt: 'Nasiya' } as Record<string, string>)[sale.payment_type || ''] || 'To‘lov';
   const paymentAmount = sale.payment_type === 'cash' ? sale.cash_received : sale.total_amount;
-  const publicToken = typeof sale.public_token === 'string' && /^[A-Za-z0-9_-]{40,64}$/.test(sale.public_token) ? sale.public_token : null;
-  const receiptUrl = publicToken && !sale._preview ? 'https://ilbi.uz/r/' + publicToken : null;
-  const escapeHtml = escapeReceiptHtml;
 
   const [showShareModal, setShowShareModal] = useState(params.mode === 'ShareSheet' || params.mode === 'PdfExport');
-  const [pdfReady, setPdfReady] = useState(false);
   const { message: toastMessage, type: toastType, show: setToastMessage } = useFeedback();
-  const [pdfUri, setPdfUri] = useState<string | null>(null);
 
-  const generateHtml = () => `
-    <!DOCTYPE html><html lang="uz">
-      <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
-        <style>
-          @page { size: ${savedReceipt.paperWidth} auto; margin: 2mm; }
-          * { box-sizing: border-box; overflow-wrap: anywhere; }
-          body { font-family: monospace; padding: 0; font-size: 10px; width: 100%; margin: 0; }
-          .center { text-align: center; }
-          .saved-text { white-space: pre-wrap; }
-          .bold { font-weight: bold; }
-          .row { display: flex; justify-content: space-between; margin: 4px 0; }
-          .divider { border-top: 1px dashed #000; margin: 8px 0; }
-        </style>
-      </head>
-      <body>
-        <div class="center bold" style="font-size: 16px;">ilbi.uz</div>
-        <div class="center">${escapeHtml(savedReceipt.storeName || '—')}</div>
-        ${savedReceipt.sellerName ? `<div class="center">${escapeHtml(savedReceipt.sellerName)}</div>` : ''}
-        ${savedReceipt.sellerTaxIdentifier ? `<div class="center">STIR: ${escapeHtml(savedReceipt.sellerTaxIdentifier)}</div>` : ''}
-        ${savedReceipt.storeCode ? `<div class="center">Do‘kon: ${escapeHtml(savedReceipt.storeCode)}</div>` : ''}
-        ${savedReceipt.address ? `<div class="center saved-text">${escapeHtml(savedReceipt.address)}</div>` : ''}
-        ${savedReceipt.phone ? `<div class="center">${escapeHtml(savedReceipt.phone)}</div>` : ''}
-        ${savedReceipt.header ? `<div class="center saved-text">${escapeHtml(savedReceipt.header)}</div>` : ''}
-        <div class="center">${escapeHtml(sale.created_at || '')}</div>
-        <div class="divider"></div>
-        <div class="bold">Chek #${escapeHtml(sale.receipt_number || sale.id || '—')}</div>
-        ${statusLabel ? `<div>Holat: ${escapeHtml(statusLabel)}</div>` : ''}
-        ${savedReceipt.showCashier ? `<div>Sotuvchi: ${escapeHtml(sale.sold_by_name || '—')}</div>` : ''}
-        ${savedReceipt.showCustomer ? `<div>Mijoz: ${escapeHtml(sale.counterparty_name || 'Umumiy mijoz')}</div>` : ''}
-        <div class="divider"></div>
-        ${receiptItems.map(
-          (item: any) => `
-          <div class="row">
-            <span>${escapeHtml(item.productName)}</span>
-            <span>${escapeHtml(item.lineTotal)}</span>
-          </div>
-          <div style="font-size: 9px; color: #555;">${escapeHtml(item.quantity)} ${escapeHtml(item.unit)} × ${escapeHtml(item.unitPrice)}</div>
-          ${savedReceipt.showItemTax && item.taxAmount !== '—' ? `<div>QQS${item.taxRate !== '—' ? ' ' + escapeHtml(item.taxRate) + '%' : ''}: ${escapeHtml(item.taxAmount)} ${escapeHtml(currencyLabel)}</div>` : ''}
-        `
-        ).join('')}
-        <div class="divider"></div>
-        <div class="row bold" style="font-size: 15px;">
-          <span>Jami:</span>
-          <span>${receiptMoney(sale.total_amount)} ${escapeHtml(currencyLabel)}</span>
-        </div>
-        ${Number(sale.tax_amount) > 0 ? `<div class="row"><span>QQS:</span><span>${Number(sale.tax_amount).toLocaleString('ru-RU')} ${escapeHtml(currencyLabel)}</span></div>` : ''}
-        ${Number(sale.refunded_amount) > 0 ? `<div class="row"><span>Qaytarilgan:</span><span>${Number(sale.refunded_amount).toLocaleString('ru-RU')} ${escapeHtml(currencyLabel)}</span></div>` : ''}
-        ${Number(sale.refunded_amount) > 0 && sale.net_amount != null ? `<div class="row"><span>Qolgan summa:</span><span>${Number(sale.net_amount).toLocaleString('ru-RU')} ${escapeHtml(currencyLabel)}</span></div>` : ''}
-        <div class="row">
-          <span>${paymentLabel}:</span>
-          <span>${paymentAmount == null ? '—' : Number(paymentAmount).toLocaleString('ru-RU')} ${escapeHtml(currencyLabel)}</span>
-        </div>
-        ${sale.payment_type === 'cash' ? `<div class="row">
-          <span>Qaytim:</span>
-          <span>${sale.change == null ? '—' : Number(sale.change).toLocaleString('ru-RU')} ${escapeHtml(currencyLabel)}</span>
-        </div>` : ''}
-        <div class="divider"></div>
-        ${savedReceipt.footer ? `<div class="center saved-text">${escapeHtml(savedReceipt.footer)}</div>` : ''}
-        <div class="center" style="font-size: 10px; margin-top: 10px;">
-          Elektron savdo nusxasi. Fiskal chek emas.
-        </div>
-      </body>
-    </html>
-  `;
-
-  // Real PDF generation using expo-print
-  const handleExportPdf = async () => {
-    setShowShareModal(false);
-    try {
-      const { uri } = await Print.printToFileAsync({ html: generateHtml(), width: savedReceipt.pdfWidth, margins: { left: 6, right: 6, top: 6, bottom: 6 } });
-      setPdfUri(uri);
-      setPdfReady(true);
-      setToastMessage('PDF tayyorlandi (vaqtinchalik fayl)', 'success');
-    } catch {
-      setPdfReady(false);
-      setToastMessage('PDF yaratilmadi. Native ilovadagi eksportni tekshiring.', 'error');
-    }
+  // Every external action rechecks the selected transaction, even after an earlier PDF.
+  // A completed native chooser does not prove a file was saved or physically printed.
+  const action = async (run: (current: SavedSale, check: () => void) => Promise<void>) => {
+    if (busyRef.current) return;
+    const epoch = focusEpoch.current;
+    const sequence = ++loadSequence.current;
+    const check = () => { assertAuthScope(scope); if (!mounted.current || epoch !== focusEpoch.current || sequence !== loadSequence.current) throw Error('Hujjat o‘zgargan. Qayta tekshiring.'); };
+    busyRef.current = true; setBusy(true); setLoadError(''); setPdfReady(false);
+    try { const current = await freshSale(); check(); setSaleRecord(current); await run(current, check); }
+    catch (error: any) { if (mounted.current && epoch === focusEpoch.current) { setPdfReady(false); setLoadError(error.message || 'Hujjat amali bajarilmadi.'); } }
+    finally { busyRef.current = false; if (mounted.current) setBusy(false); }
   };
-
-  const handlePrint = async () => {
-    try {
-      await Print.printAsync({ html: generateHtml(), width: savedReceipt.pdfWidth });
-    } catch {
-      setToastMessage('Chop etish bekor qilindi');
-    }
+  const createPdf = async (current: SavedSale, check: () => void) => {
+    check();
+    const result = await Print.printToFileAsync({ html: documentHtml(current, format), ...documentPrintOptions(current, format) });
+    check();
+    if (!result?.uri || !result.uri.startsWith('file://')) throw Error('PDF fayl yaratilgani tasdiqlanmadi.');
+    setPdfReady(true); return result.uri;
   };
-
-  const handleNativeShare = async () => {
-    setShowShareModal(false);
-    try {
-      if (pdfUri && (await Sharing.isAvailableAsync())) {
-        await Sharing.shareAsync(pdfUri);
-      } else {
-        setToastMessage('Avval PDF yarating. Ushbu platformada fayl ulashish mavjudligini tekshiring.');
-      }
-    } catch {
-      setToastMessage('Ulashish bekor qilindi');
-    }
-  };
-
-  const handleCopyLink = async () => {
-    setShowShareModal(false);
-    if (!receiptUrl) { setToastMessage('Bu chek uchun tasdiqlangan ochiq havola hali yo‘q'); return; }
-    try { await Clipboard.setStringAsync(receiptUrl); setToastMessage('Chek havolasi nusxalandi'); }
-    catch { setToastMessage('Havolani nusxalab bo‘lmadi', 'error'); }
-  };
+  const handleExportPdf = () => { setShowShareModal(false); return action(async (current, check) => {
+    await createPdf(current, check); setToastMessage('PDF tayyorlandi (vaqtinchalik fayl)', 'success');
+  }); };
+  const handlePrint = () => action(async (current, check) => {
+    await Print.printAsync({ html: documentHtml(current, format), ...documentPrintOptions(current, format) });
+    check(); setToastMessage('Chop etish oynasi ochildi.');
+  });
+  const handleNativeShare = () => { setShowShareModal(false); return action(async (current, check) => {
+    if (!await Sharing.isAvailableAsync()) throw Error('Bu qurilmada fayl ulashish mavjud emas.');
+    check();
+    const uri = await createPdf(current, check);
+    await Sharing.shareAsync(uri, { mimeType: 'application/pdf', UTI: 'com.adobe.pdf', dialogTitle: format === 'a4' ? 'A4 fakturani ulashish' : 'Chekni ulashish' });
+  }); };
+  const handleCopyLink = () => { setShowShareModal(false); return action(async (current, check) => {
+    const url = publicReceiptUrl(current, getApiBaseUrl());
+    if (!url) throw Error('Bu serverda tasdiqlangan ochiq chek havolasi mavjud emas.');
+    check(); await Clipboard.setStringAsync(url); check(); setToastMessage('Chek havolasi nusxalandi');
+  }); };
   if (!saleRecord) return <View style={{ flex: 1, padding: 24, backgroundColor: colors.background }}>
     <Button title="Orqaga" onPress={() => navigation.goBack()} />
     <Text accessibilityRole={loadError ? 'alert' : undefined} style={{ color: loadError ? colors.danger : colors.text }}>{loadError || 'Chek ma’lumotlari yuklanmoqda…'}</Text>
-    {loadError && validId ? <Button title="Chekni qayta yuklash" onPress={() => setAttempt(value => value + 1)} /> : null}
+    {loadError && validId ? <Button title="Chekni qayta yuklash" onPress={() => reloadRef.current()} /> : null}
   </View>;
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <ScreenHeader
-        title={pdfReady ? 'PDF tayyor' : `Chek #${sale.receipt_number || sale.id || '—'}`}
+        title={pdfReady ? 'PDF tayyor' : format === 'a4' ? 'Savdo hujjati' : `Chek #${sale.receipt_number || sale.id || '—'}`}
         showLogo={false}
         onGoBack={() => {
           if (pdfReady) setPdfReady(false);
@@ -200,6 +138,11 @@ const ReceiptBody: React.FC<{ params: { saleId?: string; mode?: string } }> = ({
       />
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
+        {loadError ? <Text accessibilityRole="alert" style={{ color: colors.danger, marginBottom: 12 }}>{loadError}</Text> : null}
+        {busy ? <Text style={{ color: colors.textSecondary }}>Hujjat tekshirilmoqda…</Text> : null}
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
+          {(['receipt', 'a4'] as const).map(value => <Button key={value} title={value === 'a4' ? 'A4 faktura' : 'Kassa cheki'} disabled={busy} variant={format === value ? 'primary' : 'secondary'} size="sm" onPress={() => { setFormat(value); setPdfReady(false); }} />)}
+        </View>
         {pdfReady ? (
           /* Board 26C: PDF Tayyor Screen */
           <View style={styles.pdfReadyContainer}>
@@ -215,7 +158,7 @@ const ReceiptBody: React.FC<{ params: { saleId?: string; mode?: string } }> = ({
               </View>
               <View style={styles.pdfFileDetails}>
                 <Text style={[styles.pdfFileName, { color: colors.text }]}>
-                  Chek-{sale.receipt_number || sale.id || '—'}.pdf
+                  {format === 'a4' ? 'Faktura' : 'Chek'}-{sale.receipt_number || sale.id || '—'}.pdf
                 </Text>
                 <Text style={[styles.pdfFileSize, { color: colors.textSecondary }]}>
                   PDF hujjat • vaqtinchalik fayl
@@ -229,7 +172,7 @@ const ReceiptBody: React.FC<{ params: { saleId?: string; mode?: string } }> = ({
               <View style={styles.miniReceiptTop}>
                 <IlbiLogo height={16} monochromeColor="#0B0909" />
                 <Text style={styles.miniStoreName}>{savedReceipt.storeName || '—'}</Text>
-                <Text style={styles.miniDate}>{sale.created_at ? new Date(sale.created_at).toLocaleString('uz-UZ') : '—'}</Text>
+                <Text style={styles.miniDate}>{sale.created_at ? documentDate(sale.created_at) : '—'}</Text>
               </View>
 
               <View style={styles.miniDivider} />
@@ -238,7 +181,7 @@ const ReceiptBody: React.FC<{ params: { saleId?: string; mode?: string } }> = ({
                 {receiptItems.map((item, index) => <Text key={index} style={styles.miniItemRow}>{item.productName}  {item.lineTotal}</Text>)}
               </View>
               <View style={styles.miniDivider} />
-              <Text style={styles.miniTotal}>Jami: {Number(sale.total_amount).toLocaleString('ru-RU')} {currencyLabel}</Text>
+              <Text style={styles.miniTotal}>Jami: {receiptMoney(sale.total_amount)} {currencyLabel}</Text>
             </View>
 
             {/* Action Buttons (Board 26C) */}
@@ -247,13 +190,13 @@ const ReceiptBody: React.FC<{ params: { saleId?: string; mode?: string } }> = ({
                 title="PDFni ulashish"
                 variant="secondary"
                 icon={<FileText size={18} color={colors.text} />}
-                onPress={handleNativeShare}
+                disabled={busy} onPress={() => { void handleNativeShare(); } }
                 style={{ flex: 1, marginRight: spacing.sm }}
               />
               <Button
                 title="Ulashish"
                 icon={<Share2 size={18} color={colors.primaryActionText} />}
-                onPress={handleNativeShare}
+                disabled={busy} onPress={() => { void handleNativeShare(); } }
                 style={{ flex: 1 }}
               />
             </View>
@@ -263,7 +206,7 @@ const ReceiptBody: React.FC<{ params: { saleId?: string; mode?: string } }> = ({
               variant="secondary"
               icon={<Printer size={18} color={colors.text} />}
               fullWidth
-              onPress={handlePrint}
+              disabled={busy} onPress={() => { void handlePrint(); } }
               style={{ marginTop: spacing.md }}
             />
           </View>
@@ -276,15 +219,18 @@ const ReceiptBody: React.FC<{ params: { saleId?: string; mode?: string } }> = ({
               <View style={styles.receiptHeader}>
                 <IlbiLogo height={22} monochromeColor="#0B0909" />
                 <Text style={styles.receiptStoreTitle}>{savedReceipt.storeName || '—'}</Text>
+                {format === 'a4' && saleRecord ? <Text style={styles.receiptStoreTitle}>{invoiceTitle(saleRecord)}</Text> : null}
                 {savedReceipt.sellerName ? <Text style={styles.receiptTimestamp}>{savedReceipt.sellerName}</Text> : null}
                 {savedReceipt.sellerTaxIdentifier ? <Text style={styles.receiptTimestamp}>STIR: {savedReceipt.sellerTaxIdentifier}</Text> : null}
                 {savedReceipt.storeCode ? <Text style={styles.receiptTimestamp}>Do‘kon: {savedReceipt.storeCode}</Text> : null}
                 {savedReceipt.address ? <Text style={styles.receiptTimestamp}>{savedReceipt.address}</Text> : null}
                 {savedReceipt.phone ? <Text style={styles.receiptTimestamp}>{savedReceipt.phone}</Text> : null}
                 {savedReceipt.header ? <Text style={styles.receiptTimestamp}>{savedReceipt.header}</Text> : null}
-                <Text style={styles.receiptTimestamp}>{sale.created_at ? new Date(sale.created_at).toLocaleString('uz-UZ') : '—'}</Text>
+                <Text style={styles.receiptTimestamp}>{sale.created_at ? documentDate(sale.created_at) : '—'}</Text>
               </View>
 
+              {!savedReceipt.hasSnapshot ? <Text style={styles.receiptTimestamp}>Eski hujjat: sotuv paytidagi do‘kon rekvizitlari saqlanmagan.</Text> : null}
+              {format === 'a4' ? <Text style={styles.receiptTimestamp}>Hali imzolanmagan · asl qatorlar va qaytarish alohida ko‘rsatilgan.</Text> : null}
               {savedReceipt.showCashier ? <Text style={styles.receiptTimestamp}>Sotuvchi: {sale.sold_by_name || '—'}</Text> : null}
               {savedReceipt.showCustomer ? <Text style={styles.receiptTimestamp}>Mijoz: {sale.counterparty_name || 'Umumiy mijoz'}</Text> : null}
 
@@ -294,8 +240,10 @@ const ReceiptBody: React.FC<{ params: { saleId?: string; mode?: string } }> = ({
               <View style={styles.receiptItemsList}>
                 {receiptItems.map((item, index) => (
                   <View key={index} style={styles.receiptItemRow}>
-                    <View>
+                    <View style={{ flex: 1, paddingRight: 8 }}>
                       <Text style={styles.receiptItemName}>{item.productName}</Text>
+                      {[item.variantName, item.code && 'Kod: ' + item.code, item.sku && 'SKU: ' + item.sku, item.barcode && 'Shtrix-kod: ' + item.barcode, item.mxik && 'MXIK: ' + item.mxik, item.packageCode && 'Qadoq: ' + item.packageCode].filter(Boolean).map((line, key) => <Text key={key} style={styles.receiptItemCalc}>{line}</Text>)}
+                      {Number(item.returnedQuantity) > 0 ? <Text style={styles.receiptItemCalc}>Qaytarilgan miqdor: {item.returnedQuantity}</Text> : null}
                       <Text style={styles.receiptItemCalc}>
                         {item.quantity} {item.unit} × {item.unitPrice}
                       </Text>
@@ -314,25 +262,25 @@ const ReceiptBody: React.FC<{ params: { saleId?: string; mode?: string } }> = ({
               <View style={styles.receiptTotalRow}>
                 <Text style={styles.receiptTotalLabel}>Jami:</Text>
                 <Text style={styles.receiptTotalValue}>
-                  {Number(sale.total_amount ?? 0).toLocaleString('ru-RU')} {currencyLabel}
+                  {receiptMoney(sale.total_amount)} {currencyLabel}
                 </Text>
               </View>
 
               {statusLabel ? <View style={styles.receiptSubRow}><Text style={styles.receiptSubLabel}>Holat:</Text><Text style={styles.receiptSubValue}>{statusLabel}</Text></View> : null}
-              {Number(sale.tax_amount) > 0 ? <View style={styles.receiptSubRow}><Text style={styles.receiptSubLabel}>QQS:</Text><Text style={styles.receiptSubValue}>{Number(sale.tax_amount).toLocaleString('ru-RU')} {currencyLabel}</Text></View> : null}
-              {Number(sale.refunded_amount) > 0 ? <View style={styles.receiptSubRow}><Text style={styles.receiptSubLabel}>Qaytarilgan:</Text><Text style={styles.receiptSubValue}>{Number(sale.refunded_amount).toLocaleString('ru-RU')} {currencyLabel}</Text></View> : null}
-              {Number(sale.refunded_amount) > 0 && sale.net_amount != null ? <View style={styles.receiptSubRow}><Text style={styles.receiptSubLabel}>Qolgan summa:</Text><Text style={styles.receiptSubValue}>{Number(sale.net_amount).toLocaleString('ru-RU')} {currencyLabel}</Text></View> : null}
+              {Number(sale.tax_amount) > 0 ? <View style={styles.receiptSubRow}><Text style={styles.receiptSubLabel}>QQS:</Text><Text style={styles.receiptSubValue}>{receiptMoney(sale.tax_amount)} {currencyLabel}</Text></View> : null}
+              {Number(sale.refunded_amount) > 0 ? <View style={styles.receiptSubRow}><Text style={styles.receiptSubLabel}>Qaytarilgan:</Text><Text style={styles.receiptSubValue}>{receiptMoney(sale.refunded_amount)} {currencyLabel}</Text></View> : null}
+              {Number(sale.refunded_amount) > 0 && sale.net_amount != null ? <View style={styles.receiptSubRow}><Text style={styles.receiptSubLabel}>Qolgan summa:</Text><Text style={styles.receiptSubValue}>{receiptMoney(sale.net_amount)} {currencyLabel}</Text></View> : null}
               <View style={styles.receiptSubRow}>
                 <Text style={styles.receiptSubLabel}>{paymentLabel}:</Text>
                 <Text style={styles.receiptSubValue}>
-                  {paymentAmount == null ? '—' : Number(paymentAmount).toLocaleString('ru-RU')} {currencyLabel}
+                  {paymentAmount == null ? '—' : receiptMoney(paymentAmount)} {currencyLabel}
                 </Text>
               </View>
 
               {sale.payment_type === 'cash' && <View style={styles.receiptSubRow}>
                 <Text style={styles.receiptSubLabel}>Qaytim:</Text>
                 <Text style={styles.receiptSubValue}>
-                  {sale.change == null ? '—' : Number(sale.change).toLocaleString('ru-RU')} {currencyLabel}
+                  {sale.change == null ? '—' : receiptMoney(sale.change)} {currencyLabel}
                 </Text>
               </View>}
 
@@ -359,7 +307,7 @@ const ReceiptBody: React.FC<{ params: { saleId?: string; mode?: string } }> = ({
                 title="Chop etish"
                 variant="secondary"
                 icon={<Printer size={18} color={colors.text} />}
-                onPress={handlePrint}
+                disabled={busy} onPress={() => { void handlePrint(); } }
                 style={{ flex: 1, marginRight: spacing.sm }}
               />
               <Button
@@ -381,20 +329,20 @@ const ReceiptBody: React.FC<{ params: { saleId?: string; mode?: string } }> = ({
       >
         <View style={styles.shareSheetContent}>
           <Text style={[styles.shareHeaderMeta, { color: colors.textSecondary }]}>
-            Chek #{sale.receipt_number || sale.id || '—'} • {Number(sale.total_amount ?? 0).toLocaleString('ru-RU')} {currencyLabel}
+            Chek #{sale.receipt_number || sale.id || '—'} • {receiptMoney(sale.total_amount)} {currencyLabel}
           </Text>
 
           {/* Option 1: PDF yuklab olish */}
           <TouchableOpacity accessibilityRole="button"
             activeOpacity={0.7}
-            onPress={handleExportPdf}
+            disabled={busy} onPress={() => { void handleExportPdf(); } }
             style={[styles.shareOptionCard, { backgroundColor: colors.surfaceSecondary, borderColor: colors.border }]}
           >
             <Download size={22} color={colors.text} />
             <View style={styles.shareOptionTextCol}>
-              <Text style={[styles.shareOptionTitle, { color: colors.text }]}>PDF yuklab olish</Text>
+              <Text style={[styles.shareOptionTitle, { color: colors.text }]}>PDF tayyorlash</Text>
               <Text style={[styles.shareOptionSub, { color: colors.textSecondary }]}>
-                Chekni PDF fayl sifatida saqlash
+                Vaqtinchalik PDF yaratish; keyin ulashish mumkin
               </Text>
             </View>
             <Text style={[styles.chevron, { color: colors.textMuted }]}>›</Text>
@@ -403,7 +351,7 @@ const ReceiptBody: React.FC<{ params: { saleId?: string; mode?: string } }> = ({
           {/* Option 2: Havolani nusxalash */}
           <TouchableOpacity accessibilityRole="button"
             activeOpacity={0.7}
-            onPress={handleCopyLink}
+            disabled={busy} onPress={() => { void handleCopyLink(); } }
             style={[styles.shareOptionCard, { backgroundColor: colors.surfaceSecondary, borderColor: colors.border }]}
           >
             <Copy size={22} color={colors.text} />
@@ -419,7 +367,7 @@ const ReceiptBody: React.FC<{ params: { saleId?: string; mode?: string } }> = ({
           {/* Option 3: Ilova orqali ulashish */}
           <TouchableOpacity accessibilityRole="button"
             activeOpacity={0.7}
-            onPress={handleNativeShare}
+            disabled={busy} onPress={() => { void handleNativeShare(); } }
             style={[styles.shareOptionCard, { backgroundColor: colors.surfaceSecondary, borderColor: colors.border }]}
           >
             <Share2 size={22} color={colors.text} />

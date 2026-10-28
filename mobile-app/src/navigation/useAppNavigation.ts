@@ -42,7 +42,7 @@ export function useAppNavigation() {
     navigate(name: string, params?: any) {
       if (name === 'MainTabs') name = params?.screen || 'Bosh';
       if (!canOpen(name)) throw Error('Bu bo‘lim uchun faol do‘konda vakolat berilmagan.');
-      if (['ReceiptView', 'ShareSheet', 'PdfExport'].includes(name)) {
+      if (['ReceiptView', 'ShareSheet', 'PdfExport', 'InvoiceA4'].includes(name)) {
         receiptSnapshot = params?.sale || null;
         receiptScope = scope();
         router.push({ pathname: '/receipt', params: { mode: name, saleId: String(params?.sale?.id || '') } });

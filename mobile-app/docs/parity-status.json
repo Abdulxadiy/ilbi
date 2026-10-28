@@ -514,9 +514,11 @@
     },
     "DMP-065": {
       "title": "Sale-linked A4 invoice with authoritative rows",
-      "status": "OPEN",
-      "evidence": [],
-      "notes": ""
+      "status": "TESTED_CODE",
+      "evidence": [
+        "docs/evidence/parity-implementation-2026-10-28/P03a-saved-documents/README.md"
+      ],
+      "notes": "Sale-linked A4 source and saved detail refresh verified:721 mobile tests,15 related backend tests, actual Chrome PDF widths/multipage content. Android/iOS file/printer/signed-copy acceptance remains."
     },
     "DMP-066": {
       "title": "Sender and receiver signatures with persisted document identity",
@@ -534,9 +536,10 @@
       "title": "Saved receipt snapshot, taxes and product identifiers",
       "status": "IN_PROGRESS",
       "evidence": [
-        "Saved identity/address/header/footer/legal data/display flags,58/80mm PDFs and server line totals implemented; native print/fiscal provider acceptance remains."
+        "Saved identity/address/header/footer/legal data/display flags,58/80mm PDFs and server line totals implemented; native print/fiscal provider acceptance remains.",
+        "docs/evidence/parity-implementation-2026-10-28/P03a-saved-documents/README.md"
       ],
-      "notes": ""
+      "notes": "Saved receipt/tax/product IDs and status verified against actual changed-store/catalog API fixture; stale cached document defect fixed. Legacy pre-snapshot product and related customer/cashier identity provenance still needs defined handling; native/fiscal acceptance open."
     },
     "DMP-069": {
       "title": "Thermal 58/80 mm format and configurable printer output",

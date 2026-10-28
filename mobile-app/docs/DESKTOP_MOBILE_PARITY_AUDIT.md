@@ -237,10 +237,10 @@ Approved rollout checkpoint: backend candidate `f67d770` remains deployed and si
 | [DMP-062](#dmp-062) | OPEN | Pending |
 | [DMP-063](#dmp-063) | IN_PROGRESS | Owner-scoped real timeline/categories/search/pages/details connected and API-tested; advanced actor/date filters and all snapshot/link cases remain. |
 | [DMP-064](#dmp-064) | IN_PROGRESS | 2026-10-28: owner history and credential-redacted snapshots exist; separate /audit/logs UI and full filters do not. Security redaction is already implemented, not still pending. |
-| [DMP-065](#dmp-065) | OPEN | Pending |
+| [DMP-065](#dmp-065) | TESTED_CODE | docs/evidence/parity-implementation-2026-10-28/P03a-saved-documents/README.md |
 | [DMP-066](#dmp-066) | OPEN | Pending |
 | [DMP-067](#dmp-067) | OPEN | Pending |
-| [DMP-068](#dmp-068) | IN_PROGRESS | Saved identity/address/header/footer/legal data/display flags,58/80mm PDFs and server line totals implemented; native print/fiscal provider acceptance remains. |
+| [DMP-068](#dmp-068) | IN_PROGRESS | docs/evidence/parity-implementation-2026-10-28/P03a-saved-documents/README.md |
 | [DMP-069](#dmp-069) | IN_PROGRESS | 2026-10-28: saved 58/80mm width and native Print/PDF source exist; exact physical printer output and all desktop thermal layouts remain unverified. |
 | [DMP-070](#dmp-070) | IN_PROGRESS | 2026-10-28: public token copy link exists; native public receipt route, actual QR/barcode renderer and scan/open acceptance remain missing. |
 | [DMP-071](#dmp-071) | OPEN | Pending |

@@ -1,0 +1,7 @@
+{
+  "record_count": 135,
+  "unique_record_count": 135,
+  "matches_live_ledger": true,
+  "cleanup_allowed": false,
+  "reason": "Required native, signatures/code/file lifecycle, deployment, security/fiscal/provider and remaining phase acceptance are still open."
+}

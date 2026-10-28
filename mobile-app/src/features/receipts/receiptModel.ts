@@ -3,7 +3,8 @@ const text = (value: unknown) => typeof value === 'string' ? value : '';
 export const escapeReceiptHtml = (value: unknown) => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]!));
 export function receiptMoney(value: unknown) {
   if (!['string', 'number'].includes(typeof value) || !/^\d+(?:\.\d{1,2})?$/.test(String(value)) || !Number.isFinite(Number(value))) return '—';
-  return Number(value).toLocaleString('ru-RU', { maximumFractionDigits: 2 });
+  const [whole, fraction = ''] = String(value).split('.');
+  return BigInt(whole).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '\u00a0') + (Number(fraction) ? ',' + fraction.padEnd(2, '0') : '');
 }
 export function receiptView(sale: any) {
   const saved = sale.receipt_snapshot, hasSnapshot = Boolean(saved && typeof saved === 'object' && !Array.isArray(saved) && Object.keys(saved).length);
@@ -22,6 +23,9 @@ export function receiptView(sale: any) {
       productName: text(item.product_name), quantity: /^\d+(?:\.\d{1,3})?$/.test(String(item.quantity)) ? String(item.quantity) : '—',
       unitPrice: receiptMoney(item.unit_price), lineTotal: receiptMoney(item.total_price),
       taxAmount: receiptMoney(item.tax_amount), taxRate: receiptMoney(item.tax_rate), unit: text(item.unit),
+      variantName: text(item.product_variant_name), code: text(item.product_code), sku: text(item.product_sku),
+      barcode: text(item.product_barcode), mxik: text(item.mxik), packageCode: text(item.package_code),
+      returnedQuantity: /^\d+(?:\.\d{1,3})?$/.test(String(item.voided_quantity)) ? String(item.voided_quantity) : '—',
     })),
   };
 }
