@@ -116,6 +116,84 @@ def local_response(port):
         connection.close()
 
 
+@pytest.mark.parametrize("initial", ["timeout", "unavailable"])
+def test_deployment_wait_recovers_from_real_http_warmup(initial):
+    class Handler(BaseHTTPRequestHandler):
+        def do_GET(self):
+            self.server.calls += 1
+            first = self.server.calls == 1
+            if first and initial == "timeout":
+                # Match production's >6s first response with the real timeout.
+                threading.Event().wait(6.2)
+            body = b'{"status":"not_ready"}' if first and initial == "unavailable" else b'{"status":"ready"}'
+            self.send_response(503 if first and initial == "unavailable" else 200)
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            try:
+                self.wfile.write(body)
+            except (BrokenPipeError, ConnectionResetError):
+                pass  # The first timed-out probe has already closed its socket.
+
+        def log_message(self, *args):
+            pass
+
+    server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+    server.calls = 0
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    try:
+        assert healthcheck.wait_ready(port=server.server_port, interval=0.01)
+        assert server.calls == 2
+    finally:
+        server.shutdown()
+        server.server_close()
+        thread.join(timeout=5)
+
+
+@pytest.mark.parametrize("status,body", [
+    (503, b'{"status":"not_ready"}'),
+    (302, b'{"status":"ready"}'),
+    (200, b'{"status":"not_ready"}'),
+    (200, b"<html>ready</html>"),
+    (200, b'{"status":"ready"}' + b" " * 300),
+])
+def test_deployment_wait_stops_and_fails_closed_on_persistent_bad_http(status, body):
+    class Handler(BaseHTTPRequestHandler):
+        def do_GET(self):
+            self.server.calls += 1
+            self.send_response(status)
+            self.send_header("Location", healthcheck.PATH)
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+
+        def log_message(self, *args):
+            pass
+
+    server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+    server.calls = 0
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    try:
+        assert not healthcheck.wait_ready(port=server.server_port, interval=0.01)
+        assert server.calls == 6
+    finally:
+        server.shutdown()
+        server.server_close()
+        thread.join(timeout=5)
+
+
+@pytest.mark.parametrize("arguments,wait", [([], False), (["--wait"], True)])
+def test_probe_cli_keeps_docker_single_probe_and_deployment_wait_separate(arguments, wait, capsys):
+    with patch.object(healthcheck, "check_ready", return_value=False) as single, patch.object(
+        healthcheck, "wait_ready", return_value=False
+    ) as waiting:
+        assert healthcheck.main(arguments) == 1
+    assert capsys.readouterr().out == "not ready\n"
+    assert single.call_count == (0 if wait else 1)
+    assert waiting.call_count == (1 if wait else 0)
+
+
 @pytest.fixture(scope="module")
 def synthetic_app():
     prefix = "ilbi-readiness-test-" + uuid.uuid4().hex[:12]

@@ -38,7 +38,7 @@ if ! ./ops/compose.sh up -d --no-build --wait --wait-timeout 300; then
     echo 'Release failed. Backup and .env.production.previous are retained. Check migrations before rollback.' >&2
     exit 1
 fi
-./ops/compose.sh exec -T --interactive=false ilbi python -B healthcheck.py
+./ops/compose.sh exec -T --interactive=false ilbi python -B healthcheck.py --wait
 ./ops/compose.sh exec -T --interactive=false frontend nginx -t
 printf '%s\n' "$backend_image" "$frontend_image" "$bot_image" > .deployed-images
 echo 'Release is healthy.'
