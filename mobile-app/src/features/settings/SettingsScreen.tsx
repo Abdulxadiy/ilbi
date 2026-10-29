@@ -80,11 +80,7 @@ export const SettingsScreen: React.FC = () => {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <ScreenHeader
         title="Sozlamalar"
-        leftAction={{
-          icon: 'menu',
-          onPress: () => navigation.openDrawer(),
-          accessibilityLabel: 'Menyu',
-        }}
+        onGoBack={() => navigation.goBack()}
       />
 
       <ScrollView contentContainerStyle={styles.scrollContent}>

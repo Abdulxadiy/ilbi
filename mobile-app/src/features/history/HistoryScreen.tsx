@@ -38,7 +38,7 @@ export const HistoryScreen: React.FC = () => {
   const history = useScopedQuery(allowed ? '/audit/history/?' + params.toString() : null, parseHistory);
   const [selected, setSelected] = useState<Event | null>(null);
   const detail = useScopedQuery(allowed && selected ? '/audit/history/' + encodeURIComponent(selected.source) + '/' + selected.object_id + '/' : null, parseDetail);
-  return <Page title="Tarix" onMenu={navigation.openDrawer} insetBottom={false}>
+  return <Page title="Tarix" onBack={navigation.goBack} insetBottom={false}>
     {!allowed ? <Notice error>Tarixni faqat faol do‘kon egasi ko‘ra oladi.</Notice> : <>
       <Input label="Tarixdan qidirish" value={search} onChangeText={value => { setSearch(value); setPage(1); }} placeholder="Amal, mijoz yoki hujjat" />
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>

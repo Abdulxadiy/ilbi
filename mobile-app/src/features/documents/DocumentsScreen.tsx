@@ -22,7 +22,7 @@ export const DocumentsScreen: React.FC = () => {
   if (filter !== 'all') params.set('payment_type', filter);
   const sales = usePagedResource(can('sales.view_sale') ? '/sales/?' + params.toString() : null, saleRow);
   const open = (sale: any, mode: 'ReceiptView' | 'ShareSheet' | 'PdfExport' | 'InvoiceA4') => navigation.navigate(mode, { sale });
-  return <Page title="Hujjatlar" onMenu={navigation.openDrawer} insetBottom={false} scroll={false}>
+  return <Page title="Hujjatlar" onBack={navigation.goBack} insetBottom={false} scroll={false}>
     <View style={{ padding: 16, gap: 12 }}>
       <Input label="Hujjat yoki mijoz" placeholder="Chek raqami, ism yoki telefon" value={search} onChangeText={setSearch} />
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>{([['all', 'Barchasi'], ['cash', 'Naqd'], ['card', 'Karta'], ['debt', 'Nasiya']] as const).map(([value, label]) => <Button key={value} title={label} size="sm" variant={filter === value ? 'primary' : 'secondary'} onPress={() => setFilter(value)} />)}</View>

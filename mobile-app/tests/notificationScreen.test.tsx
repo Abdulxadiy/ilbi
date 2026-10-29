@@ -10,7 +10,7 @@ const mockInbox = { rows: [{ id: 3, recipient: 7, title: 'Report', message: 'Tex
 jest.mock('../src/features/auth/AuthContext', () => ({ useAuth: () => ({ user: mockUser, activeTenant: mockTenant }) }));
 jest.mock('../src/features/notifications/NotificationsContext', () => ({ useNotifications: () => mockInbox }));
 jest.mock('../src/features/notifications/NotificationPreferences', () => ({ NotificationPreferences: () => null }));
-jest.mock('../src/navigation/useAppNavigation', () => ({ useAppNavigation: () => ({ navigate: mockNavigate, openDrawer: jest.fn() }) }));
+jest.mock('../src/navigation/useAppNavigation', () => ({ useAppNavigation: () => ({ navigate: mockNavigate, goBack: jest.fn(), openDrawer: jest.fn() }) }));
 describe('Notification destructive action scope', () => {
   beforeEach(() => {
     jest.clearAllMocks();

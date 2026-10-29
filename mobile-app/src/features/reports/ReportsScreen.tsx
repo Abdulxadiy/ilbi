@@ -42,7 +42,7 @@ export const ReportsScreen: React.FC = () => {
   };
   const kpi = analytics.data?.kpi;
   const card = { backgroundColor: colors.surface, borderColor: colors.border };
-  return <Page title="Hisobotlar" onMenu={navigation.openDrawer} insetBottom={false}>
+  return <Page title="Hisobotlar" onBack={navigation.goBack} insetBottom={false}>
     {can('analytics.view_dashboard') && <>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
         {periods.map(([value, label]) => <TouchableOpacity key={value} accessibilityRole="radio" accessibilityLabel={'Davr: ' + label} accessibilityState={{ checked: period === value }} onPress={() => setPeriod(value)} style={[styles.period, { backgroundColor: period === value ? colors.text : colors.surface, borderColor: colors.border }]}><Text style={{ color: period === value ? colors.surface : colors.text }}>{label}</Text></TouchableOpacity>)}

@@ -50,7 +50,7 @@ function CashboxBody() {
   const [message, setMessage] = useState('');
   const open = (kind: CashboxKind) => { if (shift.data) { setMessage(''); setDraft({ id: Crypto.randomUUID(), kind, shift: shift.data }); } };
   const reload = () => { void shift.reload(); void entries.reload(); void capability.reload(); };
-  return <Page title="Kassa va smena" onMenu={navigation.openDrawer} scroll={false} insetBottom={false}>
+  return <Page title="Kassa va smena" onBack={navigation.goBack} scroll={false} insetBottom={false}>
     <FlatList data={entries.rows} keyExtractor={row => String(row.id)} contentContainerStyle={{ padding: 16, gap: 12 }} refreshing={shift.loading || entries.loading} onRefresh={reload}
       ListHeaderComponent={<View style={{ gap: 12, paddingBottom: 12 }}>
         {!allowed && <Notice error>Kassani ko‘rish uchun vakolat berilmagan.</Notice>}

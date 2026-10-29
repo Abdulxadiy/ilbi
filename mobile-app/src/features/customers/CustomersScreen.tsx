@@ -58,7 +58,7 @@ function CustomersBody() {
     });
     if (result) { setArchiving(null); setMessage('Mijoz arxivlandi. Savdo va to‘lov tarixi saqlandi.'); await customers.reload(); }
   };
-  return <Page title="Mijozlar" onMenu={navigation.openDrawer} insetBottom={false} scroll={false}>
+  return <Page title="Mijozlar" onBack={navigation.goBack} insetBottom={false} scroll={false}>
     <View style={{ padding: 16, gap: 12 }}>
       {can('sales.manage_counterparty') && <Button title="Yangi mijoz" onPress={() => open('new')} />}
       {can('sales.manage_counterparty') && <Button title="Excel / CSV orqali mijozlarni yuklash" variant="secondary" onPress={() => navigation.navigate('CustomerImport')} />}

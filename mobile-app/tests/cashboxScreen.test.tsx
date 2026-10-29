@@ -13,7 +13,7 @@ jest.mock('../src/components/ui/Button', () => ({ Button: (props: any) => {
   return jest.requireActual('react').createElement(jest.requireActual('../src/components/ui/Button').Button, props);
 } }));
 jest.mock('../src/features/auth/AuthContext', () => ({ useAuth: () => ({ user, activeTenant: tenant }) }));
-jest.mock('../src/navigation/useAppNavigation', () => ({ useAppNavigation: () => ({ navigate: jest.fn(), openDrawer: jest.fn() }) }));
+jest.mock('../src/navigation/useAppNavigation', () => ({ useAppNavigation: () => ({ navigate: jest.fn(), goBack: jest.fn(), openDrawer: jest.fn() }) }));
 jest.mock('../src/api/client', () => ({ request: jest.fn(), captureAuthScope: jest.fn(() => ({})), assertAuthScope: jest.fn() }));
 jest.mock('../src/features/cashbox/commands', () => ({ submitCashbox: jest.fn(), CashboxAcceptedButUnrecorded: class extends Error {} }));
 jest.mock('../src/api/financialIdentity', () => ({ getFinancialIntent: jest.fn(), confirmFinancialIdentity: jest.fn() }));

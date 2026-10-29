@@ -47,7 +47,7 @@ function B2BBody() {
     finally { shareLock.current = false; setSharing(false); }
   };
   const sale = detail.data?.sale, pending = sale && ['b2b_pending', 'b2b_partially_accepted'].includes(sale.status) && sale.items.some(line => pendingQuantity(line) > 0n);
-  return <Page title="B2B savdolar" onMenu={navigation.openDrawer} scroll={false} insetBottom={false}>
+  return <Page title="B2B savdolar" onBack={navigation.goBack} scroll={false} insetBottom={false}>
     <View style={{ padding: 16, gap: 12 }}>
       <ChoiceField label="Yo‘nalish" value={direction} options={[{ value: 'incoming', label: 'Kiruvchi' }, { value: 'outgoing', label: 'Chiquvchi' }]} onChange={setDirection} />
       <Input label="B2B qidirish" value={search} onChangeText={setSearch} placeholder="Hujjat yoki do‘kon nomi" />

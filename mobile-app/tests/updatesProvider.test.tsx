@@ -3,6 +3,7 @@ import { AppState } from 'react-native';
 import { act, fireEvent, render, renderHook, waitFor } from '@testing-library/react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Linking from 'expo-linking';
+import * as ExpoRouter from 'expo-router';
 import { ThemeProvider } from '../src/theme/ThemeContext';
 import { UpdatesProvider, useUpdates } from '../src/features/updates/UpdatesProvider';
 import { UpdateNotice } from '../src/features/updates/UpdateNotice';
@@ -16,6 +17,7 @@ jest.mock('../src/features/updates/installed', () => ({ installedApp: () => ({ p
 jest.mock('../src/features/updates/releases', () => ({ ...jest.requireActual('../src/features/updates/releases'), fetchReleaseFeed: jest.fn() }));
 jest.mock('../src/dev/preview', () => ({ isDesignPreview: false }));
 jest.mock('expo-linking', () => ({ openURL: jest.fn(async () => true) }));
+jest.mock('expo-router', () => ({ useLocalSearchParams: () => ({}) }));
 const android = { version: '1.0.0', buildNumber: '2', url: '/downloads/mobile/' + 'a'.repeat(40) + '/ILBI-1.0.0-android-2.apk', bytes: 100, sha256: 'b'.repeat(64) };
 const wire = { schema: 1, mobile: { android } };
 const wrapper = ({ children }: { children: React.ReactNode }) => <ThemeProvider><UpdatesProvider>{children}</UpdatesProvider></ThemeProvider>;
@@ -63,6 +65,9 @@ describe('Native update reminder and download flow', () => {
   });
   test('downloads share the official feed and show independent mobile version plus unavailable iOS', async () => {
     const screen = await render(<DownloadsScreen tabbed />, { wrapper });
+    expect(screen.getByLabelText('Yuklamalar bo‘limi: Yangilanish').props.accessibilityState.checked).toBe(true);
+    expect(await screen.findByText('Sizdagi versiya: v1.0.0 · 1')).toBeTruthy();
+    await fireEvent.press(screen.getByLabelText('Yuklamalar bo‘limi: Yuklab olish'));
     expect(await screen.findByText('Android uchun ILBI')).toBeTruthy();
     expect(screen.queryByText(/SHA-256/)).toBeNull();
     expect(screen.queryByText(android.sha256)).toBeNull();
@@ -71,5 +76,11 @@ describe('Native update reminder and download flow', () => {
     expect(screen.getByText('iPhone va iPad uchun ILBI')).toBeTruthy();
     expect(screen.getAllByText('Rasmiy yuklama hali joylanmagan.')).toHaveLength(3);
     expect(fetchReleaseFeed).toHaveBeenCalledTimes(1);
+  });
+  test('an explicit downloads deep link preserves the requested tab', async () => {
+    jest.spyOn(ExpoRouter, 'useLocalSearchParams').mockReturnValue({ tab: 'downloads' });
+    const screen = await render(<DownloadsScreen />, { wrapper });
+    expect(screen.getByLabelText('Yuklamalar bo‘limi: Yuklab olish').props.accessibilityState.checked).toBe(true);
+    expect(await screen.findByText('Android uchun yuklab olish')).toBeTruthy();
   });
 });

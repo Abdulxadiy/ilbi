@@ -35,7 +35,7 @@ export const InventoryScreen: React.FC = () => {
   const [selected, setSelected] = useState<Stock | null>(null), [tab, setTab] = useState<'movements' | 'batches'>('movements');
   const [expiry, setExpiry] = useState('all');
   const details = usePagedResource(allowed && selected ? '/inventory/' + tab + '/?product_variant_id=' + selected.product_variant + (tab === 'batches' ? '&status=' + expiry : '') : null, detailRow);
-  return <Page title="Ombor" onMenu={navigation.openDrawer} insetBottom={false} scroll={false}>
+  return <Page title="Ombor" onBack={navigation.goBack} insetBottom={false} scroll={false}>
     <View style={{ padding: 16, gap: 12 }}>
       <Input label="Ombordan qidirish" value={search} onChangeText={setSearch} placeholder="Tovar, shtrix-kod yoki artikul" />
       <Button title={sort === 'qty_asc' ? 'Qoldiq: kamidan ko‘piga' : 'Qoldiq bo‘yicha saralash'} variant="secondary" onPress={() => setSort(value => value === 'name_asc' ? 'qty_asc' : 'name_asc')} />

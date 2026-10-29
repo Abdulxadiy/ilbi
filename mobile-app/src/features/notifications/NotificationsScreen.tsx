@@ -47,7 +47,7 @@ export function NotificationsScreen() {
     if (ok) setConfirm(null);
   };
   return <View style={[styles.container, { backgroundColor: colors.background }]}>
-    <ScreenHeader title="Bildirishnomalar" onOpenDrawer={navigation.openDrawer} rightAction={<TouchableOpacity accessibilityRole="button" accessibilityLabel="Bildirishnoma sozlamalari" onPress={() => setPreferences(true)} style={styles.icon}><Settings2 size={21} color={colors.text} /></TouchableOpacity>} />
+    <ScreenHeader title="Bildirishnomalar" onGoBack={navigation.goBack} rightAction={<TouchableOpacity accessibilityRole="button" accessibilityLabel="Bildirishnoma sozlamalari" onPress={() => setPreferences(true)} style={styles.icon}><Settings2 size={21} color={colors.text} /></TouchableOpacity>} />
     <View style={styles.toolbar}><Text accessibilityLiveRegion="polite" style={[styles.summary, { color: colors.text }]}>{inbox.unreadCount} ta o‘qilmagan</Text>
       <TouchableOpacity accessibilityRole="button" accessibilityLabel="Barchasini o‘qilgan qilish" disabled={!inbox.unreadCount || Boolean(inbox.busy)} onPress={() => { void inbox.markAllRead(); }} style={styles.icon}><CheckCheck size={22} color={!inbox.unreadCount || inbox.busy ? colors.textMuted : colors.text} /></TouchableOpacity>
       <TouchableOpacity accessibilityRole="button" accessibilityLabel="Bildirishnomalarni tozalash" disabled={!inbox.rows.length || Boolean(inbox.busy)} onPress={() => setConfirm('all')} style={styles.icon}><Trash2 size={20} color={!inbox.rows.length || inbox.busy ? colors.textMuted : colors.danger} /></TouchableOpacity>

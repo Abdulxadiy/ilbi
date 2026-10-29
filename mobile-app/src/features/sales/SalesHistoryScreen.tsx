@@ -53,7 +53,7 @@ function SalesHistoryBody({ initialSaleId }: { initialSaleId?: string }) {
   };
   const selected = detail.data?.id === selectedId ? detail.data : null;
   return <>
-    <Page title={selectedId ? 'Savdo tafsilotlari' : 'Savdolar tarixi'} onMenu={selectedId ? undefined : navigation.openDrawer} onBack={selectedId ? closeDetail : undefined} insetBottom={false} scroll={selectedId !== null}>
+    <Page title={selectedId ? 'Savdo tafsilotlari' : 'Savdolar tarixi'} onBack={selectedId ? closeDetail : navigation.goBack} insetBottom={false} scroll={selectedId !== null}>
       {selectedId ? <>
         <ListState loading={detail.loading} error={detail.error} onRetry={detail.reload} />
         {detail.data && !selected && <Notice error>Server boshqa savdo yozuvini qaytardi.</Notice>}

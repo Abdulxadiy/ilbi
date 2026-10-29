@@ -38,7 +38,7 @@ function EmployeesScope() {
   const initialId = Number(params.tenantId);
   const [selected, setSelected] = useState<PickValue | null>(() => user?.role === 'platform_admin' && Number.isSafeInteger(initialId) && initialId > 0 ? { id: initialId, name: `Do‘kon #${initialId}` } : null);
   const manager = teamManager(user, activeTenant), tenantId = user?.role === 'platform_admin' ? selected?.id : activeTenant?.id;
-  return <Page title="Xodimlar" onMenu={navigation.openDrawer} scroll={false} insetBottom={user?.role === 'platform_admin'}>
+  return <Page title="Xodimlar" onBack={navigation.goBack} scroll={false} insetBottom={user?.role === 'platform_admin'}>
     {!manager ? <View style={{ padding: 16 }}><Notice error>Xodimlar boshqaruvi uchun shu do‘kon egasi yoki platforma administratori bo‘lish kerak.</Notice></View> : <>
       {user?.role === 'platform_admin' && <View style={{ padding: 16 }}><ApiPicker label="Xodimlar do‘koni" endpoint="/tenants/" value={selected} onChange={setSelected} /></View>}
       {tenantId ? <EmployeesBody key={tenantId} tenantId={tenantId} /> : <View style={{ padding: 16 }}><Notice>Xodimlarni ko‘rish uchun do‘konni tanlang.</Notice></View>}

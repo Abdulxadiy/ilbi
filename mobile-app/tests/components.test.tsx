@@ -4,6 +4,8 @@ import { Button } from '../src/components/ui/Button';
 import { Badge } from '../src/components/ui/Badge';
 import { Input } from '../src/components/ui/Input';
 import { Toast } from '../src/components/ui/Toast';
+import { ScreenHeader } from '../src/components/ui/ScreenHeader';
+import { Page } from '../src/components/ui/Page';
 import { ThemeProvider } from '../src/theme/ThemeContext';
 
 jest.mock('lucide-react-native', () => { const React = jest.requireActual('react'); const { Text } = jest.requireActual('react-native'); return { ...jest.requireActual('lucide-react-native'), Check: () => React.createElement(Text, {}, 'icon:check'), CircleAlert: () => React.createElement(Text, {}, 'icon:alert'), Info: () => React.createElement(Text, {}, 'icon:info') }; });
@@ -62,5 +64,33 @@ describe('Base UI Components', () => {
       </ThemeProvider>
     );
     expect(screen.getByText('Narx yangilandi')).toBeTruthy();
+  });
+
+  test('ScreenHeader renders back arrow with Orqaga accessibility label when onGoBack is provided', async () => {
+    const onGoBack = jest.fn();
+    const screen = await render(
+      <ThemeProvider>
+        <ScreenHeader title="Kassa va smena" onGoBack={onGoBack} />
+      </ThemeProvider>
+    );
+    const backBtn = screen.getByLabelText('Orqaga');
+    expect(backBtn).toBeTruthy();
+    await fireEvent.press(backBtn);
+    expect(onGoBack).toHaveBeenCalledTimes(1);
+  });
+
+  test('Page passes onBack to ScreenHeader and renders back arrow', async () => {
+    const onBack = jest.fn();
+    const screen = await render(
+      <ThemeProvider>
+        <Page title="Ombor" onBack={onBack}>
+          <></>
+        </Page>
+      </ThemeProvider>
+    );
+    const backBtn = screen.getByLabelText('Orqaga');
+    expect(backBtn).toBeTruthy();
+    await fireEvent.press(backBtn);
+    expect(onBack).toHaveBeenCalledTimes(1);
   });
 });

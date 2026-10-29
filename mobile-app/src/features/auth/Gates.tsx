@@ -26,12 +26,15 @@ export function TermsScreen() {
   </Page>;
 }
 export function StoreSelection() {
-  const { user, selectTenant, refreshProfile, logout } = useAuth();
+  const { user, selectTenant, refreshProfile, logout, activeTenant } = useAuth();
   const { colors } = useTheme();
   const [busy, setBusy] = useState(false), [error, setError] = useState('');
 
   return (
-    <Page title="Do‘konni tanlang">
+    <Page
+      title="Do‘konni tanlang"
+      onBack={user?.tenants.length && (activeTenant || router.canGoBack()) ? () => (router.canGoBack() ? router.back() : router.replace('/')) : undefined}
+    >
       <Notice>
         {user?.tenants.length
           ? 'Savdo qaysi do‘kon yoki filial nomidan bajarilishini tanlang.'

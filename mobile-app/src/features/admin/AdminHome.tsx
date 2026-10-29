@@ -15,7 +15,7 @@ export default function AdminHome() {
     return () => controller.abort();
   }, [user?.role, version]);
   if (user?.role !== 'platform_admin') return <Page title="Ruxsat yo‘q"><Notice error>Bu bo‘lim platforma administratori uchun.</Notice></Page>;
-  return <Page title="Platforma boshqaruvi" onMenu={navigation.openDrawer}>
+  return <Page title="Platforma boshqaruvi" onBack={navigation.goBack}>
     {error ? <Retry error={error} retry={() => { setError(''); setVersion(value => value + 1); }} /> : !data ? <Loading /> : <>
       {[['accounts', 'Hisoblar'], ['tenants', 'Do‘konlar'], ['support_waiting', 'Kutayotgan murojaatlar'], ['seller_pending', 'Sotuvchi tekshiruvi']].map(([key, title]) => <View key={key} style={{ padding: 18, borderRadius: 12, backgroundColor: colors.surface }}><Text style={{ color: colors.textSecondary }}>{title}</Text><Text style={{ fontSize: 26, color: colors.text }}>{data.counts?.[key] ?? '—'}</Text></View>)}
       <Notice>Telegram: {data.telegram_configured ? 'sozlangan' : 'sozlanmagan'}</Notice>
