@@ -93,6 +93,9 @@ try {
   await waitFor(`${doc}.body.innerText.includes('Test initial support message') && ${doc}.querySelector('textarea[aria-label="Yordamga xabar"]')`, 'new consented support conversation');
   await click('Menyu', 'tab');
   await click('Yuklab olish');
+  await waitFor(`${doc}.body.innerText.includes('O‘rnatilgan ilova versiyasi Android yoki iOS ilovasida ko‘rsatiladi.')`, 'mobile download entry defaults to updates without guessing an installed binary');
+  assert.equal(await browser.evaluate(`${doc}.body.innerText.includes('Android uchun ILBI')`), false);
+  await click('Barcha ilovalarni ko‘rish');
   await waitFor(`${doc}.body.innerText.includes('Android uchun ILBI') && ${doc}.body.innerText.includes('iPhone va iPad uchun ILBI')`, 'desktop-style platform downloads');
   assert.equal(await browser.evaluate(`${doc}.querySelectorAll('[role=tab]').length`), 5);
   await click('Yuklamalar bo‘limi: Yangilanish', 'radio');
