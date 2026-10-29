@@ -3,7 +3,6 @@ import { AppState } from 'react-native';
 import { act, fireEvent, render, renderHook, waitFor } from '@testing-library/react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Linking from 'expo-linking';
-import * as ExpoRouter from 'expo-router';
 import { ThemeProvider } from '../src/theme/ThemeContext';
 import { UpdatesProvider, useUpdates } from '../src/features/updates/UpdatesProvider';
 import { UpdateNotice } from '../src/features/updates/UpdateNotice';
@@ -78,7 +77,8 @@ describe('Native update reminder and download flow', () => {
     expect(fetchReleaseFeed).toHaveBeenCalledTimes(1);
   });
   test('an explicit downloads deep link preserves the requested tab', async () => {
-    jest.spyOn(ExpoRouter, 'useLocalSearchParams').mockReturnValue({ tab: 'downloads' });
+    const router = jest.requireMock<typeof import('expo-router')>('expo-router');
+    jest.spyOn(router, 'useLocalSearchParams').mockReturnValue({ tab: 'downloads' });
     const screen = await render(<DownloadsScreen />, { wrapper });
     expect(screen.getByLabelText('Yuklamalar bo‘limi: Yuklab olish').props.accessibilityState.checked).toBe(true);
     expect(await screen.findByText('Android uchun yuklab olish')).toBeTruthy();

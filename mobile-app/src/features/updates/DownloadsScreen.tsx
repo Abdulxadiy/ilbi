@@ -23,7 +23,7 @@ function ReleaseCard({ platform, release }: { platform: ReleasePlatform; release
 export function DownloadsScreen({ tabbed = false }: { tabbed?: boolean }) {
   const updates = useUpdates(), navigation = useAppNavigation(), params = useLocalSearchParams<{ tab?: string }>();
   const { refresh } = updates;
-  const [tab, setTab] = useState<'updates' | 'downloads'>(params.tab === 'updates' ? 'updates' : 'downloads');
+  const [tab, setTab] = useState<'updates' | 'downloads'>(params.tab === 'downloads' ? 'downloads' : 'updates');
   useEffect(() => { void refresh(); }, [refresh]);
   return <Page title="Yuklab olish" onBack={navigation.goBack} insetBottom={!tabbed}>
     <ChoiceField label="Yuklamalar bo‘limi" value={tab} onChange={setTab} options={[{ value: 'updates', label: 'Yangilanish' }, { value: 'downloads', label: 'Yuklab olish' }]} />
@@ -34,6 +34,7 @@ export function DownloadsScreen({ tabbed = false }: { tabbed?: boolean }) {
       <Notice>{updates.installed ? `Sizdagi versiya: v${updates.installed.version} · ${updates.installed.buildNumber}` : 'O‘rnatilgan ilova versiyasi Android yoki iOS ilovasida ko‘rsatiladi.'}</Notice>
       {updates.candidate ? <><Notice>Yangi versiya mavjud: v{updates.candidate.version} · {updates.candidate.buildNumber}. Yangilashni qurilmangizdagi rasmiy oynada tugating.</Notice><Button title="Yangilash" loading={updates.opening} onPress={() => { void updates.open(updates.candidate!); }} /></> : updates.feed && updates.installed && updates.feed[updates.installed.platform] ? <Notice>{updates.error ? 'Yangilanish holatini tasdiqlash uchun qayta tekshiring.' : 'Yangiroq versiya topilmadi.'}</Notice> : <Notice>Bu qurilma uchun rasmiy reliz ma’lumoti hali mavjud emas.</Notice>}
       {updates.checkedAt ? <Notice>Tekshirildi: {new Date(updates.checkedAt).toLocaleString('uz-UZ', { timeZone: 'Asia/Tashkent' })}</Notice> : null}
+      <Button title="Barcha ilovalarni ko‘rish" variant="secondary" onPress={() => setTab('downloads')} />
     </> : <>
       <Notice>Rasmiy ILBI paketlari. Platforma va mobil ilova versiyalari alohida yuritiladi.</Notice>
       {(['android', 'ios', 'windows', 'linux'] as ReleasePlatform[]).map(platform => <ReleaseCard key={platform} platform={platform} release={updates.feed?.[platform] || null} />)}
