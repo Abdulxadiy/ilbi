@@ -147,6 +147,10 @@ test('default installed launch opens downloads before setup, recovers a failed r
     await waitFor(() => guide.evaluate('Boolean(document.querySelector("dialog[open]"))'), 'enlarged guide image');
     await guide.evaluate('document.querySelector("dialog[open] button[aria-label=Yopish]").click()');
     await guide.evaluate('location.href="/download";true');
+    await waitFor(() => guide.evaluate('Boolean(document.querySelector("#panel-updates")) && !document.querySelector(".ilbi-loading")'), 'default public updates before setup');
+    assert.equal(await guide.evaluate('document.querySelector("#tab-updates").getAttribute("aria-selected")'), 'true');
+    assert.equal(await guide.evaluate('document.querySelectorAll(".updates-platform-link").length'), 4);
+    await guide.evaluate('document.querySelector("#tab-downloads").click()');
     await waitFor(() => guide.evaluate(`Boolean(document.querySelector(".downloads-grid")) && document.querySelectorAll(".downloads-button[href]").length === ${available} && !document.querySelector(".ilbi-loading")`), 'public downloads before store setup');
     await capture(guide, 'downloads-before-setup');
     await guide.call('Network.enable');

@@ -38,6 +38,9 @@ try {
     throw Error('Guide check timed out: ' + expression);
   };
   await browser.call('Page.navigate', { url: origin + '/download' });
+  await wait('Boolean(document.querySelector("#panel-updates")) && !document.querySelector(".ilbi-loading")');
+  assert.equal(await browser.evaluate('document.querySelector("#tab-updates").getAttribute("aria-selected")'), 'true');
+  await browser.evaluate('document.querySelector("#tab-downloads").click()');
   await wait('Boolean(document.querySelector(".downloads-linux-guide")) && !document.querySelector(".ilbi-loading")');
   await browser.evaluate('document.querySelector(".downloads-linux-guide").scrollIntoView();document.querySelector(".downloads-linux-guide").click()');
   await wait('Boolean(document.getElementById("7-linux-uchun-batafsil-qollanma")) && !document.querySelector(".ilbi-loading")');

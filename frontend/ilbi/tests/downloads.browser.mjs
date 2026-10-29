@@ -25,7 +25,7 @@ try {
         if(downloadsQA.mode==='missing')return new Response('',{status:404});
         if(downloadsQA.delay)await new Promise(resolve=>setTimeout(resolve,downloadsQA.delay));
         if(downloadsQA.mode==='legacy')await new Promise(resolve=>setTimeout(resolve,${legacyFeedDelay}));
-        return new Response(JSON.stringify({schema:1,windows:{version:'1.2.0',url:'/downloads/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/ILBI-Setup-1.2.0-x64.exe',bytes:196124625,channel:'preview',sha256:'a'.repeat(64)},linux:downloadsQA.mode==='legacy'?null:{version:'1.2.0',url:'/downloads/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/ILBI-1.2.0-linux-x64.tar.gz',bytes:210000000,channel:'preview',sha256:'b'.repeat(64)},mobile:downloadsQA.mode==='mobile'?{android:{version:'1.0.0',buildNumber:'2',url:'/downloads/mobile/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/ILBI-1.0.0-android-2.apk',bytes:42000000,sha256:'c'.repeat(64),channel:'preview'},ios:{version:'1.0.0',buildNumber:'1',url:'https://apps.apple.com/uz/app/ilbi/id123456789',channel:'preview'}}:null}),{status:200,headers:{'Content-Type':'application/json'}});
+        return new Response(JSON.stringify({schema:1,windows:{version:'1.2.0',url:'/downloads/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/ILBI-Setup-1.2.0-x64.exe',bytes:196124625,channel:'preview',sha256:'a'.repeat(64)},linux:downloadsQA.mode==='legacy'?null:{version:'1.2.0',url:'/downloads/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/ILBI-1.2.0-linux-x64.tar.gz',bytes:210000000,channel:'preview',sha256:'b'.repeat(64)},mobile:downloadsQA.mode==='legacy'?null:{android:{version:'1.0.0',buildNumber:'2',url:'/downloads/mobile/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/ILBI-1.0.0-android-2.apk',bytes:42000000,sha256:'c'.repeat(64),channel:'preview'},ios:downloadsQA.mode==='mobile'?{version:'1.0.0',buildNumber:'1',url:'https://apps.apple.com/uz/app/ilbi/id123456789',channel:'preview'}:null}}),{status:200,headers:{'Content-Type':'application/json'}});
       }
       if(sessionStorage.getItem('download-auth')==='true'){
         if(path==='/api/v1/auth/me/'){
@@ -52,20 +52,43 @@ try {
   await browser.call('Page.navigate', { url: origin + '/' });
   await wait('Boolean(document.querySelector(".lp-nav a[href=\\\"/download\\\"]"))');
   await browser.evaluate('document.querySelector(".lp-nav a[href=\\\"/download\\\"]").click()');
+  await wait('Boolean(document.querySelector("#panel-updates")) && !document.querySelector(".ilbi-loading")');
+  await wait('document.querySelector(".updates-platform-link[data-platform=android]")?.textContent.includes("v1.0.0")');
+  assert.equal(await browser.evaluate('document.querySelector("#tab-updates").getAttribute("aria-selected")'), 'true', 'Anonymous desktop entry defaults to updates');
+  assert.equal(await browser.evaluate('document.querySelectorAll(".updates-platform-link").length'), 4);
+  assert.equal(await browser.evaluate('document.querySelector(".updates-platform-link[data-platform=ios]").textContent.includes("Paket hali chiqarilmagan")'), true);
+  assert.equal(await browser.evaluate('document.body.innerText.includes("Barcha tizim yangilanishlari va xavfsizlik sozlamalari dolzarb")'), false, 'An unchecked state cannot claim every security update is current');
+  await writeFile(join(artifacts, 'updates-default-desktop.png'), Buffer.from((await browser.call('Page.captureScreenshot', { format: 'png' })).data, 'base64'));
+  await browser.resize(390, 844);
+  assert.equal(await browser.evaluate('document.documentElement.scrollWidth<=innerWidth'), true);
+  await browser.evaluate('window.downloadBeforeReload=true');
+  await browser.call('Page.reload');
+  await wait('!window.downloadBeforeReload && Boolean(document.querySelector("#panel-updates")) && !document.querySelector(".ilbi-loading")');
+  assert.equal(await browser.evaluate('document.querySelector("#tab-updates").getAttribute("aria-selected")'), 'true', 'Anonymous phone reload also defaults to updates');
+  await writeFile(join(artifacts, 'updates-default-phone.png'), Buffer.from((await browser.call('Page.captureScreenshot', { format: 'png' })).data, 'base64'));
+  await browser.evaluate('document.querySelector(".updates-platform-link[data-platform=android]").click()');
+  await wait('Boolean(document.querySelector("#panel-downloads"))');
   await wait('Boolean(document.querySelector(".downloads-button[href]"))');
   await wait('!document.querySelector(".ilbi-loading")');
   assert.equal(await browser.evaluate('location.pathname'), '/download');
   assert.equal(await browser.evaluate('document.querySelector(".downloads-button[href]").href'), origin + '/downloads/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/ILBI-Setup-1.2.0-x64.exe');
   assert.equal(await browser.evaluate('document.querySelector(".downloads-preview").textContent'), 'Sinov nusxasi');
-  assert.equal(await browser.evaluate('document.querySelectorAll(".downloads-card button:disabled").length'), 2);
+  assert.equal(await browser.evaluate('document.querySelectorAll(".downloads-card button:disabled").length'), 1);
   assert.equal(await browser.evaluate('document.querySelector("[data-platform=linux] a.downloads-button").href'), origin + '/downloads/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/ILBI-1.2.0-linux-x64.tar.gz');
+  assert.equal(await browser.evaluate('document.querySelector("#download-android a.downloads-button").href'), origin + '/downloads/mobile/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/ILBI-1.0.0-android-2.apk');
+  assert.equal(await browser.evaluate('document.querySelector("#download-ios button.downloads-button").disabled'), true);
+  assert.equal(await browser.evaluate('document.querySelector("#download-ios .downloads-ios-web").getAttribute("href")'), '/login');
+  assert.equal(await browser.evaluate('document.querySelector("#download-android").getBoundingClientRect().top < document.querySelector("#download-ios").getBoundingClientRect().top && document.querySelector("#download-ios").getBoundingClientRect().top < document.querySelector("#download-windows").getBoundingClientRect().top'), true, 'Phone packages appear before desktop packages on a phone');
   assert.equal(await browser.evaluate('document.querySelector(".downloads-linux-install").textContent.includes("bash install.sh")'), true);
   assert.equal(await browser.evaluate('document.querySelector(".downloads-linux-install").lastElementChild.matches("a.downloads-linux-guide")'), true);
   assert.equal(await browser.evaluate('document.querySelector(".downloads-linux-guide").getAttribute("href")'), '/desktop-guide#7-linux-uchun-batafsil-qollanma');
+  await browser.resize(1280, 1000);
+  await browser.evaluate('window.scrollTo(0,0)');
   await writeFile(join(artifacts, 'downloads-desktop.png'), Buffer.from((await browser.call('Page.captureScreenshot', { format: 'png' })).data, 'base64'));
   assert.equal(await browser.evaluate('Boolean(document.querySelector(".downloads-checksum"))'), false);
   assert.equal(await browser.evaluate('document.body.innerText.includes("a".repeat(64)) || document.body.innerText.includes("b".repeat(64))'), false);
   await browser.resize(390, 844);
+  await browser.evaluate('window.scrollTo(0,0)');
   assert.equal(await browser.evaluate('document.documentElement.scrollWidth<=innerWidth'), true);
   await writeFile(join(artifacts, 'downloads-mobile.png'), Buffer.from((await browser.call('Page.captureScreenshot', { format: 'png' })).data, 'base64'));
   for (const mode of ['missing', 'offline']) {
@@ -105,6 +128,17 @@ try {
   assert.equal(await browser.evaluate('document.querySelector("[data-platform=android]").textContent.includes("Yig‘ilma 2")'), true);
   assert.equal(await browser.evaluate('document.documentElement.scrollWidth<=innerWidth'), true);
   assert.equal(await browser.evaluate('document.querySelectorAll(".downloads-button[href]").length'), 4);
+  assert.equal(await browser.evaluate('document.querySelector("#download-ios").textContent.includes("native paket hali chiqarilmagan")'), false);
+
+  await browser.call('Page.navigate', { url: origin + '/download#linux-install' });
+  await wait('Boolean(document.querySelector("#panel-downloads")) && !document.querySelector(".ilbi-loading")');
+  assert.equal(await browser.evaluate('document.querySelector("#tab-downloads").getAttribute("aria-selected")'), 'true', 'An existing direct installation-guide link still opens downloads');
+  await browser.evaluate('document.querySelector("#tab-updates").click()');
+  await wait('Boolean(document.querySelector("#panel-updates"))');
+  assert.equal(await browser.evaluate('location.hash'), '');
+  await browser.evaluate('document.querySelector(".updates-platform-link[data-platform=ios]").click()');
+  await wait('Boolean(document.querySelector("#download-ios a.downloads-button"))');
+  assert.equal(await browser.evaluate('location.hash'), '#download-ios');
 
   // Authenticated in-app scenario: tabs navigation, check for updates, and tab switching
   await browser.evaluate(`
@@ -118,7 +152,7 @@ try {
     sessionStorage.setItem('download-mode', 'published');
     window.downloadBeforeReload = true;
   `);
-  await browser.call('Page.reload');
+  await browser.call('Page.navigate', { url: origin + '/download' });
   await wait('!window.downloadBeforeReload && Boolean(document.querySelector(".downloads-tabs-nav"))');
   assert.equal(await browser.evaluate('Boolean(document.querySelector("#tab-updates.active"))'), true);
   assert.equal(await browser.evaluate('Boolean(document.querySelector("#panel-updates"))'), true);
@@ -138,9 +172,10 @@ try {
 
   // Trigger update check
   await browser.evaluate('document.querySelector(".updates-check-btn").click()');
-  await wait('Boolean(document.querySelector(".updates-status-desc"))');
+  await wait('document.querySelector(".updates-status-title")?.textContent === "Rasmiy yuklamalar tekshirildi"');
+  assert.equal(await browser.evaluate('document.body.innerText.includes("Siz ILBI ning eng so‘nggi talqinidan foydalanmoqdasiz")'), false, 'The browser cannot attest an installed native package version');
 
-  console.log(JSON.stringify({ passed: true, scenarios: ['landing download link', 'anonymous download page', 'versioned Windows and Linux links', 'Linux installation guide', 'preview label', 'unpublished Android/iOS states', 'separate published Android/iOS links and mobile build', 'mobile layout', 'missing release', 'offline and retry', 'retry controls in light/dark desktop/mobile themes', 'disabled retry during request', 'older feed without Linux', 'authenticated in-app update checks', 'authenticated tab switching'], artifacts }));
+  console.log(JSON.stringify({ passed: true, scenarios: ['landing download link', 'anonymous desktop and phone default to updates', 'four platform shortcuts and anchor navigation', 'versioned Windows and Linux links', 'Linux installation guide and legacy direct link', 'preview label', 'published Android APK and unpublished iOS with browser fallback', 'separate published Android/iOS links and mobile build', 'phone packages before desktop packages on phone', 'missing release', 'offline and retry', 'retry controls in light/dark desktop/mobile themes', 'disabled retry during request', 'older feed without Linux', 'authenticated browser catalogue check without claiming installed-native currency', 'authenticated tab switching'], artifacts }));
 
 } catch (error) {
   console.error('Browser errors:', browser?.errors);

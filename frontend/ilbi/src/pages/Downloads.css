@@ -46,7 +46,7 @@
 
 .downloads-linux-guide{display:flex;align-items:center;gap:12px;padding:16px;margin-top:22px;border:1px solid var(--border-card);border-radius:12px;background:var(--bg-chip);color:var(--text-primary);text-decoration:none!important;line-height:1.5}.downloads-linux-guide>span{flex:1;min-width:0;font-weight:600}.downloads-linux-guide small{display:block;margin-top:4px;font-size:12px;color:var(--text-secondary);font-weight:400}.downloads-linux-guide svg{flex-shrink:0}.downloads-linux-guide:focus-visible{outline:2px solid var(--primary);outline-offset:3px}
 
-/* In-App Tabs for Authenticated Users */
+/* Public and signed-in update/download navigation. */
 .downloads-tabs-container { width: min(100%, 960px); margin: 24px auto 0; }
 .downloads-tabs-nav { display: inline-flex; align-items: center; gap: 6px; padding: 4px; background: var(--bg-chip); border: 1px solid var(--border-card); border-radius: 12px; }
 .downloads-tab-pill { display: inline-flex; align-items: center; gap: 8px; border: none; background: transparent; color: var(--text-secondary); font-size: 14px; font-weight: 600; padding: 8px 18px; border-radius: 9px; cursor: pointer; transition: all .18s ease; font-family: inherit; }
@@ -56,6 +56,20 @@
 
 /* Updates View */
 .updates-tab-content { animation: fadeIn .2s ease; }
+.updates-platform-list { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-top: 28px; }
+.updates-platform-link { display: flex; flex-direction: column; align-items: flex-start; gap: 9px; min-width: 0; min-height: 120px; padding: 16px; border: 1px solid var(--border-card); border-radius: 14px; background: var(--bg-card); color: var(--text-primary); font: inherit; text-align: left; cursor: pointer; }
+.updates-platform-link strong { font-size: 15px; }
+.updates-platform-link span, .updates-platform-link small { font-size: 12px; line-height: 1.5; color: var(--text-secondary); }
+.updates-platform-link small { display: flex; align-items: center; gap: 7px; margin-top: auto; }
+.updates-platform-link:focus-visible, .downloads-tab-pill:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
+.downloads-card { scroll-margin-top: 24px; }
+.downloads-ios-web { min-height: 44px; justify-content: center; text-align: center; }
+@media (max-width: 680px) {
+  .updates-platform-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .downloads-card[data-platform="android"] { order: -2; }
+  .downloads-card[data-platform="ios"] { order: -1; }
+}
+@media (prefers-reduced-motion: reduce) { .updates-tab-content, .updates-spinner { animation: none; } }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
 .updates-card { display: flex; flex-direction: column; gap: 24px; padding: 32px; border: 1px solid var(--border-card); border-radius: 22px; background: var(--bg-card); margin: 32px 0 24px; }
